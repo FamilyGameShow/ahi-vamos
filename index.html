@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Túnel Cerati - Los Mundos Inmersivos</title>
+    <title>Colores Santos - El Universo de Cerati</title>
     <style>
         body {
             margin: 0;
             overflow: hidden;
-            background-color: #05021a;
+            background-color: #02000a;
             font-family: sans-serif;
             touch-action: none;
         }
@@ -26,7 +26,7 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(5, 2, 26, 0.95);
+            background: rgba(2, 0, 10, 0.96);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -38,32 +38,32 @@
         }
         #pantalla-intro h1 {
             color: #fff;
-            font-size: 24px;
-            letter-spacing: 4px;
-            text-shadow: 0 0 15px #00ffff, 0 0 30px #ff00ff;
+            font-size: 26px;
+            letter-spacing: 5px;
+            text-shadow: 0 0 20px #ff00ff, 0 0 40px #00ffff;
             margin-bottom: 10px;
         }
         #pantalla-intro p {
             color: #00ffff;
             font-size: 14px;
             margin-bottom: 30px;
-            max-width: 300px;
-            line-height: 1.4;
+            max-width: 320px;
+            line-height: 1.5;
         }
         .btn-inicio {
-            background: linear-gradient(45deg, #ffcc00, #ff00ff);
-            border: 2px solid #00ffff;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            border: 2px solid #fff;
             color: #fff;
-            padding: 15px 30px;
+            padding: 15px 35px;
             border-radius: 30px;
             font-size: 16px;
             font-weight: bold;
             letter-spacing: 2px;
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
+            box-shadow: 0 0 25px rgba(255, 0, 255, 0.7);
             cursor: pointer;
         }
 
-        /* Capa de juego y UI (Puntaje y Vidas arriba) */
+        /* Capa de Estadísticas (Puntos y Vidas) */
         #ui-capa {
             position: absolute;
             top: 15px;
@@ -73,7 +73,7 @@
             padding: 0 20px;
             box-sizing: border-box;
             color: #fff;
-            text-shadow: 0 0 10px #00ffff;
+            text-shadow: 0 0 10px #ff00ff;
             z-index: 10;
             pointer-events: none;
             display: none;
@@ -81,58 +81,43 @@
         .stats-box {
             font-size: 14px;
             font-weight: bold;
-            background: rgba(5, 2, 26, 0.7);
-            border: 1px solid #00ffff;
-            padding: 5px 12px;
-            border-radius: 10px;
+            background: rgba(10, 5, 30, 0.8);
+            border: 1px solid #ff00ff;
+            padding: 6px 14px;
+            border-radius: 12px;
         }
 
-        /* Cuadro de Pregunta */
-        #pregunta-wrapper {
+        /* Ventana flotante de Trivia al chocar un mundo */
+        #trivia-modal {
             position: absolute;
-            top: 70px;
-            width: 100%;
-            text-align: center;
-            z-index: 10;
-            pointer-events: none;
-            display: none;
-        }
-        #pregunta-container {
-            background: rgba(5, 2, 26, 0.85);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(10, 5, 30, 0.95);
             border: 2px solid #00ffff;
-            border-radius: 10px;
-            padding: 12px 20px;
-            margin: 0 auto;
-            max-width: 85%;
-            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
-            pointer-events: auto;
-        }
-        #epoca-titulo { margin: 0 0 5px 0; font-size: 12px; color: #ff00ff; letter-spacing: 2px; }
-        #pregunta-texto { font-size: 13px; color: #fff; font-weight: bold; }
-
-        /* Botones de opciones abajo */
-        #botones-container {
-            position: absolute;
-            bottom: 30px;
-            width: 100%;
+            border-radius: 15px;
+            padding: 20px;
+            width: 85%;
+            max-width: 350px;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.6);
+            z-index: 50;
+            text-align: center;
             display: none;
-            justify-content: space-around;
-            padding: 0 20px;
-            box-sizing: border-box;
-            z-index: 20;
         }
-        .btn-opcion {
-            background: rgba(148, 0, 211, 0.5);
-            border: 2px solid #ff00ff;
+        #trivia-titulo { color: #ff00ff; font-size: 13px; letter-spacing: 2px; margin-bottom: 8px; font-weight: bold; }
+        #trivia-pregunta { color: #fff; font-size: 14px; margin-bottom: 20px; line-height: 1.4; }
+        .btn-opcion-cosmos {
+            background: rgba(0, 255, 255, 0.2);
+            border: 2px solid #00ffff;
             color: #fff;
-            padding: 15px 10px;
-            border-radius: 20px;
-            font-size: 12px;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
             font-weight: bold;
-            width: 45%;
-            text-shadow: 0 0 5px #ff00ff;
-            box-shadow: 0 0 15px rgba(255, 0, 255, 0.4);
+            width: 100%;
+            margin-bottom: 10px;
             cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
         }
 
         /* Reproductor de YouTube oculto para el audio de fondo */
@@ -150,9 +135,9 @@
 
     <!-- PANTALLA DE INTRODUCCIÓN -->
     <div id="pantalla-intro">
-        <h1>BIENVENIDOS AL RITO</h1>
-        <p>Atraviesa los portales de los mundos de Gustavo Cerati.</p>
-        <button class="btn-opcion btn-inicio" onclick="comenzarJuego()">✨ ENTRAR AL VIAJE</button>
+        <h1>COLORES SANTOS</h1>
+        <p>Navega por el universo psicodélico de Gustavo Cerati. Choca con tus manos o tu dedo los mundos flotantes para revelar sus trivias.</p>
+        <button class="btn-opcion btn-inicio" onclick="comenzarJuego()">✨ ENTRAR AL UNIVERSO</button>
     </div>
 
     <!-- ESTADÍSTICAS -->
@@ -161,18 +146,12 @@
         <div class="stats-box">VIDAS: <span id="txt-vidas">❤️❤️❤️</span></div>
     </div>
 
-    <!-- PREGUNTA ACTIVA -->
-    <div id="pregunta-wrapper">
-        <div id="pregunta-container">
-            <div id="epoca-titulo">FASE 1</div>
-            <div id="pregunta-texto">Cargando...</div>
-        </div>
-    </div>
-
-    <!-- BOTONES DE RESPUESTA -->
-    <div id="botones-container">
-        <button id="btn-1" class="btn-opcion" onclick="responder(1)">Opción A</button>
-        <button id="btn-2" class="btn-opcion" onclick="responder(2)">Opción B</button>
+    <!-- VENTANA DE TRIVIA FLOTANTE -->
+    <div id="trivia-modal">
+        <div id="trivia-titulo">MUNDO CERATI</div>
+        <div id="trivia-pregunta">Pregunta aquí...</div>
+        <button id="trivia-btn-1" class="btn-opcion-cosmos" onclick="verificarRespuesta(1)">Opción A</button>
+        <button id="trivia-btn-2" class="btn-opcion-cosmos" onclick="verificarRespuesta(2)">Opción B</button>
     </div>
     
     <div id="canvas-container"></div>
@@ -186,65 +165,24 @@
         let juegoIniciado = false;
         let puntos = 0;
         let vidas = 3;
-        let nivelActual = 0;
+        let planetaSeleccionado = null;
+        let pausarVuelo = false;
 
-        // Base de datos de los Mundos / Eras de Cerati
-        const trivias = [
-            {
-                epoca: "MUNDO: AMOR AMARILLO (1993)",
-                colorMundo: 0xffcc00, 
-                pregunta: "¿Con qué canción arranca su debut solista 'Amor Amarillo'?",
-                opcionA: "Amor amarillo",
-                opcionB: "Pulsar",
-                respuestaCorrecta: 1,
-                trackId: "jiKGUnzCAKo"
-            },
-            {
-                epoca: "MUNDO: BOCANADA (1999)",
-                colorMundo: 0x0066ff, 
-                pregunta: '¿En qué año se lanzó el icónico álbum solista "Bocanada"?',
-                opcionA: "1997",
-                opcionB: "1999",
-                respuestaCorrecta: 2,
-                trackId: "eGrx3tZzjwE"
-            },
-            {
-                epoca: "MUNDO: SIEMPRE ES HOY (2002)",
-                colorMundo: 0xff0033, 
-                pregunta: '¿A qué disco solista pertenece el tema "Artefacto"?',
-                opcionA: "Siempre es Hoy",
-                opcionB: "Fuerza Natural",
-                respuestaCorrecta: 1,
-                trackId: "T1tDbvoHzo8"
-            },
-            {
-                epoca: "MUNDO: ¡AHÍ VAMOS! (2006)",
-                colorMundo: 0xcccccc, 
-                pregunta: '¿Qué instrumento predomina fuertemente en el sonido rock de "¡Ahí Vamos"?',
-                opcionA: "Sintetizadores analógicos",
-                opcionB: "Guitarras eléctricas crudas",
-                respuestaCorrecta: 2,
-                trackId: "sZnZfl6OGx8"
-            },
-            {
-                epoca: "MUNDO: FUERZA NATURAL (2009)",
-                colorMundo: 0x228b22, 
-                pregunta: '¿Cuál es el concepto visual y sonoro del último álbum "Fuerza Natural"?',
-                opcionA: "Viaje rutero y psicodelia folk",
-                opcionB: "Electrónica de discoteca",
-                respuestaCorrecta: 1,
-                trackId: "tsTIlhhU_Q0"
-            }
+        // Base de datos de los Mundos / Planetas en el Universo
+        const mundosData = [
+            { id: 0, nombre: "MUNDO: AMOR AMARILLO", color: 0xffcc00, pregunta: "¿Con qué canción arranca su debut solista 'Amor Amarillo'?", opcionA: "Amor amarillo", opcionB: "Pulsar", respuestaCorrecta: 1, trackId: "jiKGUnzCAKo" },
+            { id: 1, nombre: "MUNDO: BOCANADA", color: 0x0066ff, pregunta: '¿En qué año se lanzó el icónico álbum solista "Bocanada"?', opcionA: "1997", opcionB: "1999", respuestaCorrecta: 2, trackId: "eGrx3tZzjwE" },
+            { id: 2, nombre: "MUNDO: SIEMPRE ES HOY", color: 0xff0033, pregunta: '¿A qué disco solista pertenece el tema "Artefacto"?', opcionA: "Siempre es Hoy", opcionB: "Fuerza Natural", respuestaCorrecta: 1, trackId: "T1tDbvoHzo8" },
+            { id: 3, nombre: "MUNDO: ¡AHÍ VAMOS!", color: 0xcccccc, pregunta: '¿Qué instrumento predomina fuertemente en el sonido rock de "¡Ahí Vamos"?', opcionA: "Sintetizadores analógicos", opcionB: "Guitarras eléctricas crudas", respuestaCorrecta: 2, trackId: "sZnZfl6OGx8" },
+            { id: 4, nombre: "MUNDO: FUERZA NATURAL", color: 0x228b22, pregunta: '¿Cuál es el concepto visual y sonoro del último álbum "Fuerza Natural"?', opcionA: "Viaje rutero y psicodelia folk", opcionB: "Electrónica de discoteca", respuestaCorrecta: 1, trackId: "tsTIlhhU_Q0" },
+            { id: 5, nombre: "MUNDO: SODA STEREO", color: 0xff00ff, pregunta: '¿En qué año se formó Soda Stereo?', opcionA: "1982", opcionB: "1984", respuestaCorrecta: 1, trackId: "jiKGUnzCAKo" }
         ];
 
         function comenzarJuego() {
             juegoIniciado = true;
             document.getElementById('pantalla-intro').style.display = 'none';
             document.getElementById('ui-capa').style.display = 'flex';
-            document.getElementById('pregunta-wrapper').style.display = 'block';
-            document.getElementById('botones-container').style.display = 'flex';
-            
-            cargarMundoYPregunta(0);
+            actualizarAudio("jiKGUnzCAKo");
         }
 
         function actualizarAudio(videoId) {
@@ -252,88 +190,119 @@
             ytPlayer.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}`;
         }
 
-        function cargarMundoYPregunta(index) {
-            const t = trivias[index];
-            document.getElementById('epoca-titulo').innerText = t.epoca;
-            document.getElementById('pregunta-texto').innerText = t.pregunta;
-            document.getElementById('btn-1').innerText = t.opcionA;
-            document.getElementById('btn-2').innerText = t.opcionB;
-
-            // Cambiar el color de todos los anillos del túnel al color del mundo actual
-            anillos.forEach(aro => {
-                aro.material.color.setHex(t.colorMundo);
-            });
-
-            actualizarAudio(t.trackId);
-        }
-
         // Configuración 3D con Three.js
         const canvasContainer = document.getElementById('canvas-container');
         const scene = new THREE.Scene();
-        scene.fog = new THREE.FogExp2(0x05021a, 0.04);
+        scene.fog = new THREE.FogExp2(0x02000a, 0.015);
 
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         canvasContainer.appendChild(renderer.domElement);
 
-        // Sistema de Anillos Concéntricos (Túnel Real de Aros de Neón)
-        const cantidadAnillos = 40;
-        const anillos = [];
-        const radioTunel = 12;
-
-        for (let i = 0; i < cantidadAnillos; i++) {
-            const geometriaAro = new THREE.RingGeometry(radioTunel - 0.4, radioTunel, 24);
-            const materialAro = new THREE.MeshBasicMaterial({
-                color: 0xffcc00,
-                side: THREE.DoubleSide,
-                wireframe: true
-            });
-            const aro = new THREE.Mesh(geometriaAro, materialAro);
-            
-            // Distribuir los aros a lo largo del eje Z (profundidad del túnel)
-            aro.position.z = -i * 15;
-            scene.add(aro);
-            anillos.push(aro);
+        // Creación del Campo de Estrellas (Universo Colores Santos)
+        const starGeometry = new THREE.BufferGeometry();
+        const starCount = 600;
+        const starPositions = [];
+        for(let i = 0; i < starCount; i++) {
+            starPositions.push(
+                (Math.random() - 0.5) * 300,
+                (Math.random() - 0.5) * 300,
+                (Math.random() - 0.5) * 800
+            );
         }
+        starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starPositions, 3));
+        const starMaterial = new THREE.PointsMaterial({color: 0xffffff, size: 0.8});
+        const stars = new THREE.Points(starGeometry, starMaterial);
+        scene.add(stars);
 
-        camera.position.z = 5;
+        // Creación de los Planetas / Mundos Flotantes
+        const planetas = [];
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
 
-        // Lógica de respuesta
-        function responder(seleccionUsuario) {
-            const t = trivias[nivelActual];
-            const esCorrecta = (seleccionUsuario === t.respuestaCorrecta);
+        mundosData.forEach((data, index) => {
+            const geometry = new THREE.SphereGeometry(3.5, 24, 24);
+            const material = new THREE.MeshBasicMaterial({ color: data.color, wireframe: true });
+            const planeta = new THREE.Mesh(geometry, material);
+
+            // Distribuir los planetas flotando libremente en el universo
+            planeta.position.set(
+                (Math.random() - 0.5) * 40,
+                (Math.random() - 0.5) * 25,
+                -60 - (index * 45) // Espaciados en profundidad
+            );
+
+            planeta.userData = data; // Guardamos los datos de la trivia dentro del objeto 3D
+            scene.add(planeta);
+            planetas.push(planeta);
+        });
+
+        camera.position.z = 10;
+
+        // Detección de toque / clic sobre los planetas en el espacio
+        window.addEventListener('pointerdown', (e) => {
+            if (!juegoIniciado || pausarVuelo) return;
+
+            mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(planetas);
+
+            if (intersects.length > 0) {
+                const planetaTocado = intersects[0].object;
+                planetaSeleccionado = planetaTocado;
+                pausarVuelo = true; // Se frena el viaje para mostrar la trivia
+
+                // Mostrar modal con la pregunta del planeta
+                const t = planetaTocado.userData;
+                document.getElementById('trivia-titulo').innerText = t.epoca || t.nombre;
+                document.getElementById('trivia-pregunta').innerText = t.pregunta;
+                document.getElementById('trivia-btn-1').innerText = t.opcionA;
+                document.getElementById('trivia-btn-2').innerText = t.opcionB;
+                document.getElementById('trivia-modal').style.display = 'block';
+
+                // Cambiar música de fondo al tema del planeta
+                actualizarAudio(t.trackId);
+            }
+        });
+
+        // Lógica de respuesta desde el modal flotante
+        function verificarRespuesta(opcionElegida) {
+            const t = planetaSeleccionado.userData;
+            const esCorrecta = (opcionElegida === t.respuestaCorrecta);
+
+            document.getElementById('trivia-modal').style.display = 'none';
 
             if (esCorrecta) {
                 puntos += 100;
                 document.getElementById('txt-puntos').innerText = puntos;
-                
-                nivelActual++;
-                if(nivelActual < trivias.length) {
-                    alert("¡Portal superado! Entrando al siguiente mundo de Cerati...");
-                    cargarMundoYPregunta(nivelActual);
-                } else {
-                    alert("¡Felicitaciones! Completaste todos los mundos y eras de Gustavo con " + puntos + " puntos.");
+                alert("¡Mundo conquistado! Suman puntos en el cosmos.");
+
+                // El planeta desaparece del universo
+                scene.remove(planetaSeleccionado);
+                const index = planetas.indexOf(planetaSeleccionado);
+                if (index > -1) planetas.splice(index, 1);
+
+                // Verificar si conquistó todos los mundos
+                if (planetas.length === 0) {
+                    alert("¡Impresionante! Recorriste y conquistaste todo el universo de Gustavo Cerati con " + puntos + " puntos.");
                     location.reload();
                 }
             } else {
                 vidas--;
                 actualizarVidasUI();
-                
-                // Destello rojo en los anillos por error
-                anillos.forEach(aro => aro.material.color.setHex(0xff0000));
-                
-                if(vidas <= 0) {
-                    alert("Te quedaste sin vidas en el viaje. ¡Inténtalo de nuevo!");
-                    location.reload();
-                } else {
-                    alert("¡Respuesta incorrecta! Pierdes una vida.");
-                }
+                alert("Respuesta incorrecta. El mundo sigue girando...");
 
-                setTimeout(() => {
-                    anillos.forEach(aro => aro.material.color.setHex(t.colorMundo));
-                }, 800);
+                if (vidas <= 0) {
+                    alert("Te quedaste sin vidas en el viaje estelar. ¡Inténtalo de nuevo!");
+                    location.reload();
+                }
             }
+
+            planetaSeleccionado = null;
+            pausarVuelo = false; // Vuelve a arrancar el viaje por el cosmos
         }
 
         function actualizarVidasUI() {
@@ -347,34 +316,47 @@
 
         window.addEventListener('mousemove', (e) => {
             if(!juegoIniciado) return;
-            targetX = (e.clientX - window.innerWidth / 2) * 0.0015;
-            targetY = (e.clientY - window.innerHeight / 2) * 0.0015;
+            targetX = (e.clientX - window.innerWidth / 2) * 0.001;
+            targetY = (e.clientY - window.innerHeight / 2) * 0.001;
         });
 
         window.addEventListener('touchmove', (e) => {
             if(!juegoIniciado) return;
             if(e.touches.length > 0) {
-                targetX = (e.touches[0].clientX - window.innerWidth / 2) * 0.0015;
-                targetY = (e.touches[0].clientY - window.innerHeight / 2) * 0.0015;
+                targetX = (e.touches[0].clientX - window.innerWidth / 2) * 0.001;
+                targetY = (e.touches[0].clientY - window.innerHeight / 2) * 0.001;
             }
         }, { passive: true });
 
-        // Bucle de animación: Los aros se mueven hacia la cámara generando el túnel perfecto
+        // Bucle de animación del Universo Libre
         function animate() {
             requestAnimationFrame(animate);
 
-            // Mover cada anillo hacia adelante para simular velocidad continua
-            anillos.forEach(aro => {
-                aro.position.z += 1.2; // Velocidad del viaje
-                aro.rotation.z += 0.01; // Giro psicodélico del aro
+            // Si no estamos respondiendo una trivia, todo el universo avanza hacia el jugador
+            if (!pausarVuelo) {
+                planetas.forEach(planeta => {
+                    planeta.position.z += 0.4; // Velocidad de navegación estelar
+                    planeta.rotation.y += 0.01;
+                    planeta.rotation.x += 0.005;
 
-                // Si el anillo pasa al jugador, lo mandamos al fondo del túnel para hacer loop infinito
-                if (aro.position.z > 10) {
-                    aro.position.z = - (cantidadAnillos - 1) * 15;
+                    // Si el planeta pasa al jugador, lo reciclamos al fondo del universo
+                    if (planeta.position.z > 20) {
+                        planeta.position.z = -250;
+                        planeta.position.x = (Math.random() - 0.5) * 40;
+                        planeta.position.y = (Math.random() - 0.5) * 25;
+                    }
+                });
+
+                // Movimiento de las estrellas de fondo
+                const starArr = stars.geometry.attributes.position.array;
+                for(let i = 2; i < starArr.length; i += 3) {
+                    starArr[i] += 0.8;
+                    if(starArr[i] > 100) starArr[i] = -700;
                 }
-            });
+                stars.geometry.attributes.position.needsUpdate = true;
+            }
 
-            // Movimiento sutil de la cámara con el dedo/mouse
+            // Movimiento suave de la cámara con el dedo/mouse
             camera.rotation.y += (targetX - camera.rotation.y) * 0.05;
             camera.rotation.x += (targetY - camera.rotation.x) * 0.05;
 
