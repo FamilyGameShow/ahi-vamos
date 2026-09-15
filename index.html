@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Túnel Cerati - El Rito</title>
+    <title>Túnel Cerati - Artefacto</title>
     <style>
         body {
             margin: 0;
@@ -73,7 +73,7 @@
             text-shadow: 0 0 10px #00ffff, 0 0 20px #ff00ff;
             z-index: 10;
             pointer-events: none;
-            display: none; /* Se oculta hasta empezar */
+            display: none;
         }
         h2 { margin: 0; font-size: 15px; letter-spacing: 2px; }
         #pregunta-container {
@@ -93,7 +93,7 @@
             position: absolute;
             bottom: 30px;
             width: 100%;
-            display: none; /* Se oculta hasta empezar */
+            display: none;
             justify-content: space-around;
             padding: 0 20px;
             box-sizing: border-box;
@@ -112,6 +112,14 @@
             box-shadow: 0 0 15px rgba(255, 0, 255, 0.4);
             cursor: pointer;
         }
+
+        /* Reproductor de YouTube oculto para el audio de fondo */
+        #youtube-audio {
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
+            visibility: hidden;
+        }
     </style>
     <!-- Three.js CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -121,29 +129,29 @@
     <!-- PANTALLA DE INTRODUCCIÓN -->
     <div id="pantalla-intro">
         <h1>BIENVENIDOS AL RITO</h1>
-        <p>Un viaje interactivo a través de la música, las eras y la obra de Gustavo Cerati.</p>
+        <p>Fase 1: Artefacto<br>Un viaje al universo sonoro de Gustavo Cerati.</p>
         <button class="btn-opcion btn-inicio" onclick="comenzarJuego()">✨ ENTRAR AL VIAJE</button>
     </div>
 
     <!-- INTERFAZ DEL JUEGO -->
     <div id="ui-capa">
-        <h2 id="epoca-titulo">FASE: SODA STEREO (80s)</h2>
+        <h2 id="epoca-titulo">FASE: SIEMPRE ES HOY</h2>
         <div id="pregunta-container">
-            <div id="pregunta-texto">¿En qué álbum debutó la banda con su sonido característico?</div>
+            <div id="pregunta-texto">¿A qué álbum solista pertenece el tema "Artefacto"?</div>
         </div>
     </div>
 
     <div id="botones-container">
-        <button class="btn-opcion" onclick="responder(false)">Canción Animal</button>
-        <button class="btn-opcion" onclick="responder(true)">Soda Stereo (1984)</button>
+        <button class="btn-opcion" onclick="responder(false)">Bocanada (1999)</button>
+        <button class="btn-opcion" onclick="responder(true)">Siempre es Hoy (2002)</button>
     </div>
     
     <div id="canvas-container"></div>
 
-    <!-- AUDIO DE FONDO (Puedes cambiar el link por un tema instrumental o en vivo) -->
-    <audio id="audio-cerati" loop>
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-    </audio>
+    <!-- Reproductor de YouTube embebido para Artefacto -->
+    <div id="youtube-audio">
+        <iframe id="yt-player" width="100" height="100" src="" frameborder="0" allow="autoplay"></iframe>
+    </div>
 
     <script>
         let juegoIniciado = false;
@@ -154,9 +162,9 @@
             document.getElementById('ui-capa').style.display = 'block';
             document.getElementById('botones-container').style.display = 'flex';
             
-            // Intenta reproducir la música de fondo
-            const audio = document.getElementById('audio-cerati');
-            audio.play().catch(e => console.log("Audio bloqueado por navegador, requiere interacción."));
+            // Carga y reproduce "Artefacto" de fondo mediante YouTube automáticamente al presionar el botón
+            const ytPlayer = document.getElementById('yt-player');
+            ytPlayer.src = "https://www.youtube.com/embed/zhf8guZ41dY?autoplay=1&loop=1&playlist=zhf8guZ41dY";
         }
 
         const container = id => document.getElementById(id);
@@ -199,11 +207,11 @@
         // Lógica de respuesta
         function responder(esCorrecta) {
             if (esCorrecta) {
-                alert("¡Correcto! Pasas a la siguiente sala del universo.");
-                tunnel.material.color.setHex(0x00ffcc); // Cambia a cian
+                alert("¡Exacto! 'Artefacto' es una joya de Siempre es Hoy. Pasas a la siguiente sala.");
+                tunnel.material.color.setHex(0x00ffcc); // Cian brillante
             } else {
-                alert("Incorrecto. La música se distorsiona...");
-                tunnel.material.color.setHex(0xff0055); // Cambia a rojo
+                alert("MmM, no. Ese tema es de Siempre es Hoy. ¡Probá de nuevo!");
+                tunnel.material.color.setHex(0xff0055); // Rojo error
             }
             setTimeout(() => {
                 tunnel.material.color.setHex(0x9400d3);
