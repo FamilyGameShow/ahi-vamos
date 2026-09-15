@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Colores Santos - El Universo de Cerati</title>
+    <title>Colores Santos - El Multiverso de Cerati</title>
     <style>
         body {
             margin: 0;
@@ -63,7 +63,7 @@
             cursor: pointer;
         }
 
-        /* Capa de Estadísticas (Puntos y Vidas) */
+        /* Capa de Estadísticas y Estado del Viaje */
         #ui-capa {
             position: absolute;
             top: 15px;
@@ -79,12 +79,27 @@
             display: none;
         }
         .stats-box {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: bold;
             background: rgba(10, 5, 30, 0.8);
             border: 1px solid #ff00ff;
-            padding: 6px 14px;
+            padding: 6px 12px;
             border-radius: 12px;
+        }
+        #btn-volver {
+            position: absolute;
+            top: 60px;
+            left: 20px;
+            background: rgba(255, 0, 255, 0.3);
+            border: 1px solid #ff00ff;
+            color: #fff;
+            padding: 8px 15px;
+            border-radius: 10px;
+            font-size: 12px;
+            cursor: pointer;
+            z-index: 15;
+            display: none;
+            pointer-events: auto;
         }
 
         /* Ventana flotante de Trivia al chocar un mundo */
@@ -135,20 +150,22 @@
 
     <!-- PANTALLA DE INTRODUCCIÓN -->
     <div id="pantalla-intro">
-        <h1>COLORES SANTOS</h1>
-        <p>Navega por el universo psicodélico de Gustavo Cerati. Choca con tus manos o tu dedo los mundos flotantes para revelar sus trivias.</p>
-        <button class="btn-opcion btn-inicio" onclick="comenzarJuego()">✨ ENTRAR AL UNIVERSO</button>
+        <h1>VUELTA POR EL UNIVERSO</h1>
+        <p>Explora el multiverso musical de Soda Stereo y Gustavo Cerati. Choca los portales para elegir tu camino.</p>
+        <button class="btn-opcion btn-inicio" onclick="comenzarJuego()">✨ ENTRAR AL COSMOS</button>
     </div>
 
-    <!-- ESTADÍSTICAS -->
+    <!-- ESTADÍSTICAS Y BOTÓN RETROCEDER -->
     <div id="ui-capa">
         <div class="stats-box">PUNTOS: <span id="txt-puntos">0</span></div>
+        <div class="stats-box" id="txt-estado">SELECCIONA UNA GALAXIA</div>
         <div class="stats-box">VIDAS: <span id="txt-vidas">❤️❤️❤️</span></div>
     </div>
+    <button id="btn-volver" onclick="volverAlMenuPrincipal()">⬅️ VOLVER A GALAXIAS</button>
 
     <!-- VENTANA DE TRIVIA FLOTANTE -->
     <div id="trivia-modal">
-        <div id="trivia-titulo">MUNDO CERATI</div>
+        <div id="trivia-titulo">MUNDO DISCO</div>
         <div id="trivia-pregunta">Pregunta aquí...</div>
         <button id="trivia-btn-1" class="btn-opcion-cosmos" onclick="verificarRespuesta(1)">Opción A</button>
         <button id="trivia-btn-2" class="btn-opcion-cosmos" onclick="verificarRespuesta(2)">Opción B</button>
@@ -165,24 +182,49 @@
         let juegoIniciado = false;
         let puntos = 0;
         let vidas = 3;
-        let planetaSeleccionado = null;
+        let estadoActual = "MENU_PRINCIPAL"; // MENU_PRINCIPAL, MENU_DISCOS, JUEGO_PREGUNTAS
+        let objetosCosmos = [];
+        let elementoSeleccionado = null;
         let pausarVuelo = false;
 
-        // Base de datos de los Mundos / Planetas en el Universo
-        const mundosData = [
-            { id: 0, nombre: "MUNDO: AMOR AMARILLO", color: 0xffcc00, pregunta: "¿Con qué canción arranca su debut solista 'Amor Amarillo'?", opcionA: "Amor amarillo", opcionB: "Pulsar", respuestaCorrecta: 1, trackId: "jiKGUnzCAKo" },
-            { id: 1, nombre: "MUNDO: BOCANADA", color: 0x0066ff, pregunta: '¿En qué año se lanzó el icónico álbum solista "Bocanada"?', opcionA: "1997", opcionB: "1999", respuestaCorrecta: 2, trackId: "eGrx3tZzjwE" },
-            { id: 2, nombre: "MUNDO: SIEMPRE ES HOY", color: 0xff0033, pregunta: '¿A qué disco solista pertenece el tema "Artefacto"?', opcionA: "Siempre es Hoy", opcionB: "Fuerza Natural", respuestaCorrecta: 1, trackId: "T1tDbvoHzo8" },
-            { id: 3, nombre: "MUNDO: ¡AHÍ VAMOS!", color: 0xcccccc, pregunta: '¿Qué instrumento predomina fuertemente en el sonido rock de "¡Ahí Vamos"?', opcionA: "Sintetizadores analógicos", opcionB: "Guitarras eléctricas crudas", respuestaCorrecta: 2, trackId: "sZnZfl6OGx8" },
-            { id: 4, nombre: "MUNDO: FUERZA NATURAL", color: 0x228b22, pregunta: '¿Cuál es el concepto visual y sonoro del último álbum "Fuerza Natural"?', opcionA: "Viaje rutero y psicodelia folk", opcionB: "Electrónica de discoteca", respuestaCorrecta: 1, trackId: "tsTIlhhU_Q0" },
-            { id: 5, nombre: "MUNDO: SODA STEREO", color: 0xff00ff, pregunta: '¿En qué año se formó Soda Stereo?', opcionA: "1982", opcionB: "1984", respuestaCorrecta: 1, trackId: "jiKGUnzCAKo" }
-        ];
+        // Estructura Jerárquica del Multiverso
+        const multiverso = {
+            soda: {
+                nombre: "GALAXIA: SODA STEREO",
+                trackId: "jiKGUnzCAKo",
+                color: 0x00ffff,
+                discos: [
+                    { nombre: "DISCO: CANCIÓN ANIMAL", color: 0x990000, trackId: "eGrx3tZzjwE", preguntas: [
+                        { pregunta: "¿En qué año se lanzó el álbum 'Canción Animal'?", opcionA: "1988", opcionB: "1990", respuestaCorrecta: 2 },
+                        { pregunta: "¿Qué hit icónico abre el disco 'Canción Animal'?", opcionA: "De Música Ligera", opcionB: "En la Ciudad de la Furia", respuestaCorrecta: 1 }
+                    ]},
+                    { nombre: "DISCO: DOBLE VIDA", color: 0xffcc00, trackId: "T1tDbvoHzo8", preguntas: [
+                        { pregunta: "¿Cuál es el primer tema de 'Doble Vida'?", opcionA: "En la Ciudad de la Furia", opcionB: "Lo Que Sangra (La Cúpula)", respuestaCorrecta: 1 }
+                    ]}
+                ]
+            },
+            solista: {
+                nombre: "GALAXIA: GUSTAVO CERATI",
+                trackId: "tsTIlhhU_Q0",
+                color: 0xff00ff,
+                discos: [
+                    { nombre: "DISCO: BOCANADA", color: 0x0066ff, trackId: "sZnZfl6OGx8", preguntas: [
+                        { pregunta: '¿En qué año se lanzó el álbum "Bocanada"?', opcionA: "1997", opcionB: "1999", respuestaCorrecta: 2 },
+                        { pregunta: "¿Qué tema famoso pertenece a Bocanada?", opcionA: "Puente", opcionB: "Crimen", respuestaCorrecta: 1 }
+                    ]},
+                    { nombre: "DISCO: FUERZA NATURAL", color: 0x228b22, trackId: "tsTIlhhU_Q0", preguntas: [
+                        { pregunta: "¿Cuál fue el último álbum de estudio solista de Cerati?", opcionA: "Siempre es Hoy", opcionB: "Fuerza Natural", respuestaCorrecta: 2 }
+                    ]}
+                ]
+            }
+        };
 
         function comenzarJuego() {
             juegoIniciado = true;
             document.getElementById('pantalla-intro').style.display = 'none';
             document.getElementById('ui-capa').style.display = 'flex';
             actualizarAudio("jiKGUnzCAKo");
+            cargarMenuPrincipal();
         }
 
         function actualizarAudio(videoId) {
@@ -200,109 +242,154 @@
         renderer.setSize(window.innerWidth, window.innerHeight);
         canvasContainer.appendChild(renderer.domElement);
 
-        // Creación del Campo de Estrellas (Universo Colores Santos)
+        // Campo de Estrellas de fondo
         const starGeometry = new THREE.BufferGeometry();
-        const starCount = 600;
         const starPositions = [];
-        for(let i = 0; i < starCount; i++) {
-            starPositions.push(
-                (Math.random() - 0.5) * 300,
-                (Math.random() - 0.5) * 300,
-                (Math.random() - 0.5) * 800
-            );
+        for(let i = 0; i < 600; i++) {
+            starPositions.push((Math.random() - 0.5) * 300, (Math.random() - 0.5) * 300, (Math.random() - 0.5) * 800);
         }
         starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starPositions, 3));
-        const starMaterial = new THREE.PointsMaterial({color: 0xffffff, size: 0.8});
-        const stars = new THREE.Points(starGeometry, starMaterial);
+        const stars = new THREE.Points(starGeometry, new THREE.PointsMaterial({color: 0xffffff, size: 0.8}));
         scene.add(stars);
 
-        // Creación de los Planetas / Mundos Flotantes
-        const planetas = [];
-        const raycaster = new THREE.Raycaster();
-        const mouse = new THREE.Vector2();
-
-        mundosData.forEach((data, index) => {
-            const geometry = new THREE.SphereGeometry(3.5, 24, 24);
-            const material = new THREE.MeshBasicMaterial({ color: data.color, wireframe: true });
-            const planeta = new THREE.Mesh(geometry, material);
-
-            // Distribuir los planetas flotando libremente en el universo
-            planeta.position.set(
-                (Math.random() - 0.5) * 40,
-                (Math.random() - 0.5) * 25,
-                -60 - (index * 45) // Espaciados en profundidad
-            );
-
-            planeta.userData = data; // Guardamos los datos de la trivia dentro del objeto 3D
-            scene.add(planeta);
-            planetas.push(planeta);
-        });
-
         camera.position.z = 10;
+        let raycaster = new THREE.Raycaster();
+        let mouse = new THREE.Vector2();
 
-        // Detección de toque / clic sobre los planetas en el espacio
+        function limpiarCosmos() {
+            objetosCosmos.forEach(obj => scene.remove(obj));
+            objetosCosmos = [];
+        }
+
+        // 1. CARGAR MENÚ PRINCIPAL (Galaxias Soda y Solista)
+        function cargarMenuPrincipal() {
+            limpiarCosmos();
+            estadoActual = "MENU_PRINCIPAL";
+            document.getElementById('btn-volver').style.display = 'none';
+            document.getElementById('txt-estado').innerText = "SELECCIONA UNA GALAXIA";
+
+            const galaxias = [
+                { key: 'soda', nombre: multiverso.soda.nombre, color: multiverso.soda.color },
+                { key: 'solista', nombre: multiverso.solista.nombre, color: multiverso.solista.color }
+            ];
+
+            galaxias.forEach((g, index) => {
+                const mesh = crearMundoMesh(g.nombre, g.color, index);
+                mesh.userData = { tipo: 'galaxia', key: g.key, ...multiverso[g.key] };
+                scene.add(mesh);
+                objetosCosmos.push(mesh);
+            });
+        }
+
+        // 2. CARGAR MENÚ DE DISCOS DE LA GALAXIA SELECCIONADA
+        function cargarDiscosGalaxia(galaxiaData) {
+            limpiarCosmos();
+            estadoActual = "MENU_DISCOS";
+            document.getElementById('btn-volver').style.display = 'block';
+            document.getElementById('txt-estado').innerText = galaxiaData.nombre;
+            actualizarAudio(galaxiaData.trackId);
+
+            galaxiaData.discos.forEach((disco, index) => {
+                const mesh = crearMundoMesh(disco.nombre, disco.color, index);
+                mesh.userData = { tipo: 'disco', ...disco };
+                scene.add(mesh);
+                objetosCosmos.push(mesh);
+            });
+        }
+
+        // 3. CARGAR PREGUNTAS DEL DISCO (Estrellas / Mundos flotantes)
+        let discoActualSeleccionado = null;
+        function cargarPreguntasDisco(discoData) {
+            limpiarCosmos();
+            estadoActual = "JUEGO_PREGUNTAS";
+            discoActualSeleccionado = discoData;
+            document.getElementById('txt-estado').innerText = discoData.nombre;
+            actualizarAudio(discoData.trackId);
+
+            discoData.preguntas.forEach((preg, index) => {
+                const mesh = crearMundoMesh(`PREGUNTA ${index + 1}`, 0xff00ff, index);
+                mesh.userData = { tipo: 'pregunta', ...preg };
+                scene.add(mesh);
+                objetosCosmos.push(mesh);
+            });
+        }
+
+        function crearMundoMesh(nombre, colorHex, index) {
+            const geometry = new THREE.SphereGeometry(3.5, 24, 24);
+            const material = new THREE.MeshBasicMaterial({ color: colorHex, wireframe: true });
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.position.set((Math.random() - 0.5) * 40, (Math.random() - 0.5) * 25, -60 - (index * 40));
+            return mesh;
+        }
+
+        function volverAlMenuPrincipal() {
+            cargarMenuPrincipal();
+        }
+
+        // Detección de toque / clic en el espacio
         window.addEventListener('pointerdown', (e) => {
             if (!juegoIniciado || pausarVuelo) return;
 
             mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
             mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-
             raycaster.setFromCamera(mouse, camera);
-            const intersects = raycaster.intersectObjects(planetas);
+            const intersects = raycaster.intersectObjects(objetosCosmos);
 
             if (intersects.length > 0) {
-                const planetaTocado = intersects[0].object;
-                planetaSeleccionado = planetaTocado;
-                pausarVuelo = true; // Se frena el viaje para mostrar la trivia
+                const objetoTocado = intersects[0].object;
+                const data = objetoTocado.userData;
 
-                // Mostrar modal con la pregunta del planeta
-                const t = planetaTocado.userData;
-                document.getElementById('trivia-titulo').innerText = t.epoca || t.nombre;
-                document.getElementById('trivia-pregunta').innerText = t.pregunta;
-                document.getElementById('trivia-btn-1').innerText = t.opcionA;
-                document.getElementById('trivia-btn-2').innerText = t.opcionB;
-                document.getElementById('trivia-modal').style.display = 'block';
+                if (data.tipo === 'galaxia') {
+                    cargarDiscosGalaxia(data);
+                } else if (data.tipo === 'disco') {
+                    cargarPreguntasDisco(data);
+                } else if (data.tipo === 'pregunta') {
+                    elementoSeleccionado = objetoTocado;
+                    pausarVuelo = true;
 
-                // Cambiar música de fondo al tema del planeta
-                actualizarAudio(t.trackId);
+                    // Desplegar Modal de Trivia
+                    document.getElementById('trivia-titulo').innerText = discoActualSeleccionado.nombre;
+                    document.getElementById('trivia-pregunta').innerText = data.pregunta;
+                    document.getElementById('trivia-btn-1').innerText = data.opcionA;
+                    document.getElementById('trivia-btn-2').innerText = data.opcionB;
+                    document.getElementById('trivia-modal').style.display = 'block';
+                }
             }
         });
 
-        // Lógica de respuesta desde el modal flotante
+        // Verificación de respuesta
         function verificarRespuesta(opcionElegida) {
-            const t = planetaSeleccionado.userData;
-            const esCorrecta = (opcionElegida === t.respuestaCorrecta);
-
+            const data = elementoSeleccionado.userData;
+            const esCorrecta = (opcionElegida === data.respuestaCorrecta);
             document.getElementById('trivia-modal').style.display = 'none';
 
             if (esCorrecta) {
                 puntos += 100;
                 document.getElementById('txt-puntos').innerText = puntos;
-                alert("¡Mundo conquistado! Suman puntos en el cosmos.");
+                alert("¡Pregunta conquistada!");
 
-                // El planeta desaparece del universo
-                scene.remove(planetaSeleccionado);
-                const index = planetas.indexOf(planetaSeleccionado);
-                if (index > -1) planetas.splice(index, 1);
+                // Eliminar pregunta del cosmos
+                scene.remove(elementoSeleccionado);
+                const index = objetosCosmos.indexOf(elementoSeleccionado);
+                if (index > -1) objetosCosmos.splice(index, 1);
 
-                // Verificar si conquistó todos los mundos
-                if (planetas.length === 0) {
-                    alert("¡Impresionante! Recorriste y conquistaste todo el universo de Gustavo Cerati con " + puntos + " puntos.");
-                    location.reload();
+                // Si se acabaron las preguntas del disco, vuelve al menú de discos
+                if (objetosCosmos.length === 0) {
+                    alert("¡Completaste todo este disco con éxito!");
+                    cargarDiscosGalaxia(multiverso.solista); // O la galaxia activa
                 }
             } else {
                 vidas--;
                 actualizarVidasUI();
-                alert("Respuesta incorrecta. El mundo sigue girando...");
-
+                alert("Respuesta incorrecta...");
                 if (vidas <= 0) {
-                    alert("Te quedaste sin vidas en el viaje estelar. ¡Inténtalo de nuevo!");
+                    alert("Te quedaste sin vidas. ¡Reiniciando viaje!");
                     location.reload();
                 }
             }
 
-            planetaSeleccionado = null;
-            pausarVuelo = false; // Vuelve a arrancar el viaje por el cosmos
+            elementoSeleccionado = null;
+            pausarVuelo = false;
         }
 
         function actualizarVidasUI() {
@@ -311,15 +398,12 @@
             document.getElementById('txt-vidas').innerText = corazones;
         }
 
-        let targetX = 0;
-        let targetY = 0;
-
+        let targetX = 0, targetY = 0;
         window.addEventListener('mousemove', (e) => {
             if(!juegoIniciado) return;
             targetX = (e.clientX - window.innerWidth / 2) * 0.001;
             targetY = (e.clientY - window.innerHeight / 2) * 0.001;
         });
-
         window.addEventListener('touchmove', (e) => {
             if(!juegoIniciado) return;
             if(e.touches.length > 0) {
@@ -328,26 +412,22 @@
             }
         }, { passive: true });
 
-        // Bucle de animación del Universo Libre
+        // Bucle de animación del Multiverso
         function animate() {
             requestAnimationFrame(animate);
 
-            // Si no estamos respondiendo una trivia, todo el universo avanza hacia el jugador
             if (!pausarVuelo) {
-                planetas.forEach(planeta => {
-                    planeta.position.z += 0.4; // Velocidad de navegación estelar
-                    planeta.rotation.y += 0.01;
-                    planeta.rotation.x += 0.005;
+                objetosCosmos.forEach(obj => {
+                    obj.position.z += 0.4;
+                    obj.rotation.y += 0.01;
 
-                    // Si el planeta pasa al jugador, lo reciclamos al fondo del universo
-                    if (planeta.position.z > 20) {
-                        planeta.position.z = -250;
-                        planeta.position.x = (Math.random() - 0.5) * 40;
-                        planeta.position.y = (Math.random() - 0.5) * 25;
+                    if (obj.position.z > 20) {
+                        obj.position.z = -200;
+                        obj.position.x = (Math.random() - 0.5) * 40;
+                        obj.position.y = (Math.random() - 0.5) * 25;
                     }
                 });
 
-                // Movimiento de las estrellas de fondo
                 const starArr = stars.geometry.attributes.position.array;
                 for(let i = 2; i < starArr.length; i += 3) {
                     starArr[i] += 0.8;
@@ -356,7 +436,6 @@
                 stars.geometry.attributes.position.needsUpdate = true;
             }
 
-            // Movimiento suave de la cámara con el dedo/mouse
             camera.rotation.y += (targetX - camera.rotation.y) * 0.05;
             camera.rotation.x += (targetY - camera.rotation.x) * 0.05;
 
