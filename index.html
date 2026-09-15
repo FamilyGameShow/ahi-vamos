@@ -10,6 +10,7 @@
             overflow: hidden;
             background-color: #05021a;
             font-family: sans-serif;
+            touch-action: none;
         }
         #canvas-container {
             width: 100vw;
@@ -28,33 +29,35 @@
             pointer-events: none;
             z-index: 10;
         }
-        h1 { margin: 0; font-size: 20px; letter-spacing: 3px; }
+        h1 { margin: 0; font-size: 18px; letter-spacing: 2px; }
         p { margin: 5px 0; font-size: 12px; color: #00ffff; }
     </style>
-    <!-- Cargamos Three.js desde un servidor CDN ultra compatible -->
-    <script src="https://jsdelivr.net"></script>
+    <!-- Usamos un CDN directo y ultra estable para Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
 
     <div id="ui-capa">
-        <h1>AVANZANDO EN EL TIEMPO</h1>
-        <p>Arrastra el dedo por la pantalla para mover la cámara</p>
+        <h1>TÚNEL CERATI</h1>
+        <p>Arrastrá el dedo por la pantalla para mover la vista</p>
     </div>
     
     <div id="canvas-container"></div>
 
     <script>
         const container = document.getElementById('canvas-container');
+        
+        // 1. Escena, Cámara y Renderizador
         const scene = new THREE.Scene();
-        scene.fog = new THREE.FogExp2(0x05021a, 0.015);
+        scene.fog = new THREE.FogExp2(0x05021a, 0.02);
 
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         container.appendChild(renderer.domElement);
 
-        // Geometría del túnel
-        const geometry = new THREE.CylinderGeometry(20, 20, 500, 32, 20, true);
+        // 2. Crear el Túnel (Cilindro con malla de neón)
+        const geometry = new THREE.CylinderGeometry(15, 15, 400, 24, 15, true);
         const material = new THREE.MeshBasicMaterial({
             color: 0x9400d3,
             wireframe: true,
@@ -64,51 +67,53 @@
         tunnel.rotation.x = Math.PI / 2;
         scene.add(tunnel);
 
-        // Partículas flotantes
-        const pairs = 60;
-        const lineGeometry = new THREE.BufferGeometry();
+        // 3. Estrellas / Partículas de velocidad
+        const particleCount = 100;
+        const particleGeometry = new THREE.BufferGeometry();
         const positions = [];
-        for(let i=0; i<pairs; i++) {
-            positions.push((Math.random()-0.5)*40, (Math.random()-0.5)*40, (Math.random()-0.5)*400);
+        for(let i = 0; i < particleCount; i++) {
+            positions.push((Math.random() - 0.5) * 30, (Math.random() - 0.5) * 30, (Math.random() - 0.5) * 300);
         }
-        lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-        const lineMaterial = new THREE.PointsMaterial({color: 0x00ffff, size: 0.5});
-        const stars = new THREE.Points(lineGeometry, lineMaterial);
-        scene.add(stars);
+        particleGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+        const particleMaterial = new THREE.PointsMaterial({color: 0x00ffff, size: 0.8});
+        const particles = new THREE.Points(particleGeometry, particleMaterial);
+        scene.add(particles);
 
         camera.position.z = 0;
 
+        // 4. Control de movimiento táctil y mouse
         let targetX = 0;
         let targetY = 0;
 
-        // Soporte para mouse en PC
         window.addEventListener('mousemove', (e) => {
-            targetX = (e.clientX - window.innerWidth/2) * 0.003;
-            targetY = (e.clientY - window.innerHeight/2) * 0.003;
+            targetX = (e.clientX - window.innerWidth / 2) * 0.002;
+            targetY = (e.clientY - window.innerHeight / 2) * 0.002;
         });
 
-        // Soporte para pantalla táctil en celular (Corregido)
         window.addEventListener('touchmove', (e) => {
             if(e.touches.length > 0) {
-                targetX = (e.touches[0].clientX - window.innerWidth/2) * 0.003;
-                targetY = (e.touches[0].clientY - window.innerHeight/2) * 0.003;
+                targetX = (e.touches[0].clientX - window.innerWidth / 2) * 0.002;
+                targetY = (e.touches[0].clientY - window.innerHeight / 2) * 0.002;
             }
         }, { passive: true });
 
+        // 5. Bucle de animación
         function animate() {
             requestAnimationFrame(animate);
 
-            tunnel.rotation.y += 0.002;
-            stars.position.z += 1.0; 
-            if(stars.position.z > 200) stars.position.z = 0;
+            // Rotar el túnel y mover partículas para dar sensación de velocidad
+            tunnel.rotation.z += 0.005;
+            particles.position.z += 1.5;
+            if(particles.position.z > 150) particles.position.z = 0;
 
-            // Movimiento suave de la cámara
+            // Movimiento suave de la cámara con el dedo/mouse
             camera.rotation.y += (targetX - camera.rotation.y) * 0.05;
             camera.rotation.x += (targetY - camera.rotation.x) * 0.05;
 
             renderer.render(scene, camera);
         }
 
+        // Ajustar si se rota el celular
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
