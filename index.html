@@ -198,7 +198,7 @@
                 opcionA: "Te Llevo para que Me Lleves",
                 opcionB: "Pulsar",
                 respuestaCorrecta: 1,
-                trackId: "zhf8guZ41dY" // (Referencia de audio)
+                trackId: "zhf8guZ41dY"
             },
             {
                 epoca: "MUNDO: BOCANADA (1999)",
@@ -222,10 +222,10 @@
             },
             {
                 epoca: "MUNDO: ¡AHÍ VAMOS! (2006)",
-                colorTunel: 0x222222, // Blanco y negro / gris oscuro
+                colorTunel: 0x333333, // Gris oscuro / rock
                 colorParticulas: 0xffffff,
                 pregunta: '¿Qué instrumento predomina fuertemente en el sonido rock de "¡Ahí Vamos"?',
-                opcionA: "Sintetizadores analogicos",
+                opcionA: "Sintetizadores analógicos",
                 opcionB: "Guitarras eléctricas crudas",
                 respuestaCorrecta: 2,
                 trackId: "s3Ng7iLxUSs"
@@ -361,7 +361,7 @@
         });
 
         window.addEventListener('touchmove', (e) => {
-            if(!juegoIngetSession = false) return;
+            if(!juegoIniciado) return;
             if(e.touches.length > 0) {
                 targetX = (e.touches[0].clientX - window.innerWidth / 2) * 0.002;
                 targetY = (e.touches[0].clientY - window.innerHeight / 2) * 0.002;
