@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Túnel Cerati - Prototipo</title>
+    <title>Túnel Cerati - Trivia</title>
     <style>
         body {
             margin: 0;
@@ -19,6 +19,7 @@
             top: 0;
             left: 0;
         }
+        /* Capa de interfaz (UI) */
         #ui-capa {
             position: absolute;
             top: 20px;
@@ -26,20 +27,72 @@
             text-align: center;
             color: #fff;
             text-shadow: 0 0 10px #00ffff, 0 0 20px #ff00ff;
-            pointer-events: none;
             z-index: 10;
+            pointer-events: none;
         }
-        h1 { margin: 0; font-size: 18px; letter-spacing: 2px; }
-        p { margin: 5px 0; font-size: 12px; color: #00ffff; }
+        h1 { margin: 0; font-size: 16px; letter-spacing: 2px; }
+        #pregunta-container {
+            background: rgba(5, 2, 26, 0.8);
+            border: 2px solid #00ffff;
+            border-radius: 10px;
+            padding: 10px 20px;
+            margin: 10px auto;
+            max-width: 80%;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+            pointer-events: auto;
+        }
+        #pregunta-texto {
+            font-size: 14px;
+            color: #fff;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        /* Botones de respuesta táctiles abajo */
+        #botones-container {
+            position: absolute;
+            bottom: 30px;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            padding: 0 20px;
+            box-sizing: border-box;
+            z-index: 20;
+        }
+        .btn-opcion {
+            background: rgba(148, 0, 211, 0.4);
+            border: 2px solid #ff00ff;
+            color: #fff;
+            padding: 15px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            width: 42%;
+            text-shadow: 0 0 5px #ff00ff;
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.4);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-opcion:active {
+            transform: scale(0.95);
+            background: rgba(255, 0, 255, 0.6);
+        }
     </style>
-    <!-- Usamos un CDN directo y ultra estable para Three.js -->
+    <!-- Three.js CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
 
     <div id="ui-capa">
         <h1>TÚNEL CERATI</h1>
-        <p>Arrastrá el dedo por la pantalla para mover la vista</p>
+        <div id="pregunta-container">
+            <div id="pregunta-texto">¿En qué año se lanzó el álbum solista "Bocanada"?</div>
+        </div>
+    </div>
+
+    <!-- Botones táctiles de respuesta -->
+    <div id="botones-container">
+        <button class="btn-opcion" onclick="verificarRespuesta(false)">1995 (Incorrecto)</button>
+        <button class="btn-opcion" onclick="verificarRespuesta(true)">1999 (¡Correcto!)</button>
     </div>
     
     <div id="canvas-container"></div>
@@ -56,7 +109,7 @@
         renderer.setSize(window.innerWidth, window.innerHeight);
         container.appendChild(renderer.domElement);
 
-        // 2. Crear el Túnel (Cilindro con malla de neón)
+        // 2. Crear el Túnel Neón
         const geometry = new THREE.CylinderGeometry(15, 15, 400, 24, 15, true);
         const material = new THREE.MeshBasicMaterial({
             color: 0x9400d3,
@@ -81,7 +134,22 @@
 
         camera.position.z = 0;
 
-        // 4. Control de movimiento táctil y mouse
+        // 4. Lógica de respuesta de la trivia
+        function verificarRespuesta(esCorrecta) {
+            if (esCorrecta) {
+                alert("¡Bien ahí! Acertaste. El túnel acelera hacia la gloria.");
+                tunnel.material.color.setHex(0x00ffcc); // Cambia a tono cian/verde brillante
+            } else {
+                alert("MmM, no. Bocanada salió en 1999. ¡Probá de nuevo!");
+                tunnel.material.color.setHex(0xff0055); // Cambia a tono rojizo por el error
+            }
+            // Vuelve al color original violeta después de un segundo
+            setTimeout(() => {
+                tunnel.material.color.setHex(0x9400d3);
+            }, 1000);
+        }
+
+        // 5. Controles de movimiento de cámara
         let targetX = 0;
         let targetY = 0;
 
@@ -97,23 +165,20 @@
             }
         }, { passive: true });
 
-        // 5. Bucle de animación
+        // 6. Bucle de animación
         function animate() {
             requestAnimationFrame(animate);
 
-            // Rotar el túnel y mover partículas para dar sensación de velocidad
             tunnel.rotation.z += 0.005;
             particles.position.z += 1.5;
             if(particles.position.z > 150) particles.position.z = 0;
 
-            // Movimiento suave de la cámara con el dedo/mouse
             camera.rotation.y += (targetX - camera.rotation.y) * 0.05;
             camera.rotation.x += (targetY - camera.rotation.x) * 0.05;
 
             renderer.render(scene, camera);
         }
 
-        // Ajustar si se rota el celular
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
