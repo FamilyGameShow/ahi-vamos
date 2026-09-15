@@ -3,289 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Family Game Show - Edición Offline</title>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <title>Túnel Cerati - Prototipo</title>
     <style>
-        :root { --azul-fondo: #0a0e17; --tarjeta: #151f32; --neon-cyan: #00f5d4; --neon-rosa: #ff0055; --gold: #ffd166; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; color: #fff; }
-        body { background: var(--azul-fondo); padding: 10px; width: 100%; overflow-x: hidden; }
-        .contenedor-centrado { max-width: 480px; margin: 0 auto; width: 100%; }
-        .card-caja { background: var(--tarjeta); padding: 14px; border-radius: 14px; border: 1px solid #24344f; margin-bottom: 12px; }
-        h1 { font-size: 1.3rem; text-align: center; color: var(--neon-cyan); text-transform: uppercase; margin-bottom: 18px; }
-        h2 { font-size: 1rem; color: var(--neon-cyan); margin-bottom: 8px; text-transform: uppercase; }
-        input, select { width: 100%; padding: 12px; background: #0a0e17; border: 1px solid #24344f; border-radius: 8px; margin-bottom: 12px; font-size: 0.95rem; }
-        .btn-accion { width: 100%; padding: 12px; background: var(--neon-rosa); border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 0.85rem; }
-        
-        .menu-navegacion-juego { display: flex; gap: 4px; margin-bottom: 12px; }
-        .btn-pestana { flex: 1; padding: 8px 2px; background: #1e2d4a; border: 1px solid #2a3f64; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.70rem; text-align: center; }
-        .btn-pestana.p-activa { background: #2a3f64; color: var(--neon-cyan); border-color: var(--neon-cyan); }
-        
-        .grilla-bingo-local { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 10px 0; }
-        .casillero-bola { background: #1e2d4a; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; font-weight: 900; border-radius: 8px; border: 2px solid #2a3f64; cursor: pointer; }
-        .casillero-bola.marcada { background: linear-gradient(135deg, #2ec4b6 0%, #00f5d4 100%); color: #000; }
-        
-        /* Álbum de figuritas */
-        .grilla-album { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 10px; }
-        .espacio-figu { aspect-ratio: 1; background: #0a0e17; border: 2px dashed #2a3f64; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: #475569; overflow: hidden; }
-        .espacio-figu.pegada { border: 2px solid var(--neon-cyan); background: #000; }
-        .espacio-figu img { width: 100%; height: 100%; object-fit: cover; }
-
-        .switch-container { display: flex; align-items: center; justify-content: space-between; background: #0a0e17; padding: 10px; border-radius: 8px; border: 1px solid #24344f; margin-bottom: 10px; font-size: 0.85rem; }
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #05021a;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        #canvas-container {
+            width: 100vw;
+            height: 100vh;
+        }
+        #ui-capa {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            text-align: center;
+            color: #fff;
+            text-shadow: 0 0 10px #00ffff, 0 0 20px #ff00ff;
+            pointer-events: none;
+        }
+        h1 { margin: 0; font-size: 24px; letter-spacing: 3px; }
+        p { margin: 5px 0; font-size: 14px; color: #00ffff; }
     </style>
+    <!-- Importamos la librería 3D Three.js -->
+    <script src="https://cloudflare.com"></script>
 </head>
 <body>
 
-<div class="contenedor-centrado">
+    <div id="ui-capa">
+        <h1>AVANZANDO EN EL TIEMPO</h1>
+        <p>Gira o arrastra para explorar el túnel psicodélico</p>
+    </div>
     
-    <!-- LOGIN -->
-    <div id="cajaLogin" class="card-caja">
-        <h1 id="lblTituloShow">Family Game Show</h1>
-        <p style="text-align: center; color: #94a3b8; font-size: 0.85rem; margin-bottom: 14px;">Ingresá tu Nombre o Mesa</p>
-        <input type="text" id="txtNombre" placeholder="Tu Nombre y Apellido">
-        <button class="btn-accion" onclick="ingresarAlJuego()">Entrar al Show 🚀</button>
-    </div>
+    <div id="canvas-container"></div>
 
-    <!-- JUEGO PRINCIPAL -->
-    <div id="cajaJuego" style="display:none;">
-        <div style="background: rgba(0, 245, 212, 0.1); border: 1px solid var(--neon-cyan); padding: 8px; border-radius: 8px; text-align: center; font-size: 0.8rem; margin-bottom: 10px;">
-            Participante: <strong id="lblNombreUsuario" style="color:var(--gold);"></strong>
-        </div>
+    <script>
+        // Configuración básica de la escena 3D
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x05021a, 0.015); // Niebla para dar profundidad
 
-        <div class="menu-navegacion-juego">
-            <button id="tabBingo" class="btn-pestana p-activa" onclick="cambiarSeccion('bingo')">🎟️ Bingo (9)</button>
-            <button id="tabAlbum" class="btn-pestana" onclick="cambiarSeccion('album')">📘 Álbum</button>
-            <button id="tabTrivia" class="btn-pestana" onclick="cambiarSeccion('trivia')">❓ Trivia</button>
-            <button id="tabMusica" class="btn-pestana" onclick="cambiarSeccion('musica')">🎵 Música & Karaoke</button>
-        </div>
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        container.appendChild(renderer.domElement);
 
-        <!-- BINGO -->
-        <div id="seccionBingo" class="card-caja">
-            <h2>🎟️ Tu Cartón de 9 Números</h2>
-            <div class="grilla-bingo-local" id="grillaCarton"></div>
-            <div style="display: flex; gap: 8px; margin-top: 10px;">
-                <button class="btn-accion" style="background: #1e2d4a; font-size: 0.75rem;" onclick="cantarLineaLocal()">Cantá Línea</button>
-                <button class="btn-accion" style="font-size: 0.75rem;" onclick="cantarBingoLocal()">¡Cantá Bingo!</button>
-            </div>
-        </div>
-
-        <!-- ÁLBUM DE FIGURITAS -->
-        <div id="seccionAlbum" class="card-caja" style="display: none;">
-            <h2>📘 Álbum Coleccionable</h2>
-            <p style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px;">Las figuritas se ganan respondiendo correctamente las trivias de cada tema:</p>
-            <div class="grilla-album" id="grillaAlbumFiguritas">
-                <!-- Se generan dinámicamente -->
-            </div>
-        </div>
-
-        <!-- TRIVIA DINÁMICA (Solo aparece cuando suena el tema) -->
-        <div id="seccionTrivia" class="card-caja" style="display: none;">
-            <h2>❓ Trivia del Tema en Vivo</h2>
-            <div id="contenedorTrivia">
-                <div style="text-align: center; padding: 20px; color: #94a3b8;">
-                    <p>⏳ Esperando a que el anfitrión reproduzca un tema para habilitar la trivia correspondiente...</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- MÚSICA & PEDIDOS AL ANFITRIÓN -->
-        <div id="seccionMusica" class="card-caja" style="display: none;">
-            <h2>🎵 Pedidos al Anfitrión</h2>
-            <select id="selectTemas">
-                <option value="">-- Seleccioná un tema que te guste --</option>
-            </select>
-
-            <div style="background: #0a0e17; padding: 12px; border-radius: 8px; border: 1px solid #24344f; margin: 10px 0; text-align: center;">
-                <p style="font-size: 0.75rem; color: var(--gold); margin-bottom: 4px; font-weight: bold;">ESTADO DEL PEDIDO:</p>
-                <div id="estadoPedido" style="font-size: 0.85rem; color: #fff;">Esperando turno para cantar...</div>
-            </div>
-
-            <div class="switch-container">
-                <span style="font-size: 0.8rem;">🎤 ¿Cantas en vivo? (Avisar al anfitrión)</span>
-                <input type="checkbox" id="chkCanta" style="width: 22px; height: 22px; accent-color: var(--neon-rosa); cursor: pointer;">
-            </div>
-
-            <button class="btn-accion" onclick="enviarPedidoMusical()">Enviar Pedido al Anfitrión 🎶</button>
-        </div>
-    </div>
-</div>
-
-<script>
-    let datosConfig = null;
-    let figuritasDesbloqueadas = [];
-
-    // Cargar config.json automáticamente al iniciar
-    window.addEventListener('DOMContentLoaded', () => {
-        fetch('config.json')
-            .then(res => res.json())
-            .then(data => {
-                datosConfig = data;
-                if(data.tituloShow) {
-                    document.getElementById('lblTituloShow').innerText = data.tituloShow;
-                    document.title = data.tituloShow;
-                }
-                poblarTemasLimpios(data.canciones_karaoke);
-                inicializarAlbum(data.fotos_album);
-            })
-            .catch(err => {
-                console.log("Error al leer config.json:", err);
-            });
-    });
-
-    function poblarTemasLimpios(canciones) {
-        const select = document.getElementById('selectTemas');
-        if(!canciones) return;
-        select.innerHTML = '<option value="">-- Seleccioná un tema que te guste --</option>';
-        canciones.forEach((c, index) => {
-            let opt = document.createElement('option');
-            // Guardamos el índice para relacionarlo con su trivia correspondiente
-            opt.value = index; 
-            // Limpiamos los numeritos iniciales (ej: "01 - Soda Stereo..." pasa a "Soda Stereo...")
-            let nombreLimpio = c.titulo.replace(/^\d+\s*-\s*/, '');
-            opt.textContent = nombreLimpio;
-            select.appendChild(opt);
+        // Crear la forma del túnel usando un cilindro invertido
+        const geometry = new THREE.CylinderGeometry(20, 20, 500, 32, 20, true);
+        
+        // Material con estilo de malla (wireframe) fosforescente
+        const material = new THREE.MeshBasicMaterial({
+            color: 0x9400d3,
+            wireframe: true,
+            side: THREE.BackSide // Para ver el cilindro desde adentro
         });
-    }
+        
+        const tunnel = new THREE.Mesh(geometry, material);
+        rotation_speed = 0.002;
+        tunnel.rotation.x = Math.PI / 2; // Acostar el cilindro
+        scene.add(tunnel);
 
-    function inicializarAlbum(fotos) {
-        const grilla = document.getElementById('grillaAlbumFiguritas');
-        if(!fotos) return;
-        grilla.innerHTML = "";
-        fotos.forEach((foto, index) => {
-            let div = document.createElement('div');
-            div.className = "espacio-figu";
-            div.id = `figu_${index}`;
-            div.innerText = `#${index + 1}`;
-            grilla.appendChild(div);
-        });
-    }
-
-    // Función que activa la trivia del tema específico cuando el anfitrión lo reproduce
-    function activarTriviaDelTema(indiceTema) {
-        if(!datosConfig || !datosConfig.preguntas_trivia) return;
-        let t = datosConfig.preguntas_trivia[indiceTema];
-        if(!t) return;
-
-        const cont = document.getElementById('contenedorTrivia');
-        cont.innerHTML = `
-            <p style="font-size: 0.9rem; color: var(--gold); margin-bottom: 12px; text-align: center;"><b>¡Pregunta Activa!</b><br>${t.pregunta}</p>
-            <div style="display: flex; flex-direction: column; gap: 8px;" id="opcionesTriviaActiva">
-                ${t.opciones.map(op => `
-                    <button class="btn-accion" style="background: #1e2d4a; border: 1px solid #2a3f64; font-size: 0.8rem;" onclick="verificarRespuestaActiva(this, '${op.replace(/'/g, "\\'")}', '${t.correcta.replace(/'/g, "\\'")}', ${indiceTema})">${op}</button>
-                `).join('')}
-            </div>
-        `;
-    }
-
-    function verificarRespuestaActiva(btn, elegida, correcta, indiceTema) {
-        let botones = btn.parentElement.querySelectorAll('button');
-        botones.forEach(b => b.disabled = true);
-
-        if(elegida.trim().toLowerCase() === correcta.trim().toLowerCase()) {
-            btn.style.background = "#2ec4b6";
-            btn.style.color = "#000";
-            alert("🎉 ¡Correcto! Ganaste una figurita para tu álbum.");
-            if(window.confetti) confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 } });
-            pegarFiguritaEnAlbum(indiceTema);
-        } else {
-            btn.style.background = "#ff0055";
-            alert("❌ Incorrecto. La respuesta era: " + correcta);
+        // Agregar líneas de neón extras flotando para dar más efecto de velocidad
+        const pairs = 40;
+        const lineGeometry = new THREE.BufferGeometry();
+        const positions = [];
+        for(let i=0; i<pairs; i++) {
+            positions.push((Math.random()-0.5)*30, (Math.random()-0.5)*30, (Math.random()-0.5)*400);
         }
-    }
+        lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+        const lineMaterial = new THREE.PointsMaterial({color: 0x00ffff, size: 0.7});
+        const stars = new THREE.Points(lineGeometry, lineMaterial);
+        scene.add(stars);
 
-    function pegarFiguritaEnAlbum(indice) {
-        if(!datosConfig || !datosConfig.fotos_album) return;
-        let rutaFoto = datosConfig.fotos_album[indice];
-        if(!figuritasDesbloqueadas.includes(indice)) {
-            figuritasDesbloqueadas.push(indice);
-            let espacio = document.getElementById(`figu_${indice}`);
-            if(espacio) {
-                espacio.className = "espacio-figu pegada";
-                espacio.innerHTML = `<img src="${rutaFoto}" alt="Figu #${indice+1}">`;
+        // Posición inicial de la cámara del jugador dentro del túnel
+        camera.position.z = 0;
+
+        // Variables para interacción táctil/mouse básica
+        let targetX = 0;
+        let targetY = 0;
+
+        window.addEventListener('mousemove', (e) => {
+            targetX = (e.clientX - window.innerWidth/2) * 0.05;
+            targetY = (e.clientY - window.innerHeight/2) * 0.05;
+        });
+
+        window.addEventListener('touchmove', (e) => {
+            if(e.touches.length > 0) {
+                targetX = (e.touches[0].clientX - window.innerWidth/2) * 0.05;
+                targetY = (e.touches[0].clientY - window.innerHeight/2) * 0.05;
             }
+        });
+
+        // Bucle de animación (se ejecuta 60 veces por segundo)
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Efecto de avance infinito moviendo las texturas hacia atrás
+            tunnel.rotation.y += rotation_speed;
+            stars.position.z += 1.5; 
+            if(stars.position.z > 200) stars.position.z = 0; // Reinicia ciclo de partículas
+
+            // Suavizado del movimiento de cámara al interactuar
+            camera.rotation.y += (targetX - camera.rotation.y) * 0.05;
+            camera.rotation.x += (targetY - camera.rotation.x) * 0.05;
+
+            renderer.render(scene, camera);
         }
-    }
 
-    // Sistema de Bingo local
-    const audioAplausos = new Audio('assets/audio/aplausos.mp3');
-    const audioBingo = new Audio('assets/audio/bingo.mp3');
-    let misNumeros = [];
-    let marcados = [];
-
-    function ingresarAlJuego() {
-        let nombreUsuario = document.getElementById('txtNombre').value.trim();
-        if(!nombreUsuario) { alert("Ingresá tu nombre."); return; }
-        
-        document.getElementById('lblNombreUsuario').innerText = nombreUsuario;
-        document.getElementById('cajaLogin').style.display = "none";
-        document.getElementById('cajaJuego').style.display = "block";
-        generarCartonDe9();
-    }
-
-    function generarCartonDe9() {
-        let bolsa = [];
-        for(let i=1; i<=30; i++) bolsa.push(i);
-        bolsa.sort(() => Math.random() - 0.5);
-        misNumeros = bolsa.slice(0, 9).sort((a,b) => a - b);
-        renderCarton();
-    }
-
-    function renderCarton() {
-        const grilla = document.getElementById('grillaCarton');
-        grilla.innerHTML = "";
-        misNumeros.forEach(num => {
-            let div = document.createElement('div');
-            div.className = "casillero-bola";
-            if(marcados.includes(num)) div.classList.add("marcada");
-            div.innerText = String(num).padStart(2, '0');
-            div.onclick = () => {
-                if(marcados.includes(num)) {
-                    marcados = marcados.filter(n => n !== num);
-                } else {
-                    marcados.push(num);
-                }
-                renderCarton();
-            };
-            grilla.appendChild(div);
+        // Ajustar si se gira la pantalla del celular
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
         });
-    }
 
-    function cantarLineaLocal() {
-        audioAplausos.currentTime = 0;
-        audioAplausos.play();
-        if(window.confetti) confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-        alert("🎉 ¡LÍNEA CANTADA!");
-    }
-
-    function cantarBingoLocal() {
-        audioBingo.currentTime = 0;
-        audioBingo.play();
-        if(window.confetti) confetti({ particleCount: 200, spread: 100, origin: { y: 0.5 } });
-        alert("🏆 ¡BINGO!");
-    }
-
-    function cambiarSeccion(secc) {
-        ['Bingo', 'Album', 'Trivia', 'Musica'].forEach(s => {
-            document.getElementById('seccion' + s).style.display = (s.toLowerCase() === secc) ? 'block' : 'none';
-            document.getElementById('tab' + s).classList.remove('p-activa');
-        });
-        document.getElementById('tab' + secc.charAt(0).toUpperCase() + secc.slice(1)).classList.add('p-activa');
-    }
-
-    function enviarPedidoMusical() {
-        let select = document.getElementById('selectTemas');
-        let indiceTema = select.value;
-        let temaTexto = select.options[select.selectedIndex].text;
-        let canta = document.getElementById('chkCanta').checked;
-        
-        if(indiceTema === "") { alert("Elegí un tema primero."); return; }
-        
-        document.getElementById('estadoPedido').innerText = `¡Pedido enviado! Esperando habilitación del anfitrión para "${temaTexto}"`;
-        alert(`✅ Pedido enviado al anfitrión: ${temaTexto} ${canta ? '(Con aviso de karaoke)' : ''}`);
-
-        // SIMULACIÓN LOCAL DE PRUEBA: Cuando el anfitrión lo habilite (o por ahora para probar), 
-        // esto activará automáticamente la trivia correspondiente a este tema:
-        // activarTriviaDelTema(indiceTema);
-    }
-</script>
+        animate();
+    </script>
 </body>
 </html>
