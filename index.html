@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Túnel Cerati - Trivia</title>
+    <title>Túnel Cerati - El Rito</title>
     <style>
         body {
             margin: 0;
@@ -19,7 +19,51 @@
             top: 0;
             left: 0;
         }
-        /* Capa de interfaz (UI) */
+        /* Pantalla de Intro / Bienvenida */
+        #pantalla-intro {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(5, 2, 26, 0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        #pantalla-intro h1 {
+            color: #fff;
+            font-size: 24px;
+            letter-spacing: 4px;
+            text-shadow: 0 0 15px #00ffff, 0 0 30px #ff00ff;
+            margin-bottom: 10px;
+        }
+        #pantalla-intro p {
+            color: #00ffff;
+            font-size: 14px;
+            margin-bottom: 30px;
+            max-width: 300px;
+            line-height: 1.4;
+        }
+        .btn-inicio {
+            background: linear-gradient(45deg, #9400d3, #ff00ff);
+            border: 2px solid #00ffff;
+            color: #fff;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
+            cursor: pointer;
+        }
+
+        /* Capa de juego y UI */
         #ui-capa {
             position: absolute;
             top: 20px;
@@ -29,52 +73,44 @@
             text-shadow: 0 0 10px #00ffff, 0 0 20px #ff00ff;
             z-index: 10;
             pointer-events: none;
+            display: none; /* Se oculta hasta empezar */
         }
-        h1 { margin: 0; font-size: 16px; letter-spacing: 2px; }
+        h2 { margin: 0; font-size: 15px; letter-spacing: 2px; }
         #pregunta-container {
-            background: rgba(5, 2, 26, 0.8);
+            background: rgba(5, 2, 26, 0.85);
             border: 2px solid #00ffff;
             border-radius: 10px;
-            padding: 10px 20px;
+            padding: 12px 20px;
             margin: 10px auto;
-            max-width: 80%;
+            max-width: 85%;
             box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
             pointer-events: auto;
         }
-        #pregunta-texto {
-            font-size: 14px;
-            color: #fff;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-        /* Botones de respuesta táctiles abajo */
+        #pregunta-texto { font-size: 13px; color: #fff; font-weight: bold; }
+
+        /* Botones de opciones abajo */
         #botones-container {
             position: absolute;
             bottom: 30px;
             width: 100%;
-            display: flex;
+            display: none; /* Se oculta hasta empezar */
             justify-content: space-around;
             padding: 0 20px;
             box-sizing: border-box;
             z-index: 20;
         }
         .btn-opcion {
-            background: rgba(148, 0, 211, 0.4);
+            background: rgba(148, 0, 211, 0.5);
             border: 2px solid #ff00ff;
             color: #fff;
-            padding: 15px 20px;
+            padding: 15px 10px;
             border-radius: 20px;
-            font-size: 14px;
+            font-size: 12px;
             font-weight: bold;
-            width: 42%;
+            width: 45%;
             text-shadow: 0 0 5px #ff00ff;
             box-shadow: 0 0 15px rgba(255, 0, 255, 0.4);
             cursor: pointer;
-            transition: all 0.2s;
-        }
-        .btn-opcion:active {
-            transform: scale(0.95);
-            background: rgba(255, 0, 255, 0.6);
         }
     </style>
     <!-- Three.js CDN -->
@@ -82,34 +118,60 @@
 </head>
 <body>
 
+    <!-- PANTALLA DE INTRODUCCIÓN -->
+    <div id="pantalla-intro">
+        <h1>BIENVENIDOS AL RITO</h1>
+        <p>Un viaje interactivo a través de la música, las eras y la obra de Gustavo Cerati.</p>
+        <button class="btn-opcion btn-inicio" onclick="comenzarJuego()">✨ ENTRAR AL VIAJE</button>
+    </div>
+
+    <!-- INTERFAZ DEL JUEGO -->
     <div id="ui-capa">
-        <h1>TÚNEL CERATI</h1>
+        <h2 id="epoca-titulo">FASE: SODA STEREO (80s)</h2>
         <div id="pregunta-container">
-            <div id="pregunta-texto">¿En qué año se lanzó el álbum solista "Bocanada"?</div>
+            <div id="pregunta-texto">¿En qué álbum debutó la banda con su sonido característico?</div>
         </div>
     </div>
 
-    <!-- Botones táctiles de respuesta -->
     <div id="botones-container">
-        <button class="btn-opcion" onclick="verificarRespuesta(false)">1995 (Incorrecto)</button>
-        <button class="btn-opcion" onclick="verificarRespuesta(true)">1999 (¡Correcto!)</button>
+        <button class="btn-opcion" onclick="responder(false)">Canción Animal</button>
+        <button class="btn-opcion" onclick="responder(true)">Soda Stereo (1984)</button>
     </div>
     
     <div id="canvas-container"></div>
 
+    <!-- AUDIO DE FONDO (Puedes cambiar el link por un tema instrumental o en vivo) -->
+    <audio id="audio-cerati" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+    </audio>
+
     <script>
-        const container = document.getElementById('canvas-container');
+        let juegoIniciado = false;
+
+        function comenzarJuego() {
+            juegoIniciado = true;
+            document.getElementById('pantalla-intro').style.display = 'none';
+            document.getElementById('ui-capa').style.display = 'block';
+            document.getElementById('botones-container').style.display = 'flex';
+            
+            // Intenta reproducir la música de fondo
+            const audio = document.getElementById('audio-cerati');
+            audio.play().catch(e => console.log("Audio bloqueado por navegador, requiere interacción."));
+        }
+
+        const container = id => document.getElementById(id);
+        const canvasContainer = document.getElementById('canvas-container');
         
-        // 1. Escena, Cámara y Renderizador
+        // Configuración 3D
         const scene = new THREE.Scene();
         scene.fog = new THREE.FogExp2(0x05021a, 0.02);
 
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
-        container.appendChild(renderer.domElement);
+        canvasContainer.appendChild(renderer.domElement);
 
-        // 2. Crear el Túnel Neón
+        // Túnel Neón
         const geometry = new THREE.CylinderGeometry(15, 15, 400, 24, 15, true);
         const material = new THREE.MeshBasicMaterial({
             color: 0x9400d3,
@@ -120,52 +182,51 @@
         tunnel.rotation.x = Math.PI / 2;
         scene.add(tunnel);
 
-        // 3. Estrellas / Partículas de velocidad
-        const particleCount = 100;
+        // Partículas del universo
+        const particleCount = 120;
         const particleGeometry = new THREE.BufferGeometry();
         const positions = [];
         for(let i = 0; i < particleCount; i++) {
-            positions.push((Math.random() - 0.5) * 30, (Math.random() - 0.5) * 30, (Math.random() - 0.5) * 300);
+            positions.push((Math.random() - 0.5) * 35, (Math.random() - 0.5) * 35, (Math.random() - 0.5) * 300);
         }
         particleGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-        const particleMaterial = new THREE.PointsMaterial({color: 0x00ffff, size: 0.8});
+        const particleMaterial = new THREE.PointsMaterial({color: 0x00ffff, size: 0.9});
         const particles = new THREE.Points(particleGeometry, particleMaterial);
         scene.add(particles);
 
         camera.position.z = 0;
 
-        // 4. Lógica de respuesta de la trivia
-        function verificarRespuesta(esCorrecta) {
+        // Lógica de respuesta
+        function responder(esCorrecta) {
             if (esCorrecta) {
-                alert("¡Bien ahí! Acertaste. El túnel acelera hacia la gloria.");
-                tunnel.material.color.setHex(0x00ffcc); // Cambia a tono cian/verde brillante
+                alert("¡Correcto! Pasas a la siguiente sala del universo.");
+                tunnel.material.color.setHex(0x00ffcc); // Cambia a cian
             } else {
-                alert("MmM, no. Bocanada salió en 1999. ¡Probá de nuevo!");
-                tunnel.material.color.setHex(0xff0055); // Cambia a tono rojizo por el error
+                alert("Incorrecto. La música se distorsiona...");
+                tunnel.material.color.setHex(0xff0055); // Cambia a rojo
             }
-            // Vuelve al color original violeta después de un segundo
             setTimeout(() => {
                 tunnel.material.color.setHex(0x9400d3);
             }, 1000);
         }
 
-        // 5. Controles de movimiento de cámara
         let targetX = 0;
         let targetY = 0;
 
         window.addEventListener('mousemove', (e) => {
+            if(!juegoIniciado) return;
             targetX = (e.clientX - window.innerWidth / 2) * 0.002;
             targetY = (e.clientY - window.innerHeight / 2) * 0.002;
         });
 
         window.addEventListener('touchmove', (e) => {
+            if(!juegoIniciado) return;
             if(e.touches.length > 0) {
                 targetX = (e.touches[0].clientX - window.innerWidth / 2) * 0.002;
                 targetY = (e.touches[0].clientY - window.innerHeight / 2) * 0.002;
             }
         }, { passive: true });
 
-        // 6. Bucle de animación
         function animate() {
             requestAnimationFrame(animate);
 
