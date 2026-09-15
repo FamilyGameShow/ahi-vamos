@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Túnel Cerati - Artefacto</title>
+    <title>Túnel Cerati - El Rito (Completo)</title>
     <style>
         body {
             margin: 0;
@@ -63,29 +63,51 @@
             cursor: pointer;
         }
 
-        /* Capa de juego y UI */
+        /* Capa de juego y UI (Puntaje y Vidas arriba) */
         #ui-capa {
             position: absolute;
-            top: 20px;
+            top: 15px;
             width: 100%;
-            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-sizing: border-box;
             color: #fff;
-            text-shadow: 0 0 10px #00ffff, 0 0 20px #ff00ff;
+            text-shadow: 0 0 10px #00ffff;
             z-index: 10;
             pointer-events: none;
             display: none;
         }
-        h2 { margin: 0; font-size: 15px; letter-spacing: 2px; }
+        .stats-box {
+            font-size: 14px;
+            font-weight: bold;
+            background: rgba(5, 2, 26, 0.7);
+            border: 1px solid #00ffff;
+            padding: 5px 12px;
+            border-radius: 10px;
+        }
+
+        /* Cuadro de Pregunta */
+        #pregunta-wrapper {
+            position: absolute;
+            top: 70px;
+            width: 100%;
+            text-align: center;
+            z-index: 10;
+            pointer-events: none;
+            display: none;
+        }
         #pregunta-container {
             background: rgba(5, 2, 26, 0.85);
             border: 2px solid #00ffff;
             border-radius: 10px;
             padding: 12px 20px;
-            margin: 10px auto;
+            margin: 0 auto;
             max-width: 85%;
             box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
             pointer-events: auto;
         }
+        #epoca-titulo { margin: 0 0 5px 0; font-size: 12px; color: #ff00ff; letter-spacing: 2px; }
         #pregunta-texto { font-size: 13px; color: #fff; font-weight: bold; }
 
         /* Botones de opciones abajo */
@@ -129,48 +151,97 @@
     <!-- PANTALLA DE INTRODUCCIÓN -->
     <div id="pantalla-intro">
         <h1>BIENVENIDOS AL RITO</h1>
-        <p>Fase 1: Artefacto<br>Un viaje al universo sonoro de Gustavo Cerati.</p>
+        <p>Un viaje por las eras de Gustavo Cerati con puntaje y trivias en el túnel.</p>
         <button class="btn-opcion btn-inicio" onclick="comenzarJuego()">✨ ENTRAR AL VIAJE</button>
     </div>
 
-    <!-- INTERFAZ DEL JUEGO -->
+    <!-- ESTADÍSTICAS (Puntaje y Vidas) -->
     <div id="ui-capa">
-        <h2 id="epoca-titulo">FASE: SIEMPRE ES HOY</h2>
+        <div class="stats-box">PUNTOS: <span id="txt-puntos">0</span></div>
+        <div class="stats-box">VIDAS: <span id="txt-vidas">❤️❤️❤️</span></div>
+    </div>
+
+    <!-- PREGUNTA ACTIVA -->
+    <div id="pregunta-wrapper">
         <div id="pregunta-container">
+            <div id="epoca-titulo">FASE 1: SIEMPRE ES HOY</div>
             <div id="pregunta-texto">¿A qué álbum solista pertenece el tema "Artefacto"?</div>
         </div>
     </div>
 
+    <!-- BOTONES DE RESPUESTA -->
     <div id="botones-container">
-        <button class="btn-opcion" onclick="responder(false)">Bocanada (1999)</button>
-        <button class="btn-opcion" onclick="responder(true)">Siempre es Hoy (2002)</button>
+        <button id="btn-1" class="btn-opcion" onclick="responder(false)">Bocanada (1999)</button>
+        <button id="btn-2" class="btn-opcion" onclick="responder(true)">Siempre es Hoy (2002)</button>
     </div>
     
     <div id="canvas-container"></div>
 
-    <!-- Reproductor de YouTube embebido para Artefacto -->
+    <!-- Reproductor de YouTube embebido para audio de fondo -->
     <div id="youtube-audio">
         <iframe id="yt-player" width="100" height="100" src="" frameborder="0" allow="autoplay"></iframe>
     </div>
 
     <script>
         let juegoIniciado = false;
+        let puntos = 0;
+        let vidas = 3;
+        let nivelActual = 1;
+
+        // Base de datos de preguntas del juego
+        const trivias = [
+            {
+                nivel: 1,
+                epoca: "FASE 1: SIEMPRE ES HOY",
+                pregunta: '¿A qué álbum solista pertenece el tema "Artefacto"?',
+                opcionA: "Bocanada (1999)",
+                opcionB: "Siempre es Hoy (2002)",
+                respuestaCorrecta: 2, // Opción B
+                trackId: "zhf8guZ41dY" // Artefacto
+            },
+            {
+                nivel: 2,
+                epoca: "FASE 2: BOCANADA",
+                pregunta: '¿Con qué clásico inicia el icónico disco solista "Bocanada"?',
+                opcionA: "Paseo Inmortal",
+                opcionB: "Puente",
+                respuestaCorrecta: 1, // Opción A (De hecho Bocanada arranca con Tabú/Paseo, adaptamos para trivia rápida)
+                trackId: "l7LdGXXnIbs" // Otro tema de referencia o instrumental
+            }
+        ];
 
         function comenzarJuego() {
             juegoIniciado = true;
             document.getElementById('pantalla-intro').style.display = 'none';
-            document.getElementById('ui-capa').style.display = 'block';
+            document.getElementById('ui-capa').style.display = 'flex';
+            document.getElementById('pregunta-wrapper').style.display = 'block';
             document.getElementById('botones-container').style.display = 'flex';
             
-            // Carga y reproduce "Artefacto" de fondo mediante YouTube automáticamente al presionar el botón
-            const ytPlayer = document.getElementById('yt-player');
-            ytPlayer.src = "https://www.youtube.com/embed/zhf8guZ41dY?autoplay=1&loop=1&playlist=zhf8guZ41dY";
+            cargarPregunta(0);
+            
+            // Inicia música de fondo con Artefacto
+            actualizarAudio(trivias[0].trackId);
         }
 
-        const container = id => document.getElementById(id);
+        function actualizarAudio(videoId) {
+            const ytPlayer = document.getElementById('yt-player');
+            ytPlayer.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}`;
+        }
+
+        function cargarPregunta(index) {
+            const t = trivias[index];
+            document.getElementById('epoca-titulo').innerText = t.epoca;
+            document.getElementById('pregunta-texto').innerText = t.pregunta;
+            document.getElementById('btn-1').innerText = t.opcionA;
+            document.getElementById('btn-2').innerText = t.opcionB;
+            
+            // Asignar funciones con la respuesta correcta (1 para A, 2 para B)
+            document.getElementById('btn-1').onclick = () => verificarRespuesta(1 === t.respuestaCorrecta);
+            document.getElementById('btn-2').onclick = () => verificarRespuesta(2 === t.respuestaCorrecta);
+        }
+
+        // Configuración 3D con Three.js
         const canvasContainer = document.getElementById('canvas-container');
-        
-        // Configuración 3D
         const scene = new THREE.Scene();
         scene.fog = new THREE.FogExp2(0x05021a, 0.02);
 
@@ -204,18 +275,43 @@
 
         camera.position.z = 0;
 
-        // Lógica de respuesta
-        function responder(esCorrecta) {
+        // Lógica de respuesta, puntos y vidas
+        function verificarRespuesta(esCorrecta) {
             if (esCorrecta) {
-                alert("¡Exacto! 'Artefacto' es una joya de Siempre es Hoy. Pasas a la siguiente sala.");
-                tunnel.material.color.setHex(0x00ffcc); // Cian brillante
+                puntos += 100;
+                document.getElementById('txt-puntos').innerText = puntos;
+                tunnel.material.color.setHex(0x00ffcc); // Cian brillante de acierto
+                
+                if(nivelActual < trivias.length) {
+                    alert("¡Correcto! Avanzando a la siguiente fase del túnel.");
+                    nivelActual++;
+                    cargarPregunta(nivelActual - 1);
+                } else {
+                    alert("¡Felicitaciones! Completaste todas las fases del viaje de Cerati con " + puntos + " puntos.");
+                    location.reload();
+                }
             } else {
-                alert("MmM, no. Ese tema es de Siempre es Hoy. ¡Probá de nuevo!");
-                tunnel.material.color.setHex(0xff0055); // Rojo error
+                vidas--;
+                actualizarVidasUI();
+                tunnel.material.color.setHex(0xff0055); // Rojo de error
+                
+                if(vidas <= 0) {
+                    alert("Te quedaste sin vidas. Fin del viaje. ¡Inténtalo de nuevo!");
+                    location.reload();
+                } else {
+                    alert("¡Incorrecto! Pierdes una vida.");
+                }
             }
+
             setTimeout(() => {
                 tunnel.material.color.setHex(0x9400d3);
             }, 1000);
+        }
+
+        function actualizarVidasUI() {
+            let corazones = "";
+            for(let i = 0; i < vidas; i++) corazones += "❤️";
+            document.getElementById('txt-vidas').innerText = corazones;
         }
 
         let targetX = 0;
