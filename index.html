@@ -182,16 +182,17 @@
         let juegoIniciado = false;
         let puntos = 0;
         let vidas = 3;
-        let estadoActual = "MENU_PRINCIPAL"; // MENU_PRINCIPAL, MENU_DISCOS, JUEGO_PREGUNTAS
+        let estadoActual = "MENU_PRINCIPAL"; 
         let objetosCosmos = [];
         let elementoSeleccionado = null;
         let pausarVuelo = false;
+        let galaxiaActualKey = null;
 
-        // Estructura Jerárquica del Multiverso
+        // Estructura del Multiverso con los temas exactos asignados
         const multiverso = {
             soda: {
                 nombre: "GALAXIA: SODA STEREO",
-                trackId: "SV3oyTWdQao",
+                trackId: "l8Yj6W0832g", // Tema clásico de Soda para la Galaxia Soda
                 color: 0x00ffff,
                 discos: [
                     { nombre: "DISCO: CANCIÓN ANIMAL", color: 0x990000, trackId: "eGrx3tZzjwE", preguntas: [
@@ -205,7 +206,7 @@
             },
             solista: {
                 nombre: "GALAXIA: GUSTAVO CERATI",
-                trackId: "T1tDbvoHzo8",
+                trackId: "T1tDbvoHzo8", // Tema solista (ej. Puente)
                 color: 0xff00ff,
                 discos: [
                     { nombre: "DISCO: BOCANADA", color: 0x0066ff, trackId: "sZnZfl6OGx8", preguntas: [
@@ -223,7 +224,9 @@
             juegoIniciado = true;
             document.getElementById('pantalla-intro').style.display = 'none';
             document.getElementById('ui-capa').style.display = 'flex';
-            actualizarAudio("jiKGUnzCAKo");
+            
+            // Arranca sonando "Vuelta por el Universo" al entrar al multiverso principal
+            actualizarAudio("SV3oyTWdQao"); 
             cargarMenuPrincipal();
         }
 
@@ -267,6 +270,9 @@
             estadoActual = "MENU_PRINCIPAL";
             document.getElementById('btn-volver').style.display = 'none';
             document.getElementById('txt-estado').innerText = "SELECCIONA UNA GALAXIA";
+            
+            // Vuelve a sonar Vuelta por el Universo en el menú principal
+            actualizarAudio("SV3oyTWdQao");
 
             const galaxias = [
                 { key: 'soda', nombre: multiverso.soda.nombre, color: multiverso.soda.color },
@@ -281,12 +287,15 @@
             });
         }
 
-        // 2. CARGAR MENÚ DE DISCOS DE LA GALAXIA SELECCIONADA
-        function cargarDiscosGalaxia(galaxiaData) {
+        // 2. CARGAR MENÚ DE DISCOS
+        function cargarDiscosGalaxia(galaxiaData, key) {
             limpiarCosmos();
             estadoActual = "MENU_DISCOS";
+            galaxiaActualKey = key;
             document.getElementById('btn-volver').style.display = 'block';
             document.getElementById('txt-estado').innerText = galaxiaData.nombre;
+            
+            // Cambia al tema de la galaxia elegida
             actualizarAudio(galaxiaData.trackId);
 
             galaxiaData.discos.forEach((disco, index) => {
@@ -297,13 +306,15 @@
             });
         }
 
-        // 3. CARGAR PREGUNTAS DEL DISCO (Estrellas / Mundos flotantes)
+        // 3. CARGAR PREGUNTAS DEL DISCO
         let discoActualSeleccionado = null;
         function cargarPreguntasDisco(discoData) {
             limpiarCosmos();
             estadoActual = "JUEGO_PREGUNTAS";
             discoActualSeleccionado = discoData;
             document.getElementById('txt-estado').innerText = discoData.nombre;
+            
+            // Cambia al tema específico del disco
             actualizarAudio(discoData.trackId);
 
             discoData.preguntas.forEach((preg, index) => {
@@ -340,14 +351,13 @@
                 const data = objetoTocado.userData;
 
                 if (data.tipo === 'galaxia') {
-                    cargarDiscosGalaxia(data);
+                    cargarDiscosGalaxia(data, data.key);
                 } else if (data.tipo === 'disco') {
                     cargarPreguntasDisco(data);
                 } else if (data.tipo === 'pregunta') {
                     elementoSeleccionado = objetoTocado;
                     pausarVuelo = true;
 
-                    // Desplegar Modal de Trivia
                     document.getElementById('trivia-titulo').innerText = discoActualSeleccionado.nombre;
                     document.getElementById('trivia-pregunta').innerText = data.pregunta;
                     document.getElementById('trivia-btn-1').innerText = data.opcionA;
@@ -368,15 +378,13 @@
                 document.getElementById('txt-puntos').innerText = puntos;
                 alert("¡Pregunta conquistada!");
 
-                // Eliminar pregunta del cosmos
                 scene.remove(elementoSeleccionado);
                 const index = objetosCosmos.indexOf(elementoSeleccionado);
                 if (index > -1) objetosCosmos.splice(index, 1);
 
-                // Si se acabaron las preguntas del disco, vuelve al menú de discos
                 if (objetosCosmos.length === 0) {
                     alert("¡Completaste todo este disco con éxito!");
-                    cargarDiscosGalaxia(multiverso.solista); // O la galaxia activa
+                    cargarDiscosGalaxia(multiverso[galaxiaActualKey], galaxiaActualKey);
                 }
             } else {
                 vidas--;
