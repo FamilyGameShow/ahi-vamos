@@ -6,9 +6,23 @@
     <title>Colores Santos - El Multiverso de Cerati</title>
     <style>
         body { margin: 0; overflow: hidden; background-color: #02000a; font-family: sans-serif; touch-action: none; }
-        #canvas-container { width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; }
+        #canvas-container { width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; z-index: 1; }
         
-        /* Indicador visual de la punta de la nave (Desplazada hacia arriba para que el dedo no la tape) */
+        /* Capa de fondo con la escenografía de la tapa del disco / álbum */
+        #escenografia-fondo {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.35; /* Semi transparente para no tapar el efecto 3D del espacio */
+            z-index: 0;
+            transition: background-image 0.5s ease-in-out;
+        }
+
+        /* Indicador visual de la punta de la nave (Mira de impacto desplazada hacia arriba) */
         #nave-hud {
             position: absolute;
             bottom: 42%;
@@ -23,7 +37,7 @@
             pointer-events: none; 
             z-index: 5;
             transition: transform 0.05s ease-out;
-            display: none; /* Oculto hasta que empiece el juego */
+            display: none;
         }
 
         /* Pantalla de Intro / Bienvenida */
@@ -33,7 +47,7 @@
             left: 0; 
             width: 100vw; 
             height: 100vh; 
-            background: rgba(2, 0, 10, 0.96); 
+            background: rgba(2, 0, 10, 0.92); 
             display: flex; 
             flex-direction: column; 
             justify-content: center; 
@@ -65,6 +79,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
+
+    <!-- Escenografía de fondo dinámica (Aquí puedes poner las URLs de tus imágenes generadas por IA) -->
+    <div id="escenografia-fondo"></div>
 
     <!-- PANTALLA DE INTRODUCCIÓN -->
     <div id="pantalla-intro">
@@ -109,16 +126,20 @@
         let galaxiaActualKey = null;
         let discoActualSeleccionado = null;
 
+        // Base de datos con soporte para URLs de imágenes de fondo (Tapa de Colores Santos, discos, etc.)
         const multiverso = {
+            fondoPrincipal: "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=1200", // Cambia esto por la URL de tu tapa "Colores Santos"
             soda: {
                 nombre: "GALAXIA: SODA STEREO",
-                trackId: "l8Yj6W0832g",
+                trackId: "l8Yj6W0832g", // <-- ACÁ CAMBIÁS EL AUDIO PARA LA GALAXIA SODA (Ej: Vuelta por el Universo)
+                fondoGalaxia: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200",
                 color: 0x00ffff,
                 discos: [
                     {
                         nombre: "DISCO: NADA PERSONAL",
                         color: 0xff00ff,
-                        trackId: "K1y5o3l8Yj6",
+                        trackId: "K1y5o3l8Yj6", // <-- ACÁ CAMBIÁS EL AUDIO PARA ESTE DISCO
+                        fondoDisco: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1200", // <-- Tapa generada por IA del disco
                         iconos: [
                             { nombre: "🎸 Guitarra Jackson", tipoObjeto: "guitarra", pregunta: "¿Qué modelo clásico utilizaba Gustavo en los 80s?", opcionA: "Jackson Soloist", opcionB: "Fender Stratocaster", respuestaCorrecta: 1 },
                             { nombre: "💇 Peinados 80s", tipoObjeto: "peinados", pregunta: "¿Qué estilo capilar marcó tendencia en la era Nada Personal?", opcionA: "Ondas setenteras", opcionB: "Jopo y jopo alto con spray", respuestaCorrecta: 2 },
@@ -129,6 +150,7 @@
                         nombre: "DISCO: CANCIÓN ANIMAL",
                         color: 0x990000,
                         trackId: "eGrx3tZzjwE",
+                        fondoDisco: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=1200",
                         iconos: [
                             { nombre: "🐾 Arte de Tapa", tipoObjeto: "tapa", pregunta: "¿Qué animales aparecen en la portada original de Canción Animal?", opcionA: "Leones", opcionB: "Ciervos", respuestaCorrecta: 1 },
                             { nombre: "⚡ Hit de Apertura", tipoObjeto: "hit", pregunta: "¿Qué canción icónica abre el disco?", opcionA: "De Música Ligera", opcionB: "En la Ciudad de la Furia", respuestaCorrecta: 1 }
@@ -139,12 +161,14 @@
             solista: {
                 nombre: "GALAXIA: GUSTAVO CERATI",
                 trackId: "T1tDbvoHzo8",
+                fondoGalaxia: "https://images.unsplash.com/photo-1502134249126-9f3755a50d78?w=1200",
                 color: 0xff00ff,
                 discos: [
                     {
                         nombre: "DISCO: BOCANADA",
                         color: 0x0066ff,
                         trackId: "sZnZfl6OGx8",
+                        fondoDisco: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200",
                         iconos: [
                             { nombre: "🌉 Puente", tipoObjeto: "puente", pregunta: "¿Qué instrumento principal destaca en el estribillo de Puente?", opcionA: "Guitarras acústicas gemelas", opcionB: "Sinte analógico", respuestaCorrecta: 1 },
                             { nombre: "🌀 Estudio Casa", tipoObjeto: "estudio", pregunta: "¿Cómo se llamaba el estudio personal donde grabó gran parte de Bocanada?", opcionA: "Del Cielito", opcionB: "Casa", respuestaCorrecta: 2 }
@@ -153,6 +177,10 @@
                 ]
             }
         };
+
+        function cambiarFondo(urlImagen) {
+            document.getElementById('escenografia-fondo').style.backgroundImage = `url('${urlImagen}')`;
+        }
 
         document.getElementById('btn-entrar').addEventListener('click', comenzarJuego);
         document.getElementById('btn-entrar').addEventListener('touchend', (e) => {
@@ -174,7 +202,8 @@
             document.getElementById('pantalla-intro').style.display = 'none';
             document.getElementById('ui-capa').style.display = 'flex';
             document.getElementById('nave-hud').style.display = 'block';
-            actualizarAudio("SV3oyTWdQao");
+            cambiarFondo(multiverso.fondoPrincipal); // Fondo de Colores Santos al entrar
+            actualizarAudio("SV3oyTWdQao"); // <-- ACÁ PONÉS EL ID DE YOUTUBE PARA EL INICIO / GALAXIAS
             cargarMenuPrincipal();
         }
 
@@ -187,7 +216,7 @@
         const scene = new THREE.Scene();
         scene.fog = new THREE.FogExp2(0x02000a, 0.015);
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); // Alpha true para que se luzca el fondo
         renderer.setSize(window.innerWidth, window.innerHeight);
         canvasContainer.appendChild(renderer.domElement);
 
@@ -214,16 +243,17 @@
             estadoActual = "MENU_PRINCIPAL";
             document.getElementById('btn-volver').style.display = 'none';
             document.getElementById('txt-estado').innerText = "SELECCIONA UNA GALAXIA";
+            cambiarFondo(multiverso.fondoPrincipal);
             actualizarAudio("SV3oyTWdQao");
 
             const galaxias = [
-                { key: 'soda', nombre: multiverso.soda.nombre, color: multiverso.soda.color },
-                { key: 'solista', nombre: multiverso.solista.nombre, color: multiverso.solista.color }
+                { key: 'soda', nombre: multiverso.soda.nombre, color: multiverso.soda.color, fondo: multiverso.soda.fondoGalaxia },
+                { key: 'solista', nombre: multiverso.solista.nombre, color: multiverso.solista.color, fondo: multiverso.solista.fondoGalaxia }
             ];
 
             galaxias.forEach((g, index) => {
                 const mesh = crearPortalMesh(g.nombre, g.color, index);
-                mesh.userData = { tipo: 'galaxia', key: g.key, ...multiverso[g.key] };
+                mesh.userData = { tipo: 'galaxia', key: g.key, fondo: g.fondo, ...multiverso[g.key] };
                 scene.add(mesh);
                 objetosCosmos.push(mesh);
             });
@@ -235,6 +265,7 @@
             galaxiaActualKey = key;
             document.getElementById('btn-volver').style.display = 'block';
             document.getElementById('txt-estado').innerText = galaxiaData.nombre;
+            cambiarFondo(galaxiaData.fondoGalaxia);
             actualizarAudio(galaxiaData.trackId);
 
             galaxiaData.discos.forEach((disco, index) => {
@@ -250,6 +281,7 @@
             estadoActual = "JUEGO_ICONOS";
             discoActualSeleccionado = discoData;
             document.getElementById('txt-estado').innerText = discoData.nombre;
+            if(discoData.fondoDisco) cambiarFondo(discoData.fondoDisco); // Fondo personalizado de la tapa del disco
             actualizarAudio(discoData.trackId);
 
             discoData.iconos.forEach((icono, index) => {
@@ -350,11 +382,9 @@
             const offsetX = clientX - window.innerWidth / 2;
             const offsetY = clientY - window.innerHeight / 2;
             
-            // Movemos el HUD de la nave un poco más arriba del dedo para que la punta se vea perfecta
             const offsetHudY = offsetY - 80;
             naveHud.style.transform = `translate(calc(-50% + ${offsetX * 0.8}px), calc(-50% + ${offsetHudY}px)) rotate(${offsetX * 0.05}deg)`;
 
-            // La punta de la nave (la mira de colisión real) se calcula exactamente donde está la punta del triángulo visual
             const miraY = clientY - 80;
             vectorPosicionMira.x = (clientX / window.innerWidth) * 2 - 1;
             vectorPosicionMira.y = -(miraY / window.innerHeight) * 2 + 1;
