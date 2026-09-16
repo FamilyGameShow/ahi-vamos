@@ -8,17 +8,17 @@
         body { margin: 0; overflow: hidden; background-color: #02000a; font-family: sans-serif; touch-action: none; }
         #canvas-container { width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; }
         
-        /* Indicador visual de la punta de la nave (MIRA DE IMPACTO) */
+        /* Indicador visual de la punta de la nave (Desplazada hacia arriba para que el dedo no la tape) */
         #nave-hud {
             position: absolute;
-            bottom: 30%;
+            bottom: 42%;
             left: 50%;
             transform: translate(-50%, 50%);
             width: 0;
             height: 0;
             border-left: 25px solid transparent;
             border-right: 25px solid transparent;
-            border-bottom: 50px solid rgba(0, 255, 255, 0.6);
+            border-bottom: 50px solid rgba(0, 255, 255, 0.7);
             filter: drop-shadow(0 0 15px #00ffff);
             pointer-events: none; 
             z-index: 5;
@@ -26,7 +26,7 @@
             display: none; /* Oculto hasta que empiece el juego */
         }
 
-        /* Pantalla de Intro / Bienvenida (Permite toques directos) */
+        /* Pantalla de Intro / Bienvenida */
         #pantalla-intro { 
             position: absolute; 
             top: 0; 
@@ -42,7 +42,7 @@
             text-align: center; 
             padding: 20px; 
             box-sizing: border-box; 
-            touch-action: auto; /* Permite interacción táctil normal en la intro */
+            touch-action: auto;
         }
         #pantalla-intro h1 { color: #fff; font-size: 26px; letter-spacing: 5px; text-shadow: 0 0 20px #ff00ff, 0 0 40px #00ffff; margin-bottom: 10px; }
         #pantalla-intro p { color: #00ffff; font-size: 14px; margin-bottom: 30px; max-width: 320px; line-height: 1.5; }
@@ -53,13 +53,12 @@
         .stats-box { font-size: 13px; font-weight: bold; background: rgba(10, 5, 30, 0.8); border: 1px solid #ff00ff; padding: 6px 12px; border-radius: 12px; }
         #btn-volver { position: absolute; top: 60px; left: 20px; background: rgba(255, 0, 255, 0.3); border: 1px solid #ff00ff; color: #fff; padding: 8px 15px; border-radius: 10px; font-size: 12px; cursor: pointer; z-index: 15; display: none; pointer-events: auto; }
 
-        /* Ventana flotante de Trivia al chocar un icono / mundo */
+        /* Ventana flotante de Trivia */
         #trivia-modal { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(10, 5, 30, 0.95); border: 2px solid #00ffff; border-radius: 15px; padding: 20px; width: 85%; max-width: 350px; box-shadow: 0 0 30px rgba(0, 255, 255, 0.6); z-index: 50; text-align: center; display: none; touch-action: auto; }
         #trivia-titulo { color: #ff00ff; font-size: 13px; letter-spacing: 2px; margin-bottom: 8px; font-weight: bold; }
         #trivia-pregunta { color: #fff; font-size: 14px; margin-bottom: 20px; line-height: 1.4; }
         .btn-opcion-cosmos { background: rgba(0, 255, 255, 0.2); border: 2px solid #00ffff; color: #fff; padding: 12px; border-radius: 12px; font-size: 13px; font-weight: bold; width: 100%; margin-bottom: 10px; cursor: pointer; box-shadow: 0 0 10px rgba(0, 255, 255, 0.3); pointer-events: auto; }
 
-        /* Reproductor de YouTube oculto para el audio de fondo */
         #youtube-audio { position: absolute; top: -9999px; left: -9999px; visibility: hidden; }
     </style>
     <!-- Three.js CDN -->
@@ -90,12 +89,11 @@
         <button id="trivia-btn-2" class="btn-opcion-cosmos">Opción B</button>
     </div>
 
-    <!-- PUNTA DE NAVE EN PRIMERA PERSONA (MIRA DE IMPACTO) -->
+    <!-- PUNTA DE NAVE EN PRIMERA PERSONA -->
     <div id="nave-hud"></div>
 
     <div id="canvas-container"></div>
 
-    <!-- Reproductor de YouTube embebido -->
     <div id="youtube-audio">
         <iframe id="yt-player" width="100" height="100" src="" frameborder="0" allow="autoplay"></iframe>
     </div>
@@ -156,7 +154,6 @@
             }
         };
 
-        // Asociar eventos por JavaScript para asegurar compatibilidad total táctica y de mouse
         document.getElementById('btn-entrar').addEventListener('click', comenzarJuego);
         document.getElementById('btn-entrar').addEventListener('touchend', (e) => {
             e.preventDefault();
@@ -205,7 +202,7 @@
         camera.position.z = 10;
 
         let raycaster = new THREE.Raycaster();
-        let vectorPosicionMira = new THREE.Vector2(0, 0); // Centro por defecto
+        let vectorPosicionMira = new THREE.Vector2(0, 0);
 
         function limpiarCosmos() {
             objetosCosmos.forEach(obj => scene.remove(obj));
@@ -279,7 +276,6 @@
             }
         }
 
-        // Detección automática por colisión de la punta de la nave (la mira) contra los objetos
         function comprobarColisionesNave() {
             if (!juegoIniciado || pausarVuelo) return;
 
@@ -287,7 +283,6 @@
             const intersects = raycaster.intersectObjects(objetosCosmos);
 
             if (intersects.length > 0) {
-                // Al colisionar con la punta de la nave, activamos el objeto automáticamente
                 const objetoTocado = intersects[0].object;
                 const data = objetoTocado.userData;
 
@@ -355,12 +350,14 @@
             const offsetX = clientX - window.innerWidth / 2;
             const offsetY = clientY - window.innerHeight / 2;
             
-            // Mover la punta de la nave (el dedo va por detrás guiándola)
-            naveHud.style.transform = `translate(calc(-50% + ${offsetX * 0.8}px), calc(-50% + ${offsetY * 0.8}px)) rotate(${offsetX * 0.05}deg)`;
+            // Movemos el HUD de la nave un poco más arriba del dedo para que la punta se vea perfecta
+            const offsetHudY = offsetY - 80;
+            naveHud.style.transform = `translate(calc(-50% + ${offsetX * 0.8}px), calc(-50% + ${offsetHudY}px)) rotate(${offsetX * 0.05}deg)`;
 
-            // Calcular coordenadas normalizadas para que la punta de la nave actúe como mira de colisión
+            // La punta de la nave (la mira de colisión real) se calcula exactamente donde está la punta del triángulo visual
+            const miraY = clientY - 80;
             vectorPosicionMira.x = (clientX / window.innerWidth) * 2 - 1;
-            vectorPosicionMira.y = -(clientY / window.innerHeight) * 2 + 1;
+            vectorPosicionMira.y = -(miraY / window.innerHeight) * 2 + 1;
 
             comprobarColisionesNave();
         }
