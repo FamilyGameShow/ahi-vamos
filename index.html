@@ -80,7 +80,7 @@
 </head>
 <body>
 
-    <!-- Escenografía de fondo dinámica (Aquí puedes poner las URLs de tus imágenes generadas por IA) -->
+    <!-- Escenografía de fondo dinámica -->
     <div id="escenografia-fondo"></div>
 
     <!-- PANTALLA DE INTRODUCCIÓN -->
@@ -126,22 +126,20 @@
         let galaxiaActualKey = null;
         let discoActualSeleccionado = null;
 
-        // Base de datos con soporte para URLs de imágenes de fondo (Tapa de Colores Santos, discos, etc.)
+        // Base de datos configurada con tus IDs de YouTube limpios (sin saltos de línea)
         const multiverso = {
-            fondoPrincipal: "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=1200", // Cambia esto por la URL de tu tapa "Colores Santos"
+            fondoPrincipal: "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=1200",
             soda: {
                 nombre: "GALAXIA: SODA STEREO",
-                trackId: "Wun6zDSpwkg
-", // <-- ACÁ CAMBIÁS EL AUDIO PARA LA GALAXIA SODA (Ej: Vuelta por el Universo)
+                trackId: "Wun6zDSpwkg", 
                 fondoGalaxia: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200",
                 color: 0x00ffff,
                 discos: [
                     {
                         nombre: "DISCO: NADA PERSONAL",
                         color: 0xff00ff,
-                        trackId: "W0KTTiuw96A
-", // <-- ACÁ CAMBIÁS EL AUDIO PARA ESTE DISCO
-                        fondoDisco: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1200", // <-- Tapa generada por IA del disco
+                        trackId: "W0KTTiuw96A", 
+                        fondoDisco: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1200",
                         iconos: [
                             { nombre: "🎸 Guitarra Jackson", tipoObjeto: "guitarra", pregunta: "¿Qué modelo clásico utilizaba Gustavo en los 80s?", opcionA: "Jackson Soloist", opcionB: "Fender Stratocaster", respuestaCorrecta: 1 },
                             { nombre: "💇 Peinados 80s", tipoObjeto: "peinados", pregunta: "¿Qué estilo capilar marcó tendencia en la era Nada Personal?", opcionA: "Ondas setenteras", opcionB: "Jopo y jopo alto con spray", respuestaCorrecta: 2 },
@@ -155,7 +153,7 @@
                         fondoDisco: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=1200",
                         iconos: [
                             { nombre: "🐾 Arte de Tapa", tipoObjeto: "tapa", pregunta: "¿Qué animales aparecen en la portada original de Canción Animal?", opcionA: "Leones", opcionB: "Ciervos", respuestaCorrecta: 1 },
-                            { nombre: "⚡ Hit de Apertura", tipoObjeto: "hit", pregunta: "¿Qué canción icónica abre el disco?", opcionA: "En el septimo dia", opcionB: "De musica lijera", respuestaCorrecta: 1 }
+                            { nombre: "⚡ Hit de Apertura", tipoObjeto: "hit", pregunta: "¿Qué canción icónica abre el disco?", opcionA: "En el séptimo día", opcionB: "De música ligera", respuestaCorrecta: 1 }
                         ]
                     }
                 ]
@@ -204,9 +202,8 @@
             document.getElementById('pantalla-intro').style.display = 'none';
             document.getElementById('ui-capa').style.display = 'flex';
             document.getElementById('nave-hud').style.display = 'block';
-            cambiarFondo(multiverso.fondoPrincipal); // Fondo de Colores Santos al entrar
-            actualizarAudio("Wun6zDSpwkg
-"); // <-- ACÁ PONÉS EL ID DE YOUTUBE PARA EL INICIO / GALAXIAS
+            cambiarFondo(multiverso.fondoPrincipal); 
+            actualizarAudio("Wun6zDSpwkg"); // ID de YouTube limpio para el inicio
             cargarMenuPrincipal();
         }
 
@@ -219,7 +216,7 @@
         const scene = new THREE.Scene();
         scene.fog = new THREE.FogExp2(0x02000a, 0.015);
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); // Alpha true para que se luzca el fondo
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         canvasContainer.appendChild(renderer.domElement);
 
@@ -247,7 +244,7 @@
             document.getElementById('btn-volver').style.display = 'none';
             document.getElementById('txt-estado').innerText = "SELECCIONA UNA GALAXIA";
             cambiarFondo(multiverso.fondoPrincipal);
-            actualizarAudio("SV3oyTWdQao");
+            actualizarAudio("Wun6zDSpwkg");
 
             const galaxias = [
                 { key: 'soda', nombre: multiverso.soda.nombre, color: multiverso.soda.color, fondo: multiverso.soda.fondoGalaxia },
@@ -284,7 +281,7 @@
             estadoActual = "JUEGO_ICONOS";
             discoActualSeleccionado = discoData;
             document.getElementById('txt-estado').innerText = discoData.nombre;
-            if(discoData.fondoDisco) cambiarFondo(discoData.fondoDisco); // Fondo personalizado de la tapa del disco
+            if(discoData.fondoDisco) cambiarFondo(discoData.fondoDisco);
             actualizarAudio(discoData.trackId);
 
             discoData.iconos.forEach((icono, index) => {
