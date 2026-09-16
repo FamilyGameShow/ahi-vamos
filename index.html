@@ -8,7 +8,7 @@
         body { margin: 0; overflow: hidden; background-color: #02000a; font-family: sans-serif; touch-action: none; }
         #canvas-container { width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; }
         
-        /* Indicador visual de la punta de la nave (AHORA ES LA MIRA DE IMPACTO) */
+        /* Indicador visual de la punta de la nave (MIRA DE IMPACTO) */
         #nave-hud {
             position: absolute;
             bottom: 30%;
@@ -20,17 +20,33 @@
             border-right: 25px solid transparent;
             border-bottom: 50px solid rgba(0, 255, 255, 0.6);
             filter: drop-shadow(0 0 15px #00ffff);
-            /* Importante: desactivamos eventos de puntero para que el dedo guíe por debajo */
             pointer-events: none; 
             z-index: 5;
             transition: transform 0.05s ease-out;
+            display: none; /* Oculto hasta que empiece el juego */
         }
 
-        /* Pantalla de Intro / Bienvenida */
-        #pantalla-intro { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(2, 0, 10, 0.96); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 100; text-align: center; padding: 20px; box-sizing: border-box; }
+        /* Pantalla de Intro / Bienvenida (Permite toques directos) */
+        #pantalla-intro { 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100vw; 
+            height: 100vh; 
+            background: rgba(2, 0, 10, 0.96); 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            z-index: 100; 
+            text-align: center; 
+            padding: 20px; 
+            box-sizing: border-box; 
+            touch-action: auto; /* Permite interacción táctil normal en la intro */
+        }
         #pantalla-intro h1 { color: #fff; font-size: 26px; letter-spacing: 5px; text-shadow: 0 0 20px #ff00ff, 0 0 40px #00ffff; margin-bottom: 10px; }
         #pantalla-intro p { color: #00ffff; font-size: 14px; margin-bottom: 30px; max-width: 320px; line-height: 1.5; }
-        .btn-inicio { background: linear-gradient(45deg, #ff00ff, #00ffff); border: 2px solid #fff; color: #fff; padding: 15px 35px; border-radius: 30px; font-size: 16px; font-weight: bold; letter-spacing: 2px; box-shadow: 0 0 25px rgba(255, 0, 255, 0.7); cursor: pointer; }
+        .btn-inicio { background: linear-gradient(45deg, #ff00ff, #00ffff); border: 2px solid #fff; color: #fff; padding: 15px 35px; border-radius: 30px; font-size: 16px; font-weight: bold; letter-spacing: 2px; box-shadow: 0 0 25px rgba(255, 0, 255, 0.7); cursor: pointer; pointer-events: auto; }
 
         /* Capa de Estadísticas y Estado del Viaje */
         #ui-capa { position: absolute; top: 15px; width: 100%; display: flex; justify-content: space-between; padding: 0 20px; box-sizing: border-box; color: #fff; text-shadow: 0 0 10px #ff00ff; z-index: 10; pointer-events: none; display: none; }
@@ -38,10 +54,10 @@
         #btn-volver { position: absolute; top: 60px; left: 20px; background: rgba(255, 0, 255, 0.3); border: 1px solid #ff00ff; color: #fff; padding: 8px 15px; border-radius: 10px; font-size: 12px; cursor: pointer; z-index: 15; display: none; pointer-events: auto; }
 
         /* Ventana flotante de Trivia al chocar un icono / mundo */
-        #trivia-modal { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(10, 5, 30, 0.95); border: 2px solid #00ffff; border-radius: 15px; padding: 20px; width: 85%; max-width: 350px; box-shadow: 0 0 30px rgba(0, 255, 255, 0.6); z-index: 50; text-align: center; display: none; }
+        #trivia-modal { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(10, 5, 30, 0.95); border: 2px solid #00ffff; border-radius: 15px; padding: 20px; width: 85%; max-width: 350px; box-shadow: 0 0 30px rgba(0, 255, 255, 0.6); z-index: 50; text-align: center; display: none; touch-action: auto; }
         #trivia-titulo { color: #ff00ff; font-size: 13px; letter-spacing: 2px; margin-bottom: 8px; font-weight: bold; }
         #trivia-pregunta { color: #fff; font-size: 14px; margin-bottom: 20px; line-height: 1.4; }
-        .btn-opcion-cosmos { background: rgba(0, 255, 255, 0.2); border: 2px solid #00ffff; color: #fff; padding: 12px; border-radius: 12px; font-size: 13px; font-weight: bold; width: 100%; margin-bottom: 10px; cursor: pointer; box-shadow: 0 0 10px rgba(0, 255, 255, 0.3); }
+        .btn-opcion-cosmos { background: rgba(0, 255, 255, 0.2); border: 2px solid #00ffff; color: #fff; padding: 12px; border-radius: 12px; font-size: 13px; font-weight: bold; width: 100%; margin-bottom: 10px; cursor: pointer; box-shadow: 0 0 10px rgba(0, 255, 255, 0.3); pointer-events: auto; }
 
         /* Reproductor de YouTube oculto para el audio de fondo */
         #youtube-audio { position: absolute; top: -9999px; left: -9999px; visibility: hidden; }
@@ -55,7 +71,7 @@
     <div id="pantalla-intro">
         <h1>VUELTA POR EL UNIVERSO</h1>
         <p>Toma el comando de la nave, atraviesa portales galácticos y conquista cada disco de Soda Stereo y Gustavo Cerati.</p>
-        <button class="btn-opcion btn-inicio" onclick="comenzarJuego()">✨ ENTRAR AL COSMOS</button>
+        <button class="btn-opcion btn-inicio" id="btn-entrar">✨ ENTRAR AL COSMOS</button>
     </div>
 
     <!-- UI DE JUEGO Y ESTADÍSTICAS -->
@@ -64,14 +80,14 @@
         <div class="stats-box" id="txt-estado">SELECCIONA UNA GALAXIA</div>
         <div class="stats-box">VIDAS: <span id="txt-vidas">❤️❤️❤️</span></div>
     </div>
-    <button id="btn-volver" onclick="volverAlNivelAnterior()">⬅️ VOLVER</button>
+    <button id="btn-volver">⬅️ VOLVER</button>
 
     <!-- VENTANA DE TRIVIA FLOTANTE -->
     <div id="trivia-modal">
         <div id="trivia-titulo">OBJETO ICONO</div>
         <div id="trivia-pregunta">Pregunta aquí...</div>
-        <button id="trivia-btn-1" class="btn-opcion-cosmos" onclick="verificarRespuesta(1)">Opción A</button>
-        <button id="trivia-btn-2" class="btn-opcion-cosmos" onclick="verificarRespuesta(2)">Opción B</button>
+        <button id="trivia-btn-1" class="btn-opcion-cosmos">Opción A</button>
+        <button id="trivia-btn-2" class="btn-opcion-cosmos">Opción B</button>
     </div>
 
     <!-- PUNTA DE NAVE EN PRIMERA PERSONA (MIRA DE IMPACTO) -->
@@ -140,10 +156,27 @@
             }
         };
 
+        // Asociar eventos por JavaScript para asegurar compatibilidad total táctica y de mouse
+        document.getElementById('btn-entrar').addEventListener('click', comenzarJuego);
+        document.getElementById('btn-entrar').addEventListener('touchend', (e) => {
+            e.preventDefault();
+            comenzarJuego();
+        });
+
+        document.getElementById('btn-volver').addEventListener('click', volverAlNivelAnterior);
+        document.getElementById('btn-volver').addEventListener('touchend', (e) => {
+            e.preventDefault();
+            volverAlNivelAnterior();
+        });
+
+        document.getElementById('trivia-btn-1').addEventListener('click', () => verificarRespuesta(1));
+        document.getElementById('trivia-btn-2').addEventListener('click', () => verificarRespuesta(2));
+
         function comenzarJuego() {
             juegoIniciado = true;
             document.getElementById('pantalla-intro').style.display = 'none';
             document.getElementById('ui-capa').style.display = 'flex';
+            document.getElementById('nave-hud').style.display = 'block';
             actualizarAudio("SV3oyTWdQao");
             cargarMenuPrincipal();
         }
@@ -172,8 +205,7 @@
         camera.position.z = 10;
 
         let raycaster = new THREE.Raycaster();
-        // Reutilizamos este vector para la posición de la mira en pantalla
-        let miraScreenPos = new THREE.Vector2(); 
+        let vectorPosicionMira = new THREE.Vector2(0, 0); // Centro por defecto
 
         function limpiarCosmos() {
             objetosCosmos.forEach(obj => scene.remove(obj));
@@ -225,4 +257,163 @@
 
             discoData.iconos.forEach((icono, index) => {
                 const mesh = crearPortalMesh(icono.nombre, 0x00ffcc, index);
-                mesh.userData = { tipo: 'icono_trivia', ...
+                mesh.userData = { tipo: 'icono_trivia', ...icono };
+                scene.add(mesh);
+                objetosCosmos.push(mesh);
+            });
+        }
+
+        function crearPortalMesh(nombre, colorHex, index) {
+            const geometry = new THREE.TorusGeometry(3.2, 0.8, 16, 50);
+            const material = new THREE.MeshBasicMaterial({ color: colorHex, wireframe: true });
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.position.set((Math.random() - 0.5) * 35, (Math.random() - 0.5) * 20, -50 - (index * 35));
+            return mesh;
+        }
+
+        function volverAlNivelAnterior() {
+            if (estadoActual === "JUEGO_ICONOS") {
+                cargarDiscosGalaxia(multiverso[galaxiaActualKey], galaxiaActualKey);
+            } else if (estadoActual === "MENU_DISCOS") {
+                cargarMenuPrincipal();
+            }
+        }
+
+        // Detección automática por colisión de la punta de la nave (la mira) contra los objetos
+        function comprobarColisionesNave() {
+            if (!juegoIniciado || pausarVuelo) return;
+
+            raycaster.setFromCamera(vectorPosicionMira, camera);
+            const intersects = raycaster.intersectObjects(objetosCosmos);
+
+            if (intersects.length > 0) {
+                // Al colisionar con la punta de la nave, activamos el objeto automáticamente
+                const objetoTocado = intersects[0].object;
+                const data = objetoTocado.userData;
+
+                if (data.tipo === 'galaxia') {
+                    cargarDiscosGalaxia(data, data.key);
+                } else if (data.tipo === 'disco') {
+                    cargarIconosDisco(data);
+                } else if (data.tipo === 'icono_trivia') {
+                    elementoSeleccionado = objetoTocado;
+                    pausarVuelo = true;
+                    document.getElementById('trivia-titulo').innerText = discoActualSeleccionado.nombre;
+                    document.getElementById('trivia-pregunta').innerText = data.pregunta;
+                    document.getElementById('trivia-btn-1').innerText = data.opcionA;
+                    document.getElementById('trivia-btn-2').innerText = data.opcionB;
+                    document.getElementById('trivia-modal').style.display = 'block';
+                }
+            }
+        }
+
+        function verificarRespuesta(opcionElegida) {
+            const data = elementoSeleccionado.userData;
+            const esCorrecta = (opcionElegida === data.respuestaCorrecta);
+            document.getElementById('trivia-modal').style.display = 'none';
+
+            if (esCorrecta) {
+                puntos += 100;
+                document.getElementById('txt-puntos').innerText = puntos;
+                alert("¡Icono conquistado con éxito!");
+                scene.remove(elementoSeleccionado);
+                const index = objetosCosmos.indexOf(elementoSeleccionado);
+                if (index > -1) objetosCosmos.splice(index, 1);
+
+                if (objetosCosmos.length === 0) {
+                    alert("¡Has conquistado todos los misterios de este disco!");
+                    cargarDiscosGalaxia(multiverso[galaxiaActualKey], galaxiaActualKey);
+                }
+            } else {
+                vidas--;
+                actualizarVidasUI();
+                alert("Respuesta incorrecta... la nave recibe daño.");
+                if (vidas <= 0) {
+                    alert("Te quedaste sin escudo. ¡Reiniciando viaje cósmico!");
+                    location.reload();
+                }
+            }
+            elementoSeleccionado = null;
+            pausarVuelo = false;
+        }
+
+        function actualizarVidasUI() {
+            let corazones = "";
+            for(let i = 0; i < vidas; i++) corazones += "❤️";
+            document.getElementById('txt-vidas').innerText = corazones;
+        }
+
+        let targetX = 0, targetY = 0;
+        const naveHud = document.getElementById('nave-hud');
+
+        function actualizarMovimientoNave(clientX, clientY) {
+            if(!juegoIniciado) return;
+            
+            targetX = (clientX - window.innerWidth / 2) * 0.001;
+            targetY = (clientY - window.innerHeight / 2) * 0.001;
+            
+            const offsetX = clientX - window.innerWidth / 2;
+            const offsetY = clientY - window.innerHeight / 2;
+            
+            // Mover la punta de la nave (el dedo va por detrás guiándola)
+            naveHud.style.transform = `translate(calc(-50% + ${offsetX * 0.8}px), calc(-50% + ${offsetY * 0.8}px)) rotate(${offsetX * 0.05}deg)`;
+
+            // Calcular coordenadas normalizadas para que la punta de la nave actúe como mira de colisión
+            vectorPosicionMira.x = (clientX / window.innerWidth) * 2 - 1;
+            vectorPosicionMira.y = -(clientY / window.innerHeight) * 2 + 1;
+
+            comprobarColisionesNave();
+        }
+
+        window.addEventListener('mousemove', (e) => {
+            actualizarMovimientoNave(e.clientX, e.clientY);
+        });
+
+        window.addEventListener('touchmove', (e) => {
+            if(e.touches.length > 0) {
+                actualizarMovimientoNave(e.touches[0].clientX, e.touches[0].clientY);
+            }
+        }, { passive: true });
+
+        window.addEventListener('touchstart', (e) => {
+            if(e.touches.length > 0) {
+                actualizarMovimientoNave(e.touches[0].clientX, e.touches[0].clientY);
+            }
+        }, { passive: true });
+
+        function animate() {
+            requestAnimationFrame(animate);
+            if (!pausarVuelo) {
+                objetosCosmos.forEach(obj => {
+                    obj.position.z += 0.5;
+                    obj.rotation.z += 0.01;
+                    if (obj.position.z > 20) {
+                        obj.position.z = -180;
+                        obj.position.x = (Math.random() - 0.5) * 35;
+                        obj.position.y = (Math.random() - 0.5) * 20;
+                    }
+                });
+
+                const starArr = stars.geometry.attributes.position.array;
+                for(let i = 2; i < starArr.length; i += 3) {
+                    starArr[i] += 1.0;
+                    if(starArr[i] > 100) starArr[i] = -800;
+                }
+                stars.geometry.attributes.position.needsUpdate = true;
+            }
+
+            camera.rotation.y += (targetX - camera.rotation.y) * 0.05;
+            camera.rotation.x += (targetY - camera.rotation.x) * 0.05;
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        animate();
+    </script>
+</body>
+</html>
