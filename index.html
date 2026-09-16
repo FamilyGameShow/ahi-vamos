@@ -8,21 +8,21 @@
         body { margin: 0; overflow: hidden; background-color: #02000a; font-family: sans-serif; touch-action: none; }
         #canvas-container { width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; }
         
-        /* Indicador visual de la punta de la nave en primera persona */
+        /* Indicador visual de la punta de la nave en primera persona (ahora libre en X e Y) */
         #nave-hud {
             position: absolute;
-            bottom: 0;
+            bottom: 30%;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translate(-50%, 50%);
             width: 0;
             height: 0;
-            border-left: 40px solid transparent;
-            border-right: 40px solid transparent;
-            border-bottom: 70px solid rgba(0, 255, 255, 0.4);
+            border-left: 25px solid transparent;
+            border-right: 25px solid transparent;
+            border-bottom: 50px solid rgba(0, 255, 255, 0.6);
             filter: drop-shadow(0 0 15px #00ffff);
             pointer-events: none;
             z-index: 5;
-            transition: transform 0.1s ease-out;
+            transition: transform 0.05s ease-out;
         }
 
         /* Pantalla de Intro / Bienvenida */
@@ -87,14 +87,13 @@
         let juegoIniciado = false;
         let puntos = 0;
         let vidas = 3;
-        let estadoActual = "MENU_PRINCIPAL"; // MENU_PRINCIPAL, MENU_DISCOS, JUEGO_ICONOS
+        let estadoActual = "MENU_PRINCIPAL";
         let objetosCosmos = [];
         let elementoSeleccionado = null;
         let pausarVuelo = false;
         let galaxiaActualKey = null;
         let discoActualSeleccionado = null;
 
-        // Estructura expandida para soportar múltiples discos e iconos de trivia temáticos
         const multiverso = {
             soda: {
                 nombre: "GALAXIA: SODA STEREO",
@@ -133,7 +132,7 @@
                         trackId: "sZnZfl6OGx8",
                         iconos: [
                             { nombre: "🌉 Puente", tipoObjeto: "puente", pregunta: "¿Qué instrumento principal destaca en el estribillo de Puente?", opcionA: "Guitarras acústicas gemelas", opcionB: "Sinte analógico", respuestaCorrecta: 1 },
-                            { name: "🌀 Estudio Casa", tipoObjeto: "estudio", pregunta: "¿Cómo se llamaba el estudio personal donde grabó gran parte de Bocanada?", opcionA: "Del Cielito", opcionB: "Casa", respuestaCorrecta: 2 }
+                            { nombre: "🌀 Estudio Casa", tipoObjeto: "estudio", pregunta: "¿Cómo se llamaba el estudio personal donde grabó gran parte de Bocanada?", opcionA: "Del Cielito", opcionB: "Casa", respuestaCorrecta: 2 }
                         ]
                     }
                 ]
@@ -153,7 +152,6 @@
             ytPlayer.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}`;
         }
 
-        // Configuración Three.js
         const canvasContainer = document.getElementById('canvas-container');
         const scene = new THREE.Scene();
         scene.fog = new THREE.FogExp2(0x02000a, 0.015);
@@ -162,7 +160,6 @@
         renderer.setSize(window.innerWidth, window.innerHeight);
         canvasContainer.appendChild(renderer.domElement);
 
-        // Estrellas de fondo
         const starGeometry = new THREE.BufferGeometry();
         const starPositions = [];
         for(let i = 0; i < 700; i++) {
@@ -181,7 +178,6 @@
             objetosCosmos = [];
         }
 
-        // 1. Menú Principal (Galaxias)
         function cargarMenuPrincipal() {
             limpiarCosmos();
             estadoActual = "MENU_PRINCIPAL";
@@ -202,7 +198,6 @@
             });
         }
 
-        // 2. Menú de Discos dentro de la Galaxia
         function cargarDiscosGalaxia(galaxiaData, key) {
             limpiarCosmos();
             estadoActual = "MENU_DISCOS";
@@ -219,7 +214,6 @@
             });
         }
 
-        // 3. Menú de Iconos de Trivia dentro del Disco
         function cargarIconosDisco(discoData) {
             limpiarCosmos();
             estadoActual = "JUEGO_ICONOS";
@@ -236,7 +230,6 @@
         }
 
         function crearPortalMesh(nombre, colorHex, index) {
-            // Geometría toroidal/esférica simulando portal de agujero de tiempo
             const geometry = new THREE.TorusGeometry(3.2, 0.8, 16, 50);
             const material = new THREE.MeshBasicMaterial({ color: colorHex, wireframe: true });
             const mesh = new THREE.Mesh(geometry, material);
@@ -252,11 +245,13 @@
             }
         }
 
-        // Detección de selección por toque o clic al penetrar portales
-        window.addEventListener('pointerdown', (e) => {
+        // Función centralizada para procesar el impacto de la nave / toque contra los objetos
+        function procesarImpacto(clientX, clientY) {
             if (!juegoIniciado || pausarVuelo) return;
-            mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+
+            mouse.x = (clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(clientY / window.innerHeight) * 2 + 1;
+            
             raycaster.setFromCamera(mouse, camera);
             const intersects = raycaster.intersectObjects(objetosCosmos);
 
@@ -278,6 +273,10 @@
                     document.getElementById('trivia-modal').style.display = 'block';
                 }
             }
+        }
+
+        window.addEventListener('pointerdown', (e) => {
+            procesarImpacto(e.clientX, e.clientY);
         });
 
         function verificarRespuesta(opcionElegida) {
@@ -319,27 +318,30 @@
         let targetX = 0, targetY = 0;
         const naveHud = document.getElementById('nave-hud');
 
-        window.addEventListener('mousemove', (e) => {
+        function actualizarMovimientoNave(clientX, clientY) {
             if(!juegoIniciado) return;
-            targetX = (e.clientX - window.innerWidth / 2) * 0.001;
-            targetY = (e.clientY - window.innerHeight / 2) * 0.001;
             
-            // Mover la punta de la nave visualmente en pantalla en primera persona
-            let desplazamientoX = (e.clientX - window.innerWidth / 2) * 0.15;
-            naveHud.style.transform = `translateX(calc(-50% + ${desplazamientoX}px)) rotate(${desplazamientoX * 0.05}deg)`;
+            // Inclinación de la cámara según la posición
+            targetX = (clientX - window.innerWidth / 2) * 0.001;
+            targetY = (clientY - window.innerHeight / 2) * 0.001;
+            
+            // Hacer que la punta de la nave siga libremente tanto en X como en Y al dedo/mouse
+            const offsetX = clientX - window.innerWidth / 2;
+            const offsetY = clientY - window.innerHeight / 2;
+            
+            naveHud.style.transform = `translate(calc(-50% + ${offsetX * 0.8}px), calc(-50% + ${offsetY * 0.8}px)) rotate(${offsetX * 0.05}deg)`;
+        }
+
+        window.addEventListener('mousemove', (e) => {
+            actualizarMovimientoNave(e.clientX, e.clientY);
         });
 
         window.addEventListener('touchmove', (e) => {
-            if(!juegoIniciado) return;
             if(e.touches.length > 0) {
-                targetX = (e.touches[0].clientX - window.innerWidth / 2) * 0.001;
-                targetY = (e.touches[0].clientY - window.innerHeight / 2) * 0.001;
-                let desplazamientoX = (e.touches[0].clientX - window.innerWidth / 2) * 0.15;
-                naveHud.style.transform = `translateX(calc(-50% + ${desplazamientoX}px)) rotate(${desplazamientoX * 0.05}deg)`;
+                actualizarMovimientoNave(e.touches[0].clientX, e.touches[0].clientY);
             }
         }, { passive: true });
 
-        // Animación del vuelo espacial
         function animate() {
             requestAnimationFrame(animate);
             if (!pausarVuelo) {
