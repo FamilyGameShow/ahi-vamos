@@ -5,143 +5,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Colores Santos - El Multiverso de Cerati</title>
     <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-            background-color: #02000a;
-            font-family: sans-serif;
-            touch-action: none;
-        }
-        #canvas-container {
-            width: 100vw;
-            height: 100vh;
+        body { margin: 0; overflow: hidden; background-color: #02000a; font-family: sans-serif; touch-action: none; }
+        #canvas-container { width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; }
+        
+        /* Indicador visual de la punta de la nave en primera persona */
+        #nave-hud {
             position: absolute;
-            top: 0;
-            left: 0;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 40px solid transparent;
+            border-right: 40px solid transparent;
+            border-bottom: 70px solid rgba(0, 255, 255, 0.4);
+            filter: drop-shadow(0 0 15px #00ffff);
+            pointer-events: none;
+            z-index: 5;
+            transition: transform 0.1s ease-out;
         }
+
         /* Pantalla de Intro / Bienvenida */
-        #pantalla-intro {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(2, 0, 10, 0.96);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-            text-align: center;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-        #pantalla-intro h1 {
-            color: #fff;
-            font-size: 26px;
-            letter-spacing: 5px;
-            text-shadow: 0 0 20px #ff00ff, 0 0 40px #00ffff;
-            margin-bottom: 10px;
-        }
-        #pantalla-intro p {
-            color: #00ffff;
-            font-size: 14px;
-            margin-bottom: 30px;
-            max-width: 320px;
-            line-height: 1.5;
-        }
-        .btn-inicio {
-            background: linear-gradient(45deg, #ff00ff, #00ffff);
-            border: 2px solid #fff;
-            color: #fff;
-            padding: 15px 35px;
-            border-radius: 30px;
-            font-size: 16px;
-            font-weight: bold;
-            letter-spacing: 2px;
-            box-shadow: 0 0 25px rgba(255, 0, 255, 0.7);
-            cursor: pointer;
-        }
+        #pantalla-intro { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(2, 0, 10, 0.96); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 100; text-align: center; padding: 20px; box-sizing: border-box; }
+        #pantalla-intro h1 { color: #fff; font-size: 26px; letter-spacing: 5px; text-shadow: 0 0 20px #ff00ff, 0 0 40px #00ffff; margin-bottom: 10px; }
+        #pantalla-intro p { color: #00ffff; font-size: 14px; margin-bottom: 30px; max-width: 320px; line-height: 1.5; }
+        .btn-inicio { background: linear-gradient(45deg, #ff00ff, #00ffff); border: 2px solid #fff; color: #fff; padding: 15px 35px; border-radius: 30px; font-size: 16px; font-weight: bold; letter-spacing: 2px; box-shadow: 0 0 25px rgba(255, 0, 255, 0.7); cursor: pointer; }
 
         /* Capa de Estadísticas y Estado del Viaje */
-        #ui-capa {
-            position: absolute;
-            top: 15px;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            padding: 0 20px;
-            box-sizing: border-box;
-            color: #fff;
-            text-shadow: 0 0 10px #ff00ff;
-            z-index: 10;
-            pointer-events: none;
-            display: none;
-        }
-        .stats-box {
-            font-size: 13px;
-            font-weight: bold;
-            background: rgba(10, 5, 30, 0.8);
-            border: 1px solid #ff00ff;
-            padding: 6px 12px;
-            border-radius: 12px;
-        }
-        #btn-volver {
-            position: absolute;
-            top: 60px;
-            left: 20px;
-            background: rgba(255, 0, 255, 0.3);
-            border: 1px solid #ff00ff;
-            color: #fff;
-            padding: 8px 15px;
-            border-radius: 10px;
-            font-size: 12px;
-            cursor: pointer;
-            z-index: 15;
-            display: none;
-            pointer-events: auto;
-        }
+        #ui-capa { position: absolute; top: 15px; width: 100%; display: flex; justify-content: space-between; padding: 0 20px; box-sizing: border-box; color: #fff; text-shadow: 0 0 10px #ff00ff; z-index: 10; pointer-events: none; display: none; }
+        .stats-box { font-size: 13px; font-weight: bold; background: rgba(10, 5, 30, 0.8); border: 1px solid #ff00ff; padding: 6px 12px; border-radius: 12px; }
+        #btn-volver { position: absolute; top: 60px; left: 20px; background: rgba(255, 0, 255, 0.3); border: 1px solid #ff00ff; color: #fff; padding: 8px 15px; border-radius: 10px; font-size: 12px; cursor: pointer; z-index: 15; display: none; pointer-events: auto; }
 
-        /* Ventana flotante de Trivia al chocar un mundo */
-        #trivia-modal {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(10, 5, 30, 0.95);
-            border: 2px solid #00ffff;
-            border-radius: 15px;
-            padding: 20px;
-            width: 85%;
-            max-width: 350px;
-            box-shadow: 0 0 30px rgba(0, 255, 255, 0.6);
-            z-index: 50;
-            text-align: center;
-            display: none;
-        }
+        /* Ventana flotante de Trivia al chocar un icono / mundo */
+        #trivia-modal { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(10, 5, 30, 0.95); border: 2px solid #00ffff; border-radius: 15px; padding: 20px; width: 85%; max-width: 350px; box-shadow: 0 0 30px rgba(0, 255, 255, 0.6); z-index: 50; text-align: center; display: none; }
         #trivia-titulo { color: #ff00ff; font-size: 13px; letter-spacing: 2px; margin-bottom: 8px; font-weight: bold; }
         #trivia-pregunta { color: #fff; font-size: 14px; margin-bottom: 20px; line-height: 1.4; }
-        .btn-opcion-cosmos {
-            background: rgba(0, 255, 255, 0.2);
-            border: 2px solid #00ffff;
-            color: #fff;
-            padding: 12px;
-            border-radius: 12px;
-            font-size: 13px;
-            font-weight: bold;
-            width: 100%;
-            margin-bottom: 10px;
-            cursor: pointer;
-            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
-        }
+        .btn-opcion-cosmos { background: rgba(0, 255, 255, 0.2); border: 2px solid #00ffff; color: #fff; padding: 12px; border-radius: 12px; font-size: 13px; font-weight: bold; width: 100%; margin-bottom: 10px; cursor: pointer; box-shadow: 0 0 10px rgba(0, 255, 255, 0.3); }
 
         /* Reproductor de YouTube oculto para el audio de fondo */
-        #youtube-audio {
-            position: absolute;
-            top: -9999px;
-            left: -9999px;
-            visibility: hidden;
-        }
+        #youtube-audio { position: absolute; top: -9999px; left: -9999px; visibility: hidden; }
     </style>
     <!-- Three.js CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -151,26 +53,29 @@
     <!-- PANTALLA DE INTRODUCCIÓN -->
     <div id="pantalla-intro">
         <h1>VUELTA POR EL UNIVERSO</h1>
-        <p>Explora el multiverso musical de Soda Stereo y Gustavo Cerati. Choca los portales para elegir tu camino.</p>
+        <p>Toma el comando de la nave, atraviesa portales galácticos y conquista cada disco de Soda Stereo y Gustavo Cerati.</p>
         <button class="btn-opcion btn-inicio" onclick="comenzarJuego()">✨ ENTRAR AL COSMOS</button>
     </div>
 
-    <!-- ESTADÍSTICAS Y BOTÓN RETROCEDER -->
+    <!-- UI DE JUEGO Y ESTADÍSTICAS -->
     <div id="ui-capa">
         <div class="stats-box">PUNTOS: <span id="txt-puntos">0</span></div>
         <div class="stats-box" id="txt-estado">SELECCIONA UNA GALAXIA</div>
         <div class="stats-box">VIDAS: <span id="txt-vidas">❤️❤️❤️</span></div>
     </div>
-    <button id="btn-volver" onclick="volverAlMenuPrincipal()">⬅️ VOLVER A GALAXIAS</button>
+    <button id="btn-volver" onclick="volverAlNivelAnterior()">⬅️ VOLVER</button>
 
     <!-- VENTANA DE TRIVIA FLOTANTE -->
     <div id="trivia-modal">
-        <div id="trivia-titulo">MUNDO DISCO</div>
+        <div id="trivia-titulo">OBJETO ICONO</div>
         <div id="trivia-pregunta">Pregunta aquí...</div>
         <button id="trivia-btn-1" class="btn-opcion-cosmos" onclick="verificarRespuesta(1)">Opción A</button>
         <button id="trivia-btn-2" class="btn-opcion-cosmos" onclick="verificarRespuesta(2)">Opción B</button>
     </div>
-    
+
+    <!-- PUNTA DE NAVE EN PRIMERA PERSONA -->
+    <div id="nave-hud"></div>
+
     <div id="canvas-container"></div>
 
     <!-- Reproductor de YouTube embebido -->
@@ -182,40 +87,55 @@
         let juegoIniciado = false;
         let puntos = 0;
         let vidas = 3;
-        let estadoActual = "MENU_PRINCIPAL"; 
+        let estadoActual = "MENU_PRINCIPAL"; // MENU_PRINCIPAL, MENU_DISCOS, JUEGO_ICONOS
         let objetosCosmos = [];
         let elementoSeleccionado = null;
         let pausarVuelo = false;
         let galaxiaActualKey = null;
+        let discoActualSeleccionado = null;
 
-        // Estructura del Multiverso con los temas exactos asignados
+        // Estructura expandida para soportar múltiples discos e iconos de trivia temáticos
         const multiverso = {
             soda: {
                 nombre: "GALAXIA: SODA STEREO",
-                trackId: "l8Yj6W0832g", // Tema clásico de Soda para la Galaxia Soda
+                trackId: "l8Yj6W0832g",
                 color: 0x00ffff,
                 discos: [
-                    { nombre: "DISCO: CANCIÓN ANIMAL", color: 0x990000, trackId: "eGrx3tZzjwE", preguntas: [
-                        { pregunta: "¿En qué año se lanzó el álbum 'Canción Animal'?", opcionA: "1988", opcionB: "1990", respuestaCorrecta: 2 },
-                        { pregunta: "¿Qué hit icónico abre el disco 'Canción Animal'?", opcionA: "De Música Ligera", opcionB: "En la Ciudad de la Furia", respuestaCorrecta: 1 }
-                    ]},
-                    { nombre: "DISCO: DOBLE VIDA", color: 0xffcc00, trackId: "lxWYAUF-mak", preguntas: [
-                        { pregunta: "¿Cuál es el primer tema de 'Doble Vida'?", opcionA: "Pic nic en el 4to B", opcionB: "Lo Que Sangra (La Cúpula)", respuestaCorrecta: 1 }
-                    ]}
+                    {
+                        nombre: "DISCO: NADA PERSONAL",
+                        color: 0xff00ff,
+                        trackId: "K1y5o3l8Yj6",
+                        iconos: [
+                            { nombre: "🎸 Guitarra Jackson", tipoObjeto: "guitarra", pregunta: "¿Qué modelo clásico utilizaba Gustavo en los 80s?", opcionA: "Jackson Soloist", opcionB: "Fender Stratocaster", respuestaCorrecta: 1 },
+                            { nombre: "💇 Peinados 80s", tipoObjeto: "peinados", pregunta: "¿Qué estilo capilar marcó tendencia en la era Nada Personal?", opcionA: "Ondas setenteras", opcionB: "Jopo y jopo alto con spray", respuestaCorrecta: 2 },
+                            { nombre: "🏟️ Estadio Obras", tipoObjeto: "lugar", pregunta: "¿En qué mítico estadio presentaron oficialmente este disco en 1985?", opcionA: "Estadio Obras Sanitarias", opcionB: "Luna Park", respuestaCorrecta: 1 }
+                        ]
+                    },
+                    {
+                        nombre: "DISCO: CANCIÓN ANIMAL",
+                        color: 0x990000,
+                        trackId: "eGrx3tZzjwE",
+                        iconos: [
+                            { nombre: "🐾 Arte de Tapa", tipoObjeto: "tapa", pregunta: "¿Qué animales aparecen en la portada original de Canción Animal?", opcionA: "Leones", opcionB: "Ciervos", respuestaCorrecta: 1 },
+                            { nombre: "⚡ Hit de Apertura", tipoObjeto: "hit", pregunta: "¿Qué canción icónica abre el disco?", opcionA: "De Música Ligera", opcionB: "En la Ciudad de la Furia", respuestaCorrecta: 1 }
+                        ]
+                    }
                 ]
             },
             solista: {
                 nombre: "GALAXIA: GUSTAVO CERATI",
-                trackId: "T1tDbvoHzo8", // Tema solista (ej. Puente)
+                trackId: "T1tDbvoHzo8",
                 color: 0xff00ff,
                 discos: [
-                    { nombre: "DISCO: BOCANADA", color: 0x0066ff, trackId: "sZnZfl6OGx8", preguntas: [
-                        { pregunta: '¿En qué año se lanzó el álbum "Bocanada"?', opcionA: "1997", opcionB: "1999", respuestaCorrecta: 2 },
-                        { pregunta: "¿Qué tema famoso pertenece a Bocanada?", opcionA: "Puente", opcionB: "Crimen", respuestaCorrecta: 1 }
-                    ]},
-                    { nombre: "DISCO: FUERZA NATURAL", color: 0x228b22, trackId: "tsTIlhhU_Q0", preguntas: [
-                        { pregunta: "¿Cuál fue el último álbum de estudio solista de Cerati?", opcionA: "Siempre es Hoy", opcionB: "Fuerza Natural", respuestaCorrecta: 2 }
-                    ]}
+                    {
+                        nombre: "DISCO: BOCANADA",
+                        color: 0x0066ff,
+                        trackId: "sZnZfl6OGx8",
+                        iconos: [
+                            { nombre: "🌉 Puente", tipoObjeto: "puente", pregunta: "¿Qué instrumento principal destaca en el estribillo de Puente?", opcionA: "Guitarras acústicas gemelas", opcionB: "Sinte analógico", respuestaCorrecta: 1 },
+                            { name: "🌀 Estudio Casa", tipoObjeto: "estudio", pregunta: "¿Cómo se llamaba el estudio personal donde grabó gran parte de Bocanada?", opcionA: "Del Cielito", opcionB: "Casa", respuestaCorrecta: 2 }
+                        ]
+                    }
                 ]
             }
         };
@@ -224,9 +144,7 @@
             juegoIniciado = true;
             document.getElementById('pantalla-intro').style.display = 'none';
             document.getElementById('ui-capa').style.display = 'flex';
-            
-            // Arranca sonando "Vuelta por el Universo" al entrar al multiverso principal
-            actualizarAudio("SV3oyTWdQao"); 
+            actualizarAudio("SV3oyTWdQao");
             cargarMenuPrincipal();
         }
 
@@ -235,27 +153,26 @@
             ytPlayer.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}`;
         }
 
-        // Configuración 3D con Three.js
+        // Configuración Three.js
         const canvasContainer = document.getElementById('canvas-container');
         const scene = new THREE.Scene();
         scene.fog = new THREE.FogExp2(0x02000a, 0.015);
-
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         canvasContainer.appendChild(renderer.domElement);
 
-        // Campo de Estrellas de fondo
+        // Estrellas de fondo
         const starGeometry = new THREE.BufferGeometry();
         const starPositions = [];
-        for(let i = 0; i < 600; i++) {
-            starPositions.push((Math.random() - 0.5) * 300, (Math.random() - 0.5) * 300, (Math.random() - 0.5) * 800);
+        for(let i = 0; i < 700; i++) {
+            starPositions.push((Math.random() - 0.5) * 400, (Math.random() - 0.5) * 400, (Math.random() - 0.5) * 900);
         }
         starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starPositions, 3));
-        const stars = new THREE.Points(starGeometry, new THREE.PointsMaterial({color: 0xffffff, size: 0.8}));
+        const stars = new THREE.Points(starGeometry, new THREE.PointsMaterial({color: 0xffffff, size: 0.9}));
         scene.add(stars);
-
         camera.position.z = 10;
+
         let raycaster = new THREE.Raycaster();
         let mouse = new THREE.Vector2();
 
@@ -264,14 +181,12 @@
             objetosCosmos = [];
         }
 
-        // 1. CARGAR MENÚ PRINCIPAL (Galaxias Soda y Solista)
+        // 1. Menú Principal (Galaxias)
         function cargarMenuPrincipal() {
             limpiarCosmos();
             estadoActual = "MENU_PRINCIPAL";
             document.getElementById('btn-volver').style.display = 'none';
             document.getElementById('txt-estado').innerText = "SELECCIONA UNA GALAXIA";
-            
-            // Vuelve a sonar Vuelta por el Universo en el menú principal
             actualizarAudio("SV3oyTWdQao");
 
             const galaxias = [
@@ -280,67 +195,66 @@
             ];
 
             galaxias.forEach((g, index) => {
-                const mesh = crearMundoMesh(g.nombre, g.color, index);
+                const mesh = crearPortalMesh(g.nombre, g.color, index);
                 mesh.userData = { tipo: 'galaxia', key: g.key, ...multiverso[g.key] };
                 scene.add(mesh);
                 objetosCosmos.push(mesh);
             });
         }
 
-        // 2. CARGAR MENÚ DE DISCOS
+        // 2. Menú de Discos dentro de la Galaxia
         function cargarDiscosGalaxia(galaxiaData, key) {
             limpiarCosmos();
             estadoActual = "MENU_DISCOS";
             galaxiaActualKey = key;
             document.getElementById('btn-volver').style.display = 'block';
             document.getElementById('txt-estado').innerText = galaxiaData.nombre;
-            
-            // Cambia al tema de la galaxia elegida
             actualizarAudio(galaxiaData.trackId);
 
             galaxiaData.discos.forEach((disco, index) => {
-                const mesh = crearMundoMesh(disco.nombre, disco.color, index);
+                const mesh = crearPortalMesh(disco.nombre, disco.color, index);
                 mesh.userData = { tipo: 'disco', ...disco };
                 scene.add(mesh);
                 objetosCosmos.push(mesh);
             });
         }
 
-        // 3. CARGAR PREGUNTAS DEL DISCO
-        let discoActualSeleccionado = null;
-        function cargarPreguntasDisco(discoData) {
+        // 3. Menú de Iconos de Trivia dentro del Disco
+        function cargarIconosDisco(discoData) {
             limpiarCosmos();
-            estadoActual = "JUEGO_PREGUNTAS";
+            estadoActual = "JUEGO_ICONOS";
             discoActualSeleccionado = discoData;
             document.getElementById('txt-estado').innerText = discoData.nombre;
-            
-            // Cambia al tema específico del disco
             actualizarAudio(discoData.trackId);
 
-            discoData.preguntas.forEach((preg, index) => {
-                const mesh = crearMundoMesh(`PREGUNTA ${index + 1}`, 0xff00ff, index);
-                mesh.userData = { tipo: 'pregunta', ...preg };
+            discoData.iconos.forEach((icono, index) => {
+                const mesh = crearPortalMesh(icono.nombre, 0x00ffcc, index);
+                mesh.userData = { tipo: 'icono_trivia', ...icono };
                 scene.add(mesh);
                 objetosCosmos.push(mesh);
             });
         }
 
-        function crearMundoMesh(nombre, colorHex, index) {
-            const geometry = new THREE.SphereGeometry(3.5, 24, 24);
+        function crearPortalMesh(nombre, colorHex, index) {
+            // Geometría toroidal/esférica simulando portal de agujero de tiempo
+            const geometry = new THREE.TorusGeometry(3.2, 0.8, 16, 50);
             const material = new THREE.MeshBasicMaterial({ color: colorHex, wireframe: true });
             const mesh = new THREE.Mesh(geometry, material);
-            mesh.position.set((Math.random() - 0.5) * 40, (Math.random() - 0.5) * 25, -60 - (index * 40));
+            mesh.position.set((Math.random() - 0.5) * 35, (Math.random() - 0.5) * 20, -50 - (index * 35));
             return mesh;
         }
 
-        function volverAlMenuPrincipal() {
-            cargarMenuPrincipal();
+        function volverAlNivelAnterior() {
+            if (estadoActual === "JUEGO_ICONOS") {
+                cargarDiscosGalaxia(multiverso[galaxiaActualKey], galaxiaActualKey);
+            } else if (estadoActual === "MENU_DISCOS") {
+                cargarMenuPrincipal();
+            }
         }
 
-        // Detección de toque / clic en el espacio
+        // Detección de selección por toque o clic al penetrar portales
         window.addEventListener('pointerdown', (e) => {
             if (!juegoIniciado || pausarVuelo) return;
-
             mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
             mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
             raycaster.setFromCamera(mouse, camera);
@@ -353,11 +267,10 @@
                 if (data.tipo === 'galaxia') {
                     cargarDiscosGalaxia(data, data.key);
                 } else if (data.tipo === 'disco') {
-                    cargarPreguntasDisco(data);
-                } else if (data.tipo === 'pregunta') {
+                    cargarIconosDisco(data);
+                } else if (data.tipo === 'icono_trivia') {
                     elementoSeleccionado = objetoTocado;
                     pausarVuelo = true;
-
                     document.getElementById('trivia-titulo').innerText = discoActualSeleccionado.nombre;
                     document.getElementById('trivia-pregunta').innerText = data.pregunta;
                     document.getElementById('trivia-btn-1').innerText = data.opcionA;
@@ -367,7 +280,6 @@
             }
         });
 
-        // Verificación de respuesta
         function verificarRespuesta(opcionElegida) {
             const data = elementoSeleccionado.userData;
             const esCorrecta = (opcionElegida === data.respuestaCorrecta);
@@ -376,26 +288,24 @@
             if (esCorrecta) {
                 puntos += 100;
                 document.getElementById('txt-puntos').innerText = puntos;
-                alert("¡Pregunta conquistada!");
-
+                alert("¡Icono conquistado con éxito!");
                 scene.remove(elementoSeleccionado);
                 const index = objetosCosmos.indexOf(elementoSeleccionado);
                 if (index > -1) objetosCosmos.splice(index, 1);
 
                 if (objetosCosmos.length === 0) {
-                    alert("¡Completaste todo este disco con éxito!");
+                    alert("¡Has conquistado todos los misterios de este disco!");
                     cargarDiscosGalaxia(multiverso[galaxiaActualKey], galaxiaActualKey);
                 }
             } else {
                 vidas--;
                 actualizarVidasUI();
-                alert("Respuesta incorrecta...");
+                alert("Respuesta incorrecta... la nave recibe daño.");
                 if (vidas <= 0) {
-                    alert("Te quedaste sin vidas. ¡Reiniciando viaje!");
+                    alert("Te quedaste sin escudo. ¡Reiniciando viaje cósmico!");
                     location.reload();
                 }
             }
-
             elementoSeleccionado = null;
             pausarVuelo = false;
         }
@@ -407,46 +317,52 @@
         }
 
         let targetX = 0, targetY = 0;
+        const naveHud = document.getElementById('nave-hud');
+
         window.addEventListener('mousemove', (e) => {
             if(!juegoIniciado) return;
             targetX = (e.clientX - window.innerWidth / 2) * 0.001;
             targetY = (e.clientY - window.innerHeight / 2) * 0.001;
+            
+            // Mover la punta de la nave visualmente en pantalla en primera persona
+            let desplazamientoX = (e.clientX - window.innerWidth / 2) * 0.15;
+            naveHud.style.transform = `translateX(calc(-50% + ${desplazamientoX}px)) rotate(${desplazamientoX * 0.05}deg)`;
         });
+
         window.addEventListener('touchmove', (e) => {
             if(!juegoIniciado) return;
             if(e.touches.length > 0) {
                 targetX = (e.touches[0].clientX - window.innerWidth / 2) * 0.001;
                 targetY = (e.touches[0].clientY - window.innerHeight / 2) * 0.001;
+                let desplazamientoX = (e.touches[0].clientX - window.innerWidth / 2) * 0.15;
+                naveHud.style.transform = `translateX(calc(-50% + ${desplazamientoX}px)) rotate(${desplazamientoX * 0.05}deg)`;
             }
         }, { passive: true });
 
-        // Bucle de animación del Multiverso
+        // Animación del vuelo espacial
         function animate() {
             requestAnimationFrame(animate);
-
             if (!pausarVuelo) {
                 objetosCosmos.forEach(obj => {
-                    obj.position.z += 0.4;
-                    obj.rotation.y += 0.01;
-
+                    obj.position.z += 0.5;
+                    obj.rotation.z += 0.01;
                     if (obj.position.z > 20) {
-                        obj.position.z = -200;
-                        obj.position.x = (Math.random() - 0.5) * 40;
-                        obj.position.y = (Math.random() - 0.5) * 25;
+                        obj.position.z = -180;
+                        obj.position.x = (Math.random() - 0.5) * 35;
+                        obj.position.y = (Math.random() - 0.5) * 20;
                     }
                 });
 
                 const starArr = stars.geometry.attributes.position.array;
                 for(let i = 2; i < starArr.length; i += 3) {
-                    starArr[i] += 0.8;
-                    if(starArr[i] > 100) starArr[i] = -700;
+                    starArr[i] += 1.0;
+                    if(starArr[i] > 100) starArr[i] = -800;
                 }
                 stars.geometry.attributes.position.needsUpdate = true;
             }
 
             camera.rotation.y += (targetX - camera.rotation.y) * 0.05;
             camera.rotation.x += (targetY - camera.rotation.x) * 0.05;
-
             renderer.render(scene, camera);
         }
 
