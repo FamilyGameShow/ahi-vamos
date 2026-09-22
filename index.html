@@ -182,8 +182,14 @@
         <div class="hud-juego" style="color:#ff00ffff;">📝 DOBLE VIDA (1988) - CRUCIGRAMA</div>
         <div class="crucigrama-wrapper">
             <div class="pistas-box">
-                <div><b>HORIZONTALES:</b><br>• CORriente alterna / comun<br>• FURIA<br>• DOBLE<br>• LANGUIS</div>
-                <div><b>VERTICALES:</b><br>• CUARTO<br>• CUPULA<br>• BORDE<br>• INTENSIVA</div>
+                <div><b>HORIZONTALES:</b><br>• Es un dia ……., en la superficie<br>• Ciudad de la …….
+<br>• Dia comun, ……, vida
+<br>• Corazon ……..
+</div>
+                <div><b>VERTICALES:</b><br>• Picnic en el ……. B
+<br>• Lo que sangra, la ……….
+<br>• Esta en el ……., sobre algun lugar
+<br>• terapia de amor ………..<br>• El ritmo de tus …….</div>
             </div>
             <div class="crucigrama-grid-real" id="crucigrama-matriz-container"></div>
             <button class="btn-tetris" id="btn-verificar-crucigrama" style="width:100%; margin-top:4px;">✨ VERIFICAR CRUCIGRAMA</button>
@@ -238,14 +244,15 @@
 
         // --- Disco 4 (Crucigrama Fiel al Diseño exacto de 12 filas x 11 columnas) ---
         const crucigramaDef = [
-            { palabra: "COMUN", r: 1, c: 5, dir: "H" },
-            { palabra: "CUARTO", r: 1, c: 5, dir: "V" },
+            { palabra: "COMUN", r: 1, c: 6, dir: "H" },
+            { palabra: "CUARTO", r: 1, c: 6, dir: "V" },
             { palabra: "FURIA", r: 3, c: 2, dir: "H" },
             { palabra: "CUPULA", r: 2, c: 3, dir: "V" },
             { palabra: "BORDE", r: 5, c: 1, dir: "V" },
-            { palabra: "DOBLE", r: 7, c: 0, dir: "H" },
-            { palabra: "LANGUIS", r: 10, c: 0, dir: "H" },
-            { palabra: "INTENSIVA", r: 1, c: 10, dir: "V" }
+            { palabra: "DOBLE", r: 6, c: 0, dir: "H" },
+            { palabra: "DELATOR", r: 9, c: 0, dir: "H" },
+            { palabra: "INTENSIVA", r: 0, c: 11, dir: "V" }
+            { palabra: "OJOS", r: 7, c: 5, dir: "V" }
         ];
 
         const listaDiscos = [
