@@ -86,6 +86,13 @@
         .controles-tetris { display: flex; gap: 12px; justify-content: center; margin-top: 8px; }
         .btn-tetris { background: rgba(0,255,255,0.2); border: 1px solid #00ffff; color: #fff; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; }
 
+        /* Estilos del Crucigrama (Doble Vida) */
+        .crucigrama-grid { display: grid; grid-template-columns: repeat(8, 36px); gap: 3px; justify-content: center; margin: 10px 0; }
+        .crucigrama-celda { width: 36px; height: 36px; background: #110033; border: 1px solid #00ffff; color: #fff; font-size: 16px; font-weight: bold; text-align: center; text-transform: uppercase; border-radius: 4px; }
+        .crucigrama-celda:focus { background: #ff00ff; outline: none; }
+        .crucigrama-celda.bloqueada { background: #050010; border-color: #333; pointer-events: none; }
+        .pista-crucigrama { color: #00ffff; font-size: 11px; margin-bottom: 8px; line-height: 1.3; }
+
         /* Ventana de Trofeos */
         #trofeos-modal {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
@@ -169,6 +176,15 @@
         </div>
     </div>
 
+    <!-- Mini-juego Crucigrama (Disco 4 - Doble Vida) -->
+    <div id="crucigrama-game-modal" class="modal-juego" style="border-color: #00ffff;">
+        <div class="hud-juego" style="color:#00ffff;">📝 DOBLE VIDA (1988) - CRUCIGRAMA</div>
+        <div class="objetivo-juego">🎯 COMPLETÁ LAS PALABRAS CLAVE</div>
+        <div class="pista-crucigrama" id="txt-pista-crucigrama">Pista: ...</div>
+        <div class="crucigrama-grid" id="crucigrama-grid-container"></div>
+        <button class="btn-tetris" id="btn-verificar-crucigrama" style="width:100%; margin-top:5px;">✨ VERIFICAR RESPUESTA</button>
+    </div>
+
     <div id="trofeos-modal">
         <h2>ESTANTERÍA DE TROFEOS</h2>
         <p style="font-size:12px; color:#ff00ff; margin-bottom:5px;">Tus discos conquistados en el multiverso:</p>
@@ -213,19 +229,21 @@
         let tetrisCols = 10, tetrisRows = 14;
         let tetrisGrid = Array(tetrisRows).fill().map(() => Array(tetrisCols).fill(0));
         let piezaActual = null, tetrisLineasCount = 0, tetrisGameLoop = null;
-        const tetrisPiezas = [
-            [[1,1,1,1]], // I
-            [[1,1],[1,1]], // O
-            [[0,1,0],[1,1,1]], // T
-            [[1,0],[1,0],[1,1]], // L
-            [[0,1],[0,1],[1,1]]  // J
+        const tetrisPiezas = [[[1,1,1,1]], [[1,1],[1,1]], [[0,1,0],[1,1,1]], [[1,0],[1,0],[1,1]], [[0,1],[0,1],[1,1]]];
+
+        // --- Disco 4 (Crucigrama - Doble Vida) ---
+        const preguntasDobleVida = [
+            { palabra: "FURIA", pista: "En la ciudad de la..." },
+            { palabra: "CUPULA", pista: "Lo que sangra (la...)" },
+            { palabra: "CORONADOS", pista: "... de gloria (de gloria vivión)" }
         ];
+        let indiceCrucigramaActual = 0;
 
         const listaDiscos = [
             { id: "soda_84", nombre: "SODA STEREO (1984)", trackId: "W0KTTiuw96A", fondo: "https://i.ibb.co/sT3L0VW/soda-stereo.png", conquistado: false, esPacman: true },
             { id: "nada_personal", nombre: "NADA PERSONAL (1985)", trackId: "uOlCYVXOyFI", fondo: "https://i.ibb.co/xq1TGpt8/nada-personal.png", conquistado: false, esGalaxy: true },
             { id: "signos", nombre: "SIGNOS (1986)", trackId: "OLAK5uy_nIcaYGMXGIcaSm_vut9nVFBbT9vlid9fY", fondo: "https://i.ibb.co/LXQbmwRR/signos.png", conquistado: false, esTetris: true },
-            { id: "doble_vida", nombre: "DOBLE VIDA (1988)", trackId: "4l3oYRETotc", fondo: "https://i.ibb.co/cXZpRnKk/doble-vida.png", conquistado: false },
+            { id: "doble_vida", nombre: "DOBLE VIDA (1988)", trackId: "4l3oYRETotc", fondo: "https://i.ibb.co/cXZpRnKk/doble-vida.png", conquistado: false, esCrucigrama: true },
             { id: "cancion_animal", nombre: "CANCIÓN ANIMAL (1990)", trackId: "ex1qICH12Eg", fondo: "https://i.ibb.co/rRbsVPJc/cancion-animal.png", conquistado: false },
             { id: "dynamo", nombre: "DYNAMO (1992)", trackId: "a5oUU6tGKFM", fondo: "https://i.ibb.co/S1G0p32/dynamo.png", conquistado: false },
             { id: "sueno_stereo", nombre: "SUEÑO STEREO (1995)", trackId: "IqBK2UjnUVA", fondo: "https://i.ibb.co/whCCS4r1/sue-o-stereo.png", conquistado: false },
@@ -235,9 +253,7 @@
             { id: "fuerza_natural", nombre: "FUERZA NATURAL (2009)", trackId: "Z7ndVxqUb48", fondo: "https://i.ibb.co/V0yVhy8Y/fuerza-natural.png", conquistado: false }
         ];
 
-        function cambiarFondo(urlImagen) {
-            document.getElementById('escenografia-fondo').style.backgroundImage = `url('${urlImagen}')`;
-        }
+        function cambiarFondo(urlImagen) { document.getElementById('escenografia-fondo').style.backgroundImage = `url('${urlImagen}')`; }
 
         document.getElementById('btn-entrar').addEventListener('click', iniciarConteoRegresivo);
         document.getElementById('btn-entrar').addEventListener('touchend', (e) => { e.preventDefault(); iniciarConteoRegresivo(); });
@@ -253,13 +269,8 @@
             numEl.innerText = cuenta;
             let timer = setInterval(() => {
                 cuenta--;
-                if (cuenta > 0) {
-                    numEl.innerText = cuenta;
-                } else {
-                    clearInterval(timer);
-                    document.getElementById('pantalla-conteo').style.display = 'none';
-                    comenzarJuegoReal();
-                }
+                if (cuenta > 0) { numEl.innerText = cuenta; }
+                else { clearInterval(timer); document.getElementById('pantalla-conteo').style.display = 'none'; comenzarJuegoReal(); }
             }, 1000);
         }
 
@@ -381,9 +392,7 @@
                     mesh.position.set(0, 0.5, 2);
                     mesh.rotation.set(0, 0, 0);
                     mesh.scale.set(1.6, 1.6, 1.6);
-                } else {
-                    mesh.visible = false;
-                }
+                } else { mesh.visible = false; }
             });
 
             document.getElementById('disco-seleccionado-titulo').innerText = discoEnFoco.nombre;
@@ -392,15 +401,8 @@
             document.getElementById('btn-trofeos').style.display = 'none';
         }
 
-        function cancelarFocoDisco() {
-            cargarMultiversoDiscos();
-        }
-
-        function confirmarEntradaDisco() {
-            if (!discoEnFoco) return;
-            document.getElementById('disco-seleccionado-banner').style.display = 'none';
-            entrarADisco(discoEnFoco);
-        }
+        function cancelarFocoDisco() { cargarMultiversoDiscos(); }
+        function confirmarEntradaDisco() { if (!discoEnFoco) return; document.getElementById('disco-seleccionado-banner').style.display = 'none'; entrarADisco(discoEnFoco); }
 
         function entrarADisco(disco) {
             limpiarEscena();
@@ -408,16 +410,11 @@
             discoActual = disco;
             reproducirAudio(disco.trackId);
 
-            if (disco.esPacman) {
-                iniciarPacmanSoda84();
-            } else if (disco.esGalaxy) {
-                iniciarGalaxyNadaPersonal();
-            } else if (disco.esTetris) {
-                iniciarTetrisSignos();
-            } else {
-                alert(`¡Próximamente minijuego para ${disco.nombre}!`);
-                volverAlMultiverso();
-            }
+            if (disco.esPacman) { iniciarPacmanSoda84(); }
+            else if (disco.esGalaxy) { iniciarGalaxyNadaPersonal(); }
+            else if (disco.esTetris) { iniciarTetrisSignos(); }
+            else if (disco.esCrucigrama) { iniciarCrucigramaDobleVida(); }
+            else { alert(`¡Próximamente minijuego para ${disco.nombre}!`); volverAlMultiverso(); }
         }
 
         // --- DISCO 1 (Pac-Man) ---
@@ -572,9 +569,7 @@
         function fijarPiezaTetris() {
             piezaActual.shape.forEach((row, r) => {
                 row.forEach((val, c) => {
-                    if (val && piezaActual.r + r >= 0) {
-                        tetrisGrid[piezaActual.r + r][piezaActual.c + c] = 1;
-                    }
+                    if (val && piezaActual.r + r >= 0) { tetrisGrid[piezaActual.r + r][piezaActual.c + c] = 1; }
                 });
             });
             chequearLineasTetris();
@@ -591,72 +586,96 @@
                     document.getElementById('txt-puntos').innerText = puntos;
                     document.getElementById('txt-tetris-lineas').innerText = tetrisLineasCount;
                     r++;
-                    if (tetrisLineasCount >= 5) {
-                        finalizarDiscoActual();
-                    }
+                    if (tetrisLineasCount >= 5) { finalizarDiscoActual(); }
                 }
             }
         }
 
         function actualizarTetris() {
             if (estadoActual !== "JUEGO_DISCO" || !discoActual.esTetris) return;
-            if (!chequearColisionTetris(piezaActual.r + 1, piezaActual.c, piezaActual.shape)) {
-                piezaActual.r++;
-            } else {
-                fijarPiezaTetris();
-            }
+            if (!chequearColisionTetris(piezaActual.r + 1, piezaActual.c, piezaActual.shape)) { piezaActual.r++; }
+            else { fijarPiezaTetris(); }
             renderizarTetris();
         }
 
         function renderizarTetris() {
             const canvas = document.getElementById('tetris-canvas');
             const ctx = canvas.getContext('2d');
-            const boxW = canvas.width / tetrisCols;
-            const boxH = canvas.height / tetrisRows;
-
+            const boxW = canvas.width / tetrisCols, boxH = canvas.height / tetrisRows;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-
             for (let r = 0; r < tetrisRows; r++) {
                 for (let c = 0; c < tetrisCols; c++) {
-                    if (tetrisGrid[r][c]) {
-                        ctx.fillStyle = '#ff00ff';
-                        ctx.fillRect(c * boxW + 1, r * boxH + 1, boxW - 2, boxH - 2);
-                    }
+                    if (tetrisGrid[r][c]) { ctx.fillStyle = '#ff00ff'; ctx.fillRect(c * boxW + 1, r * boxH + 1, boxW - 2, boxH - 2); }
                 }
             }
-
             if (piezaActual) {
                 ctx.fillStyle = '#00ffff';
                 piezaActual.shape.forEach((row, r) => {
                     row.forEach((val, c) => {
-                        if (val) {
-                            ctx.fillRect((piezaActual.c + c) * boxW + 1, (piezaActual.r + r) * boxH + 1, boxW - 2, boxH - 2);
-                        }
+                        if (val) { ctx.fillRect((piezaActual.c + c) * boxW + 1, (piezaActual.r + r) * boxH + 1, boxW - 2, boxH - 2); }
                     });
                 });
             }
         }
 
-        document.getElementById('btn-tetris-izq').onclick = () => {
-            if (piezaActual && !chequearColisionTetris(piezaActual.r, piezaActual.c - 1, piezaActual.shape)) piezaActual.c--;
-            renderizarTetris();
-        };
-        document.getElementById('btn-tetris-der').onclick = () => {
-            if (piezaActual && !chequearColisionTetris(piezaActual.r, piezaActual.c + 1, piezaActual.shape)) piezaActual.c++;
-            renderizarTetris();
-        };
+        document.getElementById('btn-tetris-izq').onclick = () => { if (piezaActual && !chequearColisionTetris(piezaActual.r, piezaActual.c - 1, piezaActual.shape)) piezaActual.c--; renderizarTetris(); };
+        document.getElementById('btn-tetris-der').onclick = () => { if (piezaActual && !chequearColisionTetris(piezaActual.r, piezaActual.c + 1, piezaActual.shape)) piezaActual.c++; renderizarTetris(); };
         document.getElementById('btn-tetris-rot').onclick = () => {
             let rotada = piezaActual.shape[0].map((val, index) => piezaActual.shape.map(row => row[index]).reverse());
             if (!chequearColisionTetris(piezaActual.r, piezaActual.c, rotada)) piezaActual.shape = rotada;
             renderizarTetris();
         };
 
+        // --- DISCO 4 (Crucigrama - Doble Vida) ---
+        function iniciarCrucigramaDobleVida() {
+            document.getElementById('crucigrama-game-modal').style.display = 'block';
+            indiceCrucigramaActual = 0;
+            renderizarCrucigramaActual();
+        }
+
+        function renderizarCrucigramaActual() {
+            if (indiceCrucigramaActual >= preguntasDobleVida.length) {
+                finalizarDiscoActual();
+                return;
+            }
+            let item = preguntasDobleVida[indiceCrucigramaActual];
+            document.getElementById('txt-pista-crucigrama').innerText = `Pista ${indiceCrucigramaActual + 1}: ${item.pista}`;
+            
+            const container = document.getElementById('crucigrama-grid-container');
+            container.innerHTML = '';
+            
+            for (let i = 0; i < item.palabra.length; i++) {
+                let input = document.createElement('input');
+                input.type = 'text';
+                input.maxLength = 1;
+                input.className = 'crucigrama-celda';
+                input.dataset.letraCorrecta = item.palabra[i];
+                container.appendChild(input);
+            }
+        }
+
+        document.getElementById('btn-verificar-crucigrama').onclick = () => {
+            const inputs = document.querySelectorAll('.crucigrama-celda');
+            let palabraEscrita = "";
+            inputs.forEach(inp => palabraEscrita += inp.value.toUpperCase());
+            
+            let palabraObjetivo = preguntasDobleVida[indiceCrucigramaActual].palabra;
+            if (palabraEscrita === palabraObjetivo) {
+                puntos += 50;
+                document.getElementById('txt-puntos').innerText = puntos;
+                indiceCrucigramaActual++;
+                renderizarCrucigramaActual();
+            } else {
+                alert("¡Ops! Hay letras incorrectas, probá de nuevo.");
+            }
+        };
 
         // --- Cierre común de discos ---
         function finalizarDiscoActual() {
             document.getElementById('pacman-game-modal').style.display = 'none';
             document.getElementById('galaxy-game-modal').style.display = 'none';
             document.getElementById('tetris-game-modal').style.display = 'none';
+            document.getElementById('crucigrama-game-modal').style.display = 'none';
 
             if (!discoActual.conquistado) {
                 discoActual.conquistado = true;
@@ -671,6 +690,7 @@
             document.getElementById('pacman-game-modal').style.display = 'none';
             document.getElementById('galaxy-game-modal').style.display = 'none';
             document.getElementById('tetris-game-modal').style.display = 'none';
+            document.getElementById('crucigrama-game-modal').style.display = 'none';
             document.getElementById('trofeos-modal').style.display = 'none';
             document.getElementById('disco-seleccionado-banner').style.display = 'none';
             cargarMultiversoDiscos();
@@ -683,70 +703,45 @@
             listaDiscos.forEach(disco => {
                 const div = document.createElement('div');
                 div.className = `item-trofeo ${disco.conquistado ? 'conquistado' : ''}`;
-                div.innerHTML = `
-                    <img src="${disco.fondo}" alt="Tapa">
-                    <div>
-                        <strong>${disco.nombre}</strong><br>
-                        <span>${disco.conquistado ? '✅ Conquistado' : '🔒 Pendiente'}</span>
-                    </div>
-                `;
+                div.innerHTML = `<img src="${disco.fondo}" alt="Tapa"><div><strong>${disco.nombre}</strong><br><span>${disco.conquistado ? '✅ Conquistado' : '🔒 Pendiente'}</span></div>`;
                 grid.appendChild(div);
             });
             document.getElementById('trofeos-modal').style.display = 'block';
         }
 
-        function cerrarVentanaTrofeos() {
-            document.getElementById('trofeos-modal').style.display = 'none';
-        }
+        function cerrarVentanaTrofeos() { document.getElementById('trofeos-modal').style.display = 'none'; }
 
         function manejarSeleccionToque(clientX, clientY) {
             if (!juegoIniciado || estadoActual !== "MENU_PRINCIPAL") return;
-
             mouseVector.x = (clientX / window.innerWidth) * 2 - 1;
             mouseVector.y = -(clientY / window.innerHeight) * 2 + 1;
-
             raycaster.setFromCamera(mouseVector, camera);
             const intersects = raycaster.intersectObjects(meshesDiscos, true);
-
             if (intersects.length > 0) {
                 let objSeleccionado = intersects[0].object;
-                while (objSeleccionado.parent && !objSeleccionado.userData.discoData) {
-                    objSeleccionado = objSeleccionado.parent;
-                }
-                if (objSeleccionado.userData && objSeleccionado.userData.discoData) {
-                    enfocarDisco(objSeleccionado);
-                }
+                while (objSeleccionado.parent && !objSeleccionado.userData.discoData) { objSeleccionado = objSeleccionado.parent; }
+                if (objSeleccionado.userData && objSeleccionado.userData.discoData) { enfocarDisco(objSeleccionado); }
             }
         }
 
         window.addEventListener('click', (e) => { manejarSeleccionToque(e.clientX, e.clientY); });
         window.addEventListener('touchend', (e) => {
-            if(e.changedTouches.length > 0) {
-                manejarSeleccionToque(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
-            }
+            if(e.changedTouches.length > 0) { manejarSeleccionToque(e.changedTouches[0].clientX, e.changedTouches[0].clientY); }
         }, { passive: true });
 
         function animate() {
             requestAnimationFrame(animate);
-
             if (estadoActual === "MENU_PRINCIPAL") {
                 meshesDiscos.forEach(mesh => {
                     mesh.position.z += 0.08;
-                    if (mesh.position.z > 5) {
-                        mesh.position.z = -150;
-                        mesh.position.x = (Math.random() - 0.5) * 28;
-                        mesh.position.y = (Math.random() - 0.5) * 15;
-                    }
+                    if (mesh.position.z > 5) { mesh.position.z = -150; mesh.position.x = (Math.random() - 0.5) * 28; mesh.position.y = (Math.random() - 0.5) * 15; }
                 });
             }
-
             const starArr = stars.geometry.attributes.position.array;
             for(let i = 2; i < starArr.length; i += 3) {
-                starArr[i] += 0.5;
-                if(starArr[i] > 100) starArr[i] = -900;
+                starArr[i] += 0.5; if(starArr[i] > 100) starArr[i] = -900;
             }
             stars.geometry.attributes.position.needsUpdate = true;
-
             renderer.render(scene, camera);
         }
 
