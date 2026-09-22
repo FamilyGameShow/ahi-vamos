@@ -176,7 +176,13 @@
         let pacGridX = 5, pacGridY = 3;
         let pacDirX = 0, pacDirY = 0;
         let itemsCuadricula = [];
-        let cancionesObjetivoSoda84 = ["Jet Set", "Vitaminas", "Dietético", "Un Misil"];
+        
+        // ¡Lista completa con los 10 temas oficiales del disco debut Soda Stereo 1984!
+        let cancionesObjetivoSoda84 = [
+            "El Way Of Love", "Dietético", "Tele-Ka", "Trátame Suavemente", 
+            "Soda Stereo", "Jet Set", "Un Misil en mi Placard", 
+            "El Tiempo Pasará", "Afull", "Vitaminas"
+        ];
         let indiceMetaActual = 0;
         let pacmanGameLoop = null;
 
@@ -194,7 +200,8 @@
         const offsetX = 10;
         const offsetY = 15;
 
-        const cancionesTrampa = ["Persiana", "Zoom", "Signos", "Crimen"];
+        // Canciones trampa de otros discos para confundir
+        const cancionesTrampa = ["Persiana", "Zoom", "Signos", "Crimen", "Puente", "De Música", "Prófugos"];
 
         const listaDiscos = [
             { id: "soda_84", nombre: "SODA STEREO (1984)", trackId: "W0KTTiuw96A", fondo: "https://i.ibb.co/sT3L0VW/soda-stereo.png", conquistado: false, esPacman: true },
@@ -422,7 +429,6 @@
             document.getElementById('txt-cancion-meta').innerText = cancionesObjetivoSoda84[indiceMetaActual];
 
             itemsCuadricula = [];
-            // Colocamos la canción correcta y 2 trampa en posiciones libres
             let colocadas = 0;
             let cancionCorrecta = cancionesObjetivoSoda84[indiceMetaActual];
 
@@ -436,7 +442,7 @@
                 }
             }
 
-            // Poner un par de trampa
+            // Poner trampas
             for(let i = 0; i < 2; i++) {
                 let rx = Math.floor(Math.random() * mapaLaberinto[0].length);
                 let ry = Math.floor(Math.random() * mapaLaberinto.length);
@@ -447,7 +453,7 @@
             }
         }
 
-        // Control táctil intuitivo por toque en el canvas (calcula dirección hacia el toque)
+        // Control táctil intuitivo por toque en el canvas
         const canvasEl = document.getElementById('pacman-canvas');
         canvasEl.addEventListener('click', (e) => {
             const rect = canvasEl.getBoundingClientRect();
@@ -475,7 +481,7 @@
             let nextX = pacGridX + pacDirX;
             let nextY = pacGridY + pacDirY;
 
-            // Soporte para túneles laterales (Si sale por el borde izquierdo o derecho)
+            // Soporte para túneles laterales
             if (nextX < 0) nextX = mapaLaberinto[0].length - 1;
             if (nextX >= mapaLaberinto[0].length) nextX = 0;
 
@@ -497,7 +503,6 @@
                     } else {
                         puntos = Math.max(0, puntos - 10);
                         document.getElementById('txt-puntos').innerText = puntos;
-                        // Eliminar trampa mal comida
                         itemsCuadricula.splice(index, 1);
                     }
                 }
@@ -556,7 +561,7 @@
                 discosConquistadosCount++;
                 document.getElementById('txt-discos-conquistados').innerText = discosConquistadosCount;
             }
-            alert(`¡Excelente! Conquistaste ${discoActual.nombre} comiendo todas sus canciones en el laberinto.`);
+            alert(`¡Excelente! Conquistaste ${discoActual.nombre} comiendo todos sus temas en el laberinto.`);
             volverAlMultiverso();
         }
 
