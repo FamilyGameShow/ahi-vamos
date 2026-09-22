@@ -86,7 +86,7 @@
     <div id="ui-capa">
         <div class="stats-box">PUNTOS: <span id="txt-puntos">0</span></div>
         <div class="stats-box" id="txt-estado">SELECCIONA UN DISCO</div>
-        <div class="stats-box">DISCOS CONquistados: <span id="txt-discos-conquistados">0</span>/11</div>
+        <div class="stats-box">DISCOS CONQUISTADOS: <span id="txt-discos-conquistados">0</span>/11</div>
     </div>
 
     <button id="btn-volver">⬅️ VOLVER AL MULTIVERSO</button>
@@ -108,13 +108,12 @@
         let juegoIniciado = false;
         let puntos = 0;
         let discosConquistadosCount = 0;
-        let estadoActual = "MENU_PRINCIPAL"; // MENU_PRINCIPAL o JUEGO_DISCO
+        let estadoActual = "MENU_PRINCIPAL";
         let meshesDiscos = [];
         let discoActual = null;
         let preguntaActualIndex = 0;
         let erroresEnDisco = 0;
 
-        // Base completa con todos los discos y sus 10 consignas configurables
         const listaDiscos = [
             { id: "soda_84", nombre: "SODA STEREO (1984)", trackId: "W0KTTiuw96A", fondo: "https://i.ibb.co/sT3L0VW/soda-stereo.png", conquistado: false, preguntas: [
                 { p: "¿Qué tema abre el primer disco oficial de Soda?", a: "Jet Set", b: "¿Por qué te fuiste?", r: 1 },
@@ -228,7 +227,7 @@
                 { p: "¿Qué galardón internacional ganó el tema Crimen?", a: "Premio Grammy Latino a Mejor Canción Rock", b: "MTV Video Music Award", r: 1 },
                 { p: "¿El sonido marcó un retorno triunfal hacia...", a: "El rock de guitarras filosas", b: "La electrónica pura", r: 1 },
                 { p: "¿Gran éxito potente de apertura?", a: "La excepción", b: "Crimen", r: 1 },
-                { p: "¿Quiénes integraban su banda en esta gira?", a:_ "Richard Coleman, Fernando Nalé, etc.", b: "Músicos invitados aleatorios", r: 1 },
+                { p: "¿Quiénes integraban su banda en esta gira?", a: "Richard Coleman, Fernando Nalé, etc.", b: "Músicos invitados aleatorios", r: 1 },
                 { p: "¿Videoclip con Gustavo tocando en una habitación oscura?", a: "Crimen", b: "Lago en el cielo", r: 1 },
                 { p: "¿Gira monumental que recorrió el mundo?", a: "Gira Ahí Vamos", b: "Solo Argentina", r: 1 },
                 { p: "¿Disco certificado como...?", a: "Platino y Triple Platino", b: "Disco de oro simple", r: 1 },
@@ -246,7 +245,7 @@
                 { p: "¿Participó su hijo Benito en la composición?", a: "Sí, en varios temas clave", b: "No participó", r: 1 },
                 { p: "¿Ganador de múltiples premios...", a: "Grammy Latinos", b: "Premios Gardel de Oro únicamente", r: 1 },
                 { p: "¿El viaje conceptual proponía ir hacia...", a: "Una travesía natural y mental", b: "El espacio exterior galáctico", r: 1 },
-                    { p: "¿Su legado musical en esta obra es...", a: "Una despedida luminosa y brillante", b: "Un trabajo experimental fallido", r: 1 }
+                { p: "¿Su legado musical en esta obra es...", a: "Una despedida luminosa y brillante", b: "Un trabajo experimental fallido", r: 1 }
             ]}
         ];
 
@@ -303,7 +302,6 @@
         renderer.setSize(window.innerWidth, window.innerHeight);
         canvasContainer.appendChild(renderer.domElement);
 
-        // Estrellas de fondo
         const starGeometry = new THREE.BufferGeometry();
         const starPositions = [];
         for(let i = 0; i < 800; i++) {
@@ -322,7 +320,6 @@
             meshesDiscos = [];
         }
 
-        // CREAR LA PRIMERA PANTALLA: Todos los discos volando muy despacio
         function cargarMultiversoDiscos() {
             limpiarEscena();
             estadoActual = "MENU_PRINCIPAL";
@@ -334,10 +331,7 @@
             const textureLoader = new THREE.TextureLoader();
 
             listaDiscos.forEach((disco, index) => {
-                // Creamos un plano/cuadro elegante para simular la tapa del disco
                 const geometry = new THREE.PlaneGeometry(4.5, 4.5);
-                
-                // Si la imagen carga, la usamos; sino color sólido de respaldo
                 let material;
                 if(disco.fondo) {
                     const texture = textureLoader.load(disco.fondo);
@@ -347,8 +341,6 @@
                 }
 
                 const mesh = new THREE.Mesh(geometry, material);
-                
-                // Distribuir en el espacio 3D flotando
                 const posX = (Math.random() - 0.5) * 32;
                 const posY = (Math.random() - 0.5) * 18;
                 const posZ = -30 - (index * 15);
@@ -361,13 +353,12 @@
             });
         }
 
-        // AL SELECCIONAR UN DISCO: Entramos a su planeta con 10 consignas
         function entrarADisco(disco) {
             limpiarEscena();
             estadoActual = "JUEGO_DISCO";
             discoActual = disco;
             preguntaActualIndex = 0;
-            erroresInDisco = 0;
+            erroresEnDisco = 0;
 
             document.getElementById('btn-volver').style.display = 'block';
             document.getElementById('txt-estado').innerText = disco.nombre;
@@ -386,7 +377,6 @@
                 document.getElementById('trivia-btn-2').innerText = preguntaObj.b;
                 document.getElementById('trivia-modal').style.display = 'block';
             } else {
-                // Finalizamos las 10 consignas del disco
                 finalizarDisco();
             }
         }
@@ -396,7 +386,7 @@
             document.getElementById('trivia-modal').style.display = 'none';
 
             if (opcionElegida === preguntaObj.r) {
-                puntos += 10; // 10 puntos por cada una de las 10 correctas (total 100)
+                puntos += 10;
                 document.getElementById('txt-puntos').innerText = puntos;
             } else {
                 erroresEnDisco++;
@@ -425,7 +415,6 @@
             cargarMultiversoDiscos();
         }
 
-        // Interacción táctil / clic directo en las tapas flotantes
         function manejarSeleccionToque(clientX, clientY) {
             if (!juegoIniciado || estadoActual !== "MENU_PRINCIPAL") return;
 
@@ -448,13 +437,12 @@
             }
         }, { passive: true });
 
-        // Bucle de animación: hace que las tapas vuelen muy despacio por la pantalla
         function animate() {
             requestAnimationFrame(animate);
 
             if (estadoActual === "MENU_PRINCIPAL") {
                 meshesDiscos.forEach(mesh => {
-                    mesh.position.z += 0.08; // Vuelo muy suave y lento hacia adelante
+                    mesh.position.z += 0.08;
                     mesh.rotation.z += 0.002;
                     if (mesh.position.z > 5) {
                         mesh.position.z = -150;
@@ -464,7 +452,6 @@
                 });
             }
 
-            // Movimiento sutil de estrellas
             const starArr = stars.geometry.attributes.position.array;
             for(let i = 2; i < starArr.length; i += 3) {
                 starArr[i] += 0.5;
