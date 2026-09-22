@@ -195,7 +195,7 @@
         <div class="objetivo-juego" id="txt-barco-meta">🎯 HUNDÍ LOS BARCOS PARA REVELAR LAS CANCIONES</div>
         <div class="crucigrama-wrapper">
             <div class="pistas-box" style="margin-bottom: 5px;">
-                <div><b>BARCOS:</b> Té, Séptimo Día, Un Millón..., Animal, Ligera, Solo, Sol, Caníbales.</div>
+                <div><b>BARCOS:</b> Té, Séptimo, Millón, Animal, Ligera, Solo, Sol, Hombre, Caníbales.</div>
                 <div><b>ESTADO:</b> <span id="txt-barcos-hundidos-contador">0</span>/9 Barcos Hundidos</div>
             </div>
             <div id="batalla-naval-grid" style="display: grid; grid-template-columns: repeat(11, 26px); gap: 2px; justify-content: center; margin: 4px 0; background: #000; padding: 4px; border: 2px solid #00ffff; border-radius: 6px;"></div>
@@ -354,7 +354,7 @@
 
         // --- DISCO 2 (Galaxy - Nada Personal 1985) ---
         let naveX = 190;
-        let cancionesNadaPersonal = ["Nada Personal", "Ecos", "Imágenes Retro", "Quando Pase el Temblor", "Juego de Seducción", "Si no fuera por", "Estoy azulado", "Danza Rota", "Observándonos", "El cuerpo del delito"];
+        let cancionesNadaPersonal = ["Nada Personal", "Ecos", "Imágenes Retro", "Cuando Pase el Temblor", "Juego de Seducción", "Si no fuera por", "Estoy azulado", "Danza Rota", "Observándonos", "El cuerpo del delito"];
         let indiceMetaNadaPersonal = 0;
         let objetosGalaxia = [];
         let galaxyGameLoop = null;
@@ -554,7 +554,7 @@
 
         // --- DISCO 5 (Batalla Naval - Canción Animal 1990) ---
         const barcosCancionAnimal = [
-            { nombre: "Té Para Tres", segundos: 0, coordenadas: [{r:0, c:0, letra:'T'}, {r:0, c:1, letra:'E'}] },
+            { nombre: "Té Para Tres", segundos: 2074, coordenadas: [{r:0, c:0, letra:'T'}, {r:0, c:1, letra:'E'}] },
             { nombre: "Séptimo Día", segundos: 235, coordenadas: [{r:1, c:2, letra:'S'}, {r:1, c:3, letra:'É'}, {r:1, c:4, letra:'P'}, {r:1, c:5, letra:'T'}, {r:1, c:6, letra:'I'}, {r:1, c:7, letra:'M'}, {r:1, c:8, letra:'O'}] },
             { nombre: "Un Millón de Años Luz", segundos: 510, coordenadas: [{r:2, c:0, letra:'M'}, {r:3, c:0, letra:'I'}, {r:4, c:0, letra:'L'}, {r:5, c:0, letra:'L'}, {r:6, c:0, letra:'Ó'}, {r:7, c:0, letra:'N'}] },
             { nombre: "Animal", segundos: 780, coordenadas: [{r:3, c:2, letra:'A'}, {r:3, c:3, letra:'N'}, {r:3, c:4, letra:'I'}, {r:3, c:5, letra:'M'}, {r:3, c:6, letra:'A'}, {r:3, c:7, letra:'L'}] },
@@ -571,7 +571,7 @@
             { id: "nada_personal", nombre: "NADA PERSONAL (1985)", trackId: "uOlCYVXOyFI", fondo: "https://i.ibb.co/xq1TGpt8/nada-personal.png", conquistado: false, esGalaxy: true },
             { id: "signos", nombre: "SIGNOS (1986)", trackId: "xiYMsOtPa5c", fondo: "https://i.ibb.co/LXQbmwRR/signos.png", conquistado: false, esTetris: true },
             { id: "doble_vida", nombre: "DOBLE VIDA (1988)", trackId: "4l3oYRETotc", fondo: "https://i.ibb.co/cXZpRnKk/doble-vida.png", conquistado: false, esCrucigrama: true },
-            { id: "cancion_animal", nombre: "CANCIÓN ANIMAL (1990)", trackId: "BxDciewLqAU", fondo: "https://i.ibb.co/rRbsVPJc/cancion-animal.png", conquistado: false, esBatallaNaval: true },
+            { id: "cancion_animal", nombre: "CANCIÓN ANIMAL (1990)", trackId: "jzLVaylmbJU&list=RDjzLVaylmbJU&start_radio=1", fondo: "https://i.ibb.co/rRbsVPJc/cancion-animal.png", conquistado: false, esBatallaNaval: true },
             { id: "dynamo", nombre: "DYNAMO (1992)", trackId: "a5oUU6tGKFM", fondo: "https://i.ibb.co/S1G0p32/dynamo.png", conquistado: false },
             { id: "sueno_stereo", nombre: "SUEÑO STEREO (1995)", trackId: "IqBK2UjnUVA", fondo: "https://i.ibb.co/whCCS4r1/sue-o-stereo.png", conquistado: false },
             { id: "amor_amarillo", nombre: "AMOR AMARILLO (1993)", trackId: "ZOd-N9qGQK8", fondo: "https://i.ibb.co/KpPXvH5K/amor-amarillo.png", conquistado: false },
