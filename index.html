@@ -8,49 +8,28 @@
         body { margin: 0; overflow: hidden; background-color: #02000a; font-family: sans-serif; touch-action: none; }
         #canvas-container { width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; z-index: 1; }
         
-        /* Capa de fondo con la escenografía dinámica */
+        /* Capa de fondo dinámico */
         #escenografia-fondo {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-size: cover;
-            background-position: center;
-            opacity: 0.35;
-            z-index: 0;
+            position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-size: cover; background-position: center; opacity: 0.35; z-index: 0;
             transition: background-image 0.8s ease-in-out;
         }
 
-        /* Indicador visual de la punta de la nave */
-        #nave-hud {
-            position: absolute;
-            bottom: 42%;
-            left: 50%;
-            transform: translate(-50%, 50%);
-            width: 0;
-            height: 0;
-            border-left: 25px solid transparent;
-            border-right: 25px solid transparent;
-            border-bottom: 50px solid rgba(0, 255, 255, 0.7);
-            filter: drop-shadow(0 0 15px #00ffff);
-            pointer-events: none; 
-            z-index: 5;
-            transition: transform 0.05s ease-out;
-            display: none;
-        }
-
-        /* Pantalla de Intro / Bienvenida */
-        #pantalla-intro { 
-            position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; 
-            background: rgba(2, 0, 10, 0.94); display: flex; flex-direction: column; 
-            justify-content: center; align-items: center; z-index: 100; text-align: center; padding: 20px; box-sizing: border-box; touch-action: auto; 
+        /* Pantalla de Intro */
+        #pantalla-intro {
+            position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(2, 0, 10, 0.94); display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 100; text-align: center; padding: 20px; box-sizing: border-box;
         }
         #pantalla-intro h1 { color: #fff; font-size: 26px; letter-spacing: 5px; text-shadow: 0 0 20px #ff00ff, 0 0 40px #00ffff; margin-bottom: 10px; }
         #pantalla-intro p { color: #00ffff; font-size: 14px; margin-bottom: 30px; max-width: 320px; line-height: 1.5; }
-        .btn-inicio { background: linear-gradient(45deg, #ff00ff, #00ffff); border: 2px solid #fff; color: #fff; padding: 15px 35px; border-radius: 30px; font-size: 16px; font-weight: bold; letter-spacing: 2px; box-shadow: 0 0 25px rgba(255, 0, 255, 0.7); cursor: pointer; pointer-events: auto; }
+        .btn-inicio {
+            background: linear-gradient(45deg, #ff00ff, #00ffff); border: 2px solid #fff; color: #fff;
+            padding: 15px 35px; border-radius: 30px; font-size: 16px; font-weight: bold; letter-spacing: 2px;
+            box-shadow: 0 0 25px rgba(255, 0, 255, 0.7); cursor: pointer; pointer-events: auto;
+        }
 
-        /* Pantalla de Conteo Regresivo Musical */
+        /* Pantalla Conteo */
         #pantalla-conteo {
             position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(2, 0, 10, 0.85); display: flex; flex-direction: column;
@@ -59,56 +38,66 @@
         #txt-conteo-numero { font-size: 80px; color: #00ffff; text-shadow: 0 0 30px #00ffff; font-weight: bold; margin-bottom: 10px; }
         #txt-conteo-texto { font-size: 16px; color: #ff00ff; letter-spacing: 3px; text-shadow: 0 0 10px #ff00ff; }
 
-        /* Capa de Estadísticas */
-        #ui-capa { position: absolute; top: 15px; width: 100%; display: flex; justify-content: space-between; padding: 0 20px; box-sizing: border-box; color: #fff; text-shadow: 0 0 10px #ff00ff; z-index: 10; pointer-events: none; display: none; }
+        /* Capa UI de Juego */
+        #ui-capa {
+            position: absolute; top: 15px; width: 100%; display: flex; justify-content: space-between;
+            padding: 0 20px; box-sizing: border-box; color: #fff; text-shadow: 0 0 10px #ff00ff; z-index: 10; pointer-events: none; display: none;
+        }
         .stats-box { font-size: 13px; font-weight: bold; background: rgba(10, 5, 30, 0.8); border: 1px solid #ff00ff; padding: 6px 12px; border-radius: 12px; }
-        #btn-volver { position: absolute; top: 60px; left: 20px; background: rgba(255, 0, 255, 0.3); border: 1px solid #ff00ff; color: #fff; padding: 8px 15px; border-radius: 10px; font-size: 12px; cursor: pointer; z-index: 15; display: none; pointer-events: auto; }
+        
+        #btn-volver {
+            position: absolute; top: 60px; left: 20px; background: rgba(255, 0, 255, 0.3);
+            border: 1px solid #ff00ff; color: #fff; padding: 8px 15px; border-radius: 10px;
+            font-size: 12px; cursor: pointer; z-index: 15; display: none; pointer-events: auto;
+        }
 
-        /* Ventana flotante de Trivia */
-        #trivia-modal { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(10, 5, 30, 0.95); border: 2px solid #00ffff; border-radius: 15px; padding: 20px; width: 85%; max-width: 350px; box-shadow: 0 0 30px rgba(0, 255, 255, 0.6); z-index: 50; text-align: center; display: none; touch-action: auto; }
+        /* Ventana de Consignas / Trivia */
+        #trivia-modal {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(10, 5, 30, 0.95); border: 2px solid #00ffff; border-radius: 15px;
+            padding: 20px; width: 85%; max-width: 350px; box-shadow: 0 0 30px rgba(0, 255, 255, 0.6);
+            z-index: 50; text-align: center; display: none; touch-action: auto;
+        }
         #trivia-titulo { color: #ff00ff; font-size: 13px; letter-spacing: 2px; margin-bottom: 8px; font-weight: bold; }
         #trivia-pregunta { color: #fff; font-size: 14px; margin-bottom: 20px; line-height: 1.4; }
-        .btn-opcion-cosmos { background: rgba(0, 255, 255, 0.2); border: 2px solid #00ffff; color: #fff; padding: 12px; border-radius: 12px; font-size: 13px; font-weight: bold; width: 100%; margin-bottom: 10px; cursor: pointer; box-shadow: 0 0 10px rgba(0, 255, 255, 0.3); pointer-events: auto; }
-
+        .btn-opcion-cosmos {
+            background: rgba(0, 255, 255, 0.2); border: 2px solid #00ffff; color: #fff;
+            padding: 12px; border-radius: 12px; font-size: 13px; font-weight: bold; width: 100%;
+            margin-bottom: 10px; cursor: pointer; box-shadow: 0 0 10px rgba(0, 255, 255, 0.3); pointer-events: auto;
+        }
         #youtube-audio { position: absolute; top: -9999px; left: -9999px; visibility: hidden; }
     </style>
-    <!-- Three.js CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
-
     <div id="escenografia-fondo"></div>
 
-    <!-- PANTALLA DE INTRODUCCIÓN -->
     <div id="pantalla-intro">
         <h1>COLORES SANTOS</h1>
         <p>El Multiverso Sonoro de Soda Stereo y Gustavo Cerati.</p>
-        <button class="btn-opcion btn-inicio" id="btn-entrar">✨ PREPARAR NAVE</button>
+        <button class="btn-opcion btn-inicio" id="btn-entrar">✨ INICIAR VIAJE</button>
     </div>
 
-    <!-- PANTALLA DE CONTEO REGRESIVO -->
     <div id="pantalla-conteo">
         <div id="txt-conteo-numero">3</div>
-        <div id="txt-conteo-texto">SINTONIZANDO FRECUENCIA ESPACIAL...</div>
+        <div id="txt-conteo-texto">SINTONIZANDO UNIVERSO CERATI...</div>
     </div>
 
-    <!-- UI DE JUEGO -->
     <div id="ui-capa">
         <div class="stats-box">PUNTOS: <span id="txt-puntos">0</span></div>
-        <div class="stats-box" id="txt-estado">SELECCIONA UNA GALAXIA</div>
-        <div class="stats-box">VIDAS: <span id="txt-vidas">❤️❤️❤️</span></div>
+        <div class="stats-box" id="txt-estado">SELECCIONA UN DISCO</div>
+        <div class="stats-box">DISCOS CONquistados: <span id="txt-discos-conquistados">0</span>/11</div>
     </div>
-    <button id="btn-volver">⬅️ VOLVER</button>
 
-    <!-- VENTANA DE TRIVIA -->
+    <button id="btn-volver">⬅️ VOLVER AL MULTIVERSO</button>
+
     <div id="trivia-modal">
-        <div id="trivia-titulo">OBJETO ICONO</div>
+        <div id="trivia-titulo">CONSIGNA</div>
         <div id="trivia-pregunta">Pregunta aquí...</div>
         <button id="trivia-btn-1" class="btn-opcion-cosmos">Opción A</button>
         <button id="trivia-btn-2" class="btn-opcion-cosmos">Opción B</button>
     </div>
 
-    <div id="nave-hud"></div>
     <div id="canvas-container"></div>
 
     <div id="youtube-audio">
@@ -118,161 +107,165 @@
     <script>
         let juegoIniciado = false;
         let puntos = 0;
-        let vidas = 3;
-        let estadoActual = "MENU_PRINCIPAL";
-        let objetosCosmos = [];
-        let elementoSeleccionado = null;
-        let pausarVuelo = false;
-        let galaxiaActualKey = null;
-        let discoActualSeleccionado = null;
+        let discosConquistadosCount = 0;
+        let estadoActual = "MENU_PRINCIPAL"; // MENU_PRINCIPAL o JUEGO_DISCO
+        let meshesDiscos = [];
+        let discoActual = null;
+        let preguntaActualIndex = 0;
+        let erroresEnDisco = 0;
 
-        // Base de datos completa con todos los discos principales de Soda y Cerati Solista listos para configurar
-        const multiverso = {
-            audioIntro: "Wun6zDSpwkg",      // <-- 1. Audio que suena al entrar al botón inicial (Ej: Colores Santos)
-            fondoPrincipal: "https://i.ibb.co/9Hy8h9fL/colores-santos.png", 
-            
-            soda: {
-                nombre: "GALAXIA: SODA STEREO",
-                trackId: "SV3oyTWdQao",      // <-- 2. Audio general al entrar al mundo Soda (Ej: Vuelta por el Universo)
-                fondoGalaxia: "https://i.ibb.co/mF1WHsC8/mundosoda.png",
-                color: 0x00ffff,
-                discos: [
-                    {
-                        nombre: "DISCO: SODA STEREO (1984)",
-                        color: 0x00ffcc,
-                        trackId: "W0KTTiuw96A",
-                        fondoDisco: "https://i.ibb.co/sT3L0VW/soda-stereo.png",
-                        iconos: [
-                            { nombre: "🎸 Primeros Acordes", tipoObjeto: "guitarra", pregunta: "¿Qué tema abre el primer disco oficial de Soda?", opcionA: "Jet Set", opcionB: "¿Por qué te fuiste?", respuestaCorrecta: 1 }
-                        ]
-                    },
-                    {
-                        nombre: "DISCO: NADA PERSONAL (1985)",
-                        color: 0xff00ff,
-                        trackId: "uOlCYVXOyFI", 
-                        fondoDisco: "https://i.ibb.co/xq1TGpt8/nada-personal.png",
-                        iconos: [
-                            { nombre: "🎸 Guitarra Jackson", tipoObjeto: "guitarra", pregunta: "¿Qué modelo clásico utilizaba Gustavo en los 80s?", opcionA: "Jackson Soloist", opcionB: "Fender Stratocaster", respuestaCorrecta: 1 },
-                            { nombre: "💇 Peinados 80s", tipoObjeto: "peinados", pregunta: "¿Qué estilo capilar marcó tendencia en la era Nada Personal?", opcionA: "Ondas setenteras", opcionB: "Jopo y jopo alto con spray", respuestaCorrecta: 2 },
-                            { nombre: "🏟️ Estadio Obras", tipoObjeto: "lugar", pregunta: "¿En qué mítico estadio presentaron oficialmente este disco en 1985?", opcionA: "Estadio Obras Sanitarias", opcionB: "Luna Park", respuestaCorrecta: 1 }
-                        ]
-                    },
-                    {
-                        nombre: "DISCO: SIGNOS (1986)",
-                        color: 0xff6600,
-                        trackId: "C5vRGvsbz0w",
-                        fondoDisco: "https://i.ibb.co/LXQbmwRR/signos.png",
-                        iconos: [
-                            { nombre: "🌵 Signos Tour", tipoObjeto: "gira", pregunta: "¿Qué país latinoamericano visitaron por primera vez desatando furor con este disco?", opcionA: "Chile", opcionB: "México", respuestaCorrecta: 1 }
-                        ]
-                    },
-                    {
-                        nombre: "DISCO: DOBLE VIDA (1988)",
-                        color: 0xffff00,
-                        trackId: "4l3oYRETotc",
-                        fondoDisco: "https://i.ibb.co/cXZpRnKk/doble-vida.png",
-                        iconos: [
-                            { nombre: "🌃 L'Avenue", tipoObjeto: "video", pregunta: "¿En qué ciudad se filmó el videoclip de En la Ciudad de la Furia?", opcionA: "Nueva York", opcionB: "Buenos Aires", respuestaCorrecta: 1 }
-                        ]
-                    },
-                    {
-                        nombre: "DISCO: CANCIÓN ANIMAL (1990)",
-                        color: 0x990000,
-                        trackId: "ex1qICH12Eg",
-                        fondoDisco: "https://i.ibb.co/rRbsVPJc/cancion-animal.png",
-                        iconos: [
-                            { nombre: "🐾 Arte de Tapa", tipoObjeto: "tapa", pregunta: "¿Qué animales aparecen en la portada original de Canción Animal?", opcionA: "Leones", opcionB: "Ciervos", respuestaCorrecta: 1 },
-                            { nombre: "⚡ Hit de Apertura", tipoObjeto: "hit", pregunta: "¿Qué canción icónica abre el disco?", opcionA: "En el séptimo día", opcionB: "De música ligera", respuestaCorrecta: 1 }
-                        ]
-                    },
-                    {
-                        nombre: "DISCO: DYNAMO (1992)",
-                        color: 0x0066ff,
-                        trackId: "a5oUU6tGKFM",
-                        fondoDisco: "https://i.ibb.co/S1G0p32/dynamo.png",
-                        iconos: [
-                            { nombre: "🔊 Sonido Sónico", tipoObjeto: "sonido", pregunta: "¿Qué corriente musical influenció fuertemente el sonido de Dynamo?", opcionA: "Shoegaze y Manchester", opcionB: "Heavy Metal clásico", respuestaCorrecta: 1 }
-                        ]
-                    },
-                    {
-                        nombre: "DISCO: SUEÑO STEREO (1995)",
-                        color: 0xff00ff,
-                        trackId: "IqBK2UjnUVA",
-                        fondoDisco: "https://i.ibb.co/whCCS4r1/sue-o-stereo.png",
-                        iconos: [
-                            { nombre: "🪞 Púrpura", tipoObjeto: "cancion", pregunta: "¿Cuál fue el primer corte de difusión y gran éxito de Sueño Stereo?", opcionA: "Zoom", opcionB: "Ella usó mi cabeza como un revólver", respuestaCorrecta: 1 }
-                        ]
-                    }
-                ]
-            },
-            solista: {
-                nombre: "GALAXIA: GUSTAVO CERATI",
-                trackId: "T1tDbvoHzo8",      // <-- 3. Audio general al entrar al mundo Solista
-                fondoGalaxia: "https://images.unsplash.com/photo-1502134249126-9f3755a50d78?w=1200",
-                color: 0xff00ff,
-                discos: [
-                    {
-                        nombre: "DISCO: AMOR AMARILLO (1993)",
-                        color: 0xffff33,
-                        trackId: "ZOd-N9qGQK8",
-                        fondoDisco: "https://i.ibb.co/KpPXvH5K/amor-amarillo.png",
-                        iconos: [
-                            { nombre: "🌼 Covers", tipoObjeto: "cover", pregunta: "¿Qué cover incluye este disco solista?", opcionA: "Bajan", opcionB: "Te para Tres", respuestaCorrecta: 1 }
-                        ]
-                    },
-                    {
-                        nombre: "DISCO: BOCANADA (1999)",
-                        color: 0x0066ff,
-                        trackId: "90SS2mXzPcA",
-                        fondoDisco: "https://i.ibb.co/Gf9jPzVy/bocanada.png",
-                        iconos: [
-                            { nombre: "🌉 Puente", tipoObjeto: "puente", pregunta: "¿Qué instrumento principal destaca en el estribillo de Puente?", opcionA: "Guitarras acústicas gemelas", opcionB: "Sinte analógico", respuestaCorrecta: 1 },
-                            { nombre: "🌀 Estudio Casa", tipoObjeto: "estudio", pregunta: "¿Cómo se llamaba el estudio personal donde grabó gran parte de Bocanada?", opcionA: "Del Cielito", opcionB: "Casa", respuestaCorrecta: 2 }
-                        ]
-                    },
-                    {
-                        nombre: "DISCO: AHÍ VAMOS (2006)",
-                        color: 0xff0000,
-                        trackId: "qfcwCrh4s7I",
-                        fondoDisco: "https://i.ibb.co/prZnh9w4/ahi-vamos.png",
-                        iconos: [
-                            { nombre: "⚡ Crimen", tipoObjeto: "hit", pregunta: "¿Qué galardón internacional ganó el tema Crimen?", opcionA: "Premio Grammy Latino a Mejor Canción Rock", opcionB: "MTV Video Music Award", respuestaCorrecta: 1 }
-                        ]
-                    },
-                    {
-                        nombre: "DISCO: FUERZA NATURAL (2009)",
-                        color: 0x00cc44,
-                        trackId: "Z7ndVxqUb48",
-                        fondoDisco: "https://i.ibb.co/V0yVhy8Y/fuerza-natural.png",
-                        iconos: [
-                            { nombre: "🐎 Arte y Viaje", tipoObjeto: "viaje", pregunta: "¿Con qué vehículo se identifica conceptualmente la estética de Fuerza Natural?", opcionA: "Una coupé modelo rutero / ruta psicodélica", opcionB: "Una nave espacial de los 70", respuestaCorrecta: 1 }
-                        ]
-                    }
-                ]
-            }
-        };
+        // Base completa con todos los discos y sus 10 consignas configurables
+        const listaDiscos = [
+            { id: "soda_84", nombre: "SODA STEREO (1984)", trackId: "W0KTTiuw96A", fondo: "https://i.ibb.co/sT3L0VW/soda-stereo.png", conquistado: false, preguntas: [
+                { p: "¿Qué tema abre el primer disco oficial de Soda?", a: "Jet Set", b: "¿Por qué te fuiste?", r: 1 },
+                { p: "¿En qué año se lanzó este álbum debut?", a: "1984", b: "1986", r: 1 },
+                { p: "¿Quién era el baterista de la banda?", a: "Charly Alberti", b: "Daniel Melero", r: 1 },
+                { p: "¿Qué instrumento principal tocaba Gustavo?", a: "Guitarra y voz", b: "Teclados", r: 1 },
+                { p: "¿En qué país se formó la banda?", a: "Argentina", b: "Uruguay", r: 1 },
+                { p: "¿Cuál era el estilo inicial predominante?", a: "New wave / Rock moderno", b: "Heavy metal pesado", r: 1 },
+                { p: "¿Cómo se llama el tema número 3?", a: "Te hacen falta vitaminas", b: "De música ligera", r: 1 },
+                { p: "¿Qué color predominaba en la estética inicial?", a: "Vibrantes y estridentes 80s", b: "Tonos pastel", r: 1 },
+                { p: "¿Quién diseñó el logo original?", a: "La propia banda / entorno", b: "Un estudio extranjero", r: 1 },
+                { p: "¿Fue un éxito rotundo desde su salida?", a: "Sí, marcó un quiebre generacional", b: "Pasó desapercibido", r: 1 }
+            ]},
+            { id: "nada_personal", nombre: "NADA PERSONAL (1985)", trackId: "uOlCYVXOyFI", fondo: "https://i.ibb.co/xq1TGpt8/nada-personal.png", conquistado: false, preguntas: [
+                { p: "¿Qué modelo clásico de guitarra usaba Gustavo?", a: "Jackson Soloist", b: "Fender Stratocaster", r: 1 },
+                { p: "¿Qué estilo capilar marcó tendencia en esta era?", a: "Jopo alto con spray", b: "Ondas setenteras", r: 1 },
+                { p: "¿En qué mítico estadio presentaron el disco en 1985?", a: "Estadio Obras Sanitarias", b: "Luna Park", r: 1 },
+                { p: "¿Cuál es el tema homónimo del disco?", a: "Nada Personal", b: "Danza Derrota", r: 1 },
+                { p: "¿Qué hit consolida su masividad?", a: "Persiana Americana", b: "Juego de Seducción", r: 2 },
+                { p: "¿Qué sintetizador aportó texturas clave?", a: "Modelos Roland y Korg", b: "Ninguno", r: 1 },
+                { p: "¿Tuvieron gira nacional masiva?", a: "Sí, récord de público", b: "Solo tocaron en Capital", r: 1 },
+                { p: "¿El sonido evolucionó hacia un tono más...?", a: "Oscuro y sofisticado", b: "Acústico", r: 1 },
+                { p: "¿Canción destacada con videoclip icónico?", a: "Cuando pase el temblor", b: "Signos", r: 1 },
+                { p: "¿El disco fue editado por qué discográfica?", a: "CBS / Sony Music", b: "Independiente", r: 1 }
+            ]},
+            { id: "signos", nombre: "SIGNOS (1986)", trackId: "C5vRGvsbz0w", fondo: "https://i.ibb.co/LXQbmwRR/signos.png", conquistado: false, preguntas: [
+                { p: "¿Qué país visitaron por primera vez desatando furor?", a: "Chile", b: "México", r: 1 },
+                { p: "¿Primer tema que abre el disco?", a: "Signos", b: "Persiana Americana", r: 2 },
+                { p: "¿Cómo se llamó la gran gira latinoamericana?", a: "Gira Signos", b: "Me Verás Volver", r: 1 },
+                { p: "¿Qué instrumento electrónico dominó los arreglos?", a: "Cajas de ritmos y secuenciadores", b: "Orquesta de cuerdas", r: 1 },
+                { p: "¿Tema consagratorio del álbum?", a: "Persiana Americana", b: "Prófugos", r: 1 },
+                { p: "¿Ciudad donde se grabó buena parte de la esencia?", a: "Buenos Aires", b: "Londres", r: 1 },
+                { p: "¿El arte de tapa destaca por tener tonos...?", a: "Grises y texturas metálicas", b: "Rojos fuego", r: 1 },
+                { p: "¿Fue el primer disco de rock argentino en editarse en CD?", a: "Sí, en toda Latinoamérica", b: "No, salió solo en vinilo", r: 1 },
+                { p: "¿Colaboró algún músico invitado?", a: "Sintes y programaciones adicionales", b: "Ninguno", r: 1 },
+                { p: "¿El clima de las letras era más bien...?", a: "Introspectivo y nocturno", b: "Festivo bailable", r: 1 }
+            ]},
+            { id: "doble_vida", nombre: "DOBLE VIDA (1988)", trackId: "4l3oYRETotc", fondo: "https://i.ibb.co/cXZpRnKk/doble-vida.png", conquistado: false, preguntas: [
+                { p: "¿En qué ciudad se filmó el videoclip de En la Ciudad de la Furia?", a: "Nueva York", b: "Buenos Aires", r: 1 },
+                { p: "¿Quién produjo artísticamente este álbum?", a: "Carlos Alomar", b: "Gustavo Cerati solo", r: 1 },
+                { p: "¿Qué instrumento de viento sumó potencia funk?", a: "Sección de vientos / Bronces", b: "Flauta traversa", r: 1 },
+                { p: "¿Gran hit bailable que abre el disco?", a: "Lo que sangra (La cúpula)", b: "Picnic en el cuarto", r: 1 },
+                { p: "¿Dónde se grabaron las bases principales?", a: "Nueva York, USA", b: "Buenos Aires", r: 1 },
+                { p: "¿Tema emotivo de cierre?", a: "Danza rota", b: "Terapia de grupo", r: 1 },
+                { p: "¿El sonido buscó un perfil más cercano a...", a: "El funk rock internacional", b: "Folklore electrónico", r: 1 },
+                { p: "¿Qué canal internacional rotó fuertemente sus videos?", a: "MTV Internacional", b: "Ninguno", r: 1 },
+                { p: "¿El arte visual reflejaba una estética...", a: "Urbana moderna y nocturna", b: "Campestre", r: 1 },
+                { p: "¿Consolidó su internacionalización definitiva?", a: "Totalmente en todo el continente", b: "Solo en Argentina", r: 1 }
+            ]},
+            { id: "cancion_animal", nombre: "CANCIÓN ANIMAL (1990)", trackId: "ex1qICH12Eg", fondo: "https://i.ibb.co/rRbsVPJc/cancion-animal.png", conquistado: false, preguntas: [
+                { p: "¿Qué animales aparecen en la portada original?", a: "Leones", b: "Ciervos", r: 1 },
+                { p: "¿Qué canción icónica abre el disco?", a: "(En el) Séptimo día", b: "De música ligera", r: 1 },
+                { p: "¿Himno definitivo del rock en español incluido aquí?", a: "De música ligera", b: "Un millón de años luz", r: 1 },
+                { p: "¿El sonido dio un giro hacia el rock...", a: "De guitarras crudas y potente", b: "Tecno pop bailable", r: 1 },
+                { p: "¿Qué tema cuenta con una atmósfera psicodélica y profunda?", a: "Té para tres", b: "Cae el sol", r: 1 },
+                { p: "¿Gira histórica que acompañó el lanzamiento?", a: "Gira Canción Animal", b: "Gira Dynamo", r: 1 },
+                { p: "¿Dónde se realizó el cierre masivo de la gira?", a: "Av. 9 de Julio (Ante 250 mil personas)", b: "Estadio River", r: 1 },
+                { p: "¿Fue grabado principalmente en qué país?", a: "España (Miami y Bs As también)", b: "México", r: 1 },
+                { p: "¿Canción con dedicatoria muy íntima familiar?", a: "Té para tres", b: "Sueles dejarme solo", r: 1 },
+                { p: "¿Considerado por la crítica como...?", a: "Una obra cumbre del rock latino", b: "Un disco menor", r: 1 }
+            ]},
+            { id: "dynamo", nombre: "DYNAMO (1992)", trackId: "a5oUU6tGKFM", fondo: "https://i.ibb.co/S1G0p32/dynamo.png", conquistado: false, preguntas: [
+                { p: "¿Qué corriente musical influenció fuertemente el sonido?", a: "Shoegaze y Manchester", b: "Heavy Metal clásico", r: 1 },
+                { p: "¿Tema inicial vibrante y sónico?", a: "Secion de paranoia / Claroscuro", b: "Primavera 0", r: 2 },
+                { p: "¿Cómo se presentó el disco en vivo originalmente?", a: "En Obras con múltiples fechas", b: "En un estadio de fútbol", r: 1 },
+                { p: "¿Instrumentos con efectos dominantes?", a: "Guitarras con múltiples pedales de modulación", b: "Acústicos puros", r: 1 },
+                { p: "¿Sello discográfico de esta etapa?", a: "Sony Music", b: "Independiente", r: 1 },
+                { p: "¿Videoclip recordado en blanco y negro y texturas?", a: "Primavera 0", b: "Luna Roja", r: 1 },
+                { p: "¿El disco buscó experimentar con la vanguardia?", a: "Absolutamente", b: "Fue muy comercial", r: 1 },
+                { p: "¿Participó Daniel Melero activamente?", a: "Sí, como socio creativo clave", b: "No participó", r: 1 },
+                { p: "¿Tema oscuro con una letra magnética?", a: "Luna Roja", b: "En la ciudad de la furia", r: 1 },
+                { p: "¿Marcó el inicio de un receso temporal en Soda?", a: "Sí, tras la gira se tomaron descanso", b: "Siguieron tocando sin parar", r: 1 }
+            ]},
+            { id: "sueno_stereo", nombre: "SUEÑO STEREO (1995)", trackId: "IqBK2UjnUVA", fondo: "https://i.ibb.co/whCCS4r1/sue-o-stereo.png", conquistado: false, preguntas: [
+                { p: "¿Cuál fue el gran éxito y primer corte de difusión?", a: "Zoom", b: "Ella usó mi cabeza como un revólver", r: 1 },
+                { p: "¿Qué formato innovador incluyó en algunas ediciones?", a: "CD interactivo multimedia", b: "Casete doble", r: 1 },
+                { p: "¿Cómo combinó el sonido este álbum?", a: "Electrónica sofisticada y melodías pop", b: "Rock pesado sin escalas", r: 1 },
+                { p: "¿Videoclip futurista y animado recordado?", a: "Ella usó mi cabeza como un revólver", b: "Pasos", r: 1 },
+                { p: "¿Tema instrumental psicodélico de apertura?", a: "Desaniversario / Púrpura", b: "Púrpura", r: 2 },
+                { p: "¿Fue el último disco de estudio de Soda?", a: "Sí, antes de la separación en 1997", b: "Sacaron uno más en 2000", r: 1 },
+                { p: "¿Premio internacional destacado?", a: "MTV Video Music Awards (por Ella usó...)", b: "Grammy anglo", r: 1 },
+                { p: "¿La gira despedida se llamó...?", a: "El Último Concierto", b: "Gira Total", r: 1 },
+                { p: "¿Letras con un vuelo poético...", a: "Muy elevado y onírico", b: "Sencillo y directo", r: 1 },
+                { p: "¿La recepción de los fans fue...", a: "Apoteótica y de adoración total", b: "Indiferente", r: 1 }
+            ]},
+            { id: "amor_amarillo", nombre: "AMOR AMARILLO (1993)", trackId: "ZOd-N9qGQK8", fondo: "https://i.ibb.co/KpPXvH5K/amor-amarillo.png", conquistado: false, preguntas: [
+                { p: "¿Qué cover clásico incluye este disco solista?", a: "Bajan (de Luis Alberto Spinetta)", b: "Te para Tres", r: 1 },
+                { p: "¿Dónde se grabó gran parte en estudio hogareño?", a: "En su estudio en Chile / Buenos Aires", b: "En Londres", r: 1 },
+                { p: "¿Acompañamiento vocal especial en un tema?", a: "Cecilia Amenábar", b: "Fito Páez", r: 1 },
+                { p: "¿Hit luminoso que abre el disco solista?", a: "Amor amarillo", b: "Pulsar", r: 1 },
+                { p: "¿Instrumento acústico protagonista?", a: "Guitarra acústica y arreglos sutiles", b: "Sinte analógico", r: 1 },
+                { p: "¿Se editó en paralelo a qué momento de Soda?", a: "Durante el impasse previo a Sueño Stereo", b: "Luego de la separación definitiva", r: 1 },
+                { p: "¿Tema con pulso electrónico y dulce?", a: "Pulsar", b: "Avui", r: 1 },
+                { p: "¿Estética visual del disco?", a: "Cálida, íntima y casera", b: "Industrial fría", r: 1 },
+                { p: "¿Fue su primer paso formal como solista?", a: "Sí, con sello propio", b: "Ya había hecho bandas de sonido", r: 1 },
+                { p: "¿Canción con dedicatoria de amor profundo?", a: "Te llevo para que me lleves", b: "Bajan", r: 1 }
+            ]},
+            { id: "bocanada", nombre: "BOCANADA (1999)", trackId: "90SS2mXzPcA", fondo: "https://i.ibb.co/Gf9jPzVy/bocanada.png", conquistado: false, preguntas: [
+                { p: "¿Qué instrumento principal destaca en el estribillo de Puente?", a: "Guitarras acústicas gemelas", b: "Sinte analógico", r: 1 },
+                { p: "¿Cómo se llamaba su estudio personal de grabación?", a: "Casa", b: "Del Cielito", r: 2 },
+                { p: "¿Primer disco solista oficial tras...", a: "La separación oficial de Soda Stereo", b: "Un viaje a Europa", r: 1 },
+                { p: "¿Muestreos (samples) célebres utilizados?", a: "Cine argentino clásico y sinfonías", b: "Temas de otros artistas rock", r: 1 },
+                { p: "¿Himno generacional solista indiscutido?", a: "Puente", b: "Tabú", r: 1 },
+                { p: "¿Gira presentación con banda en vivo impecable?", a: "Gira Bocanada por toda América", b: "Solo shows acústicos", r: 1 },
+                { p: "¿Diseño de tapa icónico con Gustavo...", a: "Con mariposas / humo estético", b: "En la playa", r: 1 },
+                { p: "¿Tema instrumental con beat hipnótico?", a: "Bocanada", b: "Paseo inmoral", r: 1 },
+                { p: "¿Recibió elogios unánimes de la crítica?", a: "Sí, consagrado como obra maestra", b: "Fue criticado", r: 1 },
+                { p: "¿Exploró libremente géneros como...", a: "Trip hop, pop barroco y electrónica", b: "Folklore tradicional", r: 1 }
+            ]},
+            { id: "ahi_vamos", nombre: "AHÍ VAMOS (2006)", trackId: "qfcwCrh4s7I", fondo: "https://i.ibb.co/prZnh9w4/ahi-vamos.png", conquistado: false, preguntas: [
+                { p: "¿Qué galardón internacional ganó el tema Crimen?", a: "Premio Grammy Latino a Mejor Canción Rock", b: "MTV Video Music Award", r: 1 },
+                { p: "¿El sonido marcó un retorno triunfal hacia...", a: "El rock de guitarras filosas", b: "La electrónica pura", r: 1 },
+                { p: "¿Gran éxito potente de apertura?", a: "La excepción", b: "Crimen", r: 1 },
+                { p: "¿Quiénes integraban su banda en esta gira?", a:_ "Richard Coleman, Fernando Nalé, etc.", b: "Músicos invitados aleatorios", r: 1 },
+                { p: "¿Videoclip con Gustavo tocando en una habitación oscura?", a: "Crimen", b: "Lago en el cielo", r: 1 },
+                { p: "¿Gira monumental que recorrió el mundo?", a: "Gira Ahí Vamos", b: "Solo Argentina", r: 1 },
+                { p: "¿Disco certificado como...?", a: "Platino y Triple Platino", b: "Disco de oro simple", r: 1 },
+                { p: "¿Canción enérgica con riff inolvidable?", a: "A fumar (o Adios)", b: "Adiós", r: 2 },
+                { p: "¿Gustavo volvió a tocar la guitarra eléctrica principal?", a: "Sí, de manera estelar y protagonista", b: "Casi no tocó la guitarra", r: 1 },
+                { p: "¿Consolidó su estatus como máximo referente solista?", a: "Absolutamente indiscutido", b: "Generó dudas", r: 1 }
+            ]},
+            { id: "fuerza_natural", nombre: "FUERZA NATURAL (2009)", trackId: "Z7ndVxqUb48", fondo: "https://i.ibb.co/V0yVhy8Y/fuerza-natural.png", conquistado: false, preguntas: [
+                { p: "¿Con qué vehículo se identifica conceptualmente la estética?", a: "Una coupé modelo rutero / viaje psicodélico", b: "Una nave espacial de los 70", r: 1 },
+                { p: "¿Primer corte difusión con videoclip rutero?", a: "Déjà vu", b: "Fuerza natural", r: 1 },
+                { p: "¿Sonoridad general del álbum?", a: "Pop rock terráqueo, folk y psicodelia", b: "Heavy metal sinfónico", r: 1 },
+                { p: "¿Último álbum de estudio de su carrera?", a: "Sí", b: "No, grabó otro después", r: 1 },
+                { p: "¿Arte de tapa diseñado con concepto de...", a: "Álbum rutero místico y cósmico", b: "Pintura clásica abstracta", r: 1 },
+                { p: "¿Canción con gran despliegue melódico y poético?", a: "Magia", b: "Fuerza natural", r: 2 },
+                { p: "¿Participó su hijo Benito en la composición?", a: "Sí, en varios temas clave", b: "No participó", r: 1 },
+                { p: "¿Ganador de múltiples premios...", a: "Grammy Latinos", b: "Premios Gardel de Oro únicamente", r: 1 },
+                { p: "¿El viaje conceptual proponía ir hacia...", a: "Una travesía natural y mental", b: "El espacio exterior galáctico", r: 1 },
+                    { p: "¿Su legado musical en esta obra es...", a: "Una despedida luminosa y brillante", b: "Un trabajo experimental fallido", r: 1 }
+            ]}
+        ];
 
         function cambiarFondo(urlImagen) {
             document.getElementById('escenografia-fondo').style.backgroundImage = `url('${urlImagen}')`;
         }
 
-        // Evento de inicio con conteo regresivo para disfrutar la música
         document.getElementById('btn-entrar').addEventListener('click', iniciarConteoRegresivo);
-        document.getElementById('btn-entrar').addEventListener('touchend', (e) => {
-            e.preventDefault();
-            iniciarConteoRegresivo();
-        });
+        document.getElementById('btn-entrar').addEventListener('touchend', (e) => { e.preventDefault(); iniciarConteoRegresivo(); });
 
         function iniciarConteoRegresivo() {
             document.getElementById('pantalla-intro').style.display = 'none';
             document.getElementById('pantalla-conteo').style.display = 'flex';
-            cambiarFondo(multiverso.fondoPrincipal);
-            actualizarAudio(multiverso.audioIntro); // Suena el tema de bienvenida
+            cambiarFondo("https://i.ibb.co/9Hy8h9fL/colores-santos.png");
+            actualizarAudio("Wun6zDSpwkg");
 
             let cuenta = 3;
             const numEl = document.getElementById('txt-conteo-numero');
             numEl.innerText = cuenta;
-
             let timer = setInterval(() => {
                 cuenta--;
                 if (cuenta > 0) {
@@ -282,24 +275,20 @@
                     document.getElementById('pantalla-conteo').style.display = 'none';
                     comenzarJuegoReal();
                 }
-            }, 1000); // 1 segundo por número para dejar escuchar la música
+            }, 1000);
         }
 
         function comenzarJuegoReal() {
             juegoIniciado = true;
             document.getElementById('ui-capa').style.display = 'flex';
-            document.getElementById('nave-hud').style.display = 'block';
-            cargarMenuPrincipal();
+            cargarMultiversoDiscos();
         }
 
-        document.getElementById('btn-volver').addEventListener('click', volverAlNivelAnterior);
-        document.getElementById('btn-volver').addEventListener('touchend', (e) => {
-            e.preventDefault();
-            volverAlNivelAnterior();
-        });
+        document.getElementById('btn-volver').addEventListener('click', volverAlMultiverso);
+        document.getElementById('btn-volver').addEventListener('touchend', (e) => { e.preventDefault(); volverAlMultiverso(); });
 
-        document.getElementById('trivia-btn-1').addEventListener('click', () => verificarRespuesta(1));
-        document.getElementById('trivia-btn-2').addEventListener('click', () => verificarRespuesta(2));
+        document.getElementById('trivia-btn-1').addEventListener('click', () => verificarRespuestaConsigna(1));
+        document.getElementById('trivia-btn-2').addEventListener('click', () => verificarRespuestaConsigna(2));
 
         function actualizarAudio(videoId) {
             const ytPlayer = document.getElementById('yt-player');
@@ -308,223 +297,181 @@
 
         const canvasContainer = document.getElementById('canvas-container');
         const scene = new THREE.Scene();
-        scene.fog = new THREE.FogExp2(0x02000a, 0.015);
+        scene.fog = new THREE.FogExp2(0x02000a, 0.012);
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         canvasContainer.appendChild(renderer.domElement);
 
+        // Estrellas de fondo
         const starGeometry = new THREE.BufferGeometry();
         const starPositions = [];
-        for(let i = 0; i < 700; i++) {
-            starPositions.push((Math.random() - 0.5) * 400, (Math.random() - 0.5) * 400, (Math.random() - 0.5) * 900);
+        for(let i = 0; i < 800; i++) {
+            starPositions.push((Math.random() - 0.5) * 500, (Math.random() - 0.5) * 500, (Math.random() - 0.5) * 1000);
         }
         starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starPositions, 3));
-        const stars = new THREE.Points(starGeometry, new THREE.PointsMaterial({color: 0xffffff, size: 0.9}));
+        const stars = new THREE.Points(starGeometry, new THREE.PointsMaterial({color: 0xffffff, size: 0.8}));
         scene.add(stars);
-        camera.position.z = 10;
+        camera.position.z = 15;
 
         let raycaster = new THREE.Raycaster();
-        let vectorPosicionMira = new THREE.Vector2(0, 0);
+        let mouseVector = new THREE.Vector2();
 
-        function limpiarCosmos() {
-            objetosCosmos.forEach(obj => scene.remove(obj));
-            objetosCosmos = [];
+        function limpiarEscena() {
+            meshesDiscos.forEach(m => scene.remove(m));
+            meshesDiscos = [];
         }
 
-        function cargarMenuPrincipal() {
-            limpiarCosmos();
+        // CREAR LA PRIMERA PANTALLA: Todos los discos volando muy despacio
+        function cargarMultiversoDiscos() {
+            limpiarEscena();
             estadoActual = "MENU_PRINCIPAL";
             document.getElementById('btn-volver').style.display = 'none';
-            document.getElementById('txt-estado').innerText = "SELECCIONA UNA GALAXIA";
-            cambiarFondo(multiverso.fondoPrincipal);
-            actualizarAudio(multiverso.audioIntro);
+            document.getElementById('txt-estado').innerText = "SELECCIONA UN DISCO CON EL DEDO";
+            cambiarFondo("https://i.ibb.co/9Hy8h9fL/colores-santos.png");
+            actualizarAudio("Wun6zDSpwkg");
 
-            const galaxias = [
-                { key: 'soda', nombre: multiverso.soda.nombre, color: multiverso.soda.color, fondo: multiverso.soda.fondoGalaxia },
-                { key: 'solista', nombre: multiverso.solista.nombre, color: multiverso.solista.color, fondo: multiverso.solista.fondoGalaxia }
-            ];
+            const textureLoader = new THREE.TextureLoader();
 
-            galaxias.forEach((g, index) => {
-                const mesh = crearPortalMesh(g.nombre, g.color, index);
-                mesh.userData = { tipo: 'galaxia', key: g.key, fondo: g.fondo, ...multiverso[g.key] };
-                scene.add(mesh);
-                objetosCosmos.push(mesh);
-            });
-        }
-
-        function cargarDiscosGalaxia(galaxiaData, key) {
-            limpiarCosmos();
-            estadoActual = "MENU_DISCOS";
-            galaxiaActualKey = key;
-            document.getElementById('btn-volver').style.display = 'block';
-            document.getElementById('txt-estado').innerText = galaxiaData.nombre;
-            cambiarFondo(galaxiaData.fondoGalaxia);
-            actualizarAudio(galaxiaData.trackId);
-
-            galaxiaData.discos.forEach((disco, index) => {
-                const mesh = crearPortalMesh(disco.nombre, disco.color, index);
-                mesh.userData = { tipo: 'disco', ...disco };
-                scene.add(mesh);
-                objetosCosmos.push(mesh);
-            });
-        }
-
-        function cargarIconosDisco(discoData) {
-            limpiarCosmos();
-            estadoActual = "JUEGO_ICONOS";
-            discoActualSeleccionado = discoData;
-            document.getElementById('txt-estado').innerText = discoData.nombre;
-            if(discoData.fondoDisco) cambiarFondo(discoData.fondoDisco);
-            actualizarAudio(discoData.trackId);
-
-            discoData.iconos.forEach((icono, index) => {
-                const mesh = crearPortalMesh(icono.nombre, 0x00ffcc, index);
-                mesh.userData = { tipo: 'icono_trivia', ...icono };
-                scene.add(mesh);
-                objetosCosmos.push(mesh);
-            });
-        }
-
-        function crearPortalMesh(nombre, colorHex, index) {
-            const geometry = new THREE.TorusGeometry(3.2, 0.8, 16, 50);
-            const material = new THREE.MeshBasicMaterial({ color: colorHex, wireframe: true });
-            const mesh = new THREE.Mesh(geometry, material);
-            mesh.position.set((Math.random() - 0.5) * 35, (Math.random() - 0.5) * 20, -50 - (index * 35));
-            return mesh;
-        }
-
-        function volverAlNivelAnterior() {
-            if (estadoActual === "JUEGO_ICONOS") {
-                cargarDiscosGalaxia(multiverso[galaxiaActualKey], galaxiaActualKey);
-            } else if (estadoActual === "MENU_DISCOS") {
-                cargarMenuPrincipal();
-            }
-        }
-
-        function comprobarColisionesNave() {
-            if (!juegoIniciado || pausarVuelo) return;
-
-            raycaster.setFromCamera(vectorPosicionMira, camera);
-            const intersects = raycaster.intersectObjects(objetosCosmos);
-
-            if (intersects.length > 0) {
-                const objetoTocado = intersects[0].object;
-                const data = objetoTocado.userData;
-
-                if (data.tipo === 'galaxia') {
-                    cargarDiscosGalaxia(data, data.key);
-                } else if (data.tipo === 'disco') {
-                    cargarIconosDisco(data);
-                } else if (data.tipo === 'icono_trivia') {
-                    elementoSeleccionado = objetoTocado;
-                    pausarVuelo = true;
-                    document.getElementById('trivia-titulo').innerText = discoActualSeleccionado.nombre;
-                    document.getElementById('trivia-pregunta').innerText = data.pregunta;
-                    document.getElementById('trivia-btn-1').innerText = data.opcionA;
-                    document.getElementById('trivia-btn-2').innerText = data.opcionB;
-                    document.getElementById('trivia-modal').style.display = 'block';
+            listaDiscos.forEach((disco, index) => {
+                // Creamos un plano/cuadro elegante para simular la tapa del disco
+                const geometry = new THREE.PlaneGeometry(4.5, 4.5);
+                
+                // Si la imagen carga, la usamos; sino color sólido de respaldo
+                let material;
+                if(disco.fondo) {
+                    const texture = textureLoader.load(disco.fondo);
+                    material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
+                } else {
+                    material = new THREE.MeshBasicMaterial({ color: 0x00ffff, wireframe: true });
                 }
+
+                const mesh = new THREE.Mesh(geometry, material);
+                
+                // Distribuir en el espacio 3D flotando
+                const posX = (Math.random() - 0.5) * 32;
+                const posY = (Math.random() - 0.5) * 18;
+                const posZ = -30 - (index * 15);
+
+                mesh.position.set(posX, posY, posZ);
+                mesh.userData = { tipo: 'disco', discoData: disco };
+                
+                scene.add(mesh);
+                meshesDiscos.push(mesh);
+            });
+        }
+
+        // AL SELECCIONAR UN DISCO: Entramos a su planeta con 10 consignas
+        function entrarADisco(disco) {
+            limpiarEscena();
+            estadoActual = "JUEGO_DISCO";
+            discoActual = disco;
+            preguntaActualIndex = 0;
+            erroresInDisco = 0;
+
+            document.getElementById('btn-volver').style.display = 'block';
+            document.getElementById('txt-estado').innerText = disco.nombre;
+            if(disco.fondo) cambiarFondo(disco.fondo);
+            actualizarAudio(disco.trackId);
+
+            mostrarSiguienteConsigna();
+        }
+
+        function mostrarSiguienteConsigna() {
+            if (preguntaActualIndex < discoActual.preguntas.length) {
+                const preguntaObj = discoActual.preguntas[preguntaActualIndex];
+                document.getElementById('trivia-titulo').innerText = `${discoActual.nombre} (Consigna ${preguntaActualIndex + 1}/10)`;
+                document.getElementById('trivia-pregunta').innerText = preguntaObj.p;
+                document.getElementById('trivia-btn-1').innerText = preguntaObj.a;
+                document.getElementById('trivia-btn-2').innerText = preguntaObj.b;
+                document.getElementById('trivia-modal').style.display = 'block';
+            } else {
+                // Finalizamos las 10 consignas del disco
+                finalizarDisco();
             }
         }
 
-        function verificarRespuesta(opcionElegida) {
-            const data = elementoSeleccionado.userData;
-            const esCorrecta = (opcionElegida === data.respuestaCorrecta);
+        function verificarRespuestaConsigna(opcionElegida) {
+            const preguntaObj = discoActual.preguntas[preguntaActualIndex];
             document.getElementById('trivia-modal').style.display = 'none';
 
-            if (esCorrecta) {
-                puntos += 100;
+            if (opcionElegida === preguntaObj.r) {
+                puntos += 10; // 10 puntos por cada una de las 10 correctas (total 100)
                 document.getElementById('txt-puntos').innerText = puntos;
-                alert("¡Icono conquistado con éxito!");
-                scene.remove(elementoSeleccionado);
-                const index = objetosCosmos.indexOf(elementoSeleccionado);
-                if (index > -1) objetosCosmos.splice(index, 1);
-
-                if (objetosCosmos.length === 0) {
-                    alert("¡Has conquistado todos los misterios de este disco!");
-                    cargarDiscosGalaxia(multiverso[galaxiaActualKey], galaxiaActualKey);
-                }
             } else {
-                vidas--;
-                actualizarVidasUI();
-                alert("Respuesta incorrecta... la nave recibe daño.");
-                if (vidas <= 0) {
-                    alert("Te quedaste sin escudo. ¡Reiniciando viaje cósmico!");
-                    location.reload();
-                }
+                erroresEnDisco++;
             }
-            elementoSeleccionado = null;
-            pausarVuelo = false;
+
+            preguntaActualIndex++;
+            mostrarSiguienteConsigna();
         }
 
-        function actualizarVidasUI() {
-            let corazones = "";
-            for(let i = 0; i < vidas; i++) corazones += "❤️";
-            document.getElementById('txt-vidas').innerText = corazones;
-        }
+        function finalizarDisco() {
+            let puntosGanadosDisco = 100 - (erroresEnDisco * 10);
+            if (puntosGanadosDisco < 0) puntosGanadosDisco = 0;
 
-        let targetX = 0, targetY = 0;
-        const naveHud = document.getElementById('nave-hud');
-
-        function actualizarMovimientoNave(clientX, clientY) {
-            if(!juegoIniciado) return;
-            
-            targetX = (clientX - window.innerWidth / 2) * 0.001;
-            targetY = (clientY - window.innerHeight / 2) * 0.001;
-            
-            const offsetX = clientX - window.innerWidth / 2;
-            const offsetY = clientY - window.innerHeight / 2;
-            
-            const offsetHudY = offsetY - 80;
-            naveHud.style.transform = `translate(calc(-50% + ${offsetX * 0.8}px), calc(-50% + ${offsetHudY}px)) rotate(${offsetX * 0.05}deg)`;
-
-            const miraY = clientY - 80;
-            vectorPosicionMira.x = (clientX / window.innerWidth) * 2 - 1;
-            vectorPosicionMira.y = -(miraY / window.innerHeight) * 2 + 1;
-
-            comprobarColisionesNave();
-        }
-
-        window.addEventListener('mousemove', (e) => {
-            actualizarMovimientoNave(e.clientX, e.clientY);
-        });
-
-        window.addEventListener('touchmove', (e) => {
-            if(e.touches.length > 0) {
-                actualizarMovimientoNave(e.touches[0].clientX, e.touches[0].clientY);
+            if (!discoActual.conquistado) {
+                discoActual.conquistado = true;
+                discosConquistadosCount++;
+                document.getElementById('txt-discos-conquistados').innerText = discosConquistadosCount;
             }
-        }, { passive: true });
 
-        window.addEventListener('touchstart', (e) => {
-            if(e.touches.length > 0) {
-                actualizarMovimientoNave(e.touches[0].clientX, e.touches[0].clientY);
+            alert(`¡Disco completado! Obtuviste ${puntosGanadosDisco} puntos en este mundo.`);
+            volverAlMultiverso();
+        }
+
+        function volverAlMultiverso() {
+            document.getElementById('trivia-modal').style.display = 'none';
+            cargarMultiversoDiscos();
+        }
+
+        // Interacción táctil / clic directo en las tapas flotantes
+        function manejarSeleccionToque(clientX, clientY) {
+            if (!juegoIniciado || estadoActual !== "MENU_PRINCIPAL") return;
+
+            mouseVector.x = (clientX / window.innerWidth) * 2 - 1;
+            mouseVector.y = -(clientY / window.innerHeight) * 2 + 1;
+
+            raycaster.setFromCamera(mouseVector, camera);
+            const intersects = raycaster.intersectObjects(meshesDiscos);
+
+            if (intersects.length > 0) {
+                const discoSeleccionado = intersects[0].object.userData.discoData;
+                entrarADisco(discoSeleccionado);
+            }
+        }
+
+        window.addEventListener('click', (e) => { manejarSeleccionToque(e.clientX, e.clientY); });
+        window.addEventListener('touchend', (e) => {
+            if(e.changedTouches.length > 0) {
+                manejarSeleccionToque(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
             }
         }, { passive: true });
 
+        // Bucle de animación: hace que las tapas vuelen muy despacio por la pantalla
         function animate() {
             requestAnimationFrame(animate);
-            if (!pausarVuelo) {
-                objetosCosmos.forEach(obj => {
-                    obj.position.z += 0.5;
-                    obj.rotation.z += 0.01;
-                    if (obj.position.z > 20) {
-                        obj.position.z = -180;
-                        obj.position.x = (Math.random() - 0.5) * 35;
-                        obj.position.y = (Math.random() - 0.5) * 20;
+
+            if (estadoActual === "MENU_PRINCIPAL") {
+                meshesDiscos.forEach(mesh => {
+                    mesh.position.z += 0.08; // Vuelo muy suave y lento hacia adelante
+                    mesh.rotation.z += 0.002;
+                    if (mesh.position.z > 5) {
+                        mesh.position.z = -150;
+                        mesh.position.x = (Math.random() - 0.5) * 32;
+                        mesh.position.y = (Math.random() - 0.5) * 18;
                     }
                 });
-
-                const starArr = stars.geometry.attributes.position.array;
-                for(let i = 2; i < starArr.length; i += 3) {
-                    starArr[i] += 1.0;
-                    if(starArr[i] > 100) starArr[i] = -800;
-                }
-                stars.geometry.attributes.position.needsUpdate = true;
             }
 
-            camera.rotation.y += (targetX - camera.rotation.y) * 0.05;
-            camera.rotation.x += (targetY - camera.rotation.x) * 0.05;
+            // Movimiento sutil de estrellas
+            const starArr = stars.geometry.attributes.position.array;
+            for(let i = 2; i < starArr.length; i += 3) {
+                starArr[i] += 0.5;
+                if(starArr[i] > 100) starArr[i] = -900;
+            }
+            stars.geometry.attributes.position.needsUpdate = true;
+
             renderer.render(scene, camera);
         }
 
