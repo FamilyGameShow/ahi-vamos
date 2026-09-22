@@ -73,22 +73,20 @@
         #btn-entrar-disco { background: linear-gradient(45deg, #ff00ff, #00ffff); color: #fff; box-shadow: 0 0 15px rgba(255,0,255,0.7); }
         #btn-cancelar-disco { background: rgba(255,255,255,0.1); color: #fff; }
 
-        /* Modal del Minijuego Pac-Man Arcade */
+        /* Modal del Minijuego Pac-Man Estilo Laberinto Retro */
         #pacman-game-modal {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: rgba(5, 2, 20, 0.98); border: 3px solid #ffcc00; border-radius: 15px;
-            padding: 15px; width: 95%; max-width: 420px; box-shadow: 0 0 40px rgba(255, 204, 0, 0.7);
+            padding: 15px; width: 95%; max-width: 440px; box-shadow: 0 0 40px rgba(255, 204, 0, 0.7);
             z-index: 50; text-align: center; display: none; touch-action: none;
         }
-        #pacman-hud { color: #ffcc00; font-size: 12px; font-weight: bold; margin-bottom: 5px; text-shadow: 0 0 8px #ffcc00; }
-        #pacman-pregunta-txt { color: #fff; font-size: 13px; margin-bottom: 10px; line-height: 1.3; min-height: 35px; }
+        #pacman-hud { color: #ffcc00; font-size: 12px; font-weight: bold; margin-bottom: 4px; text-shadow: 0 0 8px #ffcc00; }
+        #pacman-pregunta-txt { color: #fff; font-size: 12px; margin-bottom: 8px; line-height: 1.2; min-height: 30px; font-weight: bold; }
         
-        /* Canvas donde corre el Pac-Man */
-        #pacman-canvas { background: #000; border: 2px solid #00ffff; border-radius: 8px; display: block; margin: 0 auto 10px auto; }
+        #pacman-canvas { background: #000; border: 2px solid #00ffff; border-radius: 8px; display: block; margin: 0 auto 8px auto; }
         
-        /* Controles táctiles del Pac-Man para celulares */
         .pacman-controles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; width: 160px; margin: 0 auto; }
-        .btn-dir { background: rgba(0, 255, 255, 0.2); border: 1px solid #00ffff; color: #fff; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .btn-dir { background: rgba(0, 255, 255, 0.2); border: 1px solid #00ffff; color: #fff; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; }
         .btn-dir:active { background: rgba(0, 255, 255, 0.5); }
 
         /* Ventana de Trofeos */
@@ -146,13 +144,12 @@
         </div>
     </div>
 
-    <!-- Mini-juego Pac-Man Arcade Personalizado -->
+    <!-- Mini-juego Laberinto Pac-Man con Canciones -->
     <div id="pacman-game-modal">
-        <div id="pacman-hud">🟡 PAC-MAN CERATI - PREGUNTA <span id="pacman-nro-pregunta">1</span>/10</div>
-        <div id="pacman-pregunta-txt">Cargando consigna...</div>
-        <canvas id="pacman-canvas" width="340" height="220"></canvas>
+        <div id="pacman-hud">🟡 PAC-MAN SODA 1984 - NIVEL <span id="pacman-nro-pregunta">1</span>/10</div>
+        <div id="pacman-pregunta-txt">Buscá la canción correcta en los pasillos...</div>
+        <canvas id="pacman-canvas" width="380" height="200"></canvas>
         
-        <!-- Controles táctiles en pantalla para mover a Pac-Man -->
         <div class="pacman-controles">
             <div></div>
             <button class="btn-dir" id="btn-arriba">⬆️</button>
@@ -188,24 +185,30 @@
         let erroresEnDisco = 0;
         let cancionActualId = "";
 
-        // Variables de Juego Pac-Man
-        let pacmanX = 40, pacmanY = 110, pacmanDir = {x: 0, y: 0};
-        let puntosLaberinto = [];
-        let fantasmaX = 280, fantasmaY = 110;
+        // Variables de Pac-Man con pasillos reales
+        let pacmanX = 50, pacmanY = 100, pacmanDir = {x: 0, y: 0};
+        let itemsPasillo = [];
         let pacmanLoop = null;
+
+        // Paredes del laberinto [x, y, ancho, alto]
+        const paredesLaberinto = [
+            {x: 80, y: 30, w: 220, h: 15},
+            {x: 80, y: 155, w: 220, h: 15},
+            {x: 175, y: 70, w: 30, h: 60}
+        ];
 
         const listaDiscos = [
             { id: "soda_84", nombre: "SODA STEREO (1984)", trackId: "W0KTTiuw96A", fondo: "https://i.ibb.co/sT3L0VW/soda-stereo.png", conquistado: false, preguntas: [
-                { p: "¿Qué tema abre el primer disco oficial de Soda?", opciones: ["Jet Set", "¿Por qué te fuiste?"], correcta: 0 },
-                { p: "¿En qué año se lanzó este álbum debut?", opciones: ["1984", "1986"], correcta: 0 },
-                { p: "¿Quién era el baterista de la banda?", opciones: ["Charly Alberti", "Daniel Melero"], correcta: 0 },
-                { p: "¿Qué instrumento principal tocaba Gustavo?", opciones: ["Guitarra y voz", "Teclados"], correcta: 0 },
-                { p: "¿En qué país se formó la banda?", opciones: ["Argentina", "Uruguay"], correcta: 0 },
-                { p: "¿Cuál era el estilo inicial predominante?", opciones: ["New wave / Rock moderno", "Heavy metal pesado"], correcta: 0 },
-                { p: "¿Cómo se llama el tema número 3?", opciones: ["Te hacen falta vitaminas", "De música ligera"], correcta: 0 },
-                { p: "¿Qué color predominaba en la estética inicial?", opciones: ["Vibrantes y estridentes 80s", "Tonos pastel"], correcta: 0 },
-                { p: "¿Quién diseñó el logo original?", opciones: ["La propia banda / entorno", "Un estudio extranjero"], correcta: 0 },
-                { p: "¿Fue un éxito rotundo desde su salida?", opciones: ["Sí, marcó un quiebre generacional", "Pasó desapercibido"], correcta: 0 }
+                { p: "Buscá el tema que abre el primer disco:", opciones: ["Jet Set", "¿Por qué te fuiste?"], correcta: 0 },
+                { p: "Buscá el año de lanzamiento de este álbum:", opciones: ["1984", "1986"], correcta: 0 },
+                { p: "Buscá al baterista de la banda:", opciones: ["Charly Alberti", "Daniel Melero"], correcta: 0 },
+                { p: "Buscá el instrumento principal de Gustavo:", opciones: ["Guitarra y voz", "Teclados"], correcta: 0 },
+                { p: "Buscá el país de origen de la banda:", opciones: ["Argentina", "Uruguay"], correcta: 0 },
+                { p: "Buscá el estilo inicial predominante:", opciones: ["New wave / Rock moderno", "Heavy metal pesado"], correcta: 0 },
+                { p: "Buscá el tema número 3 del disco:", opciones: ["Te hacen falta vitaminas", "De música ligera"], correcta: 0 },
+                { p: "Buscá el color de la estética inicial:", opciones: ["Vibrantes y estridentes 80s", "Tonos pastel"], correcta: 0 },
+                { p: "Buscá quién diseñó el logo original:", opciones: ["La propia banda / entorno", "Un estudio extranjero"], correcta: 0 },
+                { p: "Buscá si fue un éxito rotundo:", opciones: ["Sí, marcó un quiebre generacional", "Pasó desapercibido"], correcta: 0 }
             ]},
             { id: "nada_personal", nombre: "NADA PERSONAL (1985)", trackId: "uOlCYVXOyFI", fondo: "https://i.ibb.co/xq1TGpt8/nada-personal.png", conquistado: false, preguntas: [
                 { p: "¿Qué modelo clásico de guitarra usaba Gustavo?", opciones: ["Jackson Soloist", "Fender Stratocaster"], correcta: 0 },
@@ -324,7 +327,7 @@
                 { p: "¿Canción con gran despliegue melódico y poético?", opciones: ["Fuerza natural", "Magia"], correcta: 0 },
                 { p: "¿Participó su hijo Benito en la composición?", opciones: ["Sí, en varios temas clave", "No participó"], correcta: 0 },
                 { p: "¿Ganador de múltiples premios...", opciones: ["Grammy Latinos", "Premios Gardel de Oro únicamente"], correcta: 0 },
-                { p: "¿El viaje conceptual proponía ir hacia...", opcione: ["Una travesía natural y mental", "El espacio exterior galáctico"], correcta: 0 },
+                { p: "¿El viaje conceptual proponía ir hacia...", opciones: ["Una travesía natural y mental", "El espacio exterior galáctico"], correcta: 0 },
                 { p: "¿Su legado musical en esta obra es...", opciones: ["Una despedida luminosa y brillante", "Un trabajo experimental fallido"], correcta: 0 }
             ]}
         ];
@@ -517,19 +520,19 @@
             if(disco.fondo) cambiarFondo(disco.fondo);
             reproducirAudio(disco.trackId);
 
-            iniciarJuegoPacman();
+            iniciarJuegoLaberinto();
         }
 
-        // --- MOTOR DEL PAC-MAN ARCADE ---
-        function iniciarJuegoPacman() {
+        // --- MOTOR PAC-MAN CON PASILLOS Y CANCIONES ---
+        function iniciarJuegoLaberinto() {
             document.getElementById('pacman-game-modal').style.display = 'block';
-            prepararPreguntaPacman();
+            prepararNivelLaberinto();
             if(!pacmanLoop) {
-                pacmanLoop = setInterval(actualizarYRenderizarPacman, 1000 / 30);
+                pacmanLoop = setInterval(actualizarYRenderizarLaberinto, 1000 / 30);
             }
         }
 
-        function prepararPreguntaPacman() {
+        function prepararNivelLaberinto() {
             if (preguntaActualIndex >= discoActual.preguntas.length) {
                 finalizarDisco();
                 return;
@@ -538,73 +541,77 @@
             document.getElementById('pacman-nro-pregunta').innerText = preguntaActualIndex + 1;
             document.getElementById('pacman-pregunta-txt').innerText = q.p;
 
-            pacmanX = 40; pacmanY = 110; pacmanDir = {x: 0, y: 0};
+            pacmanX = 40; pacmanY = 100; pacmanDir = {x: 0, y: 0};
             
-            // Creamos los puntos de opciones en el tablero
-            puntosLaberinto = [
-                { x: 220, y: 70, texto: q.opciones[0], idx: 0, correcta: (0 === q.correcta) },
-                { x: 220, y: 150, texto: q.opciones[1], idx: 1, correcta: (1 === q.correcta) }
+            // Distribuir las opciones de canciones por los pasillos del laberinto
+            itemsPasillo = [
+                { x: 120, y: 100, texto: q.opciones[0], correcta: (0 === q.correcta), radio: 15 },
+                { x: 260, y: 100, texto: q.opciones[1], correcta: (1 === q.correcta), radio: 15 }
             ];
         }
 
-        // Controles de dirección
-        document.getElementById('btn-arriba').onclick = () => pacmanDir = {x: 0, y: -4};
-        document.getElementById('btn-abajo').onclick = () => pacmanDir = {x: 0, y: 4};
-        document.getElementById('btn-izq').onclick = () => pacmanDir = {x: -4, y: 0};
-        document.getElementById('btn-der').onclick = () => pacmanDir = {x: 4, y: 0};
+        document.getElementById('btn-arriba').onclick = () => pacmanDir = {x: 0, y: -3};
+        document.getElementById('btn-abajo').onclick = () => pacmanDir = {x: 0, y: 3};
+        document.getElementById('btn-izq').onclick = () => pacmanDir = {x: -3, y: 0};
+        document.getElementById('btn-der').onclick = () => pacmanDir = {x: 3, y: 0};
 
-        function actualizarYRenderizarPacman() {
+        function verificarColisionParedes(nx, ny) {
+            for(let p of paredesLaberinto) {
+                if(nx > p.x - 12 && nx < p.x + p.w + 12 && ny > p.y - 12 && ny < p.y + p.h + 12) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function actualizarYRenderizarLaberinto() {
             if (estadoActual !== "JUEGO_DISCO") return;
 
-            pacmanX += pacmanDir.x;
-            pacmanY += pacmanDir.y;
+            let nuevoX = pacmanX + pacmanDir.x;
+            let nuevoY = pacmanY + pacmanDir.y;
 
-            // Limites del canvas
-            if(pacmanX < 15) pacmanX = 15;
-            if(pacmanX > 325) pacmanX = 325;
-            if(pacmanY < 15) pacmanY = 15;
-            if(pacmanY > 205) pacmanY = 205;
+            // Limites del canvas y colisión con paredes
+            if(nuevoX >= 20 && nuevoX <= 360 && nuevoY >= 20 && nuevoY <= 180) {
+                if(!verificarColisionParedes(nuevoX, nuevoY)) {
+                    pacmanX = nuevoX;
+                    pacmanY = nuevoY;
+                }
+            }
 
             const canvas = document.getElementById('pacman-canvas');
             const ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Dibujar pasillos del laberinto
-            ctx.strokeStyle = '#00ffff';
-            ctx.lineWidth = 2;
-            ctx.strokeRect(10, 10, 320, 200);
-            ctx.beginPath();
-            ctx.moveTo(170, 10); ctx.lineTo(170, 210);
-            ctx.stroke();
+            // Dibujar Pasillos / Paredes del Laberinto
+            ctx.fillStyle = '#110033';
+            ctx.fillRect(10, 10, 360, 180);
+            
+            ctx.fillStyle = '#00ffff';
+            paredesLaberinto.forEach(p => {
+                ctx.fillRect(p.x, p.y, p.w, p.h);
+            });
 
-            // Dibujar puntos / opciones a comer
-            puntosLaberinto.forEach(p => {
-                ctx.fillStyle = '#ffcc00';
+            // Dibujar Canciones / Ítems en los pasillos
+            itemsPasillo.forEach(item => {
+                ctx.fillStyle = item.correcta ? '#ff00ff' : '#00ffaa';
                 ctx.beginPath();
-                ctx.arc(p.x, p.y, 12, 0, Math.PI * 2);
+                ctx.arc(item.x, item.y, 10, 0, Math.PI * 2);
                 ctx.fill();
 
-                ctx.fillStyle = '#000';
+                ctx.fillStyle = '#fff';
                 ctx.font = 'bold 11px sans-serif';
                 ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(p.idx + 1, p.x, p.y);
+                ctx.fillText(item.texto, item.x, item.y - 14);
 
-                // Texto de la opción al lado
-                ctx.fillStyle = '#fff';
-                ctx.font = '11px sans-serif';
-                ctx.textAlign = 'left';
-                ctx.fillText(p.texto, p.x + 18, p.y);
-
-                // Colisión (Pac-Man come el punto)
-                let distX = pacmanX - p.x;
-                let distY = pacmanY - p.y;
-                if(Math.sqrt(distX*distX + distY*distY) < 18) {
-                    verificarPuntoComido(p.correcta);
+                // Colisión (Pac-Man come la canción)
+                let distX = pacmanX - item.x;
+                let distY = pacmanY - item.y;
+                if(Math.sqrt(distX*distX + distY*distY) < 16) {
+                    resolverItemComido(item.correcta);
                 }
             });
 
-            // Dibujar Pac-Man
+            // Dibujar Pac-Man (amarillo clásico)
             ctx.fillStyle = '#ffcc00';
             ctx.beginPath();
             ctx.arc(pacmanX, pacmanY, 10, 0.2 * Math.PI, 1.8 * Math.PI);
@@ -612,8 +619,8 @@
             ctx.fill();
         }
 
-        function verificarPuntoComido(esCorrecta) {
-            pacmanDir = {x: 0, y: 0}; // Detener
+        function resolverItemComido(esCorrecta) {
+            pacmanDir = {x: 0, y: 0};
             if (esCorrecta) {
                 puntos += 10;
                 document.getElementById('txt-puntos').innerText = puntos;
@@ -621,7 +628,7 @@
                 erroresEnDisco++;
             }
             preguntaActualIndex++;
-            prepararPreguntaPacman();
+            prepararNivelLaberinto();
         }
 
         function finalizarDisco() {
@@ -635,7 +642,7 @@
                 document.getElementById('txt-discos-conquistados').innerText = discosConquistadosCount;
             }
 
-            alert(`¡Planeta conquistado! Obtuviste ${puntosGanadosDisco} puntos en este disco.`);
+            alert(`¡Universo conquistado! Obtuviste ${puntosGanadosDisco} puntos en este disco.`);
             volverAlMultiverso();
         }
 
