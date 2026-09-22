@@ -211,473 +211,477 @@
     </div>
 
     <script>
-        let juegoIniciado = false;
-        let puntos = 0;
-        let discosConquistadosCount = 0;
-        let estadoActual = "MENU_PRINCIPAL";
-        let meshesDiscos = [];
-        let discoEnFoco = null;
-        let discoActual = null;
-        let cancionActualId = "";
+        window.onload = function() {
+            let juegoIniciado = false;
+            let puntos = 0;
+            let discosConquistadosCount = 0;
+            let estadoActual = "MENU_PRINCIPAL";
+            let meshesDiscos = [];
+            let discoEnFoco = null;
+            let discoActual = null;
+            let cancionActualId = "";
 
-        function reproducirAudio(videoId, segundos = 0) {
-            const cleanId = videoId.split('&')[0];
-            const idKey = `${cleanId}_${segundos}`;
-            if (cancionActualId !== idKey) {
-                cancionActualId = idKey;
-                const ytPlayer = document.getElementById('yt-player');
-                ytPlayer.src = `https://www.youtube.com/embed/${cleanId}?autoplay=1&start=${segundos}&loop=1&playlist=${cleanId}`;
-            }
-        }
-
-        // --- Vinculación directa del botón de inicio ---
-        const btnEntrar = document.getElementById('btn-entrar');
-        btnEntrar.onclick = function(e) {
-            e.stopPropagation();
-            iniciarConteoRegresivo();
-        };
-        btnEntrar.ontouchend = function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            iniciarConteoRegresivo();
-        };
-
-        // --- Disco 1 (Pac-Man) ---
-        let pacGridX = 5, pacGridY = 3, pacDirX = 0, pacDirY = 0;
-        let itemsCuadricula = [];
-        let cancionesSoda84 = ["Sobredosis de tv", "Dietético", "Tele-Ka", "Trátame Suavemente", "Afrodisiacos", "Jet Set", "Un Misil en mi Placard", "El Tiempo es dinero", "Ni un segundo", "Vitaminas", "Mi novia tiene biceps"];
-        let indiceMetaSoda84 = 0;
-        let pacmanGameLoop = null;
-        const mapaLaberinto = [[1,1,1,1,1,1,1,1,1,1,1,1],[2,0,0,0,1,0,0,0,1,0,0,2],[1,0,1,0,1,0,1,0,1,0,1,1],[2,0,0,0,0,0,0,0,0,0,0,2],[1,0,1,1,1,0,1,1,1,0,1,1],[2,0,0,0,0,0,0,0,0,0,0,2],[1,1,1,1,1,1,1,1,1,1,1,1]];
-        const tileSize = 30, offsetX = 10, offsetY = 15;
-        const cancionesTrampa = ["Persiana", "Zoom", "Signos", "Crimen", "Puente", "De Música", "Prófugos"];
-
-        // --- Disco 2 (Galaxy) ---
-        let naveX = 190;
-        let cancionesNadaPersonal = ["Nada Personal", "Ecos", "Imágenes Retro", "Cuando Pase el Temblor", "Juego de Seducción", "Si no fuera por", "Estoy azulado", "Danza Rota", "Observándonos (satelites)", "El cuerpo del delito"];
-        let indiceMetaNadaPersonal = 0;
-        let objetosGalaxia = [];
-        let galaxyGameLoop = null;
-
-        // --- Disco 3 (Tetris - Signos) ---
-        let tetrisCols = 10, tetrisRows = 14;
-        let tetrisGrid = Array(tetrisRows).fill().map(() => Array(tetrisCols).fill(0));
-        let piezaActual = null, tetrisLineasCount = 0, tetrisGameLoop = null;
-        const tetrisPiezas = [[[1,1,1,1]], [[1,1],[1,1]], [[0,1,0],[1,1,1]], [[1,0],[1,0],[1,1]], [[0,1],[0,1],[1,1]]];
-
-        // --- Disco 4 (Crucigrama Doble Vida) ---
-        const crucigramaDef = [
-            { palabra: "COMUN", r: 1, c: 6, dir: "H" }, { palabra: "CUARTO", r: 1, c: 6, dir: "V" },
-            { palabra: "FURIA", r: 3, c: 2, dir: "H" }, { palabra: "CUPULA", r: 2, c: 3, dir: "V" },
-            { palabra: "BORDE", r: 5, c: 1, dir: "V" }, { palabra: "DOBLE", r: 6, c: 0, dir: "H" },
-            { palabra: "DELATOR", r: 9, c: 0, dir: "H" }, { palabra: "INTENSIVA", r: 0, c: 10, dir: "V" },
-            { palabra: "OJOS", r: 7, c: 5, dir: "V" }
-        ];
-
-        // --- Disco 5 (Batalla Naval / Canción Animal Interactiva) ---
-        const barcosCancionAnimal = [
-            { nombre: "Té Para Tres", segundos: 0, coordenadas: [{r:0, c:0, letra:'T'}, {r:0, c:1, letra:'E'}] },
-            { nombre: "Séptimo Día", segundos: 235, coordenadas: [{r:1, c:2, letra:'S'}, {r:1, c:3, letra:'É'}, {r:1, c:4, letra:'P'}, {r:1, c:5, letra:'T'}, {r:1, c:6, letra:'I'}, {r:1, c:7, letra:'M'}, {r:1, c:8, letra:'O'}] },
-            { nombre: "Un Millón de Años Luz", segundos: 510, coordenadas: [{r:2, c:0, letra:'M'}, {r:3, c:0, letra:'I'}, {r:4, c:0, letra:'L'}, {r:5, c:0, letra:'L'}, {r:6, c:0, letra:'Ó'}, {r:7, c:0, letra:'N'}] },
-            { nombre: "Animal", segundos: 780, coordenadas: [{r:3, c:2, letra:'A'}, {r:3, c:3, letra:'N'}, {r:3, c:4, letra:'I'}, {r:3, c:5, letra:'M'}, {r:3, c:6, letra:'A'}, {r:3, c:7, letra:'L'}] },
-            { nombre: "De Música Ligera", segundos: 1040, coordenadas: [{r:5, c:2, letra:'L'}, {r:5, c:3, letra:'I'}, {r:5, c:4, letra:'G'}, {r:5, c:5, letra:'E'}, {r:5, c:6, letra:'R'}, {r:5, c:7, letra:'A'}] },
-            { nombre: "Sueles Dejarme Solo", segundos: 1280, coordenadas: [{r:7, c:2, letra:'S'}, {r:7, c:3, letra:'O'}, {r:7, c:4, letra:'L'}, {r:7, c:5, letra:'O'}] },
-            { nombre: "Sol", segundos: 1520, coordenadas: [{r:8, c:7, letra:'S'}, {r:8, c:8, letra:'O'}, {r:8, c:9, letra:'L'}] },
-            { nombre: "Un Millón de Hombres", segundos: 1750, coordenadas: [{r:0, c:10, letra:'1'}, {r:1, c:10, letra:'9'}, {r:2, c:10, letra:'9'}, {r:3, c:10, letra:'0'}, {r:5, c:10, letra:'H'}, {r:6, c:10, letra:'O'}, {r:7, c:10, letra:'M'}, {r:8, c:10, letra:'B'}, {r:9, c:10, letra:'R'}, {r:10, c:10, letra:'E'}] },
-            { nombre: "Caníbales", segundos: 1980, coordenadas: [{r:10, c:0, letra:'C'}, {r:10, c:1, letra:'A'}, {r:10, c:2, letra:'N'}, {r:10, c:3, letra:'Í'}, {r:10, c:4, letra:'B'}, {r:10, c:5, letra:'A'}, {r:10, c:6, letra:'L'}, {r:10, c:7, letra:'E'}, {r:10, c:8, letra:'S'}] }
-        ];
-        let barcosHundidosSet = new Set();
-
-        const listaDiscos = [
-            { id: "soda_84", nombre: "SODA STEREO (1984)", trackId: "W0KTTiuw96A", fondo: "https://i.ibb.co/sT3L0VW/soda-stereo.png", conquistado: false, esPacman: true },
-            { id: "nada_personal", nombre: "NADA PERSONAL (1985)", trackId: "uOlCYVXOyFI", fondo: "https://i.ibb.co/xq1TGpt8/nada-personal.png", conquistado: false, esGalaxy: true },
-            { id: "signos", nombre: "SIGNOS (1986)", trackId: "xiYMsOtPa5c", fondo: "https://i.ibb.co/LXQbmwRR/signos.png", conquistado: false, esTetris: true },
-            { id: "doble_vida", nombre: "DOBLE VIDA (1988)", trackId: "4l3oYRETotc", fondo: "https://i.ibb.co/cXZpRnKk/doble-vida.png", conquistado: false, esCrucigrama: true },
-            { id: "cancion_animal", nombre: "CANCIÓN ANIMAL (1990)", trackId: "BxDciewLqAU", fondo: "https://i.ibb.co/rRbsVPJc/cancion-animal.png", conquistado: false, esBatallaNaval: true },
-            { id: "dynamo", nombre: "DYNAMO (1992)", trackId: "a5oUU6tGKFM", fondo: "https://i.ibb.co/S1G0p32/dynamo.png", conquistado: false },
-            { id: "sueno_stereo", nombre: "SUEÑO STEREO (1995)", trackId: "IqBK2UjnUVA", fondo: "https://i.ibb.co/whCCS4r1/sue-o-stereo.png", conquistado: false },
-            { id: "amor_amarillo", nombre: "AMOR AMARILLO (1993)", trackId: "ZOd-N9qGQK8", fondo: "https://i.ibb.co/KpPXvH5K/amor-amarillo.png", conquistado: false },
-            { id: "bocanada", nombre: "BOCANADA (1999)", trackId: "90SS2mXzPcA", fondo: "https://i.ibb.co/Gf9jPzVy/bocanada.png", conquistado: false },
-            { id: "ahi_vamos", nombre: "AHÍ VAMOS (2006)", trackId: "qfcwCrh4s7I", fondo: "https://i.ibb.co/prZnh9w4/ahi-vamos.png", conquistado: false },
-            { id: "fuerza_natural", nombre: "FUERZA NATURAL (2009)", trackId: "Z7ndVxqUb48", fondo: "https://i.ibb.co/V0yVhy8Y/fuerza-natural.png", conquistado: false }
-        ];
-
-        function cambiarFondo(urlImagen) {
-            document.getElementById('escenografia-fondo').style.backgroundImage = `url('${urlImagen}')`;
-        }
-
-        function iniciarConteoRegresivo() {
-            document.getElementById('pantalla-intro').style.display = 'none';
-            document.getElementById('pantalla-conteo').style.display = 'flex';
-            cambiarFondo("https://i.ibb.co/9Hy8h9fL/colores-santos.png");
-            reproducirAudio("Wun6zDSpwkg");
-            let cuenta = 3;
-            const numEl = document.getElementById('txt-conteo-numero');
-            numEl.innerText = cuenta;
-            let timer = setInterval(() => {
-                cuenta--;
-                if (cuenta > 0) {
-                    numEl.innerText = cuenta;
-                } else {
-                    clearInterval(timer);
-                    document.getElementById('pantalla-conteo').style.display = 'none';
-                    comenzarJuegoReal();
-                }
-            }, 1000);
-        }
-
-        function comenzarJuegoReal() {
-            juegoIniciado = true;
-            document.getElementById('ui-capa').style.display = 'flex';
-            document.getElementById('btn-trofeos').style.display = 'block';
-            cargarMultiversoDiscos();
-        }
-
-        document.getElementById('btn-volver').addEventListener('click', volverAlMultiverso);
-        document.getElementById('btn-volver').addEventListener('touchend', (e) => { e.preventDefault(); volverAlMultiverso(); });
-        document.getElementById('btn-trofeos').addEventListener('click', abrirVentanaTrofeos);
-        document.getElementById('btn-trofeos').addEventListener('touchend', (e) => { e.preventDefault(); abrirVentanaTrofeos(); });
-        document.getElementById('btn-cerrar-trofeos').addEventListener('click', cerrarVentanaTrofeos);
-        document.getElementById('btn-cerrar-trofeos').addEventListener('touchend', (e) => { e.preventDefault(); cerrarVentanaTrofeos(); });
-        document.getElementById('btn-entrar-disco').addEventListener('click', confirmarEntradaDisco);
-        document.getElementById('btn-entrar-disco').addEventListener('touchend', (e) => { e.preventDefault(); confirmarEntradaDisco(); });
-        document.getElementById('btn-cancelar-disco').addEventListener('click', cancelarFocoDisco);
-        document.getElementById('btn-cancelar-disco').addEventListener('touchend', (e) => { e.preventDefault(); cancelarFocoDisco(); });
-
-        const canvasContainer = document.getElementById('canvas-container');
-        const scene = new THREE.Scene();
-        scene.fog = new THREE.FogExp2(0x02000a, 0.012);
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        canvasContainer.appendChild(renderer.domElement);
-
-        const starGeometry = new THREE.BufferGeometry();
-        const starPositions = [];
-        for(let i = 0; i < 800; i++) {
-            starPositions.push((Math.random() - 0.5) * 500, (Math.random() - 0.5) * 500, (Math.random() - 0.5) * 1000);
-        }
-        starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starPositions, 3));
-        const stars = new THREE.Points(starGeometry, new THREE.PointsMaterial({color: 0xffffff, size: 0.8}));
-        scene.add(stars);
-        camera.position.z = 15;
-
-        let raycaster = new THREE.Raycaster();
-        let mouseVector = new THREE.Vector2();
-
-        function limpiarEscena() {
-            meshesDiscos.forEach(m => scene.remove(m));
-            meshesDiscos = [];
-        }
-
-        function cargarMultiversoDiscos() {
-            limpiarEscena();
-            estadoActual = "MENU_PRINCIPAL";
-            discoEnFoco = null;
-            document.getElementById('btn-volver').style.display = 'none';
-            document.getElementById('btn-trofeos').style.display = 'block';
-            document.getElementById('disco-seleccionado-banner').style.display = 'none';
-            document.getElementById('txt-estado').innerText = "TOCA UN DISCO PARA VERLO";
-            cambiarFondo("https://i.ibb.co/9Hy8h9fL/colores-santos.png");
-            reproducirAudio("Wun6zDSpwkg");
-
-            const textureLoader = new THREE.TextureLoader();
-            const discosDisponibles = listaDiscos.filter(d => !d.conquistado);
-            
-            discosDisponibles.forEach((disco, index) => {
-                const grupoDisco = new THREE.Group();
-                const geometry = new THREE.PlaneGeometry(4.2, 4.2);
-                let material;
-                if(disco.fondo) {
-                    const texture = textureLoader.load(disco.fondo);
-                    material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
-                } else {
-                    material = new THREE.MeshBasicMaterial({ color: 0x00ffff, wireframe: true });
-                }
-                const mesh = new THREE.Mesh(geometry, material);
-                grupoDisco.add(mesh);
-
-                const canvasTexto = document.createElement('canvas');
-                canvasTexto.width = 512;
-                canvasTexto.height = 128;
-                const ctx = canvasTexto.getContext('2d');
-                ctx.fillStyle = 'rgba(10, 5, 30, 0.9)';
-                ctx.fillRect(0, 0, 512, 128);
-                ctx.strokeStyle = '#00ffff';
-                ctx.lineWidth = 6;
-                ctx.strokeRect(0, 0, 512, 128);
-                ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 26px sans-serif';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(disco.nombre, 256, 64);
-
-                const textureTexto = new THREE.CanvasTexture(canvasTexto);
-                const materialTexto = new THREE.MeshBasicMaterial({ map: textureTexto, transparent: true });
-                const geometryTexto = new THREE.PlaneGeometry(4.6, 1.2);
-                const meshTexto = new THREE.Mesh(geometryTexto, materialTexto);
-                meshTexto.position.y = -2.8;
-                grupoDisco.add(meshTexto);
-
-                const posX = (Math.random() - 0.5) * 28;
-                const posY = (Math.random() - 0.5) * 15;
-                const posZ = -25 - (index * 16);
-                grupoDisco.position.set(posX, posY, posZ);
-                grupoDisco.userData = { tipo: 'disco', discoData: disco };
-                scene.add(grupoDisco);
-                meshesDiscos.push(grupoDisco);
-            });
-        }
-
-        function enfocarDisco(discoObj) {
-            estadoActual = "DISCO_EN_FOCO";
-            discoEnFoco = discoObj.userData.discoData;
-            meshesDiscos.forEach(mesh => {
-                if (mesh === discoObj) {
-                    mesh.position.set(0, 0.5, 2);
-                    mesh.rotation.set(0, 0, 0);
-                    mesh.scale.set(1.6, 1.6, 1.6);
-                } else {
-                    mesh.visible = false;
-                }
-            });
-            document.getElementById('disco-seleccionado-titulo').innerText = discoEnFoco.nombre;
-            document.getElementById('disco-seleccionado-banner').style.display = 'block';
-            document.getElementById('txt-estado').innerText = "DISCO SELECCIONADO";
-            document.getElementById('btn-trofeos').style.display = 'none';
-        }
-
-        function cancelarFocoDisco() { cargarMultiversoDiscos(); }
-        function confirmarEntradaDisco() {
-            if (!discoEnFoco) return;
-            document.getElementById('disco-seleccionado-banner').style.display = 'none';
-            entrarADisco(discoEnFoco);
-        }
-
-        function entrarADisco(disco) {
-            limpiarEscena();
-            estadoActual = "JUEGO_DISCO";
-            discoActual = disco;
-            reproducirAudio(disco.trackId);
-
-            if (disco.esPacman) {
-                iniciarPacmanSoda84();
-            } else if (disco.esGalaxy) {
-                iniciarGalaxyNadaPersonal();
-            } else if (disco.esTetris) {
-                iniciarTetrisSignos();
-            } else if (disco.esCrucigrama) {
-                iniciarCrucigramaDobleVida();
-            } else if (disco.esBatallaNaval) {
-                iniciarBatallaNavalCancionAnimal();
-            } else {
-                alert(`¡Próximamente minijuego para ${disco.nombre}!`);
-                volverAlMultiverso();
-            }
-        }
-
-        // --- DISCO 1 (Pac-Man) ---
-        let pacGridX = 5, pacGridY = 3, pacDirX = 0, pacDirY = 0;
-        let itemsCuadricula = [];
-        let cancionesSoda84 = ["Sobredosis de tv", "Dietético", "Tele-Ka", "Trátame Suavemente", "Afrodisiacos", "Jet Set", "Un Misil en mi Placard", "El Tiempo es dinero", "Ni un segundo", "Vitaminas", "Mi novia tiene biceps"];
-        let indiceMetaSoda84 = 0;
-        let pacmanGameLoop = null;
-        const mapaLaberinto = [[1,1,1,1,1,1,1,1,1,1,1,1],[2,0,0,0,1,0,0,0,1,0,0,2],[1,0,1,0,1,0,1,0,1,0,1,1],[2,0,0,0,0,0,0,0,0,0,0,2],[1,0,1,1,1,0,1,1,1,0,1,1],[2,0,0,0,0,0,0,0,0,0,0,2],[1,1,1,1,1,1,1,1,1,1,1,1]];
-        const tileSize = 30, offsetX = 10, offsetY = 15;
-        const cancionesTrampa = ["Persiana", "Zoom", "Signos", "Crimen", "Puente", "De Música", "Prófugos"];
-
-        // --- DISCO 2 (Galaxy) ---
-        let naveX = 190;
-        let cancionesNadaPersonal = ["Nada Personal", "Ecos", "Imágenes Retro", "Cuando Pase el Temblor", "Juego de Seducción", "Si no fuera por", "Estoy azulado", "Danza Rota", "Observándonos (satelites)", "El cuerpo del delito"];
-        let indiceMetaNadaPersonal = 0;
-        let objetosGalaxia = [];
-        let galaxyGameLoop = null;
-
-        // --- DISCO 3 (Tetris - Signos) ---
-        let tetrisCols = 10, tetrisRows = 14;
-        let tetrisGrid = Array(tetrisRows).fill().map(() => Array(tetrisCols).fill(0));
-        let piezaActual = null, tetrisLineasCount = 0, tetrisGameLoop = null;
-        const tetrisPiezas = [[[1,1,1,1]], [[1,1],[1,1]], [[0,1,0],[1,1,1]], [[1,0],[1,0],[1,1]], [[0,1],[0,1],[1,1]]];
-
-        // --- DISCO 4 (Crucigrama Doble Vida) ---
-        const crucigramaDef = [
-            { palabra: "COMUN", r: 1, c: 6, dir: "H" }, { palabra: "CUARTO", r: 1, c: 6, dir: "V" },
-            { palabra: "FURIA", r: 3, c: 2, dir: "H" }, { palabra: "CUPULA", r: 2, c: 3, dir: "V" },
-            { palabra: "BORDE", r: 5, c: 1, dir: "V" }, { palabra: "DOBLE", r: 6, c: 0, dir: "H" },
-            { palabra: "DELATOR", r: 9, c: 0, dir: "H" }, { palabra: "INTENSIVA", r: 0, c: 10, dir: "V" },
-            { palabra: "OJOS", r: 7, c: 5, dir: "V" }
-        ];
-
-        // --- DISCO 5 (Batalla Naval / Canción Animal Interactiva) ---
-        function iniciarBatallaNavalCancionAnimal() {
-            document.getElementById('batalla-naval-modal').style.display = 'block';
-            barcosHundidosSet.clear();
-            document.getElementById('txt-barcos-hundidos-contador').innerText = "0";
-            document.getElementById('txt-barco-meta').innerText = "🎯 HUNDÍ LOS BARCOS PARA REVELAR LAS CANCIONES";
-            generarGrillaBatallaNaval();
-        }
-
-        function generarGrillaBatallaNaval() {
-            const grid = document.getElementById('batalla-naval-grid');
-            grid.innerHTML = '';
-            
-            for (let r = 0; r < 11; r++) {
-                for (let c = 0; c < 11; c++) {
-                    const btn = document.createElement('button');
-                    btn.className = 'naval-btn';
-                    btn.innerText = '🌊';
-                    btn.dataset.r = r;
-                    btn.dataset.c = c;
-
-                    let barcoPropietario = null;
-                    let coordenadaItem = null;
-                    barcosCancionAnimal.forEach(barco => {
-                        let encontrada = barco.coordenadas.find(coord => coord.r === r && coord.c === c);
-                        if (encontrada) {
-                            barcoPropietario = barco;
-                            coordenadaItem = encontrada;
-                        }
-                    });
-
-                    btn.onclick = () => {
-                        if (barcoPropietario) {
-                            btn.innerText = coordenadaItem.letra;
-                            btn.className = 'naval-btn acierto';
-                            puntos += 20;
-                            document.getElementById('txt-puntos').innerText = puntos;
-                            
-                            reproducirAudio(discoActual.trackId, barcoPropietario.segundos);
-                            document.getElementById('txt-barco-meta').innerText = `🎵 ¡BARCO TOCADO: ${barcoPropietario.nombre}!`;
-
-                            let celdasBarco = document.querySelectorAll(`button[data-r]`);
-                            let barcoCompleto = true;
-                            barcoPropietario.coordenadas.forEach(coord => {
-                                let celdaPart = Array.from(celdasBarco).find(b => b.dataset.r == coord.r && b.dataset.c == coord.c);
-                                if (!celdaPart || celdaPart.innerText !== coord.letra) {
-                                    barcoCompleto = false;
-                                }
-                            });
-
-                            if (barcoCompleto && !barcosHundidosSet.has(barcoPropietario.nombre)) {
-                                barcosHundidosSet.add(barcoPropietario.nombre);
-                                document.getElementById('txt-barcos-hundidos-contador').innerText = barcosHundidosSet.size;
-                                document.getElementById('txt-barco-meta').innerText = `💥 ¡BARCO HUNDIDO: ${barcoPropietario.nombre}!`;
-
-                                if (barcosHundidosSet.size >= barcosCancionAnimal.length) {
-                                    setTimeout(() => { finalizarDiscoActual(); }, 2000);
-                                }
-                            }
-                        } else {
-                            btn.innerText = '❌';
-                            btn.className = 'naval-btn agua';
-                            puntos = Math.max(0, puntos - 5);
-                            document.getElementById('txt-puntos').innerText = puntos;
-                            document.getElementById('txt-barco-meta').innerText = "❌ ¡AGUA! Seguí buscando en el radar.";
-                        }
-                    };
-                    grid.appendChild(btn);
+            function reproducirAudio(videoId, segundos = 0) {
+                const cleanId = videoId.split('&')[0];
+                const idKey = `${cleanId}_${segundos}`;
+                if (cancionActualId !== idKey) {
+                    cancionActualId = idKey;
+                    const ytPlayer = document.getElementById('yt-player');
+                    ytPlayer.src = `https://www.youtube.com/embed/${cleanId}?autoplay=1&start=${segundos}&loop=1&playlist=${cleanId}`;
                 }
             }
-        }
 
-        document.getElementById('btn-reiniciar-naval').onclick = () => {
-            iniciarBatallaNavalCancionAnimal();
-        };
-
-        // --- Cierre común de discos ---
-        function finalizarDiscoActual() {
-            document.getElementById('pacman-game-modal').style.display = 'none';
-            document.getElementById('galaxy-game-modal').style.display = 'none';
-            document.getElementById('tetris-game-modal').style.display = 'none';
-            document.getElementById('crucigrama-game-modal').style.display = 'none';
-            document.getElementById('batalla-naval-modal').style.display = 'none';
-            if (!discoActual.conquistado) {
-                discoActual.conquistado = true;
-                discosConquistadosCount++;
-                document.getElementById('txt-discos-conquistados').innerText = discosConquistadosCount;
+            // --- Vinculación segura del botón de inicio ---
+            const btnEntrar = document.getElementById('btn-entrar');
+            if (btnEntrar) {
+                btnEntrar.onclick = function(e) {
+                    e.stopPropagation();
+                    iniciarConteoRegresivo();
+                };
+                btnEntrar.ontouchend = function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    iniciarConteoRegresivo();
+                };
             }
-            alert(`¡Excelente! Conquistaste el multiverso de ${discoActual.nombre}.`);
-            volverAlMultiverso();
-        }
 
-        function volverAlMultiverso() {
-            document.getElementById('pacman-game-modal').style.display = 'none';
-            document.getElementById('galaxy-game-modal').style.display = 'none';
-            document.getElementById('tetris-game-modal').style.display = 'none';
-            document.getElementById('crucigrama-game-modal').style.display = 'none';
-            document.getElementById('batalla-naval-modal').style.display = 'none';
-            document.getElementById('trofeos-modal').style.display = 'none';
-            document.getElementById('disco-seleccionado-banner').style.display = 'none';
-            cargarMultiversoDiscos();
-        }
+            // --- Disco 1 (Pac-Man) ---
+            let pacGridX = 5, pacGridY = 3, pacDirX = 0, pacDirY = 0;
+            let itemsCuadricula = [];
+            let cancionesSoda84 = ["Sobredosis de tv", "Dietético", "Tele-Ka", "Trátame Suavemente", "Afrodisiacos", "Jet Set", "Un Misil en mi Placard", "El Tiempo es dinero", "Ni un segundo", "Vitaminas", "Mi novia tiene biceps"];
+            let indiceMetaSoda84 = 0;
+            let pacmanGameLoop = null;
+            const mapaLaberinto = [[1,1,1,1,1,1,1,1,1,1,1,1],[2,0,0,0,1,0,0,0,1,0,0,2],[1,0,1,0,1,0,1,0,1,0,1,1],[2,0,0,0,0,0,0,0,0,0,0,2],[1,0,1,1,1,0,1,1,1,0,1,1],[2,0,0,0,0,0,0,0,0,0,0,2],[1,1,1,1,1,1,1,1,1,1,1,1]];
+            const tileSize = 30, offsetX = 10, offsetY = 15;
+            const cancionesTrampa = ["Persiana", "Zoom", "Signos", "Crimen", "Puente", "De Música", "Prófugos"];
 
-        function abrirVentanaTrofeos() {
-            if (estadoActual !== "MENU_PRINCIPAL") return;
-            const grid = document.getElementById('grid-trofeos-lista');
-            grid.innerHTML = '';
-            listaDiscos.forEach(disco => {
-                const div = document.createElement('div');
-                div.className = `item-trofeo ${disco.conquistado ? 'conquistado' : ''}`;
-                div.innerHTML = `<img src="${disco.fondo}" alt="Tapa"><div><strong>${disco.nombre}</strong><br><span>${disco.conquistado ? '✅ Conquistado' : '🔒 Pendiente'}</span></div>`;
-                grid.appendChild(div);
-            });
-            document.getElementById('trofeos-modal').style.display = 'block';
-        }
+            // --- Disco 2 (Galaxy) ---
+            let naveX = 190;
+            let cancionesNadaPersonal = ["Nada Personal", "Ecos", "Imágenes Retro", "Quando Pase el Temblor", "Juego de Seducción", "Si no fuera por", "Estoy azulado", "Danza Rota", "Observándonos (satelites)", "El cuerpo del delito"];
+            let indiceMetaNadaPersonal = 0;
+            let objetosGalaxia = [];
+            let galaxyGameLoop = null;
 
-        function cerrarVentanaTrofeos() { document.getElementById('trofeos-modal').style.display = 'none'; }
+            // --- Disco 3 (Tetris - Signos) ---
+            let tetrisCols = 10, tetrisRows = 14;
+            let tetrisGrid = Array(tetrisRows).fill().map(() => Array(tetrisCols).fill(0));
+            let piezaActual = null, tetrisLineasCount = 0, tetrisGameLoop = null;
+            const tetrisPiezas = [[[1,1,1,1]], [[1,1],[1,1]], [[0,1,0],[1,1,1]], [[1,0],[1,0],[1,1]], [[0,1],[0,1],[1,1]]];
 
-        function manejarSeleccionToque(clientX, clientY) {
-            if (!juegoIniciado || estadoActual !== "MENU_PRINCIPAL") return;
-            mouseVector.x = (clientX / window.innerWidth) * 2 - 1;
-            mouseVector.y = -(clientY / window.innerHeight) * 2 + 1;
-            raycaster.setFromCamera(mouseVector, camera);
-            const intersects = raycaster.intersectObjects(meshesDiscos, true);
-            if (intersects.length > 0) {
-                let objSeleccionado = intersects[0].object;
-                while (objSeleccionado.parent && !objSeleccionado.userData.discoData) {
-                    objSeleccionado = objSeleccionado.parent;
-                }
-                if (objSeleccionado.userData && objSeleccionado.userData.discoData) {
-                    enfocarDisco(objSeleccionado);
-                }
+            // --- Disco 4 (Crucigrama Doble Vida) ---
+            const crucigramaDef = [
+                { palabra: "COMUN", r: 1, c: 6, dir: "H" }, { palabra: "CUARTO", r: 1, c: 6, dir: "V" },
+                { palabra: "FURIA", r: 3, c: 2, dir: "H" }, { palabra: "CUPULA", r: 2, c: 3, dir: "V" },
+                { palabra: "BORDE", r: 5, c: 1, dir: "V" }, { palabra: "DOBLE", r: 6, c: 0, dir: "H" },
+                { palabra: "DELATOR", r: 9, c: 0, dir: "H" }, { palabra: "INTENSIVA", r: 0, c: 10, dir: "V" },
+                { palabra: "OJOS", r: 7, c: 5, dir: "V" }
+            ];
+
+            // --- Disco 5 (Batalla Naval / Canción Animal Interactiva) ---
+            const barcosCancionAnimal = [
+                { nombre: "Té Para Tres", segundos: 0, coordenadas: [{r:0, c:0, letra:'T'}, {r:0, c:1, letra:'E'}] },
+                { nombre: "Séptimo Día", segundos: 235, coordenadas: [{r:1, c:2, letra:'S'}, {r:1, c:3, letra:'É'}, {r:1, c:4, letra:'P'}, {r:1, c:5, letra:'T'}, {r:1, c:6, letra:'I'}, {r:1, c:7, letra:'M'}, {r:1, c:8, letra:'O'}] },
+                { nombre: "Un Millón de Años Luz", segundos: 510, coordenadas: [{r:2, c:0, letra:'M'}, {r:3, c:0, letra:'I'}, {r:4, c:0, letra:'L'}, {r:5, c:0, letra:'L'}, {r:6, c:0, letra:'Ó'}, {r:7, c:0, letra:'N'}] },
+                { nombre: "Animal", segundos: 780, coordenadas: [{r:3, c:2, letra:'A'}, {r:3, c:3, letra:'N'}, {r:3, c:4, letra:'I'}, {r:3, c:5, letra:'M'}, {r:3, c:6, letra:'A'}, {r:3, c:7, letra:'L'}] },
+                { nombre: "De Música Ligera", segundos: 1040, coordenadas: [{r:5, c:2, letra:'L'}, {r:5, c:3, letra:'I'}, {r:5, c:4, letra:'G'}, {r:5, c:5, letra:'E'}, {r:5, c:6, letra:'R'}, {r:5, c:7, letra:'A'}] },
+                { nombre: "Sueles Dejarme Solo", segundos: 1280, coordenadas: [{r:7, c:2, letra:'S'}, {r:7, c:3, letra:'O'}, {r:7, c:4, letra:'L'}, {r:7, c:5, letra:'O'}] },
+                { nombre: "Sol", segundos: 1520, coordenadas: [{r:8, c:7, letra:'S'}, {r:8, c:8, letra:'O'}, {r:8, c:9, letra:'L'}] },
+                { nombre: "Un Millón de Hombres", segundos: 1750, coordenadas: [{r:0, c:10, letra:'1'}, {r:1, c:10, letra:'9'}, {r:2, c:10, letra:'9'}, {r:3, c:10, letra:'0'}, {r:5, c:10, letra:'H'}, {r:6, c:10, letra:'O'}, {r:7, c:10, letra:'M'}, {r:8, c:10, letra:'B'}, {r:9, c:10, letra:'R'}, {r:10, c:10, letra:'E'}] },
+                { nombre: "Caníbales", segundos: 1980, coordenadas: [{r:10, c:0, letra:'C'}, {r:10, c:1, letra:'A'}, {r:10, c:2, letra:'N'}, {r:10, c:3, letra:'Í'}, {r:10, c:4, letra:'B'}, {r:10, c:5, letra:'A'}, {r:10, c:6, letra:'L'}, {r:10, c:7, letra:'E'}, {r:10, c:8, letra:'S'}] }
+            ];
+            let barcosHundidosSet = new Set();
+
+            const listaDiscos = [
+                { id: "soda_84", nombre: "SODA STEREO (1984)", trackId: "W0KTTiuw96A", fondo: "https://i.ibb.co/sT3L0VW/soda-stereo.png", conquistado: false, esPacman: true },
+                { id: "nada_personal", nombre: "NADA PERSONAL (1985)", trackId: "uOlCYVXOyFI", fondo: "https://i.ibb.co/xq1TGpt8/nada-personal.png", conquistado: false, esGalaxy: true },
+                { id: "signos", nombre: "SIGNOS (1986)", trackId: "xiYMsOtPa5c", fondo: "https://i.ibb.co/LXQbmwRR/signos.png", conquistado: false, esTetris: true },
+                { id: "doble_vida", nombre: "DOBLE VIDA (1988)", trackId: "4l3oYRETotc", fondo: "https://i.ibb.co/cXZpRnKk/doble-vida.png", conquistado: false, esCrucigrama: true },
+                { id: "cancion_animal", nombre: "CANCIÓN ANIMAL (1990)", trackId: "BxDciewLqAU", fondo: "https://i.ibb.co/rRbsVPJc/cancion-animal.png", conquistado: false, esBatallaNaval: true },
+                { id: "dynamo", nombre: "DYNAMO (1992)", trackId: "a5oUU6tGKFM", fondo: "https://i.ibb.co/S1G0p32/dynamo.png", conquistado: false },
+                { id: "sueno_stereo", nombre: "SUEÑO STEREO (1995)", trackId: "IqBK2UjnUVA", fondo: "https://i.ibb.co/whCCS4r1/sue-o-stereo.png", conquistado: false },
+                { id: "amor_amarillo", nombre: "AMOR AMARILLO (1993)", trackId: "ZOd-N9qGQK8", fondo: "https://i.ibb.co/KpPXvH5K/amor-amarillo.png", conquistado: false },
+                { id: "bocanada", nombre: "BOCANADA (1999)", trackId: "90SS2mXzPcA", fondo: "https://i.ibb.co/Gf9jPzVy/bocanada.png", conquistado: false },
+                { id: "ahi_vamos", nombre: "AHÍ VAMOS (2006)", trackId: "qfcwCrh4s7I", fondo: "https://i.ibb.co/prZnh9w4/ahi-vamos.png", conquistado: false },
+                { id: "fuerza_natural", nombre: "FUERZA NATURAL (2009)", trackId: "Z7ndVxqUb48", fondo: "https://i.ibb.co/V0yVhy8Y/fuerza-natural.png", conquistado: false }
+            ];
+
+            function cambiarFondo(urlImagen) {
+                document.getElementById('escenografia-fondo').style.backgroundImage = `url('${urlImagen}')`;
             }
-        }
 
-        window.addEventListener('click', (e) => { manejarSeleccionToque(e.clientX, e.clientY); });
-        window.addEventListener('touchend', (e) => {
-            if(e.changedTouches.length > 0) {
-                manejarSeleccionToque(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
-            }
-        }, { passive: true });
-
-        function animate() {
-            requestAnimationFrame(animate);
-            if (estadoActual === "MENU_PRINCIPAL") {
-                meshesDiscos.forEach(mesh => {
-                    mesh.position.z += 0.08;
-                    if (mesh.position.z > 5) {
-                        mesh.position.z = -150;
-                        mesh.position.x = (Math.random() - 0.5) * 28;
-                        mesh.position.y = (Math.random() - 0.5) * 15;
+            function iniciarConteoRegresivo() {
+                document.getElementById('pantalla-intro').style.display = 'none';
+                document.getElementById('pantalla-conteo').style.display = 'flex';
+                cambiarFondo("https://i.ibb.co/9Hy8h9fL/colores-santos.png");
+                reproducirAudio("Wun6zDSpwkg");
+                let cuenta = 3;
+                const numEl = document.getElementById('txt-conteo-numero');
+                numEl.innerText = cuenta;
+                let timer = setInterval(() => {
+                    cuenta--;
+                    if (cuenta > 0) {
+                        numEl.innerText = cuenta;
+                    } else {
+                        clearInterval(timer);
+                        document.getElementById('pantalla-conteo').style.display = 'none';
+                        comenzarJuegoReal();
                     }
+                }, 1000);
+            }
+
+            function comenzarJuegoReal() {
+                juegoIniciado = true;
+                document.getElementById('ui-capa').style.display = 'flex';
+                document.getElementById('btn-trofeos').style.display = 'block';
+                cargarMultiversoDiscos();
+            }
+
+            document.getElementById('btn-volver').addEventListener('click', volverAlMultiverso);
+            document.getElementById('btn-volver').addEventListener('touchend', (e) => { e.preventDefault(); volverAlMultiverso(); });
+            document.getElementById('btn-trofeos').addEventListener('click', abrirVentanaTrofeos);
+            document.getElementById('btn-trofeos').addEventListener('touchend', (e) => { e.preventDefault(); abrirVentanaTrofeos(); });
+            document.getElementById('btn-cerrar-trofeos').addEventListener('click', cerrarVentanaTrofeos);
+            document.getElementById('btn-cerrar-trofeos').addEventListener('touchend', (e) => { e.preventDefault(); cerrarVentanaTrofeos(); });
+            document.getElementById('btn-entrar-disco').addEventListener('click', confirmarEntradaDisco);
+            document.getElementById('btn-entrar-disco').addEventListener('touchend', (e) => { e.preventDefault(); confirmarEntradaDisco(); });
+            document.getElementById('btn-cancelar-disco').addEventListener('click', cancelarFocoDisco);
+            document.getElementById('btn-cancelar-disco').addEventListener('touchend', (e) => { e.preventDefault(); cancelarFocoDisco(); });
+
+            const canvasContainer = document.getElementById('canvas-container');
+            const scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x02000a, 0.012);
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            canvasContainer.appendChild(renderer.domElement);
+
+            const starGeometry = new THREE.BufferGeometry();
+            const starPositions = [];
+            for(let i = 0; i < 800; i++) {
+                starPositions.push((Math.random() - 0.5) * 500, (Math.random() - 0.5) * 500, (Math.random() - 0.5) * 1000);
+            }
+            starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starPositions, 3));
+            const stars = new THREE.Points(starGeometry, new THREE.PointsMaterial({color: 0xffffff, size: 0.8}));
+            scene.add(stars);
+            camera.position.z = 15;
+
+            let raycaster = new THREE.Raycaster();
+            let mouseVector = new THREE.Vector2();
+
+            function limpiarEscena() {
+                meshesDiscos.forEach(m => scene.remove(m));
+                meshesDiscos = [];
+            }
+
+            function cargarMultiversoDiscos() {
+                limpiarEscena();
+                estadoActual = "MENU_PRINCIPAL";
+                discoEnFoco = null;
+                document.getElementById('btn-volver').style.display = 'none';
+                document.getElementById('btn-trofeos').style.display = 'block';
+                document.getElementById('disco-seleccionado-banner').style.display = 'none';
+                document.getElementById('txt-estado').innerText = "TOCA UN DISCO PARA VERLO";
+                cambiarFondo("https://i.ibb.co/9Hy8h9fL/colores-santos.png");
+                reproducirAudio("Wun6zDSpwkg");
+
+                const textureLoader = new THREE.TextureLoader();
+                const discosDisponibles = listaDiscos.filter(d => !d.conquistado);
+                
+                discosDisponibles.forEach((disco, index) => {
+                    const grupoDisco = new THREE.Group();
+                    const geometry = new THREE.PlaneGeometry(4.2, 4.2);
+                    let material;
+                    if(disco.fondo) {
+                        const texture = textureLoader.load(disco.fondo);
+                        material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
+                    } else {
+                        material = new THREE.MeshBasicMaterial({ color: 0x00ffff, wireframe: true });
+                    }
+                    const mesh = new THREE.Mesh(geometry, material);
+                    grupoDisco.add(mesh);
+
+                    const canvasTexto = document.createElement('canvas');
+                    canvasTexto.width = 512;
+                    canvasTexto.height = 128;
+                    const ctx = canvasTexto.getContext('2d');
+                    ctx.fillStyle = 'rgba(10, 5, 30, 0.9)';
+                    ctx.fillRect(0, 0, 512, 128);
+                    ctx.strokeStyle = '#00ffff';
+                    ctx.lineWidth = 6;
+                    ctx.strokeRect(0, 0, 512, 128);
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold 26px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(disco.nombre, 256, 64);
+
+                    const textureTexto = new THREE.CanvasTexture(canvasTexto);
+                    const materialTexto = new THREE.MeshBasicMaterial({ map: textureTexto, transparent: true });
+                    const geometryTexto = new THREE.PlaneGeometry(4.6, 1.2);
+                    const meshTexto = new THREE.Mesh(geometryTexto, materialTexto);
+                    meshTexto.position.y = -2.8;
+                    grupoDisco.add(meshTexto);
+
+                    const posX = (Math.random() - 0.5) * 28;
+                    const posY = (Math.random() - 0.5) * 15;
+                    const posZ = -25 - (index * 16);
+                    grupoDisco.position.set(posX, posY, posZ);
+                    grupoDisco.userData = { tipo: 'disco', discoData: disco };
+                    scene.add(grupoDisco);
+                    meshesDiscos.push(grupoDisco);
                 });
             }
-            const starArr = stars.geometry.attributes.position.array;
-            for(let i = 2; i < starArr.length; i += 3) {
-                starArr[i] += 0.5;
-                if(starArr[i] > 100) starArr[i] = -900;
+
+            function enfocarDisco(discoObj) {
+                estadoActual = "DISCO_EN_FOCO";
+                discoEnFoco = discoObj.userData.discoData;
+                meshesDiscos.forEach(mesh => {
+                    if (mesh === discoObj) {
+                        mesh.position.set(0, 0.5, 2);
+                        mesh.rotation.set(0, 0, 0);
+                        mesh.scale.set(1.6, 1.6, 1.6);
+                    } else {
+                        mesh.visible = false;
+                    }
+                });
+                document.getElementById('disco-seleccionado-titulo').innerText = discoEnFoco.nombre;
+                document.getElementById('disco-seleccionado-banner').style.display = 'block';
+                document.getElementById('txt-estado').innerText = "DISCO SELECCIONADO";
+                document.getElementById('btn-trofeos').style.display = 'none';
             }
-            stars.geometry.attributes.position.needsUpdate = true;
-            renderer.render(scene, camera);
-        }
 
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
+            function cancelarFocoDisco() { cargarMultiversoDiscos(); }
+            function confirmarEntradaDisco() {
+                if (!discoEnFoco) return;
+                document.getElementById('disco-seleccionado-banner').style.display = 'none';
+                entrarADisco(discoEnFoco);
+            }
 
-        animate();
+            function entrarADisco(disco) {
+                limpiarEscena();
+                estadoActual = "JUEGO_DISCO";
+                discoActual = disco;
+                reproducirAudio(disco.trackId);
+
+                if (disco.esPacman) {
+                    iniciarPacmanSoda84();
+                } else if (disco.esGalaxy) {
+                    iniciarGalaxyNadaPersonal();
+                } else if (disco.esTetris) {
+                    iniciarTetrisSignos();
+                } else if (disco.esCrucigrama) {
+                    iniciarCrucigramaDobleVida();
+                } else if (disco.esBatallaNaval) {
+                    iniciarBatallaNavalCancionAnimal();
+                } else {
+                    alert(`¡Próximamente minijuego para ${disco.nombre}!`);
+                    volverAlMultiverso();
+                }
+            }
+
+            // --- DISCO 1 (Pac-Man) ---
+            let pacGridX = 5, pacGridY = 3, pacDirX = 0, pacDirY = 0;
+            let itemsCuadricula = [];
+            let cancionesSoda84 = ["Sobredosis de tv", "Dietético", "Tele-Ka", "Trátame Suavemente", "Afrodisiacos", "Jet Set", "Un Misil en mi Placard", "El Tiempo es dinero", "Ni un segundo", "Vitaminas", "Mi novia tiene biceps"];
+            let indiceMetaSoda84 = 0;
+            let pacmanGameLoop = null;
+            const mapaLaberinto = [[1,1,1,1,1,1,1,1,1,1,1,1],[2,0,0,0,1,0,0,0,1,0,0,2],[1,0,1,0,1,0,1,0,1,0,1,1],[2,0,0,0,0,0,0,0,0,0,0,2],[1,0,1,1,1,0,1,1,1,0,1,1],[2,0,0,0,0,0,0,0,0,0,0,2],[1,1,1,1,1,1,1,1,1,1,1,1]];
+            const tileSize = 30, offsetX = 10, offsetY = 15;
+            const cancionesTrampa = ["Persiana", "Zoom", "Signos", "Crimen", "Puente", "De Música", "Prófugos"];
+
+            // --- DISCO 2 (Galaxy) ---
+            let naveX = 190;
+            let cancionesNadaPersonal = ["Nada Personal", "Ecos", "Imágenes Retro", "Cuando Pase el Temblor", "Juego de Seducción", "Si no fuera por", "Estoy azulado", "Danza Rota", "Observándonos (satelites)", "El cuerpo del delito"];
+            let indiceMetaNadaPersonal = 0;
+            let objetosGalaxia = [];
+            let galaxyGameLoop = null;
+
+            // --- DISCO 3 (Tetris - Signos) ---
+            let tetrisCols = 10, tetrisRows = 14;
+            let tetrisGrid = Array(tetrisRows).fill().map(() => Array(tetrisCols).fill(0));
+            let piezaActual = null, tetrisLineasCount = 0, tetrisGameLoop = null;
+            const tetrisPiezas = [[[1,1,1,1]], [[1,1],[1,1]], [[0,1,0],[1,1,1]], [[1,0],[1,0],[1,1]], [[0,1],[0,1],[1,1]]];
+
+            // --- DISCO 4 (Crucigrama Doble Vida) ---
+            const crucigramaDef = [
+                { palabra: "COMUN", r: 1, c: 6, dir: "H" }, { palabra: "CUARTO", r: 1, c: 6, dir: "V" },
+                { palabra: "FURIA", r: 3, c: 2, dir: "H" }, { palabra: "CUPULA", r: 2, c: 3, dir: "V" },
+                { palabra: "BORDE", r: 5, c: 1, dir: "V" }, { palabra: "DOBLE", r: 6, c: 0, dir: "H" },
+                { palabra: "DELATOR", r: 9, c: 0, dir: "H" }, { palabra: "INTENSIVA", r: 0, c: 10, dir: "V" },
+                { palabra: "OJOS", r: 7, c: 5, dir: "V" }
+            ];
+
+            // --- DISCO 5 (Batalla Naval / Canción Animal Interactiva) ---
+            function iniciarBatallaNavalCancionAnimal() {
+                document.getElementById('batalla-naval-modal').style.display = 'block';
+                barcosHundidosSet.clear();
+                document.getElementById('txt-barcos-hundidos-contador').innerText = "0";
+                document.getElementById('txt-barco-meta').innerText = "🎯 HUNDÍ LOS BARCOS PARA REVELAR LAS CANCIONES";
+                generarGrillaBatallaNaval();
+            }
+
+            function generarGrillaBatallaNaval() {
+                const grid = document.getElementById('batalla-naval-grid');
+                grid.innerHTML = '';
+                
+                for (let r = 0; r < 11; r++) {
+                    for (let c = 0; c < 11; c++) {
+                        const btn = document.createElement('button');
+                        btn.className = 'naval-btn';
+                        btn.innerText = '🌊';
+                        btn.dataset.r = r;
+                        btn.dataset.c = c;
+
+                        let barcoPropietario = null;
+                        let coordenadaItem = null;
+                        barcosCancionAnimal.forEach(barco => {
+                            let encontrada = barco.coordenadas.find(coord => coord.r === r && coord.c === c);
+                            if (encontrada) {
+                                barcoPropietario = barco;
+                                coordenadaItem = encontrada;
+                            }
+                        });
+
+                        btn.onclick = () => {
+                            if (barcoPropietario) {
+                                btn.innerText = coordenadaItem.letra;
+                                btn.className = 'naval-btn acierto';
+                                puntos += 20;
+                                document.getElementById('txt-puntos').innerText = puntos;
+                                
+                                reproducirAudio(discoActual.trackId, barcoPropietario.segundos);
+                                document.getElementById('txt-barco-meta').innerText = `🎵 ¡BARCO TOCADO: ${barcoPropietario.nombre}!`;
+
+                                let celdasBarco = document.querySelectorAll(`button[data-r]`);
+                                let barcoCompleto = true;
+                                barcoPropietario.coordenadas.forEach(coord => {
+                                    let celdaPart = Array.from(celdasBarco).find(b => b.dataset.r == coord.r && b.dataset.c == coord.c);
+                                    if (!celdaPart || celdaPart.innerText !== coord.letra) {
+                                        barcoCompleto = false;
+                                    }
+                                });
+
+                                if (barcoCompleto && !barcosHundidosSet.has(barcoPropietario.nombre)) {
+                                    barcosHundidosSet.add(barcoPropietario.nombre);
+                                    document.getElementById('txt-barcos-hundidos-contador').innerText = barcosHundidosSet.size;
+                                    document.getElementById('txt-barco-meta').innerText = `💥 ¡BARCO HUNDIDO: ${barcoPropietario.nombre}!`;
+
+                                    if (barcosHundidosSet.size >= barcosCancionAnimal.length) {
+                                        setTimeout(() => { finalizarDiscoActual(); }, 2000);
+                                    }
+                                }
+                            } else {
+                                btn.innerText = '❌';
+                                btn.className = 'naval-btn agua';
+                                puntos = Math.max(0, puntos - 5);
+                                document.getElementById('txt-puntos').innerText = puntos;
+                                document.getElementById('txt-barco-meta').innerText = "❌ ¡AGUA! Seguí buscando en el radar.";
+                            }
+                        };
+                        grid.appendChild(btn);
+                    }
+                }
+            }
+
+            document.getElementById('btn-reiniciar-naval').onclick = () => {
+                iniciarBatallaNavalCancionAnimal();
+            };
+
+            // --- Cierre común de discos ---
+            function finalizarDiscoActual() {
+                document.getElementById('pacman-game-modal').style.display = 'none';
+                document.getElementById('galaxy-game-modal').style.display = 'none';
+                document.getElementById('tetris-game-modal').style.display = 'none';
+                document.getElementById('crucigrama-game-modal').style.display = 'none';
+                document.getElementById('batalla-naval-modal').style.display = 'none';
+                if (!discoActual.conquistado) {
+                    discoActual.conquistado = true;
+                    discosConquistadosCount++;
+                    document.getElementById('txt-discos-conquistados').innerText = discosConquistadosCount;
+                }
+                alert(`¡Excelente! Conquistaste el multiverso de ${discoActual.nombre}.`);
+                volverAlMultiverso();
+            }
+
+            function volverAlMultiverso() {
+                document.getElementById('pacman-game-modal').style.display = 'none';
+                document.getElementById('galaxy-game-modal').style.display = 'none';
+                document.getElementById('tetris-game-modal').style.display = 'none';
+                document.getElementById('crucigrama-game-modal').style.display = 'none';
+                document.getElementById('batalla-naval-modal').style.display = 'none';
+                document.getElementById('trofeos-modal').style.display = 'none';
+                document.getElementById('disco-seleccionado-banner').style.display = 'none';
+                cargarMultiversoDiscos();
+            }
+
+            function abrirVentanaTrofeos() {
+                if (estadoActual !== "MENU_PRINCIPAL") return;
+                const grid = document.getElementById('grid-trofeos-lista');
+                grid.innerHTML = '';
+                listaDiscos.forEach(disco => {
+                    const div = document.createElement('div');
+                    div.className = `item-trofeo ${disco.conquistado ? 'conquistado' : ''}`;
+                    div.innerHTML = `<img src="${disco.fondo}" alt="Tapa"><div><strong>${disco.nombre}</strong><br><span>${disco.conquistado ? '✅ Conquistado' : '🔒 Pendiente'}</span></div>`;
+                    grid.appendChild(div);
+                });
+                document.getElementById('trofeos-modal').style.display = 'block';
+            }
+
+            function cerrarVentanaTrofeos() { document.getElementById('trofeos-modal').style.display = 'none'; }
+
+            function manejarSeleccionToque(clientX, clientY) {
+                if (!juegoIniciado || estadoActual !== "MENU_PRINCIPAL") return;
+                mouseVector.x = (clientX / window.innerWidth) * 2 - 1;
+                mouseVector.y = -(clientY / window.innerHeight) * 2 + 1;
+                raycaster.setFromCamera(mouseVector, camera);
+                const intersects = raycaster.intersectObjects(meshesDiscos, true);
+                if (intersects.length > 0) {
+                    let objSeleccionado = intersects[0].object;
+                    while (objSeleccionado.parent && !objSeleccionado.userData.discoData) {
+                        objSeleccionado = objSeleccionado.parent;
+                    }
+                    if (objSeleccionado.userData && objSeleccionado.userData.discoData) {
+                        enfocarDisco(objSeleccionado);
+                    }
+                }
+            }
+
+            window.addEventListener('click', (e) => { manejarSeleccionToque(e.clientX, e.clientY); });
+            window.addEventListener('touchend', (e) => {
+                if(e.changedTouches.length > 0) {
+                    manejarSeleccionToque(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+                }
+            }, { passive: true });
+
+            function animate() {
+                requestAnimationFrame(animate);
+                if (estadoActual === "MENU_PRINCIPAL") {
+                    meshesDiscos.forEach(mesh => {
+                        mesh.position.z += 0.08;
+                        if (mesh.position.z > 5) {
+                            mesh.position.z = -150;
+                            mesh.position.x = (Math.random() - 0.5) * 28;
+                            mesh.position.y = (Math.random() - 0.5) * 15;
+                        }
+                    });
+                }
+                const starArr = stars.geometry.attributes.position.array;
+                for(let i = 2; i < starArr.length; i += 3) {
+                    starArr[i] += 0.5;
+                    if(starArr[i] > 100) starArr[i] = -900;
+                }
+                stars.geometry.attributes.position.needsUpdate = true;
+                renderer.render(scene, camera);
+            }
+
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+
+            animate();
+        };
     </script>
 </body>
 </html>
