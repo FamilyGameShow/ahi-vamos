@@ -73,7 +73,7 @@
         #btn-entrar-disco { background: linear-gradient(45deg, #ff00ff, #00ffff); color: #fff; box-shadow: 0 0 15px rgba(255,0,255,0.7); }
         #btn-cancelar-disco { background: rgba(255,255,255,0.1); color: #fff; }
 
-        /* Modal del Minijuego Inteligente */
+        /* Modal del Minijuego Pac-Man / Laberinto (Disco 1) */
         #pacman-game-modal {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: rgba(5, 2, 20, 0.98); border: 3px solid #ffcc00; border-radius: 15px;
@@ -82,9 +82,19 @@
         }
         #pacman-hud { color: #ffcc00; font-size: 12px; font-weight: bold; margin-bottom: 4px; text-shadow: 0 0 8px #ffcc00; }
         #pacman-objetivo { color: #ff00ff; font-size: 14px; font-weight: bold; margin-bottom: 8px; background: rgba(255,0,255,0.1); padding: 6px; border-radius: 8px; border: 1px dashed #ff00ff; }
-        
         #pacman-canvas { background: #000; border: 2px solid #00ffff; border-radius: 8px; display: block; margin: 0 auto 10px auto; width: 100%; max-width: 380px; height: auto; }
         .instrucciones-tactiles { color: #00ffff; font-size: 11px; margin-top: 5px; letter-spacing: 1px; }
+
+        /* Modal del Minijuego Galaxy (Disco 2 - Nada Personal) */
+        #galaxy-game-modal {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(2, 5, 20, 0.98); border: 3px solid #00ffff; border-radius: 15px;
+            padding: 15px; width: 92%; max-width: 420px; box-shadow: 0 0 40px rgba(0, 255, 255, 0.7);
+            z-index: 50; text-align: center; display: none; touch-action: none;
+        }
+        #galaxy-hud { color: #00ffff; font-size: 12px; font-weight: bold; margin-bottom: 4px; text-shadow: 0 0 8px #00ffff; }
+        #galaxy-objetivo { color: #ff00ff; font-size: 13px; font-weight: bold; margin-bottom: 8px; background: rgba(0,255,255,0.1); padding: 6px; border-radius: 8px; border: 1px dashed #00ffff; }
+        #galaxy-canvas { background: #000; border: 2px solid #ff00ff; border-radius: 8px; display: block; margin: 0 auto 10px auto; width: 100%; max-width: 380px; height: auto; }
 
         /* Ventana de Trofeos */
         #trofeos-modal {
@@ -141,12 +151,20 @@
         </div>
     </div>
 
-    <!-- Mini-juego Laberinto Inteligente con Túneles -->
+    <!-- Mini-juego Laberinto (Disco 1) -->
     <div id="pacman-game-modal">
         <div id="pacman-hud">🟡 SODA STEREO (1984)</div>
         <div id="pacman-objetivo">🎯 BUSCÁ Y COMÉ: <span id="txt-cancion-meta">...</span></div>
         <canvas id="pacman-canvas" width="380" height="240"></canvas>
         <div class="instrucciones-tactiles">👆 TOCÁ EL TABLERO PARA DIRIGIR A PAC-MAN</div>
+    </div>
+
+    <!-- Mini-juego Galaxy (Disco 2 - Nada Personal) -->
+    <div id="galaxy-game-modal">
+        <div id="galaxy-hud">🚀 NADA PERSONAL (1985) - GALAXY</div>
+        <div id="galaxy-objetivo">🎯 ATRAPÁ LA CANCIÓN: <span id="txt-galaxy-meta">...</span></div>
+        <canvas id="galaxy-canvas" width="380" height="240"></canvas>
+        <div class="instrucciones-tactiles">👆 ARRASTRÁ EL DEDO PARA MOVER LA NAVE</div>
     </div>
 
     <div id="trofeos-modal">
@@ -172,21 +190,18 @@
         let discoActual = null;
         let cancionActualId = "";
 
-        // Variables del Pac-Man Inteligente con Túneles
+        // --- Variables Disco 1 (Pac-Man) ---
         let pacGridX = 5, pacGridY = 3;
         let pacDirX = 0, pacDirY = 0;
         let itemsCuadricula = [];
-        
-        // ¡Lista completa con los 11 temas oficiales del disco debut Soda Stereo 1984!
-        let cancionesObjetivoSoda84 = [
+        let cancionesSoda84 = [
             "Sobredosis de tv", "Dietético", "Tele-Ka", "Trátame Suavemente", 
             "Afrodisiacos", "Jet Set", "Un Misil en mi Placard", 
             "El Tiempo es dinero", "Ni un segundo", "Vitaminas", "Mi novia tiene biceps"
         ];
-        let indiceMetaActual = 0;
+        let indiceMetaSoda84 = 0;
         let pacmanGameLoop = null;
 
-        // Mapa con túneles laterales (0 = Pasillo, 1 = Pared, 2 = Túnel abierto)
         const mapaLaberinto = [
             [1,1,1,1,1,1,1,1,1,1,1,1],
             [2,0,0,0,1,0,0,0,1,0,0,2],
@@ -199,13 +214,21 @@
         const tileSize = 30;
         const offsetX = 10;
         const offsetY = 15;
-
-        // Canciones trampa de otros discos para confundir
         const cancionesTrampa = ["Persiana", "Zoom", "Signos", "Crimen", "Puente", "De Música", "Prófugos"];
+
+        // --- Variables Disco 2 (Galaxy - Nada Personal) ---
+        let naveX = 190;
+        let cancionesNadaPersonal = [
+            "Nada Personal", "Danza Derrota", "Imágenes Retro", "Cuando Pase el Temblor",
+            "Juego de Seducción", "etar", "Sabes Mi Nombre", "Danza Rota", "Observándote (Televisión G)", "Nos Veremos Otra Vez"
+        ];
+        let indiceMetaNadaPersonal = 0;
+        let objetosGalaxia = [];
+        let galaxyGameLoop = null;
 
         const listaDiscos = [
             { id: "soda_84", nombre: "SODA STEREO (1984)", trackId: "W0KTTiuw96A", fondo: "https://i.ibb.co/sT3L0VW/soda-stereo.png", conquistado: false, esPacman: true },
-            { id: "nada_personal", nombre: "NADA PERSONAL (1985)", trackId: "uOlCYVXOyFI", fondo: "https://i.ibb.co/xq1TGpt8/nada-personal.png", conquistado: false },
+            { id: "nada_personal", nombre: "NADA PERSONAL (1985)", trackId: "uOlCYVXOyFI", fondo: "https://i.ibb.co/xq1TGpt8/nada-personal.png", conquistado: false, esGalaxy: true },
             { id: "signos", nombre: "SIGNOS (1986)", trackId: "C5vRGvsbz0w", fondo: "https://i.ibb.co/LXQbmwRR/signos.png", conquistado: false },
             { id: "doble_vida", nombre: "DOBLE VIDA (1988)", trackId: "4l3oYRETotc", fondo: "https://i.ibb.co/cXZpRnKk/doble-vida.png", conquistado: false },
             { id: "cancion_animal", nombre: "CANCIÓN ANIMAL (1990)", trackId: "ex1qICH12Eg", fondo: "https://i.ibb.co/rRbsVPJc/cancion-animal.png", conquistado: false },
@@ -400,49 +423,45 @@
 
             if (disco.esPacman) {
                 iniciarPacmanSoda84();
+            } else if (disco.esGalaxy) {
+                iniciarGalaxyNadaPersonal();
             } else {
                 alert(`¡Próximamente minijuego para ${disco.nombre}!`);
                 volverAlMultiverso();
             }
         }
 
-        // --- MOTOR PAC-MAN INTELIGENTE SODA 1984 ---
+        // --- MOTOR PAC-MAN (Disco 1) ---
         function iniciarPacmanSoda84() {
             document.getElementById('pacman-game-modal').style.display = 'block';
             pacGridX = 5; pacGridY = 3;
             pacDirX = 0; pacDirY = 0;
-            indiceMetaActual = 0;
-
-            generarItemsNivel();
+            indiceMetaSoda84 = 0;
+            generarItemsSoda84();
 
             if (!pacmanGameLoop) {
-                pacmanGameLoop = setInterval(actualizarYRenderizarPacmanCuadricula, 1000 / 5);
+                pacmanGameLoop = setInterval(actualizarYRenderizarPacman, 1000 / 5);
             }
         }
 
-        function generarItemsNivel() {
-            if (indiceMetaActual >= cancionesObjetivoSoda84.length) {
-                finalizarDiscoSoda84();
+        function generarItemsSoda84() {
+            if (indiceMetaSoda84 >= cancionesSoda84.length) {
+                finalizarDiscoActual();
                 return;
             }
-
-            document.getElementById('txt-cancion-meta').innerText = cancionesObjetivoSoda84[indiceMetaActual];
-
+            document.getElementById('txt-cancion-meta').innerText = cancionesSoda84[indiceMetaSoda84];
             itemsCuadricula = [];
             let colocadas = 0;
-            let cancionCorrecta = cancionesObjetivoSoda84[indiceMetaActual];
+            let meta = cancionesSoda84[indiceMetaSoda84];
 
-            // Poner la correcta
             while(colocadas < 1) {
                 let rx = Math.floor(Math.random() * mapaLaberinto[0].length);
                 let ry = Math.floor(Math.random() * mapaLaberinto.length);
                 if (mapaLaberinto[ry][rx] !== 1 && !(ry === pacGridY && rx === pacGridX)) {
-                    itemsCuadricula.push({ gx: rx, gy: ry, texto: cancionCorrecta, correcta: true });
+                    itemsCuadricula.push({ gx: rx, gy: ry, texto: meta, correcta: true });
                     colocadas++;
                 }
             }
-
-            // Poner trampas
             for(let i = 0; i < 2; i++) {
                 let rx = Math.floor(Math.random() * mapaLaberinto[0].length);
                 let ry = Math.floor(Math.random() * mapaLaberinto.length);
@@ -453,53 +472,38 @@
             }
         }
 
-        // Control táctil intuitivo por toque en el canvas
-        const canvasEl = document.getElementById('pacman-canvas');
-        canvasEl.addEventListener('click', (e) => {
-            const rect = canvasEl.getBoundingClientRect();
-            let clickX = e.clientX - rect.left;
-            let clickY = e.clientY - rect.top;
-
-            let pacPx = offsetX + pacGridX * tileSize + tileSize / 2;
-            let pacPy = offsetY + pacGridY * tileSize + tileSize / 2;
-
-            let diffX = clickX - pacPx;
-            let diffY = clickY - pacPy;
-
+        const canvasPacman = document.getElementById('pacman-canvas');
+        canvasPacman.addEventListener('click', (e) => {
+            if (estadoActual !== "JUEGO_DISCO" || !discoActual.esPacman) return;
+            const rect = canvasPacman.getBoundingClientRect();
+            let diffX = (e.clientX - rect.left) - (offsetX + pacGridX * tileSize + tileSize / 2);
+            let diffY = (e.clientY - rect.top) - (offsetY + pacGridY * tileSize + tileSize / 2);
             if (Math.abs(diffX) > Math.abs(diffY)) {
-                pacDirX = diffX > 0 ? 1 : -1;
-                pacDirY = 0;
+                pacDirX = diffX > 0 ? 1 : -1; pacDirY = 0;
             } else {
-                pacDirX = 0;
-                pacDirY = diffY > 0 ? 1 : -1;
+                pacDirX = 0; pacDirY = diffY > 0 ? 1 : -1;
             }
         });
 
-        function actualizarYRenderizarPacmanCuadricula() {
-            if (estadoActual !== "JUEGO_DISCO") return;
-
+        function actualizarYRenderizarPacman() {
+            if (estadoActual !== "JUEGO_DISCO" || !discoActual.esPacman) return;
             let nextX = pacGridX + pacDirX;
             let nextY = pacGridY + pacDirY;
-
-            // Soporte para túneles laterales
             if (nextX < 0) nextX = mapaLaberinto[0].length - 1;
             if (nextX >= mapaLaberinto[0].length) nextX = 0;
-
             if (nextY >= 0 && nextY < mapaLaberinto.length) {
                 if (mapaLaberinto[nextY][nextX] !== 1) {
-                    pacGridX = nextX;
-                    pacGridY = nextY;
+                    pacGridX = nextX; pacGridY = nextY;
                 }
             }
 
-            // Verificar si come canción
             itemsCuadricula.forEach((item, index) => {
                 if (item.gx === pacGridX && item.gy === pacGridY) {
                     if (item.correcta) {
                         puntos += 25;
                         document.getElementById('txt-puntos').innerText = puntos;
-                        indiceMetaActual++;
-                        generarItemsNivel();
+                        indiceMetaSoda84++;
+                        generarItemsSoda84();
                     } else {
                         puntos = Math.max(0, puntos - 10);
                         document.getElementById('txt-puntos').innerText = puntos;
@@ -508,65 +512,138 @@
                 }
             });
 
-            // Renderizado claro y nítido
-            const canvas = document.getElementById('pacman-canvas');
-            const ctx = canvas.getContext('2d');
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Dibujar Laberinto
+            const ctx = canvasPacman.getContext('2d');
+            ctx.clearRect(0, 0, canvasPacman.width, canvasPacman.height);
             for (let r = 0; r < mapaLaberinto.length; r++) {
                 for (let c = 0; c < mapaLaberinto[r].length; c++) {
-                    let px = offsetX + c * tileSize;
-                    let py = offsetY + r * tileSize;
-                    if (mapaLaberinto[r][c] === 1) {
-                        ctx.fillStyle = '#00ffff';
-                        ctx.fillRect(px + 2, py + 2, tileSize - 4, tileSize - 4);
-                    } else {
-                        ctx.fillStyle = '#000000';
-                        ctx.fillRect(px, py, tileSize, tileSize);
-                    }
+                    let px = offsetX + c * tileSize, py = offsetY + r * tileSize;
+                    ctx.fillStyle = mapaLaberinto[r][c] === 1 ? '#00ffff' : '#000000';
+                    ctx.fillRect(px + (mapaLaberinto[r][c] === 1 ? 2 : 0), py + (mapaLaberinto[r][c] === 1 ? 2 : 0), tileSize - (mapaLaberinto[r][c] === 1 ? 4 : 0), tileSize - (mapaLaberinto[r][c] === 1 ? 4 : 0));
                 }
             }
-
-            // Dibujar Canciones en los pasillos
             itemsCuadricula.forEach(item => {
                 let px = offsetX + item.gx * tileSize + tileSize / 2;
                 let py = offsetY + item.gy * tileSize + tileSize / 2;
-
                 ctx.fillStyle = item.correcta ? '#ff00ff' : '#00ffcc';
-                ctx.beginPath();
-                ctx.arc(px, py, 9, 0, Math.PI * 2);
-                ctx.fill();
-
-                ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 11px sans-serif';
-                ctx.textAlign = 'center';
+                ctx.beginPath(); ctx.arc(px, py, 9, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = '#ffffff'; ctx.font = 'bold 11px sans-serif'; ctx.textAlign = 'center';
                 ctx.fillText(item.texto, px, py - 12);
             });
-
-            // Dibujar Pac-Man
             let pacPx = offsetX + pacGridX * tileSize + tileSize / 2;
             let pacPy = offsetY + pacGridY * tileSize + tileSize / 2;
+            ctx.fillStyle = '#ffcc00'; ctx.beginPath(); ctx.arc(pacPx, pacPy, 13, 0.2 * Math.PI, 1.8 * Math.PI); ctx.lineTo(pacPx, pacPy); ctx.fill();
+        }
+
+
+        // --- MOTOR GALAXY (Disco 2 - Nada Personal) ---
+        function iniciarGalaxyNadaPersonal() {
+            document.getElementById('galaxy-game-modal').style.display = 'block';
+            naveX = 190;
+            indiceMetaNadaPersonal = 0;
+            generarObjetoGalaxy();
+
+            if (!galaxyGameLoop) {
+                galaxyGameLoop = setInterval(actualizarYRenderizarGalaxy, 1000 / 30);
+            }
+        }
+
+        function generarObjetoGalaxy() {
+            if (indiceMetaNadaPersonal >= cancionesNadaPersonal.length) {
+                finalizarDiscoActual();
+                return;
+            }
+            document.getElementById('txt-galaxy-meta').innerText = cancionesNadaPersonal[indiceMetaNadaPersonal];
+            objetosGalaxia = [];
+
+            // Creamos un objeto correcto cayendo y un par de trampa
+            let correcto = cancionesNadaPersonal[indiceMetaNadaPersonal];
+            objetosGalaxia.push({ x: Math.random() * 300 + 40, y: -20, texto: correcto, correcta: true, velocidad: 2.5 });
+            let trampa = cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)];
+            objetosGalaxia.push({ x: Math.random() * 300 + 40, y: -80, texto: trampa, correcta: false, velocidad: 2 });
+        }
+
+        const canvasGalaxy = document.getElementById('galaxy-canvas');
+        canvasGalaxy.addEventListener('touchmove', (e) => {
+            if (estadoActual !== "JUEGO_DISCO" || !discoActual.esGalaxy) return;
+            const rect = canvasGalaxy.getBoundingClientRect();
+            naveX = e.touches[0].clientX - rect.left;
+            e.preventDefault();
+        }, {passive: false});
+
+        canvasGalaxy.addEventListener('mousemove', (e) => {
+            if (estadoActual !== "JUEGO_DISCO" || !discoActual.esGalaxy) return;
+            const rect = canvasGalaxy.getBoundingClientRect();
+            naveX = e.clientX - rect.left;
+        });
+
+        function actualizarYRenderizarGalaxy() {
+            if (estadoActual !== "JUEGO_DISCO" || !discoActual.esGalaxy) return;
+
+            const ctx = canvasGalaxy.getContext('2d');
+            ctx.clearRect(0, 0, canvasGalaxy.width, canvasGalaxy.height);
+
+            // Mover y dibujar objetos cayendo
+            objetosGalaxia.forEach((obj, index) => {
+                obj.y += obj.velocidad;
+
+                // Dibujar objeto espacial
+                ctx.fillStyle = obj.correcta ? '#00ffff' : '#ff0055';
+                ctx.beginPath(); ctx.arc(obj.x, obj.y, 14, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = '#fff'; ctx.font = 'bold 11px sans-serif'; ctx.textAlign = 'center';
+                ctx.fillText(obj.texto, obj.x, obj.y - 18);
+
+                // Colisión con la nave abajo (y = 210)
+                if (obj.y >= 195 && obj.y <= 225 && Math.abs(obj.x - naveX) < 30) {
+                    if (obj.correcta) {
+                        puntos += 30;
+                        document.getElementById('txt-puntos').innerText = puntos;
+                        indiceMetaNadaPersonal++;
+                        generarObjetoGalaxy();
+                    } else {
+                        puntos = Math.max(0, puntos - 10);
+                        document.getElementById('txt-puntos').innerText = puntos;
+                        objetosGalaxia.splice(index, 1);
+                    }
+                }
+
+                // Si cae al fondo sin atrapar
+                if (obj.y > 260) {
+                    if (obj.correcta) {
+                        // Vuelve a generar si se pasó la correcta
+                        generarObjetoGalaxy();
+                    } else {
+                        objetosGalaxia.splice(index, 1);
+                    }
+                }
+            });
+
+            // Dibujar la Nave de Gustavo abajo
             ctx.fillStyle = '#ffcc00';
             ctx.beginPath();
-            ctx.arc(pacPx, pacPy, 13, 0.2 * Math.PI, 1.8 * Math.PI);
-            ctx.lineTo(pacPx, pacPy);
+            ctx.moveTo(naveX, 205);
+            ctx.lineTo(naveX - 22, 230);
+            ctx.lineTo(naveX + 22, 230);
+            ctx.closePath();
             ctx.fill();
         }
 
-        function finalizarDiscoSoda84() {
+        // --- Cierre común de discos ---
+        function finalizarDiscoActual() {
             document.getElementById('pacman-game-modal').style.display = 'none';
+            document.getElementById('galaxy-game-modal').style.display = 'none';
+
             if (!discoActual.conquistado) {
                 discoActual.conquistado = true;
                 discosConquistadosCount++;
                 document.getElementById('txt-discos-conquistados').innerText = discosConquistadosCount;
             }
-            alert(`¡Excelente! Conquistaste ${discoActual.nombre} comiendo todos sus temas en el laberinto.`);
+            alert(`¡Excelente! Conquistaste el multiverso de ${discoActual.nombre}.`);
             volverAlMultiverso();
         }
 
         function volverAlMultiverso() {
             document.getElementById('pacman-game-modal').style.display = 'none';
+            document.getElementById('galaxy-game-modal').style.display = 'none';
             document.getElementById('trofeos-modal').style.display = 'none';
             document.getElementById('disco-seleccionado-banner').style.display = 'none';
             cargarMultiversoDiscos();
