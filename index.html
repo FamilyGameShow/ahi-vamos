@@ -51,13 +51,27 @@
             font-size: 11px; cursor: pointer; z-index: 15; display: none; pointer-events: auto;
         }
 
-        /* Botón de Estantería / Trofeos */
         #btn-trofeos {
             position: absolute; top: 65px; right: 20px; background: rgba(0, 255, 255, 0.25);
             border: 1px solid #00ffff; color: #fff; padding: 8px 14px; border-radius: 10px;
             font-size: 11px; font-weight: bold; cursor: pointer; z-index: 15; display: none; pointer-events: auto;
             box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
         }
+
+        /* Banner de Confirmación cuando un disco se agranda en pantalla */
+        #disco-seleccionado-banner {
+            position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+            background: rgba(10, 5, 30, 0.95); border: 2px solid #00ffff; border-radius: 20px;
+            padding: 15px 25px; text-align: center; z-index: 40; display: none; box-shadow: 0 0 30px rgba(0, 255, 255, 0.6);
+            pointer-events: auto; width: 85%; max-width: 320px;
+        }
+        #disco-seleccionado-titulo { color: #ff00ff; font-size: 15px; font-weight: bold; margin-bottom: 10px; letter-spacing: 1px; }
+        .botones-grupo { display: flex; gap: 10px; justify-content: center; }
+        .btn-accion-banner {
+            padding: 10px 15px; border-radius: 12px; font-size: 12px; font-weight: bold; cursor: pointer; border: 1px solid #fff;
+        }
+        #btn-entrar-disco { background: linear-gradient(45deg, #ff00ff, #00ffff); color: #fff; box-shadow: 0 0 15px rgba(255,0,255,0.7); }
+        #btn-cancelar-disco { background: rgba(255,255,255,0.1); color: #fff; }
 
         /* Modal de Consignas / Trivia */
         #trivia-modal {
@@ -74,7 +88,7 @@
             margin-bottom: 10px; cursor: pointer; box-shadow: 0 0 10px rgba(0, 255, 255, 0.3); pointer-events: auto;
         }
 
-        /* Ventana / Modal de Estantería de Trofeos */
+        /* Ventana de Trofeos */
         #trofeos-modal {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: rgba(5, 2, 18, 0.98); border: 2px solid #ff00ff; border-radius: 15px;
@@ -114,12 +128,21 @@
 
     <div id="ui-capa">
         <div class="stats-box">PUNTOS: <span id="txt-puntos">0</span></div>
-        <div class="stats-box" id="txt-estado">SELECCIONA UN DISCO</div>
+        <div class="stats-box" id="txt-estado">TOCA UN DISCO PARA VERLO</div>
         <div class="stats-box">CONQUISTADOS: <span id="txt-discos-conquistados">0</span>/11</div>
     </div>
 
     <button id="btn-volver">⬅️ VOLVER AL MULTIVERSO</button>
     <button id="btn-trofeos">🏆 TROFEOS</button>
+
+    <!-- Banner flotante para confirmar el disco seleccionado -->
+    <div id="disco-seleccionado-banner">
+        <div id="disco-seleccionado-titulo">DISCO</div>
+        <div class="botones-grupo">
+            <button class="btn-accion-banner" id="btn-entrar-disco">✨ JUGAR ESTE</button>
+            <button class="btn-accion-banner" id="btn-cancelar-disco">🔄 SEGUIR BUSCANDO</button>
+        </div>
+    </div>
 
     <div id="trivia-modal">
         <div id="trivia-titulo">CONSIGNA</div>
@@ -128,13 +151,10 @@
         <button id="trivia-btn-2" class="btn-opcion-cosmos">Opción B</button>
     </div>
 
-    <!-- Ventana de Estantería de Trofeos -->
     <div id="trofeos-modal">
         <h2>ESTANTERÍA DE TROFEOS</h2>
         <p style="font-size:12px; color:#ff00ff; margin-bottom:5px;">Tus discos conquistados en el multiverso:</p>
-        <div class="grid-trofeos" id="grid-trofeos-lista">
-            <!-- Se carga dinámicamente -->
-        </div>
+        <div class="grid-trofeos" id="grid-trofeos-lista"></div>
         <button class="btn-cerrar-trofeos" id="btn-cerrar-trofeos">VOLVER AL JUEGO</button>
     </div>
 
@@ -148,8 +168,9 @@
         let juegoIniciado = false;
         let puntos = 0;
         let discosConquistadosCount = 0;
-        let estadoActual = "MENU_PRINCIPAL";
+        let estadoActual = "MENU_PRINCIPAL"; // MENU_PRINCIPAL, DISCO_EN_FOCO, JUEGO_DISCO
         let meshesDiscos = [];
+        let discoEnFoco = null;
         let discoActual = null;
         let preguntaActualIndex = 0;
         let erroresEnDisco = 0;
@@ -327,11 +348,16 @@
         document.getElementById('btn-volver').addEventListener('click', volverAlMultiverso);
         document.getElementById('btn-volver').addEventListener('touchend', (e) => { e.preventDefault(); volverAlMultiverso(); });
 
-        // Eventos del modal de Trofeos
         document.getElementById('btn-trofeos').addEventListener('click', abrirVentanaTrofeos);
         document.getElementById('btn-trofeos').addEventListener('touchend', (e) => { e.preventDefault(); abrirVentanaTrofeos(); });
         document.getElementById('btn-cerrar-trofeos').addEventListener('click', cerrarVentanaTrofeos);
         document.getElementById('btn-cerrar-trofeos').addEventListener('touchend', (e) => { e.preventDefault(); cerrarVentanaTrofeos(); });
+
+        // Botones del Banner de Foco
+        document.getElementById('btn-entrar-disco').addEventListener('click', confirmarEntradaDisco);
+        document.getElementById('btn-entrar-disco').addEventListener('touchend', (e) => { e.preventDefault(); confirmarEntradaDisco(); });
+        document.getElementById('btn-cancelar-disco').addEventListener('click', cancelarFocoDisco);
+        document.getElementById('btn-cancelar-disco').addEventListener('touchend', (e) => { e.preventDefault(); cancelarFocoDisco(); });
 
         document.getElementById('trivia-btn-1').addEventListener('click', () => verificarRespuestaConsigna(1));
         document.getElementById('trivia-btn-2').addEventListener('click', () => verificarRespuestaConsigna(2));
@@ -370,15 +396,15 @@
         function cargarMultiversoDiscos() {
             limpiarEscena();
             estadoActual = "MENU_PRINCIPAL";
+            discoEnFoco = null;
             document.getElementById('btn-volver').style.display = 'none';
             document.getElementById('btn-trofeos').style.display = 'block';
-            document.getElementById('txt-estado').innerText = "SELECCIONA UN DISCO CON EL DEDO";
+            document.getElementById('disco-seleccionado-banner').style.display = 'none';
+            document.getElementById('txt-estado').innerText = "TOCA UN DISCO PARA VERLO";
             cambiarFondo("https://i.ibb.co/9Hy8h9fL/colores-santos.png");
             actualizarAudio("Wun6zDSpwkg");
 
             const textureLoader = new THREE.TextureLoader();
-
-            // Solo mostramos en el espacio los discos que AÚN NO fueron conquistados
             const discosDisponibles = listaDiscos.filter(d => !d.conquistado);
 
             discosDisponibles.forEach((disco, index) => {
@@ -419,8 +445,8 @@
                 meshTexto.position.y = -2.8;
                 grupoDisco.add(meshTexto);
 
-                const posX = (Math.random() - 0.5) * 30;
-                const posY = (Math.random() - 0.5) * 16;
+                const posX = (Math.random() - 0.5) * 28;
+                const posY = (Math.random() - 0.5) * 15;
                 const posZ = -25 - (index * 16);
 
                 grupoDisco.position.set(posX, posY, posZ);
@@ -429,6 +455,38 @@
                 scene.add(grupoDisco);
                 meshesDiscos.push(grupoDisco);
             });
+        }
+
+        // Primer Toque: El disco se detiene, se acerca y se agranda frente a la cámara
+        function enfocarDisco(discoObj) {
+            estadoActual = "DISCO_EN_FOCO";
+            discoEnFoco = discoObj.userData.discoData;
+
+            // Detenemos los demás y acercamos el seleccionado al centro enfrente de la cámara
+            meshesDiscos.forEach(mesh => {
+                if (mesh === discoObj) {
+                    mesh.position.set(0, 0.5, 2); // Cerca y centrado
+                    mesh.scale.set(1.6, 1.6, 1.6); // Agranda la visualización
+                } else {
+                    mesh.visible = false; // Ocultamos los demás temporalmente para que no molesten
+                }
+            });
+
+            // Mostramos el banner inferior con el nombre y los botones de decisión
+            document.getElementById('disco-seleccionado-titulo').innerText = discoEnFoco.nombre;
+            document.getElementById('disco-seleccionado-banner').style.display = 'block';
+            document.getElementById('txt-estado').innerText = "DISCO SELECCIONADO";
+            document.getElementById('btn-trofeos').style.display = 'none';
+        }
+
+        function cancelarFocoDisco() {
+            cargarMultiversoDiscos(); // Vuelve a la lluvia de discos flotantes
+        }
+
+        function confirmarEntradaDisco() {
+            if (!discoEnFoco) return;
+            document.getElementById('disco-seleccionado-banner').style.display = 'none';
+            entrarADisco(discoEnFoco);
         }
 
         function entrarADisco(disco) {
@@ -492,6 +550,7 @@
         function volverAlMultiverso() {
             document.getElementById('trivia-modal').style.display = 'none';
             document.getElementById('trofeos-modal').style.display = 'none';
+            document.getElementById('disco-seleccionado-banner').style.display = 'none';
             cargarMultiversoDiscos();
         }
 
@@ -535,7 +594,7 @@
                     objSeleccionado = objSeleccionado.parent;
                 }
                 if (objSeleccionado.userData && objSeleccionado.userData.discoData) {
-                    entrarADisco(objSeleccionado.userData.discoData);
+                    enfocarDisco(objSeleccionado);
                 }
             }
         }
@@ -550,14 +609,15 @@
         function animate() {
             requestAnimationFrame(animate);
 
+            // Solo se mueven si estamos en la vista de menú principal libre
             if (estadoActual === "MENU_PRINCIPAL") {
                 meshesDiscos.forEach(mesh => {
                     mesh.position.z += 0.08;
                     mesh.rotation.z += 0.001;
                     if (mesh.position.z > 5) {
                         mesh.position.z = -150;
-                        mesh.position.x = (Math.random() - 0.5) * 30;
-                        mesh.position.y = (Math.random() - 0.5) * 16;
+                        mesh.position.x = (Math.random() - 0.5) * 28;
+                        mesh.position.y = (Math.random() - 0.5) * 15;
                     }
                 });
             }
