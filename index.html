@@ -73,23 +73,23 @@
         #btn-entrar-disco { background: linear-gradient(45deg, #ff00ff, #00ffff); color: #fff; box-shadow: 0 0 15px rgba(255,0,255,0.7); }
         #btn-cancelar-disco { background: rgba(255,255,255,0.1); color: #fff; }
 
-        /* Mini-juego Arcade / Estilo Pac-Man */
-        #pacman-modal {
+        /* Modal del Minijuego Pac-Man Arcade */
+        #pacman-game-modal {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: rgba(5, 2, 20, 0.96); border: 3px solid #ffcc00; border-radius: 15px;
-            padding: 20px; width: 90%; max-width: 380px; box-shadow: 0 0 40px rgba(255, 204, 0, 0.7);
-            z-index: 50; text-align: center; display: none; touch-action: auto;
+            background: rgba(5, 2, 20, 0.98); border: 3px solid #ffcc00; border-radius: 15px;
+            padding: 15px; width: 95%; max-width: 420px; box-shadow: 0 0 40px rgba(255, 204, 0, 0.7);
+            z-index: 50; text-align: center; display: none; touch-action: none;
         }
-        #pacman-titulo { color: #ffcc00; font-size: 12px; letter-spacing: 2px; margin-bottom: 8px; font-weight: bold; text-shadow: 0 0 10px #ffcc00; }
-        #pacman-pregunta { color: #fff; font-size: 14px; margin-bottom: 20px; line-height: 1.4; }
-        .pacman-laberinto-opciones { display: flex; flex-direction: column; gap: 10px; }
-        .btn-pacman-punto {
-            background: rgba(255, 204, 0, 0.1); border: 2px dashed #ffcc00; color: #fff;
-            padding: 12px; border-radius: 12px; font-size: 13px; font-weight: bold; width: 100%;
-            cursor: pointer; box-shadow: 0 0 10px rgba(255, 204, 0, 0.2); pointer-events: auto; text-align: left;
-            transition: all 0.2s;
-        }
-        .btn-pacman-punto:hover { background: rgba(255, 204, 0, 0.3); border-style: solid; }
+        #pacman-hud { color: #ffcc00; font-size: 12px; font-weight: bold; margin-bottom: 5px; text-shadow: 0 0 8px #ffcc00; }
+        #pacman-pregunta-txt { color: #fff; font-size: 13px; margin-bottom: 10px; line-height: 1.3; min-height: 35px; }
+        
+        /* Canvas donde corre el Pac-Man */
+        #pacman-canvas { background: #000; border: 2px solid #00ffff; border-radius: 8px; display: block; margin: 0 auto 10px auto; }
+        
+        /* Controles táctiles del Pac-Man para celulares */
+        .pacman-controles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; width: 160px; margin: 0 auto; }
+        .btn-dir { background: rgba(0, 255, 255, 0.2); border: 1px solid #00ffff; color: #fff; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .btn-dir:active { background: rgba(0, 255, 255, 0.5); }
 
         /* Ventana de Trofeos */
         #trofeos-modal {
@@ -146,11 +146,21 @@
         </div>
     </div>
 
-    <!-- Mini-juego Arcade / Pac-Man -->
-    <div id="pacman-modal">
-        <div id="pacman-titulo">🟡 MODO PAC-MAN ARCADE</div>
-        <div id="pacman-pregunta">Consigna aquí...</div>
-        <div class="pacman-laberinto-opciones" id="pacman-opciones-container"></div>
+    <!-- Mini-juego Pac-Man Arcade Personalizado -->
+    <div id="pacman-game-modal">
+        <div id="pacman-hud">🟡 PAC-MAN CERATI - PREGUNTA <span id="pacman-nro-pregunta">1</span>/10</div>
+        <div id="pacman-pregunta-txt">Cargando consigna...</div>
+        <canvas id="pacman-canvas" width="340" height="220"></canvas>
+        
+        <!-- Controles táctiles en pantalla para mover a Pac-Man -->
+        <div class="pacman-controles">
+            <div></div>
+            <button class="btn-dir" id="btn-arriba">⬆️</button>
+            <div></div>
+            <button class="btn-dir" id="btn-izq">⬅️</button>
+            <button class="btn-dir" id="btn-abajo">⬇️</button>
+            <button class="btn-dir" id="btn-der">➡️</button>
+        </div>
     </div>
 
     <div id="trofeos-modal">
@@ -170,13 +180,19 @@
         let juegoIniciado = false;
         let puntos = 0;
         let discosConquistadosCount = 0;
-        let estadoActual = "MENU_PRINCIPAL"; // MENU_PRINCIPAL, DISCO_EN_FOCO, JUEGO_DISCO
+        let estadoActual = "MENU_PRINCIPAL"; 
         let meshesDiscos = [];
         let discoEnFoco = null;
         let discoActual = null;
         let preguntaActualIndex = 0;
         let erroresEnDisco = 0;
         let cancionActualId = "";
+
+        // Variables de Juego Pac-Man
+        let pacmanX = 40, pacmanY = 110, pacmanDir = {x: 0, y: 0};
+        let puntosLaberinto = [];
+        let fantasmaX = 280, fantasmaY = 110;
+        let pacmanLoop = null;
 
         const listaDiscos = [
             { id: "soda_84", nombre: "SODA STEREO (1984)", trackId: "W0KTTiuw96A", fondo: "https://i.ibb.co/sT3L0VW/soda-stereo.png", conquistado: false, preguntas: [
@@ -308,7 +324,7 @@
                 { p: "¿Canción con gran despliegue melódico y poético?", opciones: ["Fuerza natural", "Magia"], correcta: 0 },
                 { p: "¿Participó su hijo Benito en la composición?", opciones: ["Sí, en varios temas clave", "No participó"], correcta: 0 },
                 { p: "¿Ganador de múltiples premios...", opciones: ["Grammy Latinos", "Premios Gardel de Oro únicamente"], correcta: 0 },
-                { p: "¿El viaje conceptual proponía ir hacia...", opciones: ["Una travesía natural y mental", "El espacio exterior galáctico"], correcta: 0 },
+                { p: "¿El viaje conceptual proponía ir hacia...", opcione: ["Una travesía natural y mental", "El espacio exterior galáctico"], correcta: 0 },
                 { p: "¿Su legado musical en esta obra es...", opciones: ["Una despedida luminosa y brillante", "Un trabajo experimental fallido"], correcta: 0 }
             ]}
         ];
@@ -501,47 +517,115 @@
             if(disco.fondo) cambiarFondo(disco.fondo);
             reproducirAudio(disco.trackId);
 
-            mostrarConsignaPacman();
+            iniciarJuegoPacman();
         }
 
-        function mostrarConsignaPacman() {
-            if (preguntaActualIndex < discoActual.preguntas.length) {
-                const preguntaObj = discoActual.preguntas[preguntaActualIndex];
-                document.getElementById('pacman-titulo').innerText = `🟡 ${discoActual.nombre} - PREGUNTA ${preguntaActualIndex + 1}/10`;
-                document.getElementById('pacman-pregunta').innerText = preguntaObj.p;
-
-                const contenedor = document.getElementById('pacman-opciones-container');
-                contenedor.innerHTML = '';
-
-                preguntaObj.opciones.forEach((opTexto, idx) => {
-                    const btn = document.createElement('button');
-                    btn.className = 'btn-pacman-punto';
-                    btn.innerText = `🟡 [ Comer Punto ] ${opTexto}`;
-                    btn.onclick = () => verificarRespuestaPacman(idx, preguntaObj.correcta);
-                    contenedor.appendChild(btn);
-                });
-
-                document.getElementById('pacman-modal').style.display = 'block';
-            } else {
-                finalizarDisco();
+        // --- MOTOR DEL PAC-MAN ARCADE ---
+        function iniciarJuegoPacman() {
+            document.getElementById('pacman-game-modal').style.display = 'block';
+            prepararPreguntaPacman();
+            if(!pacmanLoop) {
+                pacmanLoop = setInterval(actualizarYRenderizarPacman, 1000 / 30);
             }
         }
 
-        function verificarRespuestaPacman(indiceElegido, indiceCorrecto) {
-            document.getElementById('pacman-modal').style.display = 'none';
+        function prepararPreguntaPacman() {
+            if (preguntaActualIndex >= discoActual.preguntas.length) {
+                finalizarDisco();
+                return;
+            }
+            const q = discoActual.preguntas[preguntaActualIndex];
+            document.getElementById('pacman-nro-pregunta').innerText = preguntaActualIndex + 1;
+            document.getElementById('pacman-pregunta-txt').innerText = q.p;
 
-            if (indiceElegido === indiceCorrecto) {
+            pacmanX = 40; pacmanY = 110; pacmanDir = {x: 0, y: 0};
+            
+            // Creamos los puntos de opciones en el tablero
+            puntosLaberinto = [
+                { x: 220, y: 70, texto: q.opciones[0], idx: 0, correcta: (0 === q.correcta) },
+                { x: 220, y: 150, texto: q.opciones[1], idx: 1, correcta: (1 === q.correcta) }
+            ];
+        }
+
+        // Controles de dirección
+        document.getElementById('btn-arriba').onclick = () => pacmanDir = {x: 0, y: -4};
+        document.getElementById('btn-abajo').onclick = () => pacmanDir = {x: 0, y: 4};
+        document.getElementById('btn-izq').onclick = () => pacmanDir = {x: -4, y: 0};
+        document.getElementById('btn-der').onclick = () => pacmanDir = {x: 4, y: 0};
+
+        function actualizarYRenderizarPacman() {
+            if (estadoActual !== "JUEGO_DISCO") return;
+
+            pacmanX += pacmanDir.x;
+            pacmanY += pacmanDir.y;
+
+            // Limites del canvas
+            if(pacmanX < 15) pacmanX = 15;
+            if(pacmanX > 325) pacmanX = 325;
+            if(pacmanY < 15) pacmanY = 15;
+            if(pacmanY > 205) pacmanY = 205;
+
+            const canvas = document.getElementById('pacman-canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Dibujar pasillos del laberinto
+            ctx.strokeStyle = '#00ffff';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(10, 10, 320, 200);
+            ctx.beginPath();
+            ctx.moveTo(170, 10); ctx.lineTo(170, 210);
+            ctx.stroke();
+
+            // Dibujar puntos / opciones a comer
+            puntosLaberinto.forEach(p => {
+                ctx.fillStyle = '#ffcc00';
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 12, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = '#000';
+                ctx.font = 'bold 11px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(p.idx + 1, p.x, p.y);
+
+                // Texto de la opción al lado
+                ctx.fillStyle = '#fff';
+                ctx.font = '11px sans-serif';
+                ctx.textAlign = 'left';
+                ctx.fillText(p.texto, p.x + 18, p.y);
+
+                // Colisión (Pac-Man come el punto)
+                let distX = pacmanX - p.x;
+                let distY = pacmanY - p.y;
+                if(Math.sqrt(distX*distX + distY*distY) < 18) {
+                    verificarPuntoComido(p.correcta);
+                }
+            });
+
+            // Dibujar Pac-Man
+            ctx.fillStyle = '#ffcc00';
+            ctx.beginPath();
+            ctx.arc(pacmanX, pacmanY, 10, 0.2 * Math.PI, 1.8 * Math.PI);
+            ctx.lineTo(pacmanX, pacmanY);
+            ctx.fill();
+        }
+
+        function verificarPuntoComido(esCorrecta) {
+            pacmanDir = {x: 0, y: 0}; // Detener
+            if (esCorrecta) {
                 puntos += 10;
                 document.getElementById('txt-puntos').innerText = puntos;
             } else {
                 erroresEnDisco++;
             }
-
             preguntaActualIndex++;
-            mostrarConsignaPacman();
+            prepararPreguntaPacman();
         }
 
         function finalizarDisco() {
+            document.getElementById('pacman-game-modal').style.display = 'none';
             let puntosGanadosDisco = 100 - (erroresEnDisco * 10);
             if (puntosGanadosDisco < 0) puntosGanadosDisco = 0;
 
@@ -556,7 +640,7 @@
         }
 
         function volverAlMultiverso() {
-            document.getElementById('pacman-modal').style.display = 'none';
+            document.getElementById('pacman-game-modal').style.display = 'none';
             document.getElementById('trofeos-modal').style.display = 'none';
             document.getElementById('disco-seleccionado-banner').style.display = 'none';
             cargarMultiversoDiscos();
