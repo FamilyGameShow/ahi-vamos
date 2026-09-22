@@ -8,14 +8,12 @@
         body { margin: 0; overflow: hidden; background-color: #02000a; font-family: sans-serif; touch-action: none; }
         #canvas-container { width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; z-index: 1; }
         
-        /* Fondo dinámico */
         #escenografia-fondo {
             position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
             background-size: cover; background-position: center; opacity: 0.35; z-index: 0;
             transition: background-image 0.8s ease-in-out;
         }
 
-        /* Pantalla de Intro */
         #pantalla-intro {
             position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(2, 0, 10, 0.94); display: flex; flex-direction: column;
@@ -34,7 +32,6 @@
             letter-spacing: 2px; box-shadow: 0 0 25px rgba(255, 0, 255, 0.7); cursor: pointer; pointer-events: auto;
         }
 
-        /* Pantalla Conteo */
         #pantalla-conteo {
             position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(2, 0, 10, 0.85); display: flex; flex-direction: column;
@@ -43,7 +40,6 @@
         #txt-conteo-numero { font-size: 80px; color: #00ffff; text-shadow: 0 0 30px #00ffff; font-weight: bold; margin-bottom: 10px; }
         #txt-conteo-texto { font-size: 16px; color: #ff00ff; letter-spacing: 3px; text-shadow: 0 0 10px #ff00ff; }
 
-        /* Capa UI */
         #ui-capa {
             position: absolute; top: 15px; width: 100%; display: flex; justify-content: space-between;
             padding: 0 20px; box-sizing: border-box; color: #fff; text-shadow: 0 0 10px #ff00ff;
@@ -63,7 +59,6 @@
             pointer-events: auto; box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
         }
 
-        /* Banner de Confirmación */
         #disco-seleccionado-banner {
             position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
             background: rgba(10, 5, 30, 0.95); border: 2px solid #00ffff; border-radius: 20px;
@@ -76,7 +71,6 @@
         #btn-entrar-disco { background: linear-gradient(45deg, #ff00ff, #00ffff); color: #fff; box-shadow: 0 0 15px rgba(255,0,255,0.7); }
         #btn-cancelar-disco { background: rgba(255,255,255,0.1); color: #fff; }
 
-        /* Modales de Minijuegos */
         .modal-juego {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: rgba(5, 2, 20, 0.98); border: 3px solid #ffcc00; border-radius: 15px;
@@ -89,7 +83,6 @@
         .controles-tetris { display: flex; gap: 12px; justify-content: center; margin-top: 8px; }
         .btn-tetris { background: rgba(0,255,255,0.2); border: 1px solid #00ffff; color: #fff; padding: 10px 18px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px; }
 
-        /* Crucigrama Fiel al Diseño */
         .crucigrama-wrapper { display: flex; flex-direction: column; align-items: center; max-height: 80vh; overflow-y: auto; }
         .crucigrama-grid-real { display: grid; grid-template-columns: repeat(11, 26px); gap: 2px; justify-content: center; margin: 4px 0; background: #000; padding: 4px; border: 2px solid #00ffff; border-radius: 6px; }
         .c-celda { width: 26px; height: 26px; background: #110033; border: 1px solid #00ffff; color: #fff; font-size: 13px; font-weight: bold; text-align: center; text-transform: uppercase; border-radius: 3px; }
@@ -97,7 +90,6 @@
         .c-celda.vacia { background: #ffe600; border: 1px solid #cca300; pointer-events: none; }
         .pistas-box { text-align: left; font-size: 10px; color: #00ffff; background: rgba(0,255,255,0.05); padding: 4px; border-radius: 8px; width: 100%; box-sizing: border-box; margin-bottom: 3px; line-height: 1.1; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
 
-        /* Estilos específicos para la Batalla Naval interactiva */
         .naval-btn {
             width: 26px; height: 26px; background: #0b132b; border: 1px solid #00ffff;
             color: #00ffff; font-size: 11px; font-weight: bold; text-align: center;
@@ -106,7 +98,6 @@
         .naval-btn.agua { background: rgba(255,255,255,0.08); color: #888; border-color: #444; }
         .naval-btn.acierto { background: #ff00ff; color: #fff; border-color: #fff; text-shadow: 0 0 5px #fff; }
 
-        /* Ventana de Trofeos */
         #trofeos-modal {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: rgba(5, 2, 18, 0.98); border: 2px solid #ff00ff; border-radius: 15px;
@@ -129,7 +120,7 @@
     
     <div id="pantalla-intro">
         <h1>COLORES SANTOS</h1>
-        <p>El Multiverso Sonoro de Soda y gustavo.</p>
+        <p>El Multiverso Sonoro de Soda y Gustavo.</p>
         <button class="btn-opcion btn-inicio" id="btn-entrar">✨ INICIAR VIAJE</button>
     </div>
 
@@ -155,7 +146,6 @@
         </div>
     </div>
 
-    <!-- Mini-juego Laberinto (Disco 1) -->
     <div id="pacman-game-modal" class="modal-juego">
         <div class="hud-juego">🟡 SODA STEREO (1984)</div>
         <div class="objetivo-juego">🎯 BUSCÁ Y COMÉ: <span id="txt-cancion-meta">...</span></div>
@@ -163,7 +153,6 @@
         <div style="color:#00ffff; font-size:11px;">👆 TOCÁ EL TABLERO PARA DIRIGIR A PAC-MAN</div>
     </div>
 
-    <!-- Mini-juego Galaxy (Disco 2 - Nada Personal) -->
     <div id="galaxy-game-modal" class="modal-juego">
         <div class="hud-juego">🚀 NADA PERSONAL (1985)</div>
         <div class="objetivo-juego">🎯 ATRAPÁ LA CANCIÓN: <span id="txt-galaxy-meta">...</span></div>
@@ -171,7 +160,6 @@
         <div style="color:#00ffff; font-size:11px;">👆 ARRASTRÁ EL DEDO PARA MOVER LA NAVE</div>
     </div>
 
-    <!-- Mini-juego Tetris (Disco 3 - Signos) -->
     <div id="tetris-game-modal" class="modal-juego" style="border-color: #ff00ff;">
         <div class="hud-juego" style="color:#ff00ff;">🧱 SIGNOS (1986) - TETRIS MUSICAL</div>
         <div class="objetivo-juego">🎯 LÍNEAS COMPLETADAS: <span id="txt-tetris-lineas">0</span>/5</div>
@@ -183,7 +171,6 @@
         </div>
     </div>
 
-    <!-- Mini-juego Crucigrama Entrelazado (Disco 4 - Doble Vida) -->
     <div id="crucigrama-game-modal" class="modal-juego" style="border-color: #00ffff;">
         <div class="hud-juego" style="color:#ff00ff;">📝 DOBLE VIDA (1988) - CRUCIGRAMA</div>
         <div class="crucigrama-wrapper">
@@ -196,7 +183,6 @@
         </div>
     </div>
 
-    <!-- Mini-juego Batalla Naval (Disco 5 - Canción Animal) -->
     <div id="batalla-naval-modal" class="modal-juego" style="border-color: #ff00ff;">
         <div class="hud-juego" style="color:#ff00ff;">⚓ CANCIÓN ANIMAL (1990) - BATALLA NAVAL</div>
         <div class="objetivo-juego" id="txt-barco-meta">🎯 HUNDÍ LOS BARCOS PARA REVELAR LAS CANCIONES</div>
@@ -274,9 +260,9 @@
             { palabra: "OJOS", r: 7, c: 5, dir: "V" }
         ];
 
-        // --- Disco 5 (Batalla Naval / Grilla Canción Animal) ---
+        // --- Disco 5 (Batalla Naval / Canción Animal Interactiva con Segundos Exactos) ---
         const barcosCancionAnimal = [
-            { nombre: "Té (Canción Animal)", segundos: 0, coordenadas: [{r:0, c:0, letra:'T'}, {r:0, c:1, letra:'E'}] },
+            { nombre: "Té Para Tres", segundos: 0, coordenadas: [{r:0, c:0, letra:'T'}, {r:0, c:1, letra:'E'}] },
             { nombre: "Séptimo Día", segundos: 235, coordenadas: [{r:1, c:2, letra:'S'}, {r:1, c:3, letra:'É'}, {r:1, c:4, letra:'P'}, {r:1, c:5, letra:'T'}, {r:1, c:6, letra:'I'}, {r:1, c:7, letra:'M'}, {r:1, c:8, letra:'O'}] },
             { nombre: "Un Millón de Años Luz", segundos: 510, coordenadas: [{r:2, c:0, letra:'M'}, {r:3, c:0, letra:'I'}, {r:4, c:0, letra:'L'}, {r:5, c:0, letra:'L'}, {r:6, c:0, letra:'Ó'}, {r:7, c:0, letra:'N'}] },
             { nombre: "Animal", segundos: 780, coordenadas: [{r:3, c:2, letra:'A'}, {r:3, c:3, letra:'N'}, {r:3, c:4, letra:'I'}, {r:3, c:5, letra:'M'}, {r:3, c:6, letra:'A'}, {r:3, c:7, letra:'L'}] },
@@ -293,7 +279,7 @@
             { id: "nada_personal", nombre: "NADA PERSONAL (1985)", trackId: "uOlCYVXOyFI", fondo: "https://i.ibb.co/xq1TGpt8/nada-personal.png", conquistado: false, esGalaxy: true },
             { id: "signos", nombre: "SIGNOS (1986)", trackId: "xiYMsOtPa5c", fondo: "https://i.ibb.co/LXQbmwRR/signos.png", conquistado: false, esTetris: true },
             { id: "doble_vida", nombre: "DOBLE VIDA (1988)", trackId: "4l3oYRETotc", fondo: "https://i.ibb.co/cXZpRnKk/doble-vida.png", conquistado: false, esCrucigrama: true },
-            { id: "cancion_animal", nombre: "CANCIÓN ANIMAL (1990)", trackId: "jzLVaylmbJU&list=RDjzLVaylmbJU&start_radio=1", fondo: "https://i.ibb.co/rRbsVPJc/cancion-animal.png", conquistado: false, esBatallaNaval: true },
+            { id: "cancion_animal", nombre: "CANCIÓN ANIMAL (1990)", trackId: "BxDciewLqAU", fondo: "https://i.ibb.co/rRbsVPJc/cancion-animal.png", conquistado: false, esBatallaNaval: true },
             { id: "dynamo", nombre: "DYNAMO (1992)", trackId: "a5oUU6tGKFM", fondo: "https://i.ibb.co/S1G0p32/dynamo.png", conquistado: false },
             { id: "sueno_stereo", nombre: "SUEÑO STEREO (1995)", trackId: "IqBK2UjnUVA", fondo: "https://i.ibb.co/whCCS4r1/sue-o-stereo.png", conquistado: false },
             { id: "amor_amarillo", nombre: "AMOR AMARILLO (1993)", trackId: "ZOd-N9qGQK8", fondo: "https://i.ibb.co/KpPXvH5K/amor-amarillo.png", conquistado: false },
@@ -524,7 +510,6 @@
             const grid = document.getElementById('batalla-naval-grid');
             grid.innerHTML = '';
             
-            // Creamos la matriz lógica de 11x11
             for (let r = 0; r < 11; r++) {
                 for (let c = 0; c < 11; c++) {
                     const btn = document.createElement('button');
@@ -533,7 +518,6 @@
                     btn.dataset.r = r;
                     btn.dataset.c = c;
 
-                    // Buscar si esta celda pertenece a algún barco
                     let barcoPropietario = null;
                     let coordenadaItem = null;
                     barcosCancionAnimal.forEach(barco => {
@@ -546,17 +530,14 @@
 
                     btn.onclick = () => {
                         if (barcoPropietario) {
-                            // ¡Acierto! Revelamos la letra del barco
                             btn.innerText = coordenadaItem.letra;
                             btn.className = 'naval-btn acierto';
                             puntos += 20;
                             document.getElementById('txt-puntos').innerText = puntos;
                             
-                            // Reproducir el tema exacto en YouTube al tocar partes del barco
                             reproducirAudio(discoActual.trackId, barcoPropietario.segundos);
                             document.getElementById('txt-barco-meta').innerText = `🎵 ¡BARCO TOCADO: ${barcoPropietario.nombre}!`;
 
-                            // Verificar si todo el barco fue completado
                             let celdasBarco = document.querySelectorAll(`button[data-r]`);
                             let barcoCompleto = true;
                             barcoPropietario.coordenadas.forEach(coord => {
@@ -571,13 +552,11 @@
                                 document.getElementById('txt-barcos-hundidos-contador').innerText = barcosHundidosSet.size;
                                 document.getElementById('txt-barco-meta').innerText = `💥 ¡BARCO HUNDIDO: ${barcoPropietario.nombre}!`;
 
-                                // Si hundió todos los barcos de la grilla, gana el disco
                                 if (barcosHundidosSet.size >= barcosCancionAnimal.length) {
                                     setTimeout(() => { finalizarDiscoActual(); }, 2000);
                                 }
                             }
                         } else {
-                            // Agua
                             btn.innerText = '❌';
                             btn.className = 'naval-btn agua';
                             puntos = Math.max(0, puntos - 5);
