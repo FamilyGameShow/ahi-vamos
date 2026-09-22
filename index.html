@@ -21,12 +21,17 @@
             background: rgba(2, 0, 10, 0.94); display: flex; flex-direction: column;
             justify-content: center; align-items: center; z-index: 100; text-align: center; padding: 20px; box-sizing: border-box;
         }
-        #pantalla-intro h1 { color: #fff; font-size: 26px; letter-spacing: 5px; text-shadow: 0 0 20px #ff00ff, 0 0 40px #00ffff; margin-bottom: 10px; }
-        #pantalla-intro p { color: #00ffff; font-size: 14px; margin-bottom: 30px; max-width: 320px; line-height: 1.5; }
+        #pantalla-intro h1 {
+            color: #fff; font-size: 26px; letter-spacing: 5px;
+            text-shadow: 0 0 20px #ff00ff, 0 0 40px #00ffff; margin-bottom: 10px;
+        }
+        #pantalla-intro p {
+            color: #00ffff; font-size: 14px; margin-bottom: 30px; max-width: 320px; line-height: 1.5;
+        }
         .btn-inicio {
-            background: linear-gradient(45deg, #ff00ff, #00ffff); border: 2px solid #fff; color: #fff;
-            padding: 15px 35px; border-radius: 30px; font-size: 16px; font-weight: bold; letter-spacing: 2px;
-            box-shadow: 0 0 25px rgba(255, 0, 255, 0.7); cursor: pointer; pointer-events: auto;
+            background: linear-gradient(45deg, #ff00ff, #00ffff); border: 2px solid #fff;
+            color: #fff; padding: 15px 35px; border-radius: 30px; font-size: 16px; font-weight: bold;
+            letter-spacing: 2px; box-shadow: 0 0 25px rgba(255, 0, 255, 0.7); cursor: pointer; pointer-events: auto;
         }
 
         /* Pantalla Conteo */
@@ -41,7 +46,8 @@
         /* Capa UI */
         #ui-capa {
             position: absolute; top: 15px; width: 100%; display: flex; justify-content: space-between;
-            padding: 0 20px; box-sizing: border-box; color: #fff; text-shadow: 0 0 10px #ff00ff; z-index: 10; pointer-events: none; display: none;
+            padding: 0 20px; box-sizing: border-box; color: #fff; text-shadow: 0 0 10px #ff00ff;
+            z-index: 10; pointer-events: none; display: none;
         }
         .stats-box { font-size: 12px; font-weight: bold; background: rgba(10, 5, 30, 0.85); border: 1px solid #ff00ff; padding: 6px 10px; border-radius: 10px; }
         
@@ -50,26 +56,23 @@
             border: 1px solid #ff00ff; color: #fff; padding: 8px 14px; border-radius: 10px;
             font-size: 11px; cursor: pointer; z-index: 15; display: none; pointer-events: auto;
         }
-
         #btn-trofeos {
             position: absolute; top: 65px; right: 20px; background: rgba(0, 255, 255, 0.25);
             border: 1px solid #00ffff; color: #fff; padding: 8px 14px; border-radius: 10px;
-            font-size: 11px; font-weight: bold; cursor: pointer; z-index: 15; display: none; pointer-events: auto;
-            box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
+            font-size: 11px; font-weight: bold; cursor: pointer; z-index: 15; display: none;
+            pointer-events: auto; box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
         }
 
         /* Banner de Confirmación */
         #disco-seleccionado-banner {
             position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
             background: rgba(10, 5, 30, 0.95); border: 2px solid #00ffff; border-radius: 20px;
-            padding: 15px 25px; text-align: center; z-index: 40; display: none; box-shadow: 0 0 30px rgba(0, 255, 255, 0.6);
-            pointer-events: auto; width: 85%; max-width: 320px;
+            padding: 15px 25px; text-align: center; z-index: 40; display: none;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.6); pointer-events: auto; width: 85%; max-width: 320px;
         }
         #disco-seleccionado-titulo { color: #ff00ff; font-size: 15px; font-weight: bold; margin-bottom: 10px; letter-spacing: 1px; }
         .botones-grupo { display: flex; gap: 10px; justify-content: center; }
-        .btn-accion-banner {
-            padding: 10px 15px; border-radius: 12px; font-size: 12px; font-weight: bold; cursor: pointer; border: 1px solid #fff;
-        }
+        .btn-accion-banner { padding: 10px 15px; border-radius: 12px; font-size: 12px; font-weight: bold; cursor: pointer; border: 1px solid #fff; }
         #btn-entrar-disco { background: linear-gradient(45deg, #ff00ff, #00ffff); color: #fff; box-shadow: 0 0 15px rgba(255,0,255,0.7); }
         #btn-cancelar-disco { background: rgba(255,255,255,0.1); color: #fff; }
 
@@ -91,7 +94,7 @@
         .crucigrama-grid-real { display: grid; grid-template-columns: repeat(11, 26px); gap: 2px; justify-content: center; margin: 4px 0; background: #000; padding: 4px; border: 2px solid #00ffff; border-radius: 6px; }
         .c-celda { width: 26px; height: 26px; background: #110033; border: 1px solid #00ffff; color: #fff; font-size: 13px; font-weight: bold; text-align: center; text-transform: uppercase; border-radius: 3px; }
         .c-celda:focus { background: #ff00ff; outline: none; }
-        .c-celda.vacia { background: #ffe600; border: 1px solid #cca300; pointer-events: none; } /* Celdas amarillas decorativas como en tu imagen */
+        .c-celda.vacia { background: #ffe600; border: 1px solid #cca300; pointer-events: none; }
         .pistas-box { text-align: left; font-size: 10px; color: #00ffff; background: rgba(0,255,255,0.05); padding: 5px; border-radius: 8px; width: 100%; box-sizing: border-box; margin-bottom: 4px; line-height: 1.2; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
 
         /* Ventana de Trofeos */
@@ -103,16 +106,10 @@
         }
         #trofeos-modal h2 { color: #00ffff; font-size: 18px; margin-top: 0; letter-spacing: 2px; text-shadow: 0 0 10px #00ffff; }
         .grid-trofeos { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; text-align: left; }
-        .item-trofeo {
-            background: rgba(255, 255, 255, 0.05); border: 1px solid #444; border-radius: 8px;
-            padding: 8px; font-size: 11px; color: #aaa; display: flex; align-items: center; gap: 8px;
-        }
+        .item-trofeo { background: rgba(255, 255, 255, 0.05); border: 1px solid #444; border-radius: 8px; padding: 8px; font-size: 11px; color: #aaa; display: flex; align-items: center; gap: 8px; }
         .item-trofeo.conquistado { border-color: #00ffff; color: #fff; background: rgba(0, 255, 255, 0.1); }
         .item-trofeo img { width: 35px; height: 35px; object-fit: cover; border-radius: 4px; }
-        .btn-cerrar-trofeos {
-            background: linear-gradient(45deg, #ff00ff, #00ffff); border: none; color: #fff;
-            padding: 10px 20px; border-radius: 20px; font-size: 12px; font-weight: bold; margin-top: 20px; cursor: pointer;
-        }
+        .btn-cerrar-trofeos { background: linear-gradient(45deg, #ff00ff, #00ffff); border: none; color: #fff; padding: 10px 20px; border-radius: 20px; font-size: 12px; font-weight: bold; margin-top: 20px; cursor: pointer; }
 
         #youtube-audio { position: absolute; top: -9999px; left: -9999px; visibility: hidden; }
     </style>
@@ -120,10 +117,10 @@
 </head>
 <body>
     <div id="escenografia-fondo"></div>
-
+    
     <div id="pantalla-intro">
         <h1>COLORES SANTOS</h1>
-        <p>El Multiverso Sonoro de Soda  y Gus Cerati.</p>
+        <p>El Multiverso Sonoro de Soda y Gustavito.</p>
         <button class="btn-opcion btn-inicio" id="btn-entrar">✨ INICIAR VIAJE</button>
     </div>
 
@@ -179,16 +176,28 @@
 
     <!-- Mini-juego Crucigrama Entrelazado (Disco 4 - Doble Vida) -->
     <div id="crucigrama-game-modal" class="modal-juego" style="border-color: #00ffff;">
-        <div class="hud-juego" style="color:#ff00ffff;">📝 DOBLE VIDA (1988) - CRUCIGRAMA</div>
+        <div class="hud-juego" style="color:#ff00ff;">📝 DOBLE VIDA (1988) - CRUCIGRAMA</div>
         <div class="crucigrama-wrapper">
             <div class="pistas-box">
-                <div><b>HORIZONTALES:</b><br>• Es un dia ……., en la superficie<br>• Ciudad de la …….<br>• Dia comun, ……, vida
-<br>• Corazon ……..
-                </div>
+                <div><b>HORIZONTALES:</b><br>• Es un dia ……., en la superficie<br>• Ciudad de la …….<br>• Dia comun, ……, vida <br>• Corazon ……..</div>
                 <div><b>VERTICALES:</b><br>• Picnic en el ……. B<br>• Lo que sangra, la ……….<br>• Esta en el ……., sobre algun lugar<br>• Terapia de amor ………..<br>• El ritmo de tus …….</div>
             </div>
             <div class="crucigrama-grid-real" id="crucigrama-matriz-container"></div>
             <button class="btn-tetris" id="btn-verificar-crucigrama" style="width:100%; margin-top:4px;">✨ VERIFICAR CRUCIGRAMA</button>
+        </div>
+    </div>
+
+    <!-- Mini-juego Batalla Naval (Disco 5 - Canción Animal) -->
+    <div id="batalla-naval-modal" class="modal-juego" style="border-color: #ff00ff;">
+        <div class="hud-juego" style="color:#ff00ff;">⚓ CANCIÓN ANIMAL (1990) - BATALLA NAVAL</div>
+        <div class="objetivo-juego">🎯 ATACÁ LAS COORDENADAS DEL BARCO: <span id="txt-barco-meta">...</span></div>
+        <div class="crucigrama-wrapper">
+            <div class="pistas-box" style="margin-bottom: 8px;">
+                <div><b>FLOTA CERATIANA:</b><br>• De Música Ligera<br>• Canción Animal<br>• Té Para Tres</div>
+                <div><b>ESTADO:</b> ¡Hundí la flota y sintonizá el tema exacto!</div>
+            </div>
+            <div id="batalla-naval-grid" style="display: grid; grid-template-columns: repeat(6, 36px); gap: 3px; justify-content: center; margin: 5px 0; background: #000; padding: 6px; border: 2px solid #00ffff; border-radius: 6px;"></div>
+            <button class="btn-tetris" id="btn-reiniciar-naval" style="width:100%; margin-top:6px;">🔄 REINICIAR RADAR</button>
         </div>
     </div>
 
@@ -200,7 +209,6 @@
     </div>
 
     <div id="canvas-container"></div>
-
     <div id="youtube-audio">
         <iframe id="yt-player" width="100" height="100" src="" frameborder="0" allow="autoplay"></iframe>
     </div>
@@ -209,11 +217,22 @@
         let juegoIniciado = false;
         let puntos = 0;
         let discosConquistadosCount = 0;
-        let estadoActual = "MENU_PRINCIPAL"; 
+        let estadoActual = "MENU_PRINCIPAL";
         let meshesDiscos = [];
         let discoEnFoco = null;
         let discoActual = null;
         let cancionActualId = "";
+
+        // Función inteligente para reproducir con salto de tiempo exacto en YouTube
+        function reproducirAudio(videoId, segundos = 0) {
+            const cleanId = videoId.split('&')[0]; // Limpia parámetros extra si los hubiera
+            const idKey = `${cleanId}_${segundos}`;
+            if (cancionActualId !== idKey) {
+                cancionActualId = idKey;
+                const ytPlayer = document.getElementById('yt-player');
+                ytPlayer.src = `https://www.youtube.com/embed/${cleanId}?autoplay=1&start=${segundos}&loop=1&playlist=${cleanId}`;
+            }
+        }
 
         // --- Disco 1 (Pac-Man) ---
         let pacGridX = 5, pacGridY = 3, pacDirX = 0, pacDirY = 0;
@@ -238,25 +257,31 @@
         let piezaActual = null, tetrisLineasCount = 0, tetrisGameLoop = null;
         const tetrisPiezas = [[[1,1,1,1]], [[1,1],[1,1]], [[0,1,0],[1,1,1]], [[1,0],[1,0],[1,1]], [[0,1],[0,1],[1,1]]];
 
-        // --- Disco 4 (Crucigrama Fiel al Diseño exacto de 12 filas x 11 columnas) ---
+        // --- Disco 4 (Crucigrama Doble Vida) ---
         const crucigramaDef = [
-            { palabra: "COMUN", r: 1, c: 6, dir: "H" },
-            { palabra: "CUARTO", r: 1, c: 6, dir: "V" },
-            { palabra: "FURIA", r: 3, c: 2, dir: "H" },
-            { palabra: "CUPULA", r: 2, c: 3, dir: "V" },
-            { palabra: "BORDE", r: 5, c: 1, dir: "V" },
-            { palabra: "DOBLE", r: 6, c: 0, dir: "H" },
-            { palabra: "DELATOR", r: 9, c: 0, dir: "H" },
-            { palabra: "INTENSIVA", r: 0, c: 10, dir: "V" },
+            { palabra: "COMUN", r: 1, c: 6, dir: "H" }, { palabra: "CUARTO", r: 1, c: 6, dir: "V" },
+            { palabra: "FURIA", r: 3, c: 2, dir: "H" }, { palabra: "CUPULA", r: 2, c: 3, dir: "V" },
+            { palabra: "BORDE", r: 5, c: 1, dir: "V" }, { palabra: "DOBLE", r: 6, c: 0, dir: "H" },
+            { palabra: "DELATOR", r: 9, c: 0, dir: "H" }, { palabra: "INTENSIVA", r: 0, c: 10, dir: "V" },
             { palabra: "OJOS", r: 7, c: 5, dir: "V" }
         ];
+
+        // --- Disco 5 (Batalla Naval - Canción Animal) ---
+        const cancionesCancionAnimal = [
+            { nombre: "Canción Animal", segundos: 0 },
+            { nombre: "De Música Ligera", segundos: 235 },
+            { nombre: "Un Millón de Años Luz", segundos: 510 },
+            { nombre: "Sueles Dejarme Solo", segundos: 780 },
+            { nombre: "Té Para Tres", segundos: 1040 }
+        ];
+        let barcoActualIndex = 0;
 
         const listaDiscos = [
             { id: "soda_84", nombre: "SODA STEREO (1984)", trackId: "W0KTTiuw96A", fondo: "https://i.ibb.co/sT3L0VW/soda-stereo.png", conquistado: false, esPacman: true },
             { id: "nada_personal", nombre: "NADA PERSONAL (1985)", trackId: "uOlCYVXOyFI", fondo: "https://i.ibb.co/xq1TGpt8/nada-personal.png", conquistado: false, esGalaxy: true },
-            { id: "signos", nombre: "SIGNOS (1986)", trackId: "xiYMsOtPa5c&list=OLAK5uy_nIcaYGMXGIcaSm_vut9nVFBbT9vlid9fY&index=2", fondo: "https://i.ibb.co/LXQbmwRR/signos.png", conquistado: false, esTetris: true },
+            { id: "signos", nombre: "SIGNOS (1986)", trackId: "xiYMsOtPa5c", fondo: "https://i.ibb.co/LXQbmwRR/signos.png", conquistado: false, esTetris: true },
             { id: "doble_vida", nombre: "DOBLE VIDA (1988)", trackId: "4l3oYRETotc", fondo: "https://i.ibb.co/cXZpRnKk/doble-vida.png", conquistado: false, esCrucigrama: true },
-            { id: "cancion_animal", nombre: "CANCIÓN ANIMAL (1990)", trackId: "BxDciewLqAU&list=OLAK5uy_mJxHiRiLtU_LZlY8fY9vqkuQytX6wFY6Y&index=2", fondo: "https://i.ibb.co/rRbsVPJc/cancion-animal.png", conquistado: false },
+            { id: "cancion_animal", nombre: "CANCIÓN ANIMAL (1990)", trackId: "BxDciewLqAU", fondo: "https://i.ibb.co/rRbsVPJc/cancion-animal.png", conquistado: false, esBatallaNaval: true },
             { id: "dynamo", nombre: "DYNAMO (1992)", trackId: "a5oUU6tGKFM", fondo: "https://i.ibb.co/S1G0p32/dynamo.png", conquistado: false },
             { id: "sueno_stereo", nombre: "SUEÑO STEREO (1995)", trackId: "IqBK2UjnUVA", fondo: "https://i.ibb.co/whCCS4r1/sue-o-stereo.png", conquistado: false },
             { id: "amor_amarillo", nombre: "AMOR AMARILLO (1993)", trackId: "ZOd-N9qGQK8", fondo: "https://i.ibb.co/KpPXvH5K/amor-amarillo.png", conquistado: false },
@@ -265,7 +290,9 @@
             { id: "fuerza_natural", nombre: "FUERZA NATURAL (2009)", trackId: "Z7ndVxqUb48", fondo: "https://i.ibb.co/V0yVhy8Y/fuerza-natural.png", conquistado: false }
         ];
 
-        function cambiarFondo(urlImagen) { document.getElementById('escenografia-fondo').style.backgroundImage = `url('${urlImagen}')`; }
+        function cambiarFondo(urlImagen) {
+            document.getElementById('escenografia-fondo').style.backgroundImage = `url('${urlImagen}')`;
+        }
 
         document.getElementById('btn-entrar').addEventListener('click', iniciarConteoRegresivo);
         document.getElementById('btn-entrar').addEventListener('touchend', (e) => { e.preventDefault(); iniciarConteoRegresivo(); });
@@ -275,14 +302,18 @@
             document.getElementById('pantalla-conteo').style.display = 'flex';
             cambiarFondo("https://i.ibb.co/9Hy8h9fL/colores-santos.png");
             reproducirAudio("Wun6zDSpwkg");
-
             let cuenta = 3;
             const numEl = document.getElementById('txt-conteo-numero');
             numEl.innerText = cuenta;
             let timer = setInterval(() => {
                 cuenta--;
-                if (cuenta > 0) { numEl.innerText = cuenta; }
-                else { clearInterval(timer); document.getElementById('pantalla-conteo').style.display = 'none'; comenzarJuegoReal(); }
+                if (cuenta > 0) {
+                    numEl.innerText = cuenta;
+                } else {
+                    clearInterval(timer);
+                    document.getElementById('pantalla-conteo').style.display = 'none';
+                    comenzarJuegoReal();
+                }
             }, 1000);
         }
 
@@ -295,24 +326,14 @@
 
         document.getElementById('btn-volver').addEventListener('click', volverAlMultiverso);
         document.getElementById('btn-volver').addEventListener('touchend', (e) => { e.preventDefault(); volverAlMultiverso(); });
-
         document.getElementById('btn-trofeos').addEventListener('click', abrirVentanaTrofeos);
         document.getElementById('btn-trofeos').addEventListener('touchend', (e) => { e.preventDefault(); abrirVentanaTrofeos(); });
         document.getElementById('btn-cerrar-trofeos').addEventListener('click', cerrarVentanaTrofeos);
         document.getElementById('btn-cerrar-trofeos').addEventListener('touchend', (e) => { e.preventDefault(); cerrarVentanaTrofeos(); });
-
         document.getElementById('btn-entrar-disco').addEventListener('click', confirmarEntradaDisco);
         document.getElementById('btn-entrar-disco').addEventListener('touchend', (e) => { e.preventDefault(); confirmarEntradaDisco(); });
         document.getElementById('btn-cancelar-disco').addEventListener('click', cancelarFocoDisco);
         document.getElementById('btn-cancelar-disco').addEventListener('touchend', (e) => { e.preventDefault(); cancelarFocoDisco(); });
-
-        function reproducirAudio(videoId) {
-            if (cancionActualId !== videoId) {
-                cancionActualId = videoId;
-                const ytPlayer = document.getElementById('yt-player');
-                ytPlayer.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}`;
-            }
-        }
 
         const canvasContainer = document.getElementById('canvas-container');
         const scene = new THREE.Scene();
@@ -353,7 +374,7 @@
 
             const textureLoader = new THREE.TextureLoader();
             const discosDisponibles = listaDiscos.filter(d => !d.conquistado);
-
+            
             discosDisponibles.forEach((disco, index) => {
                 const grupoDisco = new THREE.Group();
                 const geometry = new THREE.PlaneGeometry(4.2, 4.2);
@@ -368,11 +389,18 @@
                 grupoDisco.add(mesh);
 
                 const canvasTexto = document.createElement('canvas');
-                canvasTexto.width = 512; canvasTexto.height = 128;
+                canvasTexto.width = 512;
+                canvasTexto.height = 128;
                 const ctx = canvasTexto.getContext('2d');
-                ctx.fillStyle = 'rgba(10, 5, 30, 0.9)'; ctx.fillRect(0, 0, 512, 128);
-                ctx.strokeStyle = '#00ffff'; ctx.lineWidth = 6; ctx.strokeRect(0, 0, 512, 128);
-                ctx.fillStyle = '#ffffff'; ctx.font = 'bold 26px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.fillStyle = 'rgba(10, 5, 30, 0.9)';
+                ctx.fillRect(0, 0, 512, 128);
+                ctx.strokeStyle = '#00ffff';
+                ctx.lineWidth = 6;
+                ctx.strokeRect(0, 0, 512, 128);
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 26px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
                 ctx.fillText(disco.nombre, 256, 64);
 
                 const textureTexto = new THREE.CanvasTexture(canvasTexto);
@@ -385,11 +413,8 @@
                 const posX = (Math.random() - 0.5) * 28;
                 const posY = (Math.random() - 0.5) * 15;
                 const posZ = -25 - (index * 16);
-
                 grupoDisco.position.set(posX, posY, posZ);
-                grupoDisco.rotation.set(0, 0, 0);
                 grupoDisco.userData = { tipo: 'disco', discoData: disco };
-                
                 scene.add(grupoDisco);
                 meshesDiscos.push(grupoDisco);
             });
@@ -398,15 +423,15 @@
         function enfocarDisco(discoObj) {
             estadoActual = "DISCO_EN_FOCO";
             discoEnFoco = discoObj.userData.discoData;
-
             meshesDiscos.forEach(mesh => {
                 if (mesh === discoObj) {
                     mesh.position.set(0, 0.5, 2);
                     mesh.rotation.set(0, 0, 0);
                     mesh.scale.set(1.6, 1.6, 1.6);
-                } else { mesh.visible = false; }
+                } else {
+                    mesh.visible = false;
+                }
             });
-
             document.getElementById('disco-seleccionado-titulo').innerText = discoEnFoco.nombre;
             document.getElementById('disco-seleccionado-banner').style.display = 'block';
             document.getElementById('txt-estado').innerText = "DISCO SELECCIONADO";
@@ -414,7 +439,11 @@
         }
 
         function cancelarFocoDisco() { cargarMultiversoDiscos(); }
-        function confirmarEntradaDisco() { if (!discoEnFoco) return; document.getElementById('disco-seleccionado-banner').style.display = 'none'; entrarADisco(discoEnFoco); }
+        function confirmarEntradaDisco() {
+            if (!discoEnFoco) return;
+            document.getElementById('disco-seleccionado-banner').style.display = 'none';
+            entrarADisco(discoEnFoco);
+        }
 
         function entrarADisco(disco) {
             limpiarEscena();
@@ -422,11 +451,20 @@
             discoActual = disco;
             reproducirAudio(disco.trackId);
 
-            if (disco.esPacman) { iniciarPacmanSoda84(); }
-            else if (disco.esGalaxy) { iniciarGalaxyNadaPersonal(); }
-            else if (disco.esTetris) { iniciarTetrisSignos(); }
-            else if (disco.esCrucigrama) { iniciarCrucigramaDobleVida(); }
-            else { alert(`¡Próximamente minijuego para ${disco.nombre}!`); volverAlMultiverso(); }
+            if (disco.esPacman) {
+                iniciarPacmanSoda84();
+            } else if (disco.esGalaxy) {
+                iniciarGalaxyNadaPersonal();
+            } else if (disco.esTetris) {
+                iniciarTetrisSignos();
+            } else if (disco.esCrucigrama) {
+                iniciarCrucigramaDobleVida();
+            } else if (disco.esBatallaNaval) {
+                iniciarBatallaNavalCancionAnimal();
+            } else {
+                alert(`¡Próximamente minijuego para ${disco.nombre}!`);
+                volverAlMultiverso();
+            }
         }
 
         // --- DISCO 1 (Pac-Man) ---
@@ -436,7 +474,6 @@
             generarItemsSoda84();
             if (!pacmanGameLoop) pacmanGameLoop = setInterval(actualizarYRenderizarPacman, 1000 / 5);
         }
-
         function generarItemsSoda84() {
             if (indiceMetaSoda84 >= cancionesSoda84.length) { finalizarDiscoActual(); return; }
             document.getElementById('txt-cancion-meta').innerText = cancionesSoda84[indiceMetaSoda84];
@@ -457,17 +494,18 @@
                 if (mapaLaberinto[ry][rx] !== 1) itemsCuadricula.push({ gx: rx, gy: ry, texto: trampa, correcta: false });
             }
         }
-
         const canvasPacman = document.getElementById('pacman-canvas');
         canvasPacman.addEventListener('click', (e) => {
             if (estadoActual !== "JUEGO_DISCO" || !discoActual.esPacman) return;
             const rect = canvasPacman.getBoundingClientRect();
             let diffX = (e.clientX - rect.left) - (offsetX + pacGridX * tileSize + tileSize / 2);
             let diffY = (e.clientY - rect.top) - (offsetY + pacGridY * tileSize + tileSize / 2);
-            if (Math.abs(diffX) > Math.abs(diffY)) { pacDirX = diffX > 0 ? 1 : -1; pacDirY = 0; }
-            else { pacDirX = 0; pacDirY = diffY > 0 ? 1 : -1; }
+            if (Math.abs(diffX) > Math.abs(diffY)) {
+                pacDirX = diffX > 0 ? 1 : -1; pacDirY = 0;
+            } else {
+                pacDirX = 0; pacDirY = diffY > 0 ? 1 : -1;
+            }
         });
-
         function actualizarYRenderizarPacman() {
             if (estadoActual !== "JUEGO_DISCO" || !discoActual.esPacman) return;
             let nextX = pacGridX + pacDirX, nextY = pacGridY + pacDirY;
@@ -478,8 +516,13 @@
             }
             itemsCuadricula.forEach((item, index) => {
                 if (item.gx === pacGridX && item.gy === pacGridY) {
-                    if (item.correcta) { puntos += 25; document.getElementById('txt-puntos').innerText = puntos; indiceMetaSoda84++; generarItemsSoda84(); }
-                    else { puntos = Math.max(0, puntos - 10); document.getElementById('txt-puntos').innerText = puntos; itemsCuadricula.splice(index, 1); }
+                    if (item.correcta) {
+                        puntos += 25; document.getElementById('txt-puntos').innerText = puntos;
+                        indiceMetaSoda84++; generarItemsSoda84();
+                    } else {
+                        puntos = Math.max(0, puntos - 10); document.getElementById('txt-puntos').innerText = puntos;
+                        itemsCuadricula.splice(index, 1);
+                    }
                 }
             });
             const ctx = canvasPacman.getContext('2d');
@@ -495,10 +538,12 @@
                 let px = offsetX + item.gx * tileSize + tileSize / 2, py = offsetY + item.gy * tileSize + tileSize / 2;
                 ctx.fillStyle = item.correcta ? '#ff00ff' : '#00ffcc';
                 ctx.beginPath(); ctx.arc(px, py, 9, 0, Math.PI * 2); ctx.fill();
-                ctx.fillStyle = '#ffffff'; ctx.font = 'bold 11px sans-serif'; ctx.textAlign = 'center'; ctx.fillText(item.texto, px, py - 12);
+                ctx.fillStyle = '#ffffff'; ctx.font = 'bold 11px sans-serif'; ctx.textAlign = 'center';
+                ctx.fillText(item.texto, px, py - 12);
             });
             let pacPx = offsetX + pacGridX * tileSize + tileSize / 2, pacPy = offsetY + pacGridY * tileSize + tileSize / 2;
-            ctx.fillStyle = '#ffcc00'; ctx.beginPath(); ctx.arc(pacPx, pacPy, 13, 0.2 * Math.PI, 1.8 * Math.PI); ctx.lineTo(pacPx, pacPy); ctx.fill();
+            ctx.fillStyle = '#ffcc00'; ctx.beginPath(); ctx.arc(pacPx, pacPy, 13, 0.2 * Math.PI, 1.8 * Math.PI);
+            ctx.lineTo(pacPx, pacPy); ctx.fill();
         }
 
         // --- DISCO 2 (Galaxy) ---
@@ -507,7 +552,6 @@
             naveX = 190; indiceMetaNadaPersonal = 0; generarObjetoGalaxy();
             if (!galaxyGameLoop) galaxyGameLoop = setInterval(actualizarYRenderizarGalaxy, 1000 / 30);
         }
-
         function generarObjetoGalaxy() {
             if (indiceMetaNadaPersonal >= cancionesNadaPersonal.length) { finalizarDiscoActual(); return; }
             document.getElementById('txt-galaxy-meta').innerText = cancionesNadaPersonal[indiceMetaNadaPersonal];
@@ -517,7 +561,6 @@
             let trampa = cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)];
             objetosGalaxia.push({ x: Math.random() * 300 + 40, y: -80, texto: trampa, correcta: false, velocidad: 2 });
         }
-
         const canvasGalaxy = document.getElementById('galaxy-canvas');
         canvasGalaxy.addEventListener('touchmove', (e) => {
             if (estadoActual !== "JUEGO_DISCO" || !discoActual.esGalaxy) return;
@@ -528,7 +571,6 @@
             if (estadoActual !== "JUEGO_DISCO" || !discoActual.esGalaxy) return;
             naveX = e.clientX - canvasGalaxy.getBoundingClientRect().left;
         });
-
         function actualizarYRenderizarGalaxy() {
             if (estadoActual !== "JUEGO_DISCO" || !discoActual.esGalaxy) return;
             const ctx = canvasGalaxy.getContext('2d');
@@ -537,26 +579,34 @@
                 obj.y += obj.velocidad;
                 ctx.fillStyle = obj.correcta ? '#00ffff' : '#ff0055';
                 ctx.beginPath(); ctx.arc(obj.x, obj.y, 14, 0, Math.PI * 2); ctx.fill();
-                ctx.fillStyle = '#fff'; ctx.font = 'bold 11px sans-serif'; ctx.textAlign = 'center'; ctx.fillText(obj.texto, obj.x, obj.y - 18);
+                ctx.fillStyle = '#fff'; ctx.font = 'bold 11px sans-serif'; ctx.textAlign = 'center';
+                ctx.fillText(obj.texto, obj.x, obj.y - 18);
                 if (obj.y >= 195 && obj.y <= 225 && Math.abs(obj.x - naveX) < 30) {
-                    if (obj.correcta) { puntos += 30; document.getElementById('txt-puntos').innerText = puntos; indiceMetaNadaPersonal++; generarObjetoGalaxy(); }
-                    else { puntos = Math.max(0, puntos - 10); document.getElementById('txt-puntos').innerText = puntos; objetosGalaxia.splice(index, 1); }
+                    if (obj.correcta) {
+                        puntos += 30; document.getElementById('txt-puntos').innerText = puntos;
+                        indiceMetaNadaPersonal++; generarObjetoGalaxy();
+                    } else {
+                        puntos = Math.max(0, puntos - 10); document.getElementById('txt-puntos').innerText = puntos;
+                        objetosGalaxia.splice(index, 1);
+                    }
                 }
-                if (obj.y > 260) { if (obj.correcta) generarObjetoGalaxy(); else objetosGalaxia.splice(index, 1); }
+                if (obj.y > 260) {
+                    if (obj.correcta) generarObjetoGalaxy(); else objetosGalaxia.splice(index, 1);
+                }
             });
-            ctx.fillStyle = '#ffcc00'; ctx.beginPath(); ctx.moveTo(naveX, 205); ctx.lineTo(naveX - 22, 230); ctx.lineTo(naveX + 22, 230); ctx.closePath(); ctx.fill();
+            ctx.fillStyle = '#ffcc00'; ctx.beginPath();
+            ctx.moveTo(naveX, 205); ctx.lineTo(naveX - 22, 230); ctx.lineTo(naveX + 22, 230);
+            ctx.closePath(); ctx.fill();
         }
 
         // --- DISCO 3 (Tetris - Signos) ---
         function iniciarTetrisSignos() {
             document.getElementById('tetris-game-modal').style.display = 'block';
             tetrisGrid = Array(tetrisRows).fill().map(() => Array(tetrisCols).fill(0));
-            tetrisLineasCount = 0;
-            document.getElementById('txt-tetris-lineas').innerText = tetrisLineasCount;
+            tetrisLineasCount = 0; document.getElementById('txt-tetris-lineas').innerText = tetrisLineasCount;
             crearPiezaTetris();
             if (!tetrisGameLoop) tetrisGameLoop = setInterval(actualizarTetris, 600);
         }
-
         function crearPiezaTetris() {
             let shape = tetrisPiezas[Math.floor(Math.random() * tetrisPiezas.length)];
             piezaActual = { shape: shape, r: 0, c: Math.floor(tetrisCols / 2) - 1 };
@@ -564,7 +614,6 @@
                 tetrisGrid = Array(tetrisRows).fill().map(() => Array(tetrisCols).fill(0));
             }
         }
-
         function chequearColisionTetris(row, col, shape) {
             for (let r = 0; r < shape.length; r++) {
                 for (let c = 0; c < shape[r].length; c++) {
@@ -577,39 +626,33 @@
             }
             return false;
         }
-
         function fijarPiezaTetris() {
             piezaActual.shape.forEach((row, r) => {
                 row.forEach((val, c) => {
                     if (val && piezaActual.r + r >= 0) { tetrisGrid[piezaActual.r + r][piezaActual.c + c] = 1; }
                 });
             });
-            chequearLineasTetris();
-            crearPiezaTetris();
+            chequearLineasTetris(); crearPiezaTetris();
         }
-
         function chequearLineasTetris() {
             for (let r = tetrisRows - 1; r >= 0; r--) {
                 if (tetrisGrid[r].every(cell => cell === 1)) {
-                    tetrisGrid.splice(r, 1);
-                    tetrisGrid.unshift(Array(tetrisCols).fill(0));
-                    tetrisLineasCount++;
-                    puntos += 50;
-                    document.getElementById('txt-puntos').innerText = puntos;
+                    tetrisGrid.splice(r, 1); tetrisGrid.unshift(Array(tetrisCols).fill(0));
+                    tetrisLineasCount++; puntos += 50; document.getElementById('txt-puntos').innerText = puntos;
                     document.getElementById('txt-tetris-lineas').innerText = tetrisLineasCount;
-                    r++;
-                    if (tetrisLineasCount >= 5) { finalizarDiscoActual(); }
+                    r++; if (tetrisLineasCount >= 5) { finalizarDiscoActual(); }
                 }
             }
         }
-
         function actualizarTetris() {
             if (estadoActual !== "JUEGO_DISCO" || !discoActual.esTetris) return;
-            if (!chequearColisionTetris(piezaActual.r + 1, piezaActual.c, piezaActual.shape)) { piezaActual.r++; }
-            else { fijarPiezaTetris(); }
+            if (!chequearColisionTetris(piezaActual.r + 1, piezaActual.c, piezaActual.shape)) {
+                piezaActual.r++;
+            } else {
+                fijarPiezaTetris();
+            }
             renderizarTetris();
         }
-
         function renderizarTetris() {
             const canvas = document.getElementById('tetris-canvas');
             const ctx = canvas.getContext('2d');
@@ -617,7 +660,9 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             for (let r = 0; r < tetrisRows; r++) {
                 for (let c = 0; c < tetrisCols; c++) {
-                    if (tetrisGrid[r][c]) { ctx.fillStyle = '#ff00ff'; ctx.fillRect(c * boxW + 1, r * boxH + 1, boxW - 2, boxH - 2); }
+                    if (tetrisGrid[r][c]) {
+                        ctx.fillStyle = '#ff00ff'; ctx.fillRect(c * boxW + 1, r * boxH + 1, boxW - 2, boxH - 2);
+                    }
                 }
             }
             if (piezaActual) {
@@ -629,7 +674,6 @@
                 });
             }
         }
-
         document.getElementById('btn-tetris-izq').onclick = () => { if (piezaActual && !chequearColisionTetris(piezaActual.r, piezaActual.c - 1, piezaActual.shape)) piezaActual.c--; renderizarTetris(); };
         document.getElementById('btn-tetris-der').onclick = () => { if (piezaActual && !chequearColisionTetris(piezaActual.r, piezaActual.c + 1, piezaActual.shape)) piezaActual.c++; renderizarTetris(); };
         document.getElementById('btn-tetris-rot').onclick = () => {
@@ -638,26 +682,19 @@
             renderizarTetris();
         };
 
-        // --- DISCO 4 (Crucigrama Fiel al Diseño exacto) ---
+        // --- DISCO 4 (Crucigrama Doble Vida) ---
         function iniciarCrucigramaDobleVida() {
             document.getElementById('crucigrama-game-modal').style.display = 'block';
             const container = document.getElementById('crucigrama-matriz-container');
             container.innerHTML = '';
-
-            // Generar grilla de 12 filas x 11 columnas
             for (let r = 0; r < 12; r++) {
                 for (let c = 0; c < 11; c++) {
                     let input = document.createElement('input');
-                    input.type = 'text';
-                    input.maxLength = 1;
-                    input.className = 'c-celda vacia'; // Por defecto decorativa amarilla
-                    input.dataset.r = r;
-                    input.dataset.c = c;
+                    input.type = 'text'; input.maxLength = 1; input.className = 'c-celda vacia';
+                    input.dataset.r = r; input.dataset.c = c;
                     container.appendChild(input);
                 }
             }
-
-            // Habilitar celdas reales del crucigrama basado en crucigramaDef
             crucigramaDef.forEach(item => {
                 for (let i = 0; i < item.palabra.length; i++) {
                     let cellR = item.dir === "H" ? item.r : item.r + i;
@@ -671,23 +708,78 @@
                 }
             });
         }
-
         document.getElementById('btn-verificar-crucigrama').onclick = () => {
             const inputs = document.querySelectorAll('.c-celda:not(.vacia)');
             let todoOk = true;
             inputs.forEach(inp => {
-                if (inp.value.toUpperCase() !== inp.dataset.letra) {
-                    todoOk = false;
-                }
+                if (inp.value.toUpperCase() !== inp.dataset.letra) { todoOk = false; }
             });
-
             if (todoOk) {
-                puntos += 100;
-                document.getElementById('txt-puntos').innerText = puntos;
+                puntos += 100; document.getElementById('txt-puntos').innerText = puntos;
                 finalizarDiscoActual();
             } else {
                 alert("¡Hay algunas letras incorrectas en el crucigrama, revisalo bien!");
             }
+        };
+
+        // --- DISCO 5 (Batalla Naval - Canción Animal) ---
+        function iniciarBatallaNavalCancionAnimal() {
+            document.getElementById('batalla-naval-modal').style.display = 'block';
+            barcoActualIndex = 0;
+            actualizarMetaNaval();
+            generarGrillaNaval();
+        }
+
+        function actualizarMetaNaval() {
+            if (barcoActualIndex >= cancionesCancionAnimal.length) {
+                finalizarDiscoActual();
+                return;
+            }
+            document.getElementById('txt-barco-meta').innerText = cancionesCancionAnimal[barcoActualIndex].nombre;
+        }
+
+        function generarGrillaNaval() {
+            const grid = document.getElementById('batalla-naval-grid');
+            grid.innerHTML = '';
+            for (let r = 0; r < 6; r++) {
+                for (let c = 0; c < 6; c++) {
+                    const celda = document.createElement('button');
+                    celda.className = 'btn-tetris';
+                    celda.style.width = '36px';
+                    celda.style.height = '36px';
+                    celda.style.padding = '0';
+                    celda.style.fontSize = '12px';
+                    celda.innerText = '🌊';
+                    
+                    let esAcierto = (r === barcoActualIndex && c === 2);
+                    celda.onclick = () => {
+                        if (esAcierto) {
+                            celda.innerText = '💥';
+                            celda.style.background = '#ff00ff';
+                            puntos += 50;
+                            document.getElementById('txt-puntos').innerText = puntos;
+                            
+                            // Salto exacto en YouTube según el barco destruido
+                            reproducirAudio(discoActual.trackId, cancionesCancionAnimal[barcoActualIndex].segundos);
+                            
+                            barcoActualIndex++;
+                            setTimeout(actualizarMetaNaval, 1000);
+                        } else {
+                            celda.innerText = '❌';
+                            celda.style.background = 'rgba(255,255,255,0.1)';
+                            puntos = Math.max(0, puntos - 5);
+                            document.getElementById('txt-puntos').innerText = puntos;
+                        }
+                    };
+                    grid.appendChild(celda);
+                }
+            }
+        }
+
+        document.getElementById('btn-reiniciar-naval').onclick = () => {
+            barcoActualIndex = 0;
+            actualizarMetaNaval();
+            generarGrillaNaval();
         };
 
         // --- Cierre común de discos ---
@@ -696,7 +788,7 @@
             document.getElementById('galaxy-game-modal').style.display = 'none';
             document.getElementById('tetris-game-modal').style.display = 'none';
             document.getElementById('crucigrama-game-modal').style.display = 'none';
-
+            document.getElementById('batalla-naval-modal').style.display = 'none';
             if (!discoActual.conquistado) {
                 discoActual.conquistado = true;
                 discosConquistadosCount++;
@@ -711,6 +803,7 @@
             document.getElementById('galaxy-game-modal').style.display = 'none';
             document.getElementById('tetris-game-modal').style.display = 'none';
             document.getElementById('crucigrama-game-modal').style.display = 'none';
+            document.getElementById('batalla-naval-modal').style.display = 'none';
             document.getElementById('trofeos-modal').style.display = 'none';
             document.getElementById('disco-seleccionado-banner').style.display = 'none';
             cargarMultiversoDiscos();
@@ -739,14 +832,20 @@
             const intersects = raycaster.intersectObjects(meshesDiscos, true);
             if (intersects.length > 0) {
                 let objSeleccionado = intersects[0].object;
-                while (objSeleccionado.parent && !objSeleccionado.userData.discoData) { objSeleccionado = objSeleccionado.parent; }
-                if (objSeleccionado.userData && objSeleccionado.userData.discoData) { enfocarDisco(objSeleccionado); }
+                while (objSeleccionado.parent && !objSeleccionado.userData.discoData) {
+                    objSeleccionado = objSeleccionado.parent;
+                }
+                if (objSeleccionado.userData && objSeleccionado.userData.discoData) {
+                    enfocarDisco(objSeleccionado);
+                }
             }
         }
 
         window.addEventListener('click', (e) => { manejarSeleccionToque(e.clientX, e.clientY); });
         window.addEventListener('touchend', (e) => {
-            if(e.changedTouches.length > 0) { manejarSeleccionToque(e.changedTouches[0].clientX, e.changedTouches[0].clientY); }
+            if(e.changedTouches.length > 0) {
+                manejarSeleccionToque(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+            }
         }, { passive: true });
 
         function animate() {
@@ -754,12 +853,17 @@
             if (estadoActual === "MENU_PRINCIPAL") {
                 meshesDiscos.forEach(mesh => {
                     mesh.position.z += 0.08;
-                    if (mesh.position.z > 5) { mesh.position.z = -150; mesh.position.x = (Math.random() - 0.5) * 28; mesh.position.y = (Math.random() - 0.5) * 15; }
+                    if (mesh.position.z > 5) {
+                        mesh.position.z = -150;
+                        mesh.position.x = (Math.random() - 0.5) * 28;
+                        mesh.position.y = (Math.random() - 0.5) * 15;
+                    }
                 });
             }
             const starArr = stars.geometry.attributes.position.array;
             for(let i = 2; i < starArr.length; i += 3) {
-                starArr[i] += 0.5; if(starArr[i] > 100) starArr[i] = -900;
+                starArr[i] += 0.5;
+                if(starArr[i] > 100) starArr[i] = -900;
             }
             stars.geometry.attributes.position.needsUpdate = true;
             renderer.render(scene, camera);
