@@ -182,11 +182,10 @@
         <div class="hud-juego" style="color:#00ffff;">📝 DOBLE VIDA (1988) - CRUCIGRAMA</div>
         <div class="crucigrama-wrapper">
             <div class="pistas-box">
-                <b>HORIZONTAL:</b><br>
-                1. ... de Gloria<br>
-                <b>VERTICAL:</b><br>
-                2. En la Ciudad de la ...<br>
-                3. Lo que sangra (la ...)
+                <b>CONSIGNAS DOBLE VIDA:</b><br>
+                1. En la ciudad de la ... (Horizontal)<br>
+                2. Lo que sangra (la ...) (Vertical)<br>
+                3. Tema instrumental de cierre (Vertical)
             </div>
             <div class="crucigrama-grid-real" id="crucigrama-matriz-container"></div>
             <button class="btn-tetris" id="btn-verificar-crucigrama" style="width:100%; margin-top:5px;">✨ VERIFICAR CRUCIGRAMA</button>
@@ -239,16 +238,12 @@
         let piezaActual = null, tetrisLineasCount = 0, tetrisGameLoop = null;
         const tetrisPiezas = [[[1,1,1,1]], [[1,1],[1,1]], [[0,1,0],[1,1,1]], [[1,0],[1,0],[1,1]], [[0,1],[0,1],[1,1]]];
 
-        // --- Disco 4 (Crucigrama Real Entrelazado - Doble Vida) ---
-        // Matriz 11x6 de ejemplo que cruza FURIA, CUPULA y CORONADOS
-        // Celdas vacías = null, Celdas con letra = objeto { r, c, letra, id }
+        // --- Disco 4 (Crucigrama Real Entrelazado - Doble Vida con temas reales) ---
+        // Palabras reales de Doble Vida: FURIA (horizontal), CUPULA (vertical cruzando en la U), LANGUIS (vertical cruzando en la I)
         const crucigramaDef = [
-            // F U R I A (Fila horizontal)
-            { palabra: "FURIA", r: 1, c: 3, dir: "H" },
-            // C U P U L A (Vertical cruzando en la U de Furia -> col 4)
-            { palabra: "CUPULA", r: 0, c: 4, dir: "V" },
-            // C O R O N A D O S (Vertical cruzando en la R de Furia -> col 5)
-            { palabra: "CORONADOS", r: 1, c: 5, dir: "V" }
+            { palabra: "FURIA", r: 1, c: 3, dir: "H" },   // F U R I A
+            { palabra: "CUPULA", r: 0, c: 4, dir: "V" },  // C U P U L A (cruza con la U de furia)
+            { palabra: "LANGUIS", r: 1, c: 6, dir: "V" }  // L A N G U I S (cruza con la I de furia)
         ];
 
         const listaDiscos = [
@@ -638,13 +633,12 @@
             renderizarTetris();
         };
 
-        // --- DISCO 4 (Crucigrama Real Entrelazado - Doble Vida) ---
+        // --- DISCO 4 (Crucigrama Real Entrelazado - Doble Vida con temas reales) ---
         function iniciarCrucigramaDobleVida() {
             document.getElementById('crucigrama-game-modal').style.display = 'block';
             const container = document.getElementById('crucigrama-matriz-container');
             container.innerHTML = '';
 
-            // Generar cuadrícula 11x6
             for (let r = 0; r < 6; r++) {
                 for (let c = 0; c < 11; c++) {
                     let input = document.createElement('input');
@@ -657,7 +651,6 @@
                 }
             }
 
-            // Asignar letras y habilitar celdas según el crucigramaDef
             crucigramaDef.forEach(item => {
                 for (let i = 0; i < item.palabra.length; i++) {
                     let cellR = item.dir === "H" ? item.r : item.r + i;
