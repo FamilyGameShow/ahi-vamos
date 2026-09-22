@@ -73,19 +73,18 @@
         #btn-entrar-disco { background: linear-gradient(45deg, #ff00ff, #00ffff); color: #fff; box-shadow: 0 0 15px rgba(255,0,255,0.7); }
         #btn-cancelar-disco { background: rgba(255,255,255,0.1); color: #fff; }
 
-        /* Modal del Minijuego Pac-Man Estilo Laberinto Retro */
+        /* Modal del Minijuego Pac-Man Cuadrícula Original (Soda 1984) */
         #pacman-game-modal {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: rgba(5, 2, 20, 0.98); border: 3px solid #ffcc00; border-radius: 15px;
-            padding: 15px; width: 95%; max-width: 440px; box-shadow: 0 0 40px rgba(255, 204, 0, 0.7);
+            padding: 12px; width: 95%; max-width: 400px; box-shadow: 0 0 40px rgba(255, 204, 0, 0.7);
             z-index: 50; text-align: center; display: none; touch-action: none;
         }
-        #pacman-hud { color: #ffcc00; font-size: 12px; font-weight: bold; margin-bottom: 4px; text-shadow: 0 0 8px #ffcc00; }
-        #pacman-pregunta-txt { color: #fff; font-size: 12px; margin-bottom: 8px; line-height: 1.2; min-height: 30px; font-weight: bold; }
+        #pacman-hud { color: #ffcc00; font-size: 11px; font-weight: bold; margin-bottom: 30px; text-shadow: 0 0 8px #ffcc00; }
         
         #pacman-canvas { background: #000; border: 2px solid #00ffff; border-radius: 8px; display: block; margin: 0 auto 8px auto; }
         
-        .pacman-controles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; width: 160px; margin: 0 auto; }
+        .pacman-controles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; width: 150px; margin: 0 auto; }
         .btn-dir { background: rgba(0, 255, 255, 0.2); border: 1px solid #00ffff; color: #fff; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; }
         .btn-dir:active { background: rgba(0, 255, 255, 0.5); }
 
@@ -144,11 +143,10 @@
         </div>
     </div>
 
-    <!-- Mini-juego Laberinto Pac-Man con Canciones -->
+    <!-- Mini-juego Pac-Man Cuadrícula Original para Soda 1984 -->
     <div id="pacman-game-modal">
-        <div id="pacman-hud">🟡 PAC-MAN SODA 1984 - NIVEL <span id="pacman-nro-pregunta">1</span>/10</div>
-        <div id="pacman-pregunta-txt">Buscá la canción correcta en los pasillos...</div>
-        <canvas id="pacman-canvas" width="380" height="200"></canvas>
+        <div id="pacman-hud">🟡 SODA STEREO (1984) - ¡COMÉ LAS CANCIONES CORRECTAS!</div>
+        <canvas id="pacman-canvas" width="360" height="240"></canvas>
         
         <div class="pacman-controles">
             <div></div>
@@ -181,155 +179,45 @@
         let meshesDiscos = [];
         let discoEnFoco = null;
         let discoActual = null;
-        let preguntaActualIndex = 0;
-        let erroresEnDisco = 0;
         let cancionActualId = "";
 
-        // Variables de Pac-Man con pasillos reales
-        let pacmanX = 50, pacmanY = 100, pacmanDir = {x: 0, y: 0};
-        let itemsPasillo = [];
-        let pacmanLoop = null;
+        // Variables del Pac-Man en Cuadrícula para Soda 1984
+        let pacGridX = 1, pacGridY = 1;
+        let pacDirX = 0, pacDirY = 0;
+        let pacNextDirX = 0, pacNextDirY = 0;
+        let itemsCuadricula = [];
+        let pacmanGameLoop = null;
 
-        // Paredes del laberinto [x, y, ancho, alto]
-        const paredesLaberinto = [
-            {x: 80, y: 30, w: 220, h: 15},
-            {x: 80, y: 155, w: 220, h: 15},
-            {x: 175, y: 70, w: 30, h: 60}
+        // Mapa de la cuadrícula (1 = Pared, 0 = Pasillo)
+        const mapaLaberinto = [
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,0,0,0,0,0,1,0,1,0,0,0,0,0,1],
+            [1,0,1,1,0,1,1,0,1,1,0,1,1,0,1],
+            [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+            [1,0,1,0,1,1,1,0,1,1,1,0,1,0,1],
+            [1,0,0,0,0,0,1,0,1,0,0,0,0,0,1],
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
         ];
+        const tileSize = 24;
+        const offsetX = 18;
+        const offsetY = 30;
+
+        // Canciones correctas del disco 1 y canciones trampa de otros discos
+        const cancionesSoda84 = ["Jet Set", "Vitaminas", "Un Misil", "Dietético"];
+        const cancionesTrampa = ["Persiana", "De Música", "Signos", "Zoom", "Crimen", "Puente"];
 
         const listaDiscos = [
-            { id: "soda_84", nombre: "SODA STEREO (1984)", trackId: "W0KTTiuw96A", fondo: "https://i.ibb.co/sT3L0VW/soda-stereo.png", conquistado: false, preguntas: [
-                { p: "Buscá el tema que abre el primer disco:", opciones: ["Jet Set", "¿Por qué te fuiste?"], correcta: 0 },
-                { p: "Buscá el año de lanzamiento de este álbum:", opciones: ["1984", "1986"], correcta: 0 },
-                { p: "Buscá al baterista de la banda:", opciones: ["Charly Alberti", "Daniel Melero"], correcta: 0 },
-                { p: "Buscá el instrumento principal de Gustavo:", opciones: ["Guitarra y voz", "Teclados"], correcta: 0 },
-                { p: "Buscá el país de origen de la banda:", opciones: ["Argentina", "Uruguay"], correcta: 0 },
-                { p: "Buscá el estilo inicial predominante:", opciones: ["New wave / Rock moderno", "Heavy metal pesado"], correcta: 0 },
-                { p: "Buscá el tema número 3 del disco:", opciones: ["Te hacen falta vitaminas", "De música ligera"], correcta: 0 },
-                { p: "Buscá el color de la estética inicial:", opciones: ["Vibrantes y estridentes 80s", "Tonos pastel"], correcta: 0 },
-                { p: "Buscá quién diseñó el logo original:", opciones: ["La propia banda / entorno", "Un estudio extranjero"], correcta: 0 },
-                { p: "Buscá si fue un éxito rotundo:", opciones: ["Sí, marcó un quiebre generacional", "Pasó desapercibido"], correcta: 0 }
-            ]},
-            { id: "nada_personal", nombre: "NADA PERSONAL (1985)", trackId: "uOlCYVXOyFI", fondo: "https://i.ibb.co/xq1TGpt8/nada-personal.png", conquistado: false, preguntas: [
-                { p: "¿Qué modelo clásico de guitarra usaba Gustavo?", opciones: ["Jackson Soloist", "Fender Stratocaster"], correcta: 0 },
-                { p: "¿Qué estilo capilar marcó tendencia en esta era?", opciones: ["Jopo alto con spray", "Ondas setenteras"], correcta: 0 },
-                { p: "¿En qué mítico estadio presentaron el disco en 1985?", opciones: ["Estadio Obras Sanitarias", "Luna Park"], correcta: 0 },
-                { p: "¿Cuál es el tema homónimo del disco?", opciones: ["Nada Personal", "Danza Derrota"], correcta: 0 },
-                { p: "¿Qué hit consolida su masividad?", opciones: ["Persiana Americana", "Juego de Seducción"], correcta: 1 },
-                { p: "¿Qué sintetizador aportó texturas clave?", opciones: ["Modelos Roland y Korg", "Ninguno"], correcta: 0 },
-                { p: "¿Tuvieron gira nacional masiva?", opciones: ["Sí, récord de público", "Solo tocaron en Capital"], correcta: 0 },
-                { p: "¿El sonido evolucionó hacia un tono más...?", opciones: ["Oscuro y sofisticado", "Acústico"], correcta: 0 },
-                { p: "¿Canción destacada con videoclip icónico?", opciones: ["Cuando pase el temblor", "Signos"], correcta: 0 },
-                { p: "¿El disco fue editado por qué discográfica?", opciones: ["CBS / Sony Music", "Independiente"], correcta: 0 }
-            ]},
-            { id: "signos", nombre: "SIGNOS (1986)", trackId: "C5vRGvsbz0w", fondo: "https://i.ibb.co/LXQbmwRR/signos.png", conquistado: false, preguntas: [
-                { p: "¿Qué país visitaron por primera vez desatando furor?", opciones: ["Chile", "México"], correcta: 0 },
-                { p: "¿Primer tema que abre el disco?", opciones: ["Signos", "Persiana Americana"], correcta: 1 },
-                { p: "¿Cómo se llamó la gran gira latinoamericana?", opciones: ["Gira Signos", "Me Verás Volver"], correcta: 0 },
-                { p: "¿Qué instrumento electrónico dominó los arreglos?", opciones: ["Cajas de ritmos y secuenciadores", "Orquesta de cuerdas"], correcta: 0 },
-                { p: "¿Tema consagratorio del álbum?", opciones: ["Persiana Americana", "Prófugos"], correcta: 0 },
-                { p: "¿Ciudad donde se grabó buena parte de la esencia?", opciones: ["Buenos Aires", "Londres"], correcta: 0 },
-                { p: "¿El arte de tapa destaca por tener tonos...?", opciones: ["Grises y texturas metálicas", "Rojos fuego"], correcta: 0 },
-                { p: "¿Fue el primer disco de rock argentino en editarse en CD?", opciones: ["Sí, en toda Latinoamérica", "No, salió solo en vinilo"], correcta: 0 },
-                { p: "¿Colaboró algún músico invitado?", opciones: ["Sintes y programaciones adicionales", "Ninguno"], correcta: 0 },
-                { p: "¿El clima de las letras era más bien...?", opciones: ["Introspectivo y nocturno", "Festivo bailable"], correcta: 0 }
-            ]},
-            { id: "doble_vida", nombre: "DOBLE VIDA (1988)", trackId: "4l3oYRETotc", fondo: "https://i.ibb.co/cXZpRnKk/doble-vida.png", conquistado: false, preguntas: [
-                { p: "¿En qué ciudad se filmó el videoclip de En la Ciudad de la Furia?", opciones: ["Nueva York", "Buenos Aires"], correcta: 0 },
-                { p: "¿Quién produjo artísticamente este álbum?", opciones: ["Carlos Alomar", "Gustavo Cerati solo"], correcta: 0 },
-                { p: "¿Qué instrumento de viento sumó potencia funk?", opciones: ["Sección de vientos / Bronces", "Flauta traversa"], correcta: 0 },
-                { p: "¿Gran hit bailable que abre el disco?", opciones: ["Lo que sangra (La cúpula)", "Picnic en el cuarto"], correcta: 0 },
-                { p: "¿Dónde se grabaron las bases principales?", opciones: ["Nueva York, USA", "Buenos Aires"], correcta: 0 },
-                { p: "¿Tema emotivo de cierre?", opciones: ["Danza rota", "Terapia de grupo"], correcta: 0 },
-                { p: "¿El sonido buscó un perfil más cercano a...", opciones: ["El funk rock internacional", "Folklore electrónico"], correcta: 0 },
-                { p: "¿Qué canal internacional rotó fuertemente sus videos?", opciones: ["MTV Internacional", "Ninguno"], correcta: 0 },
-                { p: "¿El arte visual reflejaba una estética...", opciones: ["Urbana moderna y nocturna", "Campestre"], correcta: 0 },
-                { p: "¿Consolidó su internacionalización definitiva?", opciones: ["Totalmente en todo el continente", "Solo en Argentina"], correcta: 0 }
-            ]},
-            { id: "cancion_animal", nombre: "CANCIÓN ANIMAL (1990)", trackId: "ex1qICH12Eg", fondo: "https://i.ibb.co/rRbsVPJc/cancion-animal.png", conquistado: false, preguntas: [
-                { p: "¿Qué animales aparecen en la portada original?", opciones: ["Leones", "Ciervos"], correcta: 0 },
-                { p: "¿Qué canción icónica abre el disco?", opciones: ["(En el) Séptimo día", "De música ligera"], correcta: 1 },
-                { p: "¿Himno definitivo del rock en español incluido aquí?", opciones: ["De música ligera", "Un millón de años luz"], correcta: 0 },
-                { p: "¿El sonido dio un giro hacia el rock...", opciones: ["De guitarras crudas y potente", "Tecno pop bailable"], correcta: 0 },
-                { p: "¿Qué tema cuenta con una atmósfera psicodélica y profunda?", opciones: ["Té para tres", "Cae el sol"], correcta: 0 },
-                { p: "¿Gira histórica que acompañó el lanzamiento?", opciones: ["Gira Canción Animal", "Gira Dynamo"], correcta: 0 },
-                { p: "¿Dónde se realizó el cierre masivo de la gira?", opciones: ["Av. 9 de Julio (Ante 250 mil personas)", "Estadio River"], correcta: 0 },
-                { p: "¿Fue grabado principalmente en qué país?", opciones: ["España (Miami y Bs As también)", "México"], correcta: 0 },
-                { p: "¿Canción con dedicatoria muy íntima familiar?", opciones: ["Té para tres", "Sueles dejarme solo"], correcta: 0 },
-                { p: "¿Considerado por la crítica como...?", opciones: ["Una obra cumbre del rock latino", "Un disco menor"], correcta: 0 }
-            ]},
-            { id: "dynamo", nombre: "DYNAMO (1992)", trackId: "a5oUU6tGKFM", fondo: "https://i.ibb.co/S1G0p32/dynamo.png", conquistado: false, preguntas: [
-                { p: "¿Qué corriente musical influenció fuertemente el sonido?", opciones: ["Shoegaze y Manchester", "Heavy Metal clásico"], correcta: 0 },
-                { p: "¿Tema inicial vibrante y sónico?", opciones: ["Secion de paranoia / Claroscuro", "Primavera 0"], correcta: 1 },
-                { p: "¿Cómo se presentó el disco en vivo originalmente?", opciones: ["En Obras con múltiples fechas", "En un estadio de fútbol"], correcta: 0 },
-                { p: "¿Instrumentos con efectos dominantes?", opciones: ["Guitarras con múltiples pedales de modulación", "Acústicos puros"], correcta: 0 },
-                { p: "¿Sello discográfico de esta etapa?", opciones: ["Sony Music", "Independiente"], correcta: 0 },
-                { p: "¿Videoclip recordado en blanco y negro y texturas?", opciones: ["Primavera 0", "Luna Roja"], correcta: 0 },
-                { p: "¿El disco buscó experimentar con la vanguardia?", opciones: ["Absolutamente", "Fue muy comercial"], correcta: 0 },
-                { p: "¿Participó Daniel Melero activamente?", opciones: ["Sí, como socio creativo clave", "No participó"], correcta: 0 },
-                { p: "¿Tema oscuro con una letra magnética?", opciones: ["Luna Roja", "En la ciudad de la furia"], correcta: 0 },
-                { p: "¿Marcó el inicio de un receso temporal en Soda?", opciones: ["Sí, tras la gira se tomaron descanso", "Siguieron tocando sin parar"], correcta: 0 }
-            ]},
-            { id: "sueno_stereo", nombre: "SUEÑO STEREO (1995)", trackId: "IqBK2UjnUVA", fondo: "https://i.ibb.co/whCCS4r1/sue-o-stereo.png", conquistado: false, preguntas: [
-                { p: "¿Cuál fue el gran éxito y primer corte de difusión?", opciones: ["Zoom", "Ella usó mi cabeza como un revólver"], correcta: 1 },
-                { p: "¿Qué formato innovador incluyó en algunas ediciones?", opciones: ["CD interactivo multimedia", "Casete doble"], correcta: 0 },
-                { p: "¿Cómo combinó el sonido este álbum?", opciones: ["Electrónica sofisticada y melodías pop", "Rock pesado sin escalas"], correcta: 0 },
-                { p: "¿Videoclip futurista y animado recordado?", opciones: ["Ella usó mi cabeza como un revólver", "Pasos"], correcta: 0 },
-                { p: "¿Tema instrumental psicodélico de apertura?", opciones: ["Desaniversario / Púrpura", "Púrpura"], correcta: 1 },
-                { p: "¿Fue el último disco de estudio de Soda?", opciones: ["Sí, antes de la separación en 1997", "Sacaron uno más en 2000"], correcta: 0 },
-                { p: "¿Premio internacional destacado?", opciones: ["MTV Video Music Awards (por Ella usó...)", "Grammy anglo"], correcta: 0 },
-                { p: "¿La gira despedida se llamó...?", opciones: ["El Último Concierto", "Gira Total"], correcta: 0 },
-                { p: "¿Letras con un vuelo poético...", opciones: ["Muy elevado y onírico", "Sencillo y directo"], correcta: 0 },
-                { p: "¿La recepción de los fans fue...", opciones: ["Apoteótica y de adoración total", "Indiferente"], correcta: 0 }
-            ]},
-            { id: "amor_amarillo", nombre: "AMOR AMARILLO (1993)", trackId: "ZOd-N9qGQK8", fondo: "https://i.ibb.co/KpPXvH5K/amor-amarillo.png", conquistado: false, preguntas: [
-                { p: "¿Qué cover clásico incluye este disco solista?", opciones: ["Bajan (de Luis Alberto Spinetta)", "Te para Tres"], correcta: 0 },
-                { p: "¿Dónde se grabó gran parte en estudio hogareño?", opciones: ["En su estudio en Chile / Buenos Aires", "En Londres"], correcta: 0 },
-                { p: "¿Acompañamiento vocal especial en un tema?", opciones: ["Cecilia Amenábar", "Fito Páez"], correcta: 0 },
-                { p: "¿Hit luminoso que abre el disco solista?", opciones: ["Amor amarillo", "Pulsar"], correcta: 0 },
-                { p: "¿Instrumento acústico protagonista?", opciones: ["Guitarra acústica y arreglos sutiles", "Sinte analógico"], correcta: 0 },
-                { p: "¿Se editó en paralelo a qué momento de Soda?", opciones: ["Durante el impasse previo a Sueño Stereo", "Luego de la separación definitiva"], correcta: 0 },
-                { p: "¿Tema con pulso electrónico y dulce?", opciones: ["Pulsar", "Avui"], correcta: 0 },
-                { p: "¿Estética visual del disco?", opciones: ["Cálida, íntima y casera", "Industrial fría"], correcta: 0 },
-                { p: "¿Fue su primer paso formal como solista?", opciones: ["Sí, con sello propio", "Ya había hecho bandas de sonido"], correcta: 0 },
-                { p: "¿Canción con dedicatoria de amor profundo?", opciones: ["Te llevo para que me lleves", "Bajan"], correcta: 0 }
-            ]},
-            { id: "bocanada", nombre: "BOCANADA (1999)", trackId: "90SS2mXzPcA", fondo: "https://i.ibb.co/Gf9jPzVy/bocanada.png", conquistado: false, preguntas: [
-                { p: "¿Qué instrumento principal destaca en el estribillo de Puente?", opciones: ["Guitarras acústicas gemelas", "Sinte analógico"], correcta: 0 },
-                { p: "¿Cómo se llamaba su estudio personal de grabación?", opciones: ["Casa", "Del Cielito"], correcta: 1 },
-                { p: "¿Primer disco solista oficial tras...", opciones: ["La separación oficial de Soda Stereo", "Un viaje a Europa"], correcta: 0 },
-                { p: "¿Muestreos (samples) célebres utilizados?", opciones: ["Cine argentino clásico y sinfonías", "Temas de otros artistas rock"], correcta: 0 },
-                { p: "¿Himno generacional solista indiscutido?", opciones: ["Puente", "Tabú"], correcta: 0 },
-                { p: "¿Gira presentación con banda en vivo impecable?", opciones: ["Gira Bocanada por toda América", "Solo shows acústicos"], correcta: 0 },
-                { p: "¿Diseño de tapa icónico con Gustavo...", opciones: ["Con mariposas / humo estético", "En la playa"], correcta: 0 },
-                { p: "¿Tema instrumental con beat hipnótico?", opciones: ["Bocanada", "Paseo inmoral"], correcta: 0 },
-                { p: "¿Recibió elogios unánimes de la crítica?", opciones: ["Sí, consagrado como obra maestra", "Fue criticado"], correcta: 0 },
-                { p: "¿Exploró libremente géneros como...", opciones: ["Trip hop, pop barroco y electrónica", "Folklore tradicional"], correcta: 0 }
-            ]},
-            { id: "ahi_vamos", nombre: "AHÍ VAMOS (2006)", trackId: "qfcwCrh4s7I", fondo: "https://i.ibb.co/prZnh9w4/ahi-vamos.png", conquistado: false, preguntas: [
-                { p: "¿Qué galardón internacional ganó el tema Crimen?", opciones: ["Premio Grammy Latino a Mejor Canción Rock", "MTV Video Music Award"], correcta: 0 },
-                { p: "¿El sonido marcó un retorno triunfal hacia...", opciones: ["El rock de guitarras filosas", "La electrónica pura"], correcta: 0 },
-                { p: "¿Gran éxito potente de apertura?", opciones: ["La excepción", "Crimen"], correcta: 0 },
-                { p: "¿Quiénes integraban su banda en esta gira?", opciones: ["Richard Coleman, Fernando Nalé, etc.", "Músicos invitados aleatorios"], correcta: 0 },
-                { p: "¿Videoclip con Gustavo tocando en una habitación oscura?", opciones: ["Crimen", "Lago en el cielo"], correcta: 0 },
-                { p: "¿Gira monumental que recorrió el mundo?", opciones: ["Gira Ahí Vamos", "Solo Argentina"], correcta: 0 },
-                { p: "¿Disco certificado como...?", opciones: ["Platino y Triple Platino", "Disco de oro simple"], correcta: 0 },
-                { p: "¿Canción enérgica con riff inolvidable?", opciones: ["Adiós", "A fumar"], correcta: 0 },
-                { p: "¿Gustavo volvió a tocar la guitarra eléctrica principal?", opciones: ["Sí, de manera estelar y protagonista", "Casi no tocó la guitarra"], correcta: 0 },
-                { p: "¿Consolidó su estatus como máximo referente solista?", opciones: ["Absolutamente indiscutido", "Generó dudas"], correcta: 0 }
-            ]},
-            { id: "fuerza_natural", nombre: "FUERZA NATURAL (2009)", trackId: "Z7ndVxqUb48", fondo: "https://i.ibb.co/V0yVhy8Y/fuerza-natural.png", conquistado: false, preguntas: [
-                { p: "¿Con qué vehículo se identifica conceptualmente la estética?", opciones: ["Una coupé modelo rutero / viaje psicodélico", "Una nave espacial de los 70"], correcta: 0 },
-                { p: "¿Primer corte difusión con videoclip rutero?", opciones: ["Déjà vu", "Fuerza natural"], correcta: 0 },
-                { p: "¿Sonoridad general del álbum?", opciones: ["Pop rock terráqueo, folk y psicodelia", "Heavy metal sinfónico"], correcta: 0 },
-                { p: "¿Último álbum de estudio de su carrera?", opciones: ["Sí", "No, grabó otro después"], correcta: 0 },
-                { p: "¿Arte de tapa diseñado con concepto de...", opciones: ["Álbum rutero místico y cósmico", "Pintura clásica abstracta"], correcta: 0 },
-                { p: "¿Canción con gran despliegue melódico y poético?", opciones: ["Fuerza natural", "Magia"], correcta: 0 },
-                { p: "¿Participó su hijo Benito en la composición?", opciones: ["Sí, en varios temas clave", "No participó"], correcta: 0 },
-                { p: "¿Ganador de múltiples premios...", opciones: ["Grammy Latinos", "Premios Gardel de Oro únicamente"], correcta: 0 },
-                { p: "¿El viaje conceptual proponía ir hacia...", opciones: ["Una travesía natural y mental", "El espacio exterior galáctico"], correcta: 0 },
-                { p: "¿Su legado musical en esta obra es...", opciones: ["Una despedida luminosa y brillante", "Un trabajo experimental fallido"], correcta: 0 }
-            ]}
+            { id: "soda_84", nombre: "SODA STEREO (1984)", trackId: "W0KTTiuw96A", fondo: "https://i.ibb.co/sT3L0VW/soda-stereo.png", conquistado: false, esPacman: true },
+            { id: "nada_personal", nombre: "NADA PERSONAL (1985)", trackId: "uOlCYVXOyFI", fondo: "https://i.ibb.co/xq1TGpt8/nada-personal.png", conquistado: false, preguntas: [] },
+            { id: "signos", nombre: "SIGNOS (1986)", trackId: "C5vRGvsbz0w", fondo: "https://i.ibb.co/LXQbmwRR/signos.png", conquistado: false, preguntas: [] },
+            { id: "doble_vida", nombre: "DOBLE VIDA (1988)", trackId: "4l3oYRETotc", fondo: "https://i.ibb.co/cXZpRnKk/doble-vida.png", conquistado: false, preguntas: [] },
+            { id: "cancion_animal", nombre: "CANCIÓN ANIMAL (1990)", trackId: "ex1qICH12Eg", fondo: "https://i.ibb.co/rRbsVPJc/cancion-animal.png", conquistado: false, preguntas: [] },
+            { id: "dynamo", nombre: "DYNAMO (1992)", trackId: "a5oUU6tGKFM", fondo: "https://i.ibb.co/S1G0p32/dynamo.png", conquistado: false, preguntas: [] },
+            { id: "sueno_stereo", nombre: "SUEÑO STEREO (1995)", trackId: "IqBK2UjnUVA", fondo: "https://i.ibb.co/whCCS4r1/sue-o-stereo.png", conquistado: false, preguntas: [] },
+            { id: "amor_amarillo", nombre: "AMOR AMARILLO (1993)", trackId: "ZOd-N9qGQK8", fondo: "https://i.ibb.co/KpPXvH5K/amor-amarillo.png", conquistado: false, preguntas: [] },
+            { id: "bocanada", nombre: "BOCANADA (1999)", trackId: "90SS2mXzPcA", fondo: "https://i.ibb.co/Gf9jPzVy/bocanada.png", conquistado: false, preguntas: [] },
+            { id: "ahi_vamos", nombre: "AHÍ VAMOS (2006)", trackId: "qfcwCrh4s7I", fondo: "https://i.ibb.co/prZnh9w4/ahi-vamos.png", conquistado: false, preguntas: [] },
+            { id: "fuerza_natural", nombre: "FUERZA NATURAL (2009)", trackId: "Z7ndVxqUb48", fondo: "https://i.ibb.co/V0yVhy8Y/fuerza-natural.png", conquistado: false, preguntas: [] }
         ];
 
         function cambiarFondo(urlImagen) {
@@ -511,138 +399,144 @@
             limpiarEscena();
             estadoActual = "JUEGO_DISCO";
             discoActual = disco;
-            preguntaActualIndex = 0;
-            erroresEnDisco = 0;
-
-            document.getElementById('btn-trofeos').style.display = 'none';
-            document.getElementById('btn-volver').style.display = 'block';
-            document.getElementById('txt-estado').innerText = disco.nombre;
-            if(disco.fondo) cambiarFondo(disco.fondo);
             reproducirAudio(disco.trackId);
 
-            iniciarJuegoLaberinto();
+            if (disco.esPacman) {
+                iniciarPacmanSoda84();
+            } else {
+                alert(`¡Próximamente minijuego para ${disco.nombre}!`);
+                volverAlMultiverso();
+            }
         }
 
-        // --- MOTOR PAC-MAN CON PASILLOS Y CANCIONES ---
-        function iniciarJuegoLaberinto() {
+        // --- MOTOR PAC-MAN CUADRÍCULA SODA 1984 ---
+        function iniciarPacmanSoda84() {
             document.getElementById('pacman-game-modal').style.display = 'block';
-            prepararNivelLaberinto();
-            if(!pacmanLoop) {
-                pacmanLoop = setInterval(actualizarYRenderizarLaberinto, 1000 / 30);
-            }
-        }
+            pacGridX = 1; pacGridY = 1;
+            pacDirX = 0; pacDirY = 0; pacNextDirX = 0; pacNextDirY = 0;
 
-        function prepararNivelLaberinto() {
-            if (preguntaActualIndex >= discoActual.preguntas.length) {
-                finalizarDisco();
-                return;
-            }
-            const q = discoActual.preguntas[preguntaActualIndex];
-            document.getElementById('pacman-nro-pregunta').innerText = preguntaActualIndex + 1;
-            document.getElementById('pacman-pregunta-txt').innerText = q.p;
-
-            pacmanX = 40; pacmanY = 100; pacmanDir = {x: 0, y: 0};
-            
-            // Distribuir las opciones de canciones por los pasillos del laberinto
-            itemsPasillo = [
-                { x: 120, y: 100, texto: q.opciones[0], correcta: (0 === q.correcta), radio: 15 },
-                { x: 260, y: 100, texto: q.opciones[1], correcta: (1 === q.correcta), radio: 15 }
-            ];
-        }
-
-        document.getElementById('btn-arriba').onclick = () => pacmanDir = {x: 0, y: -3};
-        document.getElementById('btn-abajo').onclick = () => pacmanDir = {x: 0, y: 3};
-        document.getElementById('btn-izq').onclick = () => pacmanDir = {x: -3, y: 0};
-        document.getElementById('btn-der').onclick = () => pacmanDir = {x: 3, y: 0};
-
-        function verificarColisionParedes(nx, ny) {
-            for(let p of paredesLaberinto) {
-                if(nx > p.x - 12 && nx < p.x + p.w + 12 && ny > p.y - 12 && ny < p.y + p.h + 12) {
-                    return true;
+            // Colocar canciones correctas y trampa en los pasillos libres (valor 0 del mapa)
+            itemsCuadricula = [];
+            for (let r = 0; r < mapaLaberinto.length; r++) {
+                for (let c = 0; c < mapaLaberinto[r].length; c++) {
+                    if (mapaLaberinto[r][c] === 0 && !(r === 1 && c === 1)) {
+                        let esCorrecta = Math.random() < 0.4;
+                        let nombreCancion = esCorrecta ? 
+                            cancionesSoda84[Math.floor(Math.random() * cancionesSoda84.length)] : 
+                            cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)];
+                        
+                        itemsCuadricula.push({ gx: c, gy: r, texto: nombreCancion, correcta: esCorrecta });
+                    }
                 }
             }
-            return false;
+
+            if (!pacmanGameLoop) {
+                pacmanGameLoop = setInterval(actualizarYRenderizarPacmanCuadricula, 1000 / 6); // Movimiento por casillas estilo arcade retro
+            }
         }
 
-        function actualizarYRenderizarLaberinto() {
+        document.getElementById('btn-arriba').onclick = () => { pacNextDirX = 0; pacNextDirY = -1; };
+        document.getElementById('btn-abajo').onclick = () => { pacNextDirX = 0; pacNextDirY = 1; };
+        document.getElementById('btn-izq').onclick = () => { pacNextDirX = -1; pacNextDirY = 0; };
+        document.getElementById('btn-der').onclick = () => { pacNextDirX = 1; pacNextDirY = 0; };
+
+        function actualizarYRenderizarPacmanCuadricula() {
             if (estadoActual !== "JUEGO_DISCO") return;
 
-            let nuevoX = pacmanX + pacmanDir.x;
-            let nuevoY = pacmanY + pacmanDir.y;
-
-            // Limites del canvas y colisión con paredes
-            if(nuevoX >= 20 && nuevoX <= 360 && nuevoY >= 20 && nuevoY <= 180) {
-                if(!verificarColisionParedes(nuevoX, nuevoY)) {
-                    pacmanX = nuevoX;
-                    pacmanY = nuevoY;
+            // Intentar aplicar la siguiente dirección si es pasillo libre
+            let testX = pacGridX + pacNextDirX;
+            let testY = pacGridY + pacNextDirY;
+            if (testY >= 0 && testY < mapaLaberinto.length && testX >= 0 && testX < mapaLaberinto[0].length) {
+                if (mapaLaberinto[testY][testX] === 0) {
+                    pacDirX = pacNextDirX;
+                    pacDirY = pacNextDirY;
                 }
             }
 
+            // Mover en la dirección actual
+            let nextX = pacGridX + pacDirX;
+            let nextY = pacGridY + pacDirY;
+            if (nextY >= 0 && nextY < mapaLaberinto.length && nextX >= 0 && nextX < mapaLaberinto[0].length) {
+                if (mapaLaberinto[nextY][nextX] === 0) {
+                    pacGridX = nextX;
+                    pacGridY = nextY;
+                }
+            }
+
+            // Revisar si comió alguna canción en esta casilla
+            itemsCuadricula.forEach((item, index) => {
+                if (item.gx === pacGridX && item.gy === pacGridY) {
+                    if (item.correcta) {
+                        puntos += 10;
+                        document.getElementById('txt-puntos').innerText = puntos;
+                    } else {
+                        puntos = Math.max(0, puntos - 5);
+                        document.getElementById('txt-puntos').innerText = puntos;
+                    }
+                    itemsCuadricula.splice(index, 1);
+                }
+            });
+
+            // Si comió todas las correctas, conquista el disco
+            let quedanCorrectas = itemsCuadricula.some(i => i.correcta);
+            if (!quedanCorrectas) {
+                finalizarDiscoSoda84();
+            }
+
+            // Renderizado en Canvas
             const canvas = document.getElementById('pacman-canvas');
             const ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Dibujar Pasillos / Paredes del Laberinto
-            ctx.fillStyle = '#110033';
-            ctx.fillRect(10, 10, 360, 180);
-            
-            ctx.fillStyle = '#00ffff';
-            paredesLaberinto.forEach(p => {
-                ctx.fillRect(p.x, p.y, p.w, p.h);
-            });
+            // Dibujar el Laberinto de Cuadrícula
+            for (let r = 0; r < mapaLaberinto.length; r++) {
+                for (let c = 0; c < mapaLaberinto[r].length; c++) {
+                    let px = offsetX + c * tileSize;
+                    let py = offsetY + r * tileSize;
+                    if (mapaLaberinto[r][c] === 1) {
+                        ctx.fillStyle = '#0055ff';
+                        ctx.fillRect(px, py, tileSize, tileSize);
+                    } else {
+                        ctx.fillStyle = '#0a001a';
+                        ctx.fillRect(px, py, tileSize, tileSize);
+                    }
+                }
+            }
 
-            // Dibujar Canciones / Ítems en los pasillos
-            itemsPasillo.forEach(item => {
-                ctx.fillStyle = item.correcta ? '#ff00ff' : '#00ffaa';
+            // Dibujar Canciones circulando por los pasillos
+            itemsCuadricula.forEach(item => {
+                let px = offsetX + item.gx * tileSize + tileSize / 2;
+                let py = offsetY + item.gy * tileSize + tileSize / 2;
+
+                ctx.fillStyle = item.correcta ? '#ff00ff' : '#00ffff';
                 ctx.beginPath();
-                ctx.arc(item.x, item.y, 10, 0, Math.PI * 2);
+                ctx.arc(px, py, 6, 0, Math.PI * 2);
                 ctx.fill();
 
                 ctx.fillStyle = '#fff';
-                ctx.font = 'bold 11px sans-serif';
+                ctx.font = '9px sans-serif';
                 ctx.textAlign = 'center';
-                ctx.fillText(item.texto, item.x, item.y - 14);
-
-                // Colisión (Pac-Man come la canción)
-                let distX = pacmanX - item.x;
-                let distY = pacmanY - item.y;
-                if(Math.sqrt(distX*distX + distY*distY) < 16) {
-                    resolverItemComido(item.correcta);
-                }
+                ctx.fillText(item.texto, px, py - 8);
             });
 
-            // Dibujar Pac-Man (amarillo clásico)
+            // Dibujar Pac-Man
+            let pacPx = offsetX + pacGridX * tileSize + tileSize / 2;
+            let pacPy = offsetY + pacGridY * tileSize + tileSize / 2;
             ctx.fillStyle = '#ffcc00';
             ctx.beginPath();
-            ctx.arc(pacmanX, pacmanY, 10, 0.2 * Math.PI, 1.8 * Math.PI);
-            ctx.lineTo(pacmanX, pacmanY);
+            ctx.arc(pacPx, pacPy, 10, 0.2 * Math.PI, 1.8 * Math.PI);
+            ctx.lineTo(pacPx, pacPy);
             ctx.fill();
         }
 
-        function resolverItemComido(esCorrecta) {
-            pacmanDir = {x: 0, y: 0};
-            if (esCorrecta) {
-                puntos += 10;
-                document.getElementById('txt-puntos').innerText = puntos;
-            } else {
-                erroresEnDisco++;
-            }
-            preguntaActualIndex++;
-            prepararNivelLaberinto();
-        }
-
-        function finalizarDisco() {
+        function finalizarDiscoSoda84() {
             document.getElementById('pacman-game-modal').style.display = 'none';
-            let puntosGanadosDisco = 100 - (erroresEnDisco * 10);
-            if (puntosGanadosDisco < 0) puntosGanadosDisco = 0;
-
             if (!discoActual.conquistado) {
                 discoActual.conquistado = true;
                 discosConquistadosCount++;
                 document.getElementById('txt-discos-conquistados').innerText = discosConquistadosCount;
             }
-
-            alert(`¡Universo conquistado! Obtuviste ${puntosGanadosDisco} puntos en este disco.`);
+            alert(`¡Impresionante! Conquistaste el universo de ${discoActual.nombre} comiendo todas sus canciones correctas.`);
             volverAlMultiverso();
         }
 
