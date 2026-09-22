@@ -58,7 +58,7 @@
             box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
         }
 
-        /* Banner de Confirmación cuando un disco se agranda en pantalla */
+        /* Banner de Confirmación */
         #disco-seleccionado-banner {
             position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
             background: rgba(10, 5, 30, 0.95); border: 2px solid #00ffff; border-radius: 20px;
@@ -135,7 +135,6 @@
     <button id="btn-volver">⬅️ VOLVER AL MULTIVERSO</button>
     <button id="btn-trofeos">🏆 TROFEOS</button>
 
-    <!-- Banner flotante para confirmar el disco seleccionado -->
     <div id="disco-seleccionado-banner">
         <div id="disco-seleccionado-titulo">DISCO</div>
         <div class="botones-grupo">
@@ -174,6 +173,7 @@
         let discoActual = null;
         let preguntaActualIndex = 0;
         let erroresEnDisco = 0;
+        let cancionActualId = "";
 
         const listaDiscos = [
             { id: "soda_84", nombre: "SODA STEREO (1984)", trackId: "W0KTTiuw96A", fondo: "https://i.ibb.co/sT3L0VW/soda-stereo.png", conquistado: false, preguntas: [
@@ -321,7 +321,7 @@
             document.getElementById('pantalla-intro').style.display = 'none';
             document.getElementById('pantalla-conteo').style.display = 'flex';
             cambiarFondo("https://i.ibb.co/9Hy8h9fL/colores-santos.png");
-            actualizarAudio("Wun6zDSpwkg");
+            reproducirAudio("Wun6zDSpwkg");
 
             let cuenta = 3;
             const numEl = document.getElementById('txt-conteo-numero');
@@ -353,7 +353,6 @@
         document.getElementById('btn-cerrar-trofeos').addEventListener('click', cerrarVentanaTrofeos);
         document.getElementById('btn-cerrar-trofeos').addEventListener('touchend', (e) => { e.preventDefault(); cerrarVentanaTrofeos(); });
 
-        // Botones del Banner de Foco
         document.getElementById('btn-entrar-disco').addEventListener('click', confirmarEntradaDisco);
         document.getElementById('btn-entrar-disco').addEventListener('touchend', (e) => { e.preventDefault(); confirmarEntradaDisco(); });
         document.getElementById('btn-cancelar-disco').addEventListener('click', cancelarFocoDisco);
@@ -362,9 +361,13 @@
         document.getElementById('trivia-btn-1').addEventListener('click', () => verificarRespuestaConsigna(1));
         document.getElementById('trivia-btn-2').addEventListener('click', () => verificarRespuestaConsigna(2));
 
-        function actualizarAudio(videoId) {
-            const ytPlayer = document.getElementById('yt-player');
-            ytPlayer.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}`;
+        // Control de audio fluido para evitar que se reinicie si ya está sonando
+        function reproducirAudio(videoId) {
+            if (cancionActualId !== videoId) {
+                cancionActualId = videoId;
+                const ytPlayer = document.getElementById('yt-player');
+                ytPlayer.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}`;
+            }
         }
 
         const canvasContainer = document.getElementById('canvas-container');
@@ -402,7 +405,7 @@
             document.getElementById('disco-seleccionado-banner').style.display = 'none';
             document.getElementById('txt-estado').innerText = "TOCA UN DISCO PARA VERLO";
             cambiarFondo("https://i.ibb.co/9Hy8h9fL/colores-santos.png");
-            actualizarAudio("Wun6zDSpwkg");
+            reproducirAudio("Wun6zDSpwkg");
 
             const textureLoader = new THREE.TextureLoader();
             const discosDisponibles = listaDiscos.filter(d => !d.conquistado);
@@ -410,7 +413,7 @@
             discosDisponibles.forEach((disco, index) => {
                 const grupoDisco = new THREE.Group();
 
-                // 1. Tapa del disco
+                // 1. Tapa del disco (Derecha, mirando siempre al frente con un sutil brillo)
                 const geometry = new THREE.PlaneGeometry(4.2, 4.2);
                 let material;
                 if(disco.fondo) {
@@ -450,6 +453,8 @@
                 const posZ = -25 - (index * 16);
 
                 grupoDisco.position.set(posX, posY, posZ);
+                // Sin rotación lateral: vienen derechos hacia adelante
+                grupoDisco.rotation.set(0, 0, 0);
                 grupoDisco.userData = { tipo: 'disco', discoData: disco };
                 
                 scene.add(grupoDisco);
@@ -457,22 +462,21 @@
             });
         }
 
-        // Primer Toque: El disco se detiene, se acerca y se agranda frente a la cámara
         function enfocarDisco(discoObj) {
             estadoActual = "DISCO_EN_FOCO";
             discoEnFoco = discoObj.userData.discoData;
 
-            // Detenemos los demás y acercamos el seleccionado al centro enfrente de la cámara
+            // Detenemos los demás y centramos el seleccionado mirando derecho al frente
             meshesDiscos.forEach(mesh => {
                 if (mesh === discoObj) {
-                    mesh.position.set(0, 0.5, 2); // Cerca y centrado
-                    mesh.scale.set(1.6, 1.6, 1.6); // Agranda la visualización
+                    mesh.position.set(0, 0.5, 2);
+                    mesh.rotation.set(0, 0, 0); // Siempre derecho
+                    mesh.scale.set(1.6, 1.6, 1.6);
                 } else {
-                    mesh.visible = false; // Ocultamos los demás temporalmente para que no molesten
+                    mesh.visible = false;
                 }
             });
 
-            // Mostramos el banner inferior con el nombre y los botones de decisión
             document.getElementById('disco-seleccionado-titulo').innerText = discoEnFoco.nombre;
             document.getElementById('disco-seleccionado-banner').style.display = 'block';
             document.getElementById('txt-estado').innerText = "DISCO SELECCIONADO";
@@ -480,7 +484,7 @@
         }
 
         function cancelarFocoDisco() {
-            cargarMultiversoDiscos(); // Vuelve a la lluvia de discos flotantes
+            cargarMultiversoDiscos();
         }
 
         function confirmarEntradaDisco() {
@@ -500,7 +504,9 @@
             document.getElementById('btn-volver').style.display = 'block';
             document.getElementById('txt-estado').innerText = disco.nombre;
             if(disco.fondo) cambiarFondo(disco.fondo);
-            actualizarAudio(disco.trackId);
+            
+            // Aquí reproducimos el tema específico del disco sin cortar bruscamente si ya venía sonando
+            reproducirAudio(disco.trackId);
 
             mostrarSiguienteConsigna();
         }
@@ -609,11 +615,10 @@
         function animate() {
             requestAnimationFrame(animate);
 
-            // Solo se mueven si estamos en la vista de menú principal libre
             if (estadoActual === "MENU_PRINCIPAL") {
                 meshesDiscos.forEach(mesh => {
                     mesh.position.z += 0.08;
-                    mesh.rotation.z += 0.001;
+                    // Vuelo recto y derecho (sin giro lateral de la tapa)
                     if (mesh.position.z > 5) {
                         mesh.position.z = -150;
                         mesh.position.x = (Math.random() - 0.5) * 28;
