@@ -8,7 +8,7 @@
         body { margin: 0; overflow: hidden; background-color: #02000a; font-family: sans-serif; touch-action: none; }
         #canvas-container { width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; z-index: 1; }
         
-        /* Capa de fondo dinámico */
+        /* Fondo dinámico */
         #escenografia-fondo {
             position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
             background-size: cover; background-position: center; opacity: 0.35; z-index: 0;
@@ -38,23 +38,31 @@
         #txt-conteo-numero { font-size: 80px; color: #00ffff; text-shadow: 0 0 30px #00ffff; font-weight: bold; margin-bottom: 10px; }
         #txt-conteo-texto { font-size: 16px; color: #ff00ff; letter-spacing: 3px; text-shadow: 0 0 10px #ff00ff; }
 
-        /* Capa UI de Juego */
+        /* Capa UI */
         #ui-capa {
             position: absolute; top: 15px; width: 100%; display: flex; justify-content: space-between;
             padding: 0 20px; box-sizing: border-box; color: #fff; text-shadow: 0 0 10px #ff00ff; z-index: 10; pointer-events: none; display: none;
         }
-        .stats-box { font-size: 13px; font-weight: bold; background: rgba(10, 5, 30, 0.8); border: 1px solid #ff00ff; padding: 6px 12px; border-radius: 12px; }
+        .stats-box { font-size: 12px; font-weight: bold; background: rgba(10, 5, 30, 0.85); border: 1px solid #ff00ff; padding: 6px 10px; border-radius: 10px; }
         
         #btn-volver {
-            position: absolute; top: 60px; left: 20px; background: rgba(255, 0, 255, 0.3);
-            border: 1px solid #ff00ff; color: #fff; padding: 8px 15px; border-radius: 10px;
-            font-size: 12px; cursor: pointer; z-index: 15; display: none; pointer-events: auto;
+            position: absolute; top: 65px; left: 20px; background: rgba(255, 0, 255, 0.3);
+            border: 1px solid #ff00ff; color: #fff; padding: 8px 14px; border-radius: 10px;
+            font-size: 11px; cursor: pointer; z-index: 15; display: none; pointer-events: auto;
         }
 
-        /* Ventana de Consignas / Trivia */
+        /* Botón de Estantería / Trofeos */
+        #btn-trofeos {
+            position: absolute; top: 65px; right: 20px; background: rgba(0, 255, 255, 0.25);
+            border: 1px solid #00ffff; color: #fff; padding: 8px 14px; border-radius: 10px;
+            font-size: 11px; font-weight: bold; cursor: pointer; z-index: 15; display: none; pointer-events: auto;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
+        }
+
+        /* Modal de Consignas / Trivia */
         #trivia-modal {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: rgba(10, 5, 30, 0.95); border: 2px solid #00ffff; border-radius: 15px;
+            background: rgba(10, 5, 30, 0.96); border: 2px solid #00ffff; border-radius: 15px;
             padding: 20px; width: 85%; max-width: 350px; box-shadow: 0 0 30px rgba(0, 255, 255, 0.6);
             z-index: 50; text-align: center; display: none; touch-action: auto;
         }
@@ -65,6 +73,27 @@
             padding: 12px; border-radius: 12px; font-size: 13px; font-weight: bold; width: 100%;
             margin-bottom: 10px; cursor: pointer; box-shadow: 0 0 10px rgba(0, 255, 255, 0.3); pointer-events: auto;
         }
+
+        /* Ventana / Modal de Estantería de Trofeos */
+        #trofeos-modal {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(5, 2, 18, 0.98); border: 2px solid #ff00ff; border-radius: 15px;
+            padding: 20px; width: 90%; max-width: 420px; max-height: 80vh; overflow-y: auto;
+            box-shadow: 0 0 40px rgba(255, 0, 255, 0.6); z-index: 60; text-align: center; display: none; pointer-events: auto;
+        }
+        #trofeos-modal h2 { color: #00ffff; font-size: 18px; margin-top: 0; letter-spacing: 2px; text-shadow: 0 0 10px #00ffff; }
+        .grid-trofeos { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; text-align: left; }
+        .item-trofeo {
+            background: rgba(255, 255, 255, 0.05); border: 1px solid #444; border-radius: 8px;
+            padding: 8px; font-size: 11px; color: #aaa; display: flex; align-items: center; gap: 8px;
+        }
+        .item-trofeo.conquistado { border-color: #00ffff; color: #fff; background: rgba(0, 255, 255, 0.1); }
+        .item-trofeo img { width: 35px; height: 35px; object-fit: cover; border-radius: 4px; }
+        .btn-cerrar-trofeos {
+            background: linear-gradient(45deg, #ff00ff, #00ffff); border: none; color: #fff;
+            padding: 10px 20px; border-radius: 20px; font-size: 12px; font-weight: bold; margin-top: 20px; cursor: pointer;
+        }
+
         #youtube-audio { position: absolute; top: -9999px; left: -9999px; visibility: hidden; }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -86,16 +115,27 @@
     <div id="ui-capa">
         <div class="stats-box">PUNTOS: <span id="txt-puntos">0</span></div>
         <div class="stats-box" id="txt-estado">SELECCIONA UN DISCO</div>
-        <div class="stats-box">DISCOS CONQUISTADOS: <span id="txt-discos-conquistados">0</span>/11</div>
+        <div class="stats-box">CONQUISTADOS: <span id="txt-discos-conquistados">0</span>/11</div>
     </div>
 
     <button id="btn-volver">⬅️ VOLVER AL MULTIVERSO</button>
+    <button id="btn-trofeos">🏆 TROFEOS</button>
 
     <div id="trivia-modal">
         <div id="trivia-titulo">CONSIGNA</div>
         <div id="trivia-pregunta">Pregunta aquí...</div>
         <button id="trivia-btn-1" class="btn-opcion-cosmos">Opción A</button>
         <button id="trivia-btn-2" class="btn-opcion-cosmos">Opción B</button>
+    </div>
+
+    <!-- Ventana de Estantería de Trofeos -->
+    <div id="trofeos-modal">
+        <h2>ESTANTERÍA DE TROFEOS</h2>
+        <p style="font-size:12px; color:#ff00ff; margin-bottom:5px;">Tus discos conquistados en el multiverso:</p>
+        <div class="grid-trofeos" id="grid-trofeos-lista">
+            <!-- Se carga dinámicamente -->
+        </div>
+        <button class="btn-cerrar-trofeos" id="btn-cerrar-trofeos">VOLVER AL JUEGO</button>
     </div>
 
     <div id="canvas-container"></div>
@@ -280,11 +320,18 @@
         function comenzarJuegoReal() {
             juegoIniciado = true;
             document.getElementById('ui-capa').style.display = 'flex';
+            document.getElementById('btn-trofeos').style.display = 'block';
             cargarMultiversoDiscos();
         }
 
         document.getElementById('btn-volver').addEventListener('click', volverAlMultiverso);
         document.getElementById('btn-volver').addEventListener('touchend', (e) => { e.preventDefault(); volverAlMultiverso(); });
+
+        // Eventos del modal de Trofeos
+        document.getElementById('btn-trofeos').addEventListener('click', abrirVentanaTrofeos);
+        document.getElementById('btn-trofeos').addEventListener('touchend', (e) => { e.preventDefault(); abrirVentanaTrofeos(); });
+        document.getElementById('btn-cerrar-trofeos').addEventListener('click', cerrarVentanaTrofeos);
+        document.getElementById('btn-cerrar-trofeos').addEventListener('touchend', (e) => { e.preventDefault(); cerrarVentanaTrofeos(); });
 
         document.getElementById('trivia-btn-1').addEventListener('click', () => verificarRespuestaConsigna(1));
         document.getElementById('trivia-btn-2').addEventListener('click', () => verificarRespuestaConsigna(2));
@@ -324,14 +371,21 @@
             limpiarEscena();
             estadoActual = "MENU_PRINCIPAL";
             document.getElementById('btn-volver').style.display = 'none';
+            document.getElementById('btn-trofeos').style.display = 'block';
             document.getElementById('txt-estado').innerText = "SELECCIONA UN DISCO CON EL DEDO";
             cambiarFondo("https://i.ibb.co/9Hy8h9fL/colores-santos.png");
             actualizarAudio("Wun6zDSpwkg");
 
             const textureLoader = new THREE.TextureLoader();
 
-            listaDiscos.forEach((disco, index) => {
-                const geometry = new THREE.PlaneGeometry(4.5, 4.5);
+            // Solo mostramos en el espacio los discos que AÚN NO fueron conquistados
+            const discosDisponibles = listaDiscos.filter(d => !d.conquistado);
+
+            discosDisponibles.forEach((disco, index) => {
+                const grupoDisco = new THREE.Group();
+
+                // 1. Tapa del disco
+                const geometry = new THREE.PlaneGeometry(4.2, 4.2);
                 let material;
                 if(disco.fondo) {
                     const texture = textureLoader.load(disco.fondo);
@@ -339,17 +393,41 @@
                 } else {
                     material = new THREE.MeshBasicMaterial({ color: 0x00ffff, wireframe: true });
                 }
-
                 const mesh = new THREE.Mesh(geometry, material);
-                const posX = (Math.random() - 0.5) * 32;
-                const posY = (Math.random() - 0.5) * 18;
-                const posZ = -30 - (index * 15);
+                grupoDisco.add(mesh);
 
-                mesh.position.set(posX, posY, posZ);
-                mesh.userData = { tipo: 'disco', discoData: disco };
+                // 2. Cartel con el Nombre del Disco debajo
+                const canvasTexto = document.createElement('canvas');
+                canvasTexto.width = 512;
+                canvasTexto.height = 128;
+                const ctx = canvasTexto.getContext('2d');
+                ctx.fillStyle = 'rgba(10, 5, 30, 0.9)';
+                ctx.fillRect(0, 0, 512, 128);
+                ctx.strokeStyle = '#00ffff';
+                ctx.lineWidth = 6;
+                ctx.strokeRect(0, 0, 512, 128);
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 26px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(disco.nombre, 256, 64);
+
+                const textureTexto = new THREE.CanvasTexture(canvasTexto);
+                const materialTexto = new THREE.MeshBasicMaterial({ map: textureTexto, transparent: true });
+                const geometryTexto = new THREE.PlaneGeometry(4.6, 1.2);
+                const meshTexto = new THREE.Mesh(geometryTexto, materialTexto);
+                meshTexto.position.y = -2.8;
+                grupoDisco.add(meshTexto);
+
+                const posX = (Math.random() - 0.5) * 30;
+                const posY = (Math.random() - 0.5) * 16;
+                const posZ = -25 - (index * 16);
+
+                grupoDisco.position.set(posX, posY, posZ);
+                grupoDisco.userData = { tipo: 'disco', discoData: disco };
                 
-                scene.add(mesh);
-                meshesDiscos.push(mesh);
+                scene.add(grupoDisco);
+                meshesDiscos.push(grupoDisco);
             });
         }
 
@@ -360,6 +438,7 @@
             preguntaActualIndex = 0;
             erroresEnDisco = 0;
 
+            document.getElementById('btn-trofeos').style.display = 'none';
             document.getElementById('btn-volver').style.display = 'block';
             document.getElementById('txt-estado').innerText = disco.nombre;
             if(disco.fondo) cambiarFondo(disco.fondo);
@@ -406,13 +485,39 @@
                 document.getElementById('txt-discos-conquistados').innerText = discosConquistadosCount;
             }
 
-            alert(`¡Disco completado! Obtuviste ${puntosGanadosDisco} puntos en este mundo.`);
+            alert(`¡Disco conquistado! Obtuviste ${puntosGanadosDisco} puntos en este mundo.`);
             volverAlMultiverso();
         }
 
         function volverAlMultiverso() {
             document.getElementById('trivia-modal').style.display = 'none';
+            document.getElementById('trofeos-modal').style.display = 'none';
             cargarMultiversoDiscos();
+        }
+
+        function abrirVentanaTrofeos() {
+            if (estadoActual !== "MENU_PRINCIPAL") return;
+            const grid = document.getElementById('grid-trofeos-lista');
+            grid.innerHTML = '';
+
+            listaDiscos.forEach(disco => {
+                const div = document.createElement('div');
+                div.className = `item-trofeo ${disco.conquistado ? 'conquistado' : ''}`;
+                div.innerHTML = `
+                    <img src="${disco.fondo}" alt="Tapa">
+                    <div>
+                        <strong>${disco.nombre}</strong><br>
+                        <span>${disco.conquistado ? '✅ Conquistado' : '🔒 Pendiente'}</span>
+                    </div>
+                `;
+                grid.appendChild(div);
+            });
+
+            document.getElementById('trofeos-modal').style.display = 'block';
+        }
+
+        function cerrarVentanaTrofeos() {
+            document.getElementById('trofeos-modal').style.display = 'none';
         }
 
         function manejarSeleccionToque(clientX, clientY) {
@@ -422,11 +527,16 @@
             mouseVector.y = -(clientY / window.innerHeight) * 2 + 1;
 
             raycaster.setFromCamera(mouseVector, camera);
-            const intersects = raycaster.intersectObjects(meshesDiscos);
+            const intersects = raycaster.intersectObjects(meshesDiscos, true);
 
             if (intersects.length > 0) {
-                const discoSeleccionado = intersects[0].object.userData.discoData;
-                entrarADisco(discoSeleccionado);
+                let objSeleccionado = intersects[0].object;
+                while (objSeleccionado.parent && !objSeleccionado.userData.discoData) {
+                    objSeleccionado = objSeleccionado.parent;
+                }
+                if (objSeleccionado.userData && objSeleccionado.userData.discoData) {
+                    entrarADisco(objSeleccionado.userData.discoData);
+                }
             }
         }
 
@@ -443,11 +553,11 @@
             if (estadoActual === "MENU_PRINCIPAL") {
                 meshesDiscos.forEach(mesh => {
                     mesh.position.z += 0.08;
-                    mesh.rotation.z += 0.002;
+                    mesh.rotation.z += 0.001;
                     if (mesh.position.z > 5) {
                         mesh.position.z = -150;
-                        mesh.position.x = (Math.random() - 0.5) * 32;
-                        mesh.position.y = (Math.random() - 0.5) * 18;
+                        mesh.position.x = (Math.random() - 0.5) * 30;
+                        mesh.position.y = (Math.random() - 0.5) * 16;
                     }
                 });
             }
