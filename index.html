@@ -122,7 +122,7 @@
     
     <div id="pantalla-intro">
         <h1>COLORES SANTOS</h1>
-        <p>El Multiverso incoloro de Soda y Gustavo.</p>
+        <p>El Multiverso Sonoro de Soda y Gustavo.</p>
         <button class="btn-opcion btn-inicio" id="btn-entrar" onclick="iniciarConteoRegresivo()">✨ INICIAR VIAJE</button>
     </div>
 
@@ -148,6 +148,7 @@
         </div>
     </div>
 
+    <!-- Mini-juego Pacman (Disco 1) -->
     <div id="pacman-game-modal" class="modal-juego">
         <div class="hud-juego">🟡 SODA STEREO (1984)</div>
         <div class="objetivo-juego">🎯 BUSCÁ Y COMÉ: <span id="txt-cancion-meta">...</span></div>
@@ -155,6 +156,7 @@
         <div style="color:#00ffff; font-size:11px;">👆 TOCÁ EL TABLERO PARA DIRIGIR A PAC-MAN</div>
     </div>
 
+    <!-- Mini-juego Galaxy (Disco 2) -->
     <div id="galaxy-game-modal" class="modal-juego">
         <div class="hud-juego">🚀 NADA PERSONAL (1985)</div>
         <div class="objetivo-juego">🎯 ATRAPÁ LA CANCIÓN: <span id="txt-galaxy-meta">...</span></div>
@@ -162,6 +164,7 @@
         <div style="color:#00ffff; font-size:11px;">👆 ARRASTRÁ EL DEDO PARA MOVER LA NAVE</div>
     </div>
 
+    <!-- Mini-juego Tetris (Disco 3) -->
     <div id="tetris-game-modal" class="modal-juego" style="border-color: #ff00ff;">
         <div class="hud-juego" style="color:#ff00ff;">🧱 SIGNOS (1986) - TETRIS MUSICAL</div>
         <div class="objetivo-juego">🎯 LÍNEAS COMPLETADAS: <span id="txt-tetris-lineas">0</span>/5</div>
@@ -173,6 +176,7 @@
         </div>
     </div>
 
+    <!-- Mini-juego Crucigrama (Disco 4) -->
     <div id="crucigrama-game-modal" class="modal-juego" style="border-color: #00ffff;">
         <div class="hud-juego" style="color:#ff00ff;">📝 DOBLE VIDA (1988) - CRUCIGRAMA</div>
         <div class="crucigrama-wrapper">
@@ -185,6 +189,7 @@
         </div>
     </div>
 
+    <!-- Mini-juego Batalla Naval (Disco 5) -->
     <div id="batalla-naval-modal" class="modal-juego" style="border-color: #ff00ff;">
         <div class="hud-juego" style="color:#ff00ff;">⚓ CANCIÓN ANIMAL (1990) - BATALLA NAVAL</div>
         <div class="objetivo-juego" id="txt-barco-meta">🎯 HUNDÍ LOS BARCOS PARA REVELAR LAS CANCIONES</div>
@@ -257,7 +262,7 @@
             cargarMultiversoDiscos();
         }
 
-        // --- Disco 1 (Pac-Man) ---
+        // --- DISCO 1 (Pac-Man - Soda Stereo 1984) ---
         let pacGridX = 5, pacGridY = 3, pacDirX = 0, pacDirY = 0;
         let itemsCuadricula = [];
         let cancionesSoda84 = ["Sobredosis de tv", "Dietético", "Tele-Ka", "Trátame Suavemente", "Afrodisiacos", "Jet Set", "Un Misil en mi Placard", "El Tiempo es dinero", "Ni un segundo", "Vitaminas", "Mi novia tiene biceps"];
@@ -267,20 +272,238 @@
         const tileSize = 30, offsetX = 10, offsetY = 15;
         const cancionesTrampa = ["Persiana", "Zoom", "Signos", "Crimen", "Puente", "De Música", "Prófugos"];
 
-        // --- Disco 2 (Galaxy) ---
+        function iniciarPacmanSoda84() {
+            document.getElementById('pacman-game-modal').style.display = 'block';
+            pacGridX = 5; pacGridY = 3; pacDirX = 0; pacDirY = 0; indiceMetaSoda84 = 0;
+            generarItemsSoda84();
+            if (!pacmanGameLoop) pacmanGameLoop = setInterval(actualizarYRenderizarPacman, 1000 / 5);
+        }
+
+        function generarItemsSoda84() {
+            if (indiceMetaSoda84 >= cancionesSoda84.length) { finalizarDiscoActual(); return; }
+            document.getElementById('txt-cancion-meta').innerText = cancionesSoda84[indiceMetaSoda84];
+            itemsCuadricula = [];
+            let colocadas = 0, meta = cancionesSoda84[indiceMetaSoda84];
+            while(colocadas < 1) {
+                let rx = Math.floor(Math.random() * mapaLaberinto[0].length);
+                let ry = Math.floor(Math.random() * mapaLaberinto.length);
+                if (mapaLaberinto[ry][rx] !== 1 && !(ry === pacGridY && rx === pacGridX)) {
+                    itemsCuadricula.push({ gx: rx, gy: ry, texto: meta, correcta: true });
+                    colocadas++;
+                }
+            }
+            for(let i = 0; i < 2; i++) {
+                let rx = Math.floor(Math.random() * mapaLaberinto[0].length);
+                let ry = Math.floor(Math.random() * mapaLaberinto.length);
+                let trampa = cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)];
+                if (mapaLaberinto[ry][rx] !== 1) itemsCuadricula.push({ gx: rx, gy: ry, texto: trampa, correcta: false });
+            }
+        }
+
+        const canvasPacman = document.getElementById('pacman-canvas');
+        canvasPacman.onclick = (e) => {
+            const rect = canvasPacman.getBoundingClientRect();
+            let diffX = (e.clientX - rect.left) - (offsetX + pacGridX * tileSize + tileSize / 2);
+            let diffY = (e.clientY - rect.top) - (offsetY + pacGridY * tileSize + tileSize / 2);
+            if (Math.abs(diffX) > Math.abs(diffY)) {
+                pacDirX = diffX > 0 ? 1 : -1; pacDirY = 0;
+            } else {
+                pacDirX = 0; pacDirY = diffY > 0 ? 1 : -1;
+            }
+        };
+
+        function actualizarYRenderizarPacman() {
+            if (estadoActual !== "JUEGO_DISCO" || !discoActual || !discoActual.esPacman) return;
+            let nextX = pacGridX + pacDirX, nextY = pacGridY + pacDirY;
+            if (nextX < 0) nextX = mapaLaberinto[0].length - 1;
+            if (nextX >= mapaLaberinto[0].length) nextX = 0;
+            if (nextY >= 0 && nextY < mapaLaberinto.length && mapaLaberinto[nextY][nextX] !== 1) {
+                pacGridX = nextX; pacGridY = nextY;
+            }
+            itemsCuadricula.forEach((item, index) => {
+                if (item.gx === pacGridX && item.gy === pacGridY) {
+                    if (item.correcta) {
+                        puntos += 25; document.getElementById('txt-puntos').innerText = puntos;
+                        indiceMetaSoda84++; generarItemsSoda84();
+                    } else {
+                        puntos = Math.max(0, puntos - 10); document.getElementById('txt-puntos').innerText = puntos;
+                        itemsCuadricula.splice(index, 1);
+                    }
+                }
+            });
+            const ctx = canvasPacman.getContext('2d');
+            ctx.clearRect(0, 0, canvasPacman.width, canvasPacman.height);
+            for (let r = 0; r < mapaLaberinto.length; r++) {
+                for (let c = 0; c < mapaLaberinto[r].length; c++) {
+                    let px = offsetX + c * tileSize, py = offsetY + r * tileSize;
+                    ctx.fillStyle = mapaLaberinto[r][c] === 1 ? '#00ffff' : '#000000';
+                    ctx.fillRect(px + (mapaLaberinto[r][c] === 1 ? 2 : 0), py + (mapaLaberinto[r][c] === 1 ? 2 : 0), tileSize - (mapaLaberinto[r][c] === 1 ? 4 : 0), tileSize - (mapaLaberinto[r][c] === 1 ? 4 : 0));
+                }
+            }
+            itemsCuadricula.forEach(item => {
+                let px = offsetX + item.gx * tileSize + tileSize / 2, py = offsetY + item.gy * tileSize + tileSize / 2;
+                ctx.fillStyle = item.correcta ? '#ff00ff' : '#00ffcc';
+                ctx.beginPath(); ctx.arc(px, py, 9, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = '#ffffff'; ctx.font = 'bold 11px sans-serif'; ctx.textAlign = 'center';
+                ctx.fillText(item.texto, px, py - 12);
+            });
+            let pacPx = offsetX + pacGridX * tileSize + tileSize / 2, pacPy = offsetY + pacGridY * tileSize + tileSize / 2;
+            ctx.fillStyle = '#ffcc00'; ctx.beginPath(); ctx.arc(pacPx, pacPy, 13, 0.2 * Math.PI, 1.8 * Math.PI);
+            ctx.lineTo(pacPx, pacPy); ctx.fill();
+        }
+
+        // --- DISCO 2 (Galaxy - Nada Personal 1985) ---
         let naveX = 190;
-        let cancionesNadaPersonal = ["Nada Personal", "Ecos", "Imágenes Retro", "Quando Pase el Temblor", "Juego de Seducción", "Si no fuera por", "Estoy azulado", "Danza Rota", "Observándonos (satelites)", "El cuerpo del delito"];
+        let cancionesNadaPersonal = ["Nada Personal", "Ecos", "Imágenes Retro", "Quando Pase el Temblor", "Juego de Seducción", "Si no fuera por", "Estoy azulado", "Danza Rota", "Observándonos", "El cuerpo del delito"];
         let indiceMetaNadaPersonal = 0;
         let objetosGalaxia = [];
         let galaxyGameLoop = null;
 
-        // --- Disco 3 (Tetris - Signos) ---
+        function iniciarGalaxyNadaPersonal() {
+            document.getElementById('galaxy-game-modal').style.display = 'block';
+            naveX = 190; indiceMetaNadaPersonal = 0; generarObjetoGalaxy();
+            if (!galaxyGameLoop) galaxyGameLoop = setInterval(actualizarYRenderizarGalaxy, 1000 / 30);
+        }
+
+        function generarObjetoGalaxy() {
+            if (indiceMetaNadaPersonal >= cancionesNadaPersonal.length) { finalizarDiscoActual(); return; }
+            document.getElementById('txt-galaxy-meta').innerText = cancionesNadaPersonal[indiceMetaNadaPersonal];
+            objetosGalaxia = [];
+            let correcto = cancionesNadaPersonal[indiceMetaNadaPersonal];
+            objetosGalaxia.push({ x: Math.random() * 300 + 40, y: -20, texto: correcto, correcta: true, velocidad: 2.5 });
+            let trampa = cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)];
+            objetosGalaxia.push({ x: Math.random() * 300 + 40, y: -80, texto: trampa, correcta: false, velocidad: 2 });
+        }
+
+        const canvasGalaxy = document.getElementById('galaxy-canvas');
+        canvasGalaxy.onmousemove = (e) => {
+            naveX = e.clientX - canvasGalaxy.getBoundingClientRect().left;
+        };
+
+        function actualizarYRenderizarGalaxy() {
+            if (estadoActual !== "JUEGO_DISCO" || !discoActual || !discoActual.esGalaxy) return;
+            const ctx = canvasGalaxy.getContext('2d');
+            ctx.clearRect(0, 0, canvasGalaxy.width, canvasGalaxy.height);
+            objetosGalaxia.forEach((obj, index) => {
+                obj.y += obj.velocidad;
+                ctx.fillStyle = obj.correcta ? '#00ffff' : '#ff0055';
+                ctx.beginPath(); ctx.arc(obj.x, obj.y, 14, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = '#fff'; ctx.font = 'bold 11px sans-serif'; ctx.textAlign = 'center';
+                ctx.fillText(obj.texto, obj.x, obj.y - 18);
+                if (obj.y >= 195 && obj.y <= 225 && Math.abs(obj.x - naveX) < 30) {
+                    if (obj.correcta) {
+                        puntos += 30; document.getElementById('txt-puntos').innerText = puntos;
+                        indiceMetaNadaPersonal++; generarObjetoGalaxy();
+                    } else {
+                        puntos = Math.max(0, puntos - 10); document.getElementById('txt-puntos').innerText = puntos;
+                        objetosGalaxia.splice(index, 1);
+                    }
+                }
+                if (obj.y > 260) {
+                    if (obj.correcta) generarObjetoGalaxy(); else objetosGalaxia.splice(index, 1);
+                }
+            });
+            ctx.fillStyle = '#ffcc00'; ctx.beginPath();
+            ctx.moveTo(naveX, 205); ctx.lineTo(naveX - 22, 230); ctx.lineTo(naveX + 22, 230);
+            ctx.closePath(); ctx.fill();
+        }
+
+        // --- DISCO 3 (Tetris - Signos 1986) ---
         let tetrisCols = 10, tetrisRows = 14;
         let tetrisGrid = Array(tetrisRows).fill().map(() => Array(tetrisCols).fill(0));
         let piezaActual = null, tetrisLineasCount = 0, tetrisGameLoop = null;
         const tetrisPiezas = [[[1,1,1,1]], [[1,1],[1,1]], [[0,1,0],[1,1,1]], [[1,0],[1,0],[1,1]], [[0,1],[0,1],[1,1]]];
 
-        // --- Disco 4 (Crucigrama Doble Vida) ---
+        function iniciarTetrisSignos() {
+            document.getElementById('tetris-game-modal').style.display = 'block';
+            tetrisGrid = Array(tetrisRows).fill().map(() => Array(tetrisCols).fill(0));
+            tetrisLineasCount = 0; document.getElementById('txt-tetris-lineas').innerText = tetrisLineasCount;
+            crearPiezaTetris();
+            if (!tetrisGameLoop) tetrisGameLoop = setInterval(actualizarTetris, 600);
+        }
+
+        function crearPiezaTetris() {
+            let shape = tetrisPiezas[Math.floor(Math.random() * tetrisPiezas.length)];
+            piezaActual = { shape: shape, r: 0, c: Math.floor(tetrisCols / 2) - 1 };
+            if (chequearColisionTetris(piezaActual.r, piezaActual.c, piezaActual.shape)) {
+                tetrisGrid = Array(tetrisRows).fill().map(() => Array(tetrisCols).fill(0));
+            }
+        }
+
+        function chequearColisionTetris(row, col, shape) {
+            for (let r = 0; r < shape.length; r++) {
+                for (let c = 0; c < shape[r].length; c++) {
+                    if (shape[r][c]) {
+                        let nuevoR = row + r, nuevoC = col + c;
+                        if (nuevoC < 0 || nuevoC >= tetrisCols || nuevoR >= tetrisRows) return true;
+                        if (nuevoR >= 0 && tetrisGrid[nuevoR][nuevoC]) return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        function fijarPiezaTetris() {
+            piezaActual.shape.forEach((row, r) => {
+                row.forEach((val, c) => {
+                    if (val && piezaActual.r + r >= 0) { tetrisGrid[piezaActual.r + r][piezaActual.c + c] = 1; }
+                });
+            });
+            chequearLineasTetris(); crearPiezaTetris();
+        }
+
+        function chequearLineasTetris() {
+            for (let r = tetrisRows - 1; r >= 0; r--) {
+                if (tetrisGrid[r].every(cell => cell === 1)) {
+                    tetrisGrid.splice(r, 1); tetrisGrid.unshift(Array(tetrisCols).fill(0));
+                    tetrisLineasCount++; puntos += 50; document.getElementById('txt-puntos').innerText = puntos;
+                    document.getElementById('txt-tetris-lineas').innerText = tetrisLineasCount;
+                    r++; if (tetrisLineasCount >= 5) { finalizarDiscoActual(); }
+                }
+            }
+        }
+
+        function actualizarTetris() {
+            if (estadoActual !== "JUEGO_DISCO" || !discoActual || !discoActual.esTetris) return;
+            if (!chequearColisionTetris(piezaActual.r + 1, piezaActual.c, piezaActual.shape)) {
+                piezaActual.r++;
+            } else {
+                fijarPiezaTetris();
+            }
+            renderizarTetris();
+        }
+
+        function renderizarTetris() {
+            const canvas = document.getElementById('tetris-canvas');
+            const ctx = canvas.getContext('2d');
+            const boxW = canvas.width / tetrisCols, boxH = canvas.height / tetrisRows;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let r = 0; r < tetrisRows; r++) {
+                for (let c = 0; c < tetrisCols; c++) {
+                    if (tetrisGrid[r][c]) {
+                        ctx.fillStyle = '#ff00ff'; ctx.fillRect(c * boxW + 1, r * boxH + 1, boxW - 2, boxH - 2);
+                    }
+                }
+            }
+            if (piezaActual) {
+                ctx.fillStyle = '#00ffff';
+                piezaActual.shape.forEach((row, r) => {
+                    row.forEach((val, c) => {
+                        if (val) { ctx.fillRect((piezaActual.c + c) * boxW + 1, (piezaActual.r + r) * boxH + 1, boxW - 2, boxH - 2); }
+                    });
+                });
+            }
+        }
+
+        document.getElementById('btn-tetris-izq').onclick = () => { if (piezaActual && !chequearColisionTetris(piezaActual.r, piezaActual.c - 1, piezaActual.shape)) piezaActual.c--; renderizarTetris(); };
+        document.getElementById('btn-tetris-der').onclick = () => { if (piezaActual && !chequearColisionTetris(piezaActual.r, piezaActual.c + 1, piezaActual.shape)) piezaActual.c++; renderizarTetris(); };
+        document.getElementById('btn-tetris-rot').onclick = () => {
+            let rotada = piezaActual.shape[0].map((val, index) => piezaActual.shape.map(row => row[index]).reverse());
+            if (!chequearColisionTetris(piezaActual.r, piezaActual.c, rotada)) piezaActual.shape = rotada;
+            renderizarTetris();
+        };
+
+        // --- DISCO 4 (Crucigrama - Doble Vida 1988) ---
         const crucigramaDef = [
             { palabra: "COMUN", r: 1, c: 6, dir: "H" }, { palabra: "CUARTO", r: 1, c: 6, dir: "V" },
             { palabra: "FURIA", r: 3, c: 2, dir: "H" }, { palabra: "CUPULA", r: 2, c: 3, dir: "V" },
@@ -289,7 +512,47 @@
             { palabra: "OJOS", r: 7, c: 5, dir: "V" }
         ];
 
-        // --- Disco 5 (Batalla Naval / Canción Animal Interactiva) ---
+        function iniciarCrucigramaDobleVida() {
+            document.getElementById('crucigrama-game-modal').style.display = 'block';
+            const container = document.getElementById('crucigrama-matriz-container');
+            container.innerHTML = '';
+            for (let r = 0; r < 12; r++) {
+                for (let c = 0; c < 11; c++) {
+                    let input = document.createElement('input');
+                    input.type = 'text'; input.maxLength = 1; input.className = 'c-celda vacia';
+                    input.dataset.r = r; input.dataset.c = c;
+                    container.appendChild(input);
+                }
+            }
+            crucigramaDef.forEach(item => {
+                for (let i = 0; i < item.palabra.length; i++) {
+                    let cellR = item.dir === "H" ? item.r : item.r + i;
+                    let cellC = item.dir === "H" ? item.c + i : item.c;
+                    let index = cellR * 11 + cellC;
+                    let celdaEl = container.children[index];
+                    if (celdaEl) {
+                        celdaEl.classList.remove('vacia');
+                        celdaEl.dataset.letra = item.palabra[i];
+                    }
+                }
+            });
+        }
+
+        document.getElementById('btn-verificar-crucigrama').onclick = () => {
+            const inputs = document.querySelectorAll('.c-celda:not(.vacia)');
+            let todoOk = true;
+            inputs.forEach(inp => {
+                if (inp.value.toUpperCase() !== inp.dataset.letra) { todoOk = false; }
+            });
+            if (todoOk) {
+                puntos += 100; document.getElementById('txt-puntos').innerText = puntos;
+                finalizarDiscoActual();
+            } else {
+                alert("¡Hay algunas letras incorrectas en el crucigrama, revisalo bien!");
+            }
+        };
+
+        // --- DISCO 5 (Batalla Naval - Canción Animal 1990) ---
         const barcosCancionAnimal = [
             { nombre: "Té Para Tres", segundos: 0, coordenadas: [{r:0, c:0, letra:'T'}, {r:0, c:1, letra:'E'}] },
             { nombre: "Séptimo Día", segundos: 235, coordenadas: [{r:1, c:2, letra:'S'}, {r:1, c:3, letra:'É'}, {r:1, c:4, letra:'P'}, {r:1, c:5, letra:'T'}, {r:1, c:6, letra:'I'}, {r:1, c:7, letra:'M'}, {r:1, c:8, letra:'O'}] },
