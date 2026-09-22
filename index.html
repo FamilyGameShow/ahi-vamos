@@ -80,22 +80,31 @@
         .modal-juego {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: rgba(5, 2, 20, 0.98); border: 3px solid #ffcc00; border-radius: 15px;
-            padding: 12px; width: 98%; max-width: 480px; box-shadow: 0 0 40px rgba(255, 204, 0, 0.7);
+            padding: 10px; width: 98%; max-width: 500px; box-shadow: 0 0 40px rgba(255, 204, 0, 0.7);
             z-index: 50; text-align: center; display: none; touch-action: none;
         }
-        .hud-juego { color: #ffcc00; font-size: 12px; font-weight: bold; margin-bottom: 4px; text-shadow: 0 0 8px #ffcc00; }
-        .objetivo-juego { color: #ff00ff; font-size: 12px; font-weight: bold; margin-bottom: 6px; background: rgba(255,0,255,0.1); padding: 4px; border-radius: 6px; border: 1px dashed #ff00ff; }
+        .hud-juego { color: #ffcc00; font-size: 12px; font-weight: bold; margin-bottom: 3px; text-shadow: 0 0 8px #ffcc00; }
+        .objetivo-juego { color: #ff00ff; font-size: 11px; font-weight: bold; margin-bottom: 4px; background: rgba(255,0,255,0.1); padding: 3px; border-radius: 6px; border: 1px dashed #ff00ff; }
         canvas.canvas-juego { background: #000; border: 2px solid #00ffff; border-radius: 8px; display: block; margin: 0 auto 8px auto; }
         .controles-tetris { display: flex; gap: 12px; justify-content: center; margin-top: 8px; }
         .btn-tetris { background: rgba(0,255,255,0.2); border: 1px solid #00ffff; color: #fff; padding: 10px 18px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px; }
 
         /* Crucigrama Fiel al Diseño */
-        .crucigrama-wrapper { display: flex; flex-direction: column; align-items: center; max-height: 78vh; overflow-y: auto; }
+        .crucigrama-wrapper { display: flex; flex-direction: column; align-items: center; max-height: 80vh; overflow-y: auto; }
         .crucigrama-grid-real { display: grid; grid-template-columns: repeat(11, 26px); gap: 2px; justify-content: center; margin: 4px 0; background: #000; padding: 4px; border: 2px solid #00ffff; border-radius: 6px; }
         .c-celda { width: 26px; height: 26px; background: #110033; border: 1px solid #00ffff; color: #fff; font-size: 13px; font-weight: bold; text-align: center; text-transform: uppercase; border-radius: 3px; }
         .c-celda:focus { background: #ff00ff; outline: none; }
         .c-celda.vacia { background: #ffe600; border: 1px solid #cca300; pointer-events: none; }
-        .pistas-box { text-align: left; font-size: 10px; color: #00ffff; background: rgba(0,255,255,0.05); padding: 5px; border-radius: 8px; width: 100%; box-sizing: border-box; margin-bottom: 4px; line-height: 1.2; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+        .pistas-box { text-align: left; font-size: 10px; color: #00ffff; background: rgba(0,255,255,0.05); padding: 4px; border-radius: 8px; width: 100%; box-sizing: border-box; margin-bottom: 3px; line-height: 1.1; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+
+        /* Estilos específicos para la Batalla Naval interactiva */
+        .naval-btn {
+            width: 26px; height: 26px; background: #0b132b; border: 1px solid #00ffff;
+            color: #00ffff; font-size: 11px; font-weight: bold; text-align: center;
+            border-radius: 3px; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center;
+        }
+        .naval-btn.agua { background: rgba(255,255,255,0.08); color: #888; border-color: #444; }
+        .naval-btn.acierto { background: #ff00ff; color: #fff; border-color: #fff; text-shadow: 0 0 5px #fff; }
 
         /* Ventana de Trofeos */
         #trofeos-modal {
@@ -120,7 +129,7 @@
     
     <div id="pantalla-intro">
         <h1>COLORES SANTOS</h1>
-        <p>El Multiverso Sonoro de Soda y ceratin.</p>
+        <p>El Multiverso Sonoro de Soda y Gus Cerati.</p>
         <button class="btn-opcion btn-inicio" id="btn-entrar">✨ INICIAR VIAJE</button>
     </div>
 
@@ -190,11 +199,11 @@
     <!-- Mini-juego Batalla Naval (Disco 5 - Canción Animal) -->
     <div id="batalla-naval-modal" class="modal-juego" style="border-color: #ff00ff;">
         <div class="hud-juego" style="color:#ff00ff;">⚓ CANCIÓN ANIMAL (1990) - BATALLA NAVAL</div>
-        <div class="objetivo-juego">🎯 DESCUBRÍ LOS BARCOS DE LA GRILLA: <span id="txt-barco-meta">Tocá una celda</span></div>
+        <div class="objetivo-juego" id="txt-barco-meta">🎯 HUNDÍ LOS BARCOS PARA REVELAR LAS CANCIONES</div>
         <div class="crucigrama-wrapper">
-            <div class="pistas-box" style="margin-bottom: 6px;">
-                <div><b>FLOTA DE BARCOS:</b><br>• TÉ / SÉPTIMO / ANIMAL<br>• LIGERA / SOLO / SOL<br>• CANÍBALES / UN MILLÓN DE HOMBRES</div>
-                <div><b>ESTADO:</b> ¡Hundí los barcos exactos para sintonizar cada tema!</div>
+            <div class="pistas-box" style="margin-bottom: 5px;">
+                <div><b>BARCOS:</b> Té, Séptimo Día, Un Millón..., Animal, Ligera, Solo, Sol, Caníbales.</div>
+                <div><b>ESTADO:</b> <span id="txt-barcos-hundidos-contador">0</span>/9 Barcos Hundidos</div>
             </div>
             <div id="batalla-naval-grid" style="display: grid; grid-template-columns: repeat(11, 26px); gap: 2px; justify-content: center; margin: 4px 0; background: #000; padding: 4px; border: 2px solid #00ffff; border-radius: 6px;"></div>
             <button class="btn-tetris" id="btn-reiniciar-naval" style="width:100%; margin-top:6px;">🔄 REINICIAR RADAR</button>
@@ -266,19 +275,18 @@
         ];
 
         // --- Disco 5 (Batalla Naval / Grilla Canción Animal) ---
-        // Definición exacta de los barcos basados en tu imagen de la grilla (coordenadas r, c) y sus segundos en el disco
         const barcosCancionAnimal = [
-            { nombre: "Canción Animal (Té)", segundos: 0, coordenadas: [{r:0, c:0}, {r:0, c:1}] },
-            { nombre: "Séptimo Día", segundos: 235, coordenadas: [{r:1, c:2}, {r:1, c:3}, {r:1, c:4}, {r:1, c:5}, {r:1, c:6}, {r:1, c:7}, {r:1, c:8}] },
-            { nombre: "Un Millón de Años Luz", segundos: 510, coordenadas: [{r:2, c:0}, {r:3, c:0}, {r:4, c:0}, {r:5, c:0}, {r:6, c:0}, {r:7, c:0}] },
-            { nombre: "Animal", segundos: 780, coordenadas: [{r:3, c:2}, {r:3, c:3}, {r:3, c:4}, {r:3, c:5}, {r:3, c:6}] },
-            { nombre: "De Música Ligera", segundos: 1040, coordenadas: [{r:5, c:2}, {r:5, c:3}, {r:5, c:4}, {r:5, c:5}, {r:5, c:6}, {r:5, c:7}] },
-            { nombre: "Sueles Dejarme Solo", segundos: 1280, coordenadas: [{r:7, c:2}, {r:7, c:3}, {r:7, c:4}, {r:7, c:5}] },
-            { nombre: "Sol", segundos: 1520, coordenadas: [{r:8, c:7}, {r:8, c:8}, {r:8, c:9}] },
-            { nombre: "Un Millón de Hombres (Columna 10)", segundos: 1750, coordenadas: [{r:0, c:10}, {r:1, c:10}, {r:2, c:10}, {r:5, c:10}, {r:6, c:10}, {r:7, c:10}, {r:8, c:10}, {r:9, c:10}, {r:10, c:10}] },
-            { nombre: "Caníbales", segundos: 1980, coordenadas: [{r:10, c:0}, {r:10, c:1}, {r:10, c:2}, {r:10, c:3}, {r:10, c:4}, {r:10, c:5}, {r:10, c:6}, {r:10, c:7}, {r:10, c:8}] }
+            { nombre: "Té (Canción Animal)", segundos: 0, coordenadas: [{r:0, c:0, letra:'T'}, {r:0, c:1, letra:'E'}] },
+            { nombre: "Séptimo Día", segundos: 235, coordenadas: [{r:1, c:2, letra:'S'}, {r:1, c:3, letra:'É'}, {r:1, c:4, letra:'P'}, {r:1, c:5, letra:'T'}, {r:1, c:6, letra:'I'}, {r:1, c:7, letra:'M'}, {r:1, c:8, letra:'O'}] },
+            { nombre: "Un Millón de Años Luz", segundos: 510, coordenadas: [{r:2, c:0, letra:'M'}, {r:3, c:0, letra:'I'}, {r:4, c:0, letra:'L'}, {r:5, c:0, letra:'L'}, {r:6, c:0, letra:'Ó'}, {r:7, c:0, letra:'N'}] },
+            { nombre: "Animal", segundos: 780, coordenadas: [{r:3, c:2, letra:'A'}, {r:3, c:3, letra:'N'}, {r:3, c:4, letra:'I'}, {r:3, c:5, letra:'M'}, {r:3, c:6, letra:'A'}, {r:3, c:7, letra:'L'}] },
+            { nombre: "De Música Ligera", segundos: 1040, coordenadas: [{r:5, c:2, letra:'L'}, {r:5, c:3, letra:'I'}, {r:5, c:4, letra:'G'}, {r:5, c:5, letra:'E'}, {r:5, c:6, letra:'R'}, {r:5, c:7, letra:'A'}] },
+            { nombre: "Sueles Dejarme Solo", segundos: 1280, coordenadas: [{r:7, c:2, letra:'S'}, {r:7, c:3, letra:'O'}, {r:7, c:4, letra:'L'}, {r:7, c:5, letra:'O'}] },
+            { nombre: "Sol", segundos: 1520, coordenadas: [{r:8, c:7, letra:'S'}, {r:8, c:8, letra:'O'}, {r:8, c:9, letra:'L'}] },
+            { nombre: "Un Millón de Hombres", segundos: 1750, coordenadas: [{r:0, c:10, letra:'1'}, {r:1, c:10, letra:'9'}, {r:2, c:10, letra:'9'}, {r:3, c:10, letra:'0'}, {r:5, c:10, letra:'H'}, {r:6, c:10, letra:'O'}, {r:7, c:10, letra:'M'}, {r:8, c:10, letra:'B'}, {r:9, c:10, letra:'R'}, {r:10, c:10, letra:'E'}] },
+            { nombre: "Caníbales", segundos: 1980, coordenadas: [{r:10, c:0, letra:'C'}, {r:10, c:1, letra:'A'}, {r:10, c:2, letra:'N'}, {r:10, c:3, letra:'Í'}, {r:10, c:4, letra:'B'}, {r:10, c:5, letra:'A'}, {r:10, c:6, letra:'L'}, {r:10, c:7, letra:'E'}, {r:10, c:8, letra:'S'}] }
         ];
-        let barcosHundidosCount = 0;
+        let barcosHundidosSet = new Set();
 
         const listaDiscos = [
             { id: "soda_84", nombre: "SODA STEREO (1984)", trackId: "W0KTTiuw96A", fondo: "https://i.ibb.co/sT3L0VW/soda-stereo.png", conquistado: false, esPacman: true },
@@ -472,309 +480,112 @@
         }
 
         // --- DISCO 1 (Pac-Man) ---
-        function iniciarPacmanSoda84() {
-            document.getElementById('pacman-game-modal').style.display = 'block';
-            pacGridX = 5; pacGridY = 3; pacDirX = 0; pacDirY = 0; indiceMetaSoda84 = 0;
-            generarItemsSoda84();
-            if (!pacmanGameLoop) pacmanGameLoop = setInterval(actualizarYRenderizarPacman, 1000 / 5);
-        }
-        function generarItemsSoda84() {
-            if (indiceMetaSoda84 >= cancionesSoda84.length) { finalizarDiscoActual(); return; }
-            document.getElementById('txt-cancion-meta').innerText = cancionesSoda84[indiceMetaSoda84];
-            itemsCuadricula = [];
-            let colocadas = 0, meta = cancionesSoda84[indiceMetaSoda84];
-            while(colocadas < 1) {
-                let rx = Math.floor(Math.random() * mapaLaberinto[0].length);
-                let ry = Math.floor(Math.random() * mapaLaberinto.length);
-                if (mapaLaberinto[ry][rx] !== 1 && !(ry === pacGridY && rx === pacGridX)) {
-                    itemsCuadricula.push({ gx: rx, gy: ry, texto: meta, correcta: true });
-                    colocadas++;
-                }
-            }
-            for(let i = 0; i < 2; i++) {
-                let rx = Math.floor(Math.random() * mapaLaberinto[0].length);
-                let ry = Math.floor(Math.random() * mapaLaberinto.length);
-                let trampa = cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)];
-                if (mapaLaberinto[ry][rx] !== 1) itemsCuadricula.push({ gx: rx, gy: ry, texto: trampa, correcta: false });
-            }
-        }
-        const canvasPacman = document.getElementById('pacman-canvas');
-        canvasPacman.addEventListener('click', (e) => {
-            if (estadoActual !== "JUEGO_DISCO" || !discoActual.esPacman) return;
-            const rect = canvasPacman.getBoundingClientRect();
-            let diffX = (e.clientX - rect.left) - (offsetX + pacGridX * tileSize + tileSize / 2);
-            let diffY = (e.clientY - rect.top) - (offsetY + pacGridY * tileSize + tileSize / 2);
-            if (Math.abs(diffX) > Math.abs(diffY)) {
-                pacDirX = diffX > 0 ? 1 : -1; pacDirY = 0;
-            } else {
-                pacDirX = 0; pacDirY = diffY > 0 ? 1 : -1;
-            }
-        });
-        function actualizarYRenderizarPacman() {
-            if (estadoActual !== "JUEGO_DISCO" || !discoActual.esPacman) return;
-            let nextX = pacGridX + pacDirX, nextY = pacGridY + pacDirY;
-            if (nextX < 0) nextX = mapaLaberinto[0].length - 1;
-            if (nextX >= mapaLaberinto[0].length) nextX = 0;
-            if (nextY >= 0 && nextY < mapaLaberinto.length && mapaLaberinto[nextY][nextX] !== 1) {
-                pacGridX = nextX; pacGridY = nextY;
-            }
-            itemsCuadricula.forEach((item, index) => {
-                if (item.gx === pacGridX && item.gy === pacGridY) {
-                    if (item.correcta) {
-                        puntos += 25; document.getElementById('txt-puntos').innerText = puntos;
-                        indiceMetaSoda84++; generarItemsSoda84();
-                    } else {
-                        puntos = Math.max(0, puntos - 10); document.getElementById('txt-puntos').innerText = puntos;
-                        itemsCuadricula.splice(index, 1);
-                    }
-                }
-            });
-            const ctx = canvasPacman.getContext('2d');
-            ctx.clearRect(0, 0, canvasPacman.width, canvasPacman.height);
-            for (let r = 0; r < mapaLaberinto.length; r++) {
-                for (let c = 0; c < mapaLaberinto[r].length; c++) {
-                    let px = offsetX + c * tileSize, py = offsetY + r * tileSize;
-                    ctx.fillStyle = mapaLaberinto[r][c] === 1 ? '#00ffff' : '#000000';
-                    ctx.fillRect(px + (mapaLaberinto[r][c] === 1 ? 2 : 0), py + (mapaLaberinto[r][c] === 1 ? 2 : 0), tileSize - (mapaLaberinto[r][c] === 1 ? 4 : 0), tileSize - (mapaLaberinto[r][c] === 1 ? 4 : 0));
-                }
-            }
-            itemsCuadricula.forEach(item => {
-                let px = offsetX + item.gx * tileSize + tileSize / 2, py = offsetY + item.gy * tileSize + tileSize / 2;
-                ctx.fillStyle = item.correcta ? '#ff00ff' : '#00ffcc';
-                ctx.beginPath(); ctx.arc(px, py, 9, 0, Math.PI * 2); ctx.fill();
-                ctx.fillStyle = '#ffffff'; ctx.font = 'bold 11px sans-serif'; ctx.textAlign = 'center';
-                ctx.fillText(item.texto, px, py - 12);
-            });
-            let pacPx = offsetX + pacGridX * tileSize + tileSize / 2, pacPy = offsetY + pacGridY * tileSize + tileSize / 2;
-            ctx.fillStyle = '#ffcc00'; ctx.beginPath(); ctx.arc(pacPx, pacPy, 13, 0.2 * Math.PI, 1.8 * Math.PI);
-            ctx.lineTo(pacPx, pacPy); ctx.fill();
-        }
+        let pacGridX = 5, pacGridY = 3, pacDirX = 0, pacDirY = 0;
+        let itemsCuadricula = [];
+        let cancionesSoda84 = ["Sobredosis de tv", "Dietético", "Tele-Ka", "Trátame Suavemente", "Afrodisiacos", "Jet Set", "Un Misil en mi Placard", "El Tiempo es dinero", "Ni un segundo", "Vitaminas", "Mi novia tiene biceps"];
+        let indiceMetaSoda84 = 0;
+        let pacmanGameLoop = null;
+        const mapaLaberinto = [[1,1,1,1,1,1,1,1,1,1,1,1],[2,0,0,0,1,0,0,0,1,0,0,2],[1,0,1,0,1,0,1,0,1,0,1,1],[2,0,0,0,0,0,0,0,0,0,0,2],[1,0,1,1,1,0,1,1,1,0,1,1],[2,0,0,0,0,0,0,0,0,0,0,2],[1,1,1,1,1,1,1,1,1,1,1,1]];
+        const tileSize = 30, offsetX = 10, offsetY = 15;
+        const cancionesTrampa = ["Persiana", "Zoom", "Signos", "Crimen", "Puente", "De Música", "Prófugos"];
 
         // --- DISCO 2 (Galaxy) ---
-        function iniciarGalaxyNadaPersonal() {
-            document.getElementById('galaxy-game-modal').style.display = 'block';
-            naveX = 190; indiceMetaNadaPersonal = 0; generarObjetoGalaxy();
-            if (!galaxyGameLoop) galaxyGameLoop = setInterval(actualizarYRenderizarGalaxy, 1000 / 30);
-        }
-        function generarObjetoGalaxy() {
-            if (indiceMetaNadaPersonal >= cancionesNadaPersonal.length) { finalizarDiscoActual(); return; }
-            document.getElementById('txt-galaxy-meta').innerText = cancionesNadaPersonal[indiceMetaNadaPersonal];
-            objetosGalaxia = [];
-            let correcto = cancionesNadaPersonal[indiceMetaNadaPersonal];
-            objetosGalaxia.push({ x: Math.random() * 300 + 40, y: -20, texto: correcto, correcta: true, velocidad: 2.5 });
-            let trampa = cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)];
-            objetosGalaxia.push({ x: Math.random() * 300 + 40, y: -80, texto: trampa, correcta: false, velocidad: 2 });
-        }
-        const canvasGalaxy = document.getElementById('galaxy-canvas');
-        canvasGalaxy.addEventListener('touchmove', (e) => {
-            if (estadoActual !== "JUEGO_DISCO" || !discoActual.esGalaxy) return;
-            naveX = e.touches[0].clientX - canvasGalaxy.getBoundingClientRect().left;
-            e.preventDefault();
-        }, {passive: false});
-        canvasGalaxy.addEventListener('mousemove', (e) => {
-            if (estadoActual !== "JUEGO_DISCO" || !discoActual.esGalaxy) return;
-            naveX = e.clientX - canvasGalaxy.getBoundingClientRect().left;
-        });
-        function actualizarYRenderizarGalaxy() {
-            if (estadoActual !== "JUEGO_DISCO" || !discoActual.esGalaxy) return;
-            const ctx = canvasGalaxy.getContext('2d');
-            ctx.clearRect(0, 0, canvasGalaxy.width, canvasGalaxy.height);
-            objetosGalaxia.forEach((obj, index) => {
-                obj.y += obj.velocidad;
-                ctx.fillStyle = obj.correcta ? '#00ffff' : '#ff0055';
-                ctx.beginPath(); ctx.arc(obj.x, obj.y, 14, 0, Math.PI * 2); ctx.fill();
-                ctx.fillStyle = '#fff'; ctx.font = 'bold 11px sans-serif'; ctx.textAlign = 'center';
-                ctx.fillText(obj.texto, obj.x, obj.y - 18);
-                if (obj.y >= 195 && obj.y <= 225 && Math.abs(obj.x - naveX) < 30) {
-                    if (obj.correcta) {
-                        puntos += 30; document.getElementById('txt-puntos').innerText = puntos;
-                        indiceMetaNadaPersonal++; generarObjetoGalaxy();
-                    } else {
-                        puntos = Math.max(0, puntos - 10); document.getElementById('txt-puntos').innerText = puntos;
-                        objetosGalaxia.splice(index, 1);
-                    }
-                }
-                if (obj.y > 260) {
-                    if (obj.correcta) generarObjetoGalaxy(); else objetosGalaxia.splice(index, 1);
-                }
-            });
-            ctx.fillStyle = '#ffcc00'; ctx.beginPath();
-            ctx.moveTo(naveX, 205); ctx.lineTo(naveX - 22, 230); ctx.lineTo(naveX + 22, 230);
-            ctx.closePath(); ctx.fill();
-        }
+        let naveX = 190;
+        let cancionesNadaPersonal = ["Nada Personal", "Ecos", "Imágenes Retro", "Cuando Pase el Temblor", "Juego de Seducción", "Si no fuera por", "Estoy azulado", "Danza Rota", "Observándonos (satelites)", "El cuerpo del delito"];
+        let indiceMetaNadaPersonal = 0;
+        let objetosGalaxia = [];
+        let galaxyGameLoop = null;
 
         // --- DISCO 3 (Tetris - Signos) ---
-        function iniciarTetrisSignos() {
-            document.getElementById('tetris-game-modal').style.display = 'block';
-            tetrisGrid = Array(tetrisRows).fill().map(() => Array(tetrisCols).fill(0));
-            tetrisLineasCount = 0; document.getElementById('txt-tetris-lineas').innerText = tetrisLineasCount;
-            crearPiezaTetris();
-            if (!tetrisGameLoop) tetrisGameLoop = setInterval(actualizarTetris, 600);
-        }
-        function crearPiezaTetris() {
-            let shape = tetrisPiezas[Math.floor(Math.random() * tetrisPiezas.length)];
-            piezaActual = { shape: shape, r: 0, c: Math.floor(tetrisCols / 2) - 1 };
-            if (chequearColisionTetris(piezaActual.r, piezaActual.c, piezaActual.shape)) {
-                tetrisGrid = Array(tetrisRows).fill().map(() => Array(tetrisCols).fill(0));
-            }
-        }
-        function chequearColisionTetris(row, col, shape) {
-            for (let r = 0; r < shape.length; r++) {
-                for (let c = 0; c < shape[r].length; c++) {
-                    if (shape[r][c]) {
-                        let nuevoR = row + r, nuevoC = col + c;
-                        if (nuevoC < 0 || nuevoC >= tetrisCols || nuevoR >= tetrisRows) return true;
-                        if (nuevoR >= 0 && tetrisGrid[nuevoR][nuevoC]) return true;
-                    }
-                }
-            }
-            return false;
-        }
-        function fijarPiezaTetris() {
-            piezaActual.shape.forEach((row, r) => {
-                row.forEach((val, c) => {
-                    if (val && piezaActual.r + r >= 0) { tetrisGrid[piezaActual.r + r][piezaActual.c + c] = 1; }
-                });
-            });
-            chequearLineasTetris(); crearPiezaTetris();
-        }
-        function chequearLineasTetris() {
-            for (let r = tetrisRows - 1; r >= 0; r--) {
-                if (tetrisGrid[r].every(cell => cell === 1)) {
-                    tetrisGrid.splice(r, 1); tetrisGrid.unshift(Array(tetrisCols).fill(0));
-                    tetrisLineasCount++; puntos += 50; document.getElementById('txt-puntos').innerText = puntos;
-                    document.getElementById('txt-tetris-lineas').innerText = tetrisLineasCount;
-                    r++; if (tetrisLineasCount >= 5) { finalizarDiscoActual(); }
-                }
-            }
-        }
-        function actualizarTetris() {
-            if (estadoActual !== "JUEGO_DISCO" || !discoActual.esTetris) return;
-            if (!chequearColisionTetris(piezaActual.r + 1, piezaActual.c, piezaActual.shape)) {
-                piezaActual.r++;
-            } else {
-                fijarPiezaTetris();
-            }
-            renderizarTetris();
-        }
-        function renderizarTetris() {
-            const canvas = document.getElementById('tetris-canvas');
-            const ctx = canvas.getContext('2d');
-            const boxW = canvas.width / tetrisCols, boxH = canvas.height / tetrisRows;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            for (let r = 0; r < tetrisRows; r++) {
-                for (let c = 0; c < tetrisCols; c++) {
-                    if (tetrisGrid[r][c]) {
-                        ctx.fillStyle = '#ff00ff'; ctx.fillRect(c * boxW + 1, r * boxH + 1, boxW - 2, boxH - 2);
-                    }
-                }
-            }
-            if (piezaActual) {
-                ctx.fillStyle = '#00ffff';
-                piezaActual.shape.forEach((row, r) => {
-                    row.forEach((val, c) => {
-                        if (val) { ctx.fillRect((piezaActual.c + c) * boxW + 1, (piezaActual.r + r) * boxH + 1, boxW - 2, boxH - 2); }
-                    });
-                });
-            }
-        }
-        document.getElementById('btn-tetris-izq').onclick = () => { if (piezaActual && !chequearColisionTetris(piezaActual.r, piezaActual.c - 1, piezaActual.shape)) piezaActual.c--; renderizarTetris(); };
-        document.getElementById('btn-tetris-der').onclick = () => { if (piezaActual && !chequearColisionTetris(piezaActual.r, piezaActual.c + 1, piezaActual.shape)) piezaActual.c++; renderizarTetris(); };
-        document.getElementById('btn-tetris-rot').onclick = () => {
-            let rotada = piezaActual.shape[0].map((val, index) => piezaActual.shape.map(row => row[index]).reverse());
-            if (!chequearColisionTetris(piezaActual.r, piezaActual.c, rotada)) piezaActual.shape = rotada;
-            renderizarTetris();
-        };
+        let tetrisCols = 10, tetrisRows = 14;
+        let tetrisGrid = Array(tetrisRows).fill().map(() => Array(tetrisCols).fill(0));
+        let piezaActual = null, tetrisLineasCount = 0, tetrisGameLoop = null;
+        const tetrisPiezas = [[[1,1,1,1]], [[1,1],[1,1]], [[0,1,0],[1,1,1]], [[1,0],[1,0],[1,1]], [[0,1],[0,1],[1,1]]];
 
         // --- DISCO 4 (Crucigrama Doble Vida) ---
-        function iniciarCrucigramaDobleVida() {
-            document.getElementById('crucigrama-game-modal').style.display = 'block';
-            const container = document.getElementById('crucigrama-matriz-container');
-            container.innerHTML = '';
-            for (let r = 0; r < 12; r++) {
-                for (let c = 0; c < 11; c++) {
-                    let input = document.createElement('input');
-                    input.type = 'text'; input.maxLength = 1; input.className = 'c-celda vacia';
-                    input.dataset.r = r; input.dataset.c = c;
-                    container.appendChild(input);
-                }
-            }
-            crucigramaDef.forEach(item => {
-                for (let i = 0; i < item.palabra.length; i++) {
-                    let cellR = item.dir === "H" ? item.r : item.r + i;
-                    let cellC = item.dir === "H" ? item.c + i : item.c;
-                    let index = cellR * 11 + cellC;
-                    let celdaEl = container.children[index];
-                    if (celdaEl) {
-                        celdaEl.classList.remove('vacia');
-                        celdaEl.dataset.letra = item.palabra[i];
-                    }
-                }
-            });
-        }
-        document.getElementById('btn-verificar-crucigrama').onclick = () => {
-            const inputs = document.querySelectorAll('.c-celda:not(.vacia)');
-            let todoOk = true;
-            inputs.forEach(inp => {
-                if (inp.value.toUpperCase() !== inp.dataset.letra) { todoOk = false; }
-            });
-            if (todoOk) {
-                puntos += 100; document.getElementById('txt-puntos').innerText = puntos;
-                finalizarDiscoActual();
-            } else {
-                alert("¡Hay algunas letras incorrectas en el crucigrama, revisalo bien!");
-            }
-        };
+        const crucigramaDef = [
+            { palabra: "COMUN", r: 1, c: 6, dir: "H" }, { palabra: "CUARTO", r: 1, c: 6, dir: "V" },
+            { palabra: "FURIA", r: 3, c: 2, dir: "H" }, { palabra: "CUPULA", r: 2, c: 3, dir: "V" },
+            { palabra: "BORDE", r: 5, c: 1, dir: "V" }, { palabra: "DOBLE", r: 6, c: 0, dir: "H" },
+            { palabra: "DELATOR", r: 9, c: 0, dir: "H" }, { palabra: "INTENSIVA", r: 0, c: 10, dir: "V" },
+            { palabra: "OJOS", r: 7, c: 5, dir: "V" }
+        ];
 
-        // --- DISCO 5 (Batalla Naval / Grilla Canción Animal de 11x11) ---
+        // --- DISCO 5 (Batalla Naval / Canción Animal Interactiva) ---
         function iniciarBatallaNavalCancionAnimal() {
             document.getElementById('batalla-naval-modal').style.display = 'block';
-            barcosHundidosCount = 0;
-            document.getElementById('txt-barco-meta').innerText = "¡Encontrá los barcos en la grilla!";
-            generarGrillaNavalCancionAnimal();
+            barcosHundidosSet.clear();
+            document.getElementById('txt-barcos-hundidos-contador').innerText = "0";
+            document.getElementById('txt-barco-meta').innerText = "🎯 HUNDÍ LOS BARCOS PARA REVELAR LAS CANCIONES";
+            generarGrillaBatallaNaval();
         }
 
-        function generarGrillaNavalCancionAnimal() {
+        function generarGrillaBatallaNaval() {
             const grid = document.getElementById('batalla-naval-grid');
             grid.innerHTML = '';
-            // Grilla de 11 filas x 11 columnas exacta según la imagen enviada
+            
+            // Creamos la matriz lógica de 11x11
             for (let r = 0; r < 11; r++) {
                 for (let c = 0; c < 11; c++) {
-                    const celda = document.createElement('button');
-                    celda.className = 'btn-tetris';
-                    celda.style.width = '26px';
-                    celda.style.height = '26px';
-                    celda.style.padding = '0';
-                    celda.style.fontSize = '10px';
-                    celda.innerText = '🌊';
-                    
-                    // Buscar a qué barco pertenece esta celda (si es parte de uno)
-                    let barcoAsociado = barcosCancionAnimal.find(b => b.coordenadas.some(coord => coord.r === r && coord.c === c));
-                    
-                    celda.onclick = () => {
-                        if (barcoAsociado) {
-                            celda.innerText = '💥';
-                            celda.style.background = '#ff00ff';
-                            puntos += 25;
+                    const btn = document.createElement('button');
+                    btn.className = 'naval-btn';
+                    btn.innerText = '🌊';
+                    btn.dataset.r = r;
+                    btn.dataset.c = c;
+
+                    // Buscar si esta celda pertenece a algún barco
+                    let barcoPropietario = null;
+                    let coordenadaItem = null;
+                    barcosCancionAnimal.forEach(barco => {
+                        let encontrada = barco.coordenadas.find(coord => coord.r === r && coord.c === c);
+                        if (encontrada) {
+                            barcoPropietario = barco;
+                            coordenadaItem = encontrada;
+                        }
+                    });
+
+                    btn.onclick = () => {
+                        if (barcoPropietario) {
+                            // ¡Acierto! Revelamos la letra del barco
+                            btn.innerText = coordenadaItem.letra;
+                            btn.className = 'naval-btn acierto';
+                            puntos += 20;
                             document.getElementById('txt-puntos').innerText = puntos;
-                            document.getElementById('txt-barco-meta').innerText = `¡BARCO HUNDIDO: ${barcoAsociado.nombre}!`;
                             
-                            // Reproduce el minuto exacto de YouTube correspondiente a este tema/barco
-                            reproducirAudio(discoActual.trackId, barcoAsociado.segundos);
-                            
-                            // Verificamos si ya descubrió al menos un bloque de cada barco principal para completar
-                            barcosHundidosCount++;
-                            if (barcosHundidosCount >= 5) {
-                                setTimeout(() => { finalizarDiscoActual(); }, 1500);
+                            // Reproducir el tema exacto en YouTube al tocar partes del barco
+                            reproducirAudio(discoActual.trackId, barcoPropietario.segundos);
+                            document.getElementById('txt-barco-meta').innerText = `🎵 ¡BARCO TOCADO: ${barcoPropietario.nombre}!`;
+
+                            // Verificar si todo el barco fue completado
+                            let celdasBarco = document.querySelectorAll(`button[data-r]`);
+                            let barcoCompleto = true;
+                            barcoPropietario.coordenadas.forEach(coord => {
+                                let celdaPart = Array.from(celdasBarco).find(b => b.dataset.r == coord.r && b.dataset.c == coord.c);
+                                if (!celdaPart || celdaPart.innerText !== coord.letra) {
+                                    barcoCompleto = false;
+                                }
+                            });
+
+                            if (barcoCompleto && !barcosHundidosSet.has(barcoPropietario.nombre)) {
+                                barcosHundidosSet.add(barcoPropietario.nombre);
+                                document.getElementById('txt-barcos-hundidos-contador').innerText = barcosHundidosSet.size;
+                                document.getElementById('txt-barco-meta').innerText = `💥 ¡BARCO HUNDIDO: ${barcoPropietario.nombre}!`;
+
+                                // Si hundió todos los barcos de la grilla, gana el disco
+                                if (barcosHundidosSet.size >= barcosCancionAnimal.length) {
+                                    setTimeout(() => { finalizarDiscoActual(); }, 2000);
+                                }
                             }
                         } else {
-                            celda.innerText = '❌';
-                            celda.style.background = 'rgba(255,255,255,0.1)';
+                            // Agua
+                            btn.innerText = '❌';
+                            btn.className = 'naval-btn agua';
                             puntos = Math.max(0, puntos - 5);
                             document.getElementById('txt-puntos').innerText = puntos;
+                            document.getElementById('txt-barco-meta').innerText = "❌ ¡AGUA! Seguí buscando en el radar.";
                         }
                     };
-                    grid.appendChild(celda);
+                    grid.appendChild(btn);
                 }
             }
         }
