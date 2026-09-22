@@ -73,20 +73,18 @@
         #btn-entrar-disco { background: linear-gradient(45deg, #ff00ff, #00ffff); color: #fff; box-shadow: 0 0 15px rgba(255,0,255,0.7); }
         #btn-cancelar-disco { background: rgba(255,255,255,0.1); color: #fff; }
 
-        /* Modal del Minijuego Pac-Man Cuadrícula Original (Soda 1984) */
+        /* Modal del Minijuego Pac-Man Optimizado para Celular */
         #pacman-game-modal {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: rgba(5, 2, 20, 0.98); border: 3px solid #ffcc00; border-radius: 15px;
-            padding: 12px; width: 95%; max-width: 400px; box-shadow: 0 0 40px rgba(255, 204, 0, 0.7);
+            padding: 15px; width: 92%; max-width: 420px; box-shadow: 0 0 40px rgba(255, 204, 0, 0.7);
             z-index: 50; text-align: center; display: none; touch-action: none;
         }
-        #pacman-hud { color: #ffcc00; font-size: 11px; font-weight: bold; margin-bottom: 30px; text-shadow: 0 0 8px #ffcc00; }
+        #pacman-hud { color: #ffcc00; font-size: 13px; font-weight: bold; margin-bottom: 10px; text-shadow: 0 0 8px #ffcc00; }
         
-        #pacman-canvas { background: #000; border: 2px solid #00ffff; border-radius: 8px; display: block; margin: 0 auto 8px auto; }
+        #pacman-canvas { background: #000; border: 2px solid #00ffff; border-radius: 8px; display: block; margin: 0 auto 10px auto; cursor: pointer; width: 100%; max-width: 380px; height: auto; }
         
-        .pacman-controles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; width: 150px; margin: 0 auto; }
-        .btn-dir { background: rgba(0, 255, 255, 0.2); border: 1px solid #00ffff; color: #fff; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        .btn-dir:active { background: rgba(0, 255, 255, 0.5); }
+        .instrucciones-tactiles { color: #00ffff; font-size: 11px; margin-top: 5px; letter-spacing: 1px; }
 
         /* Ventana de Trofeos */
         #trofeos-modal {
@@ -143,19 +141,11 @@
         </div>
     </div>
 
-    <!-- Mini-juego Pac-Man Cuadrícula Original para Soda 1984 -->
+    <!-- Mini-juego Pac-Man Optimizado Touch -->
     <div id="pacman-game-modal">
-        <div id="pacman-hud">🟡 SODA STEREO (1984) - ¡COMÉ LAS CANCIONES CORRECTAS!</div>
-        <canvas id="pacman-canvas" width="360" height="240"></canvas>
-        
-        <div class="pacman-controles">
-            <div></div>
-            <button class="btn-dir" id="btn-arriba">⬆️</button>
-            <div></div>
-            <button class="btn-dir" id="btn-izq">⬅️</button>
-            <button class="btn-dir" id="btn-abajo">⬇️</button>
-            <button class="btn-dir" id="btn-der">➡️</button>
-        </div>
+        <div id="pacman-hud">🟡 SODA STEREO (1984) - COMÉ TUS TEMAS</div>
+        <canvas id="pacman-canvas" width="380" height="260"></canvas>
+        <div class="instrucciones-tactiles">👆 DESLIZÁ O TOCÁ EL TABLERO PARA MOVERTE</div>
     </div>
 
     <div id="trofeos-modal">
@@ -181,43 +171,41 @@
         let discoActual = null;
         let cancionActualId = "";
 
-        // Variables del Pac-Man en Cuadrícula para Soda 1984
+        // Variables Pac-Man Cuadrícula 1984 Optimizada
         let pacGridX = 1, pacGridY = 1;
         let pacDirX = 0, pacDirY = 0;
-        let pacNextDirX = 0, pacNextDirY = 0;
         let itemsCuadricula = [];
         let pacmanGameLoop = null;
 
-        // Mapa de la cuadrícula (1 = Pared, 0 = Pasillo)
+        // Cuadrícula limpia y espaciosa (1 = Pared fina, 0 = Pasillo amplio)
         const mapaLaberinto = [
-            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-            [1,0,0,0,0,0,1,0,1,0,0,0,0,0,1],
-            [1,0,1,1,0,1,1,0,1,1,0,1,1,0,1],
-            [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-            [1,0,1,0,1,1,1,0,1,1,1,0,1,0,1],
-            [1,0,0,0,0,0,1,0,1,0,0,0,0,0,1],
-            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+            [1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,0,0,0,1,0,0,0,1,0,0,1],
+            [1,0,1,0,1,0,1,0,1,0,1,1],
+            [1,0,0,0,0,0,0,0,0,0,0,1],
+            [1,0,1,1,1,0,1,1,1,0,1,1],
+            [1,0,0,0,0,0,0,0,0,0,0,1],
+            [1,1,1,1,1,1,1,1,1,1,1,1]
         ];
-        const tileSize = 24;
-        const offsetX = 18;
-        const offsetY = 30;
+        const tileSize = 30; // Casillas más grandes para celular
+        const offsetX = 10;
+        const offsetY = 20;
 
-        // Canciones correctas del disco 1 y canciones trampa de otros discos
-        const cancionesSoda84 = ["Jet Set", "Vitaminas", "Un Misil", "Dietético"];
-        const cancionesTrampa = ["Persiana", "De Música", "Signos", "Zoom", "Crimen", "Puente"];
+        const cancionesSoda84 = ["Jet Set", "Vitaminas", "Dietético"];
+        const cancionesTrampa = ["Persiana", "Zoom", "Signos", "Crimen"];
 
         const listaDiscos = [
             { id: "soda_84", nombre: "SODA STEREO (1984)", trackId: "W0KTTiuw96A", fondo: "https://i.ibb.co/sT3L0VW/soda-stereo.png", conquistado: false, esPacman: true },
-            { id: "nada_personal", nombre: "NADA PERSONAL (1985)", trackId: "uOlCYVXOyFI", fondo: "https://i.ibb.co/xq1TGpt8/nada-personal.png", conquistado: false, preguntas: [] },
-            { id: "signos", nombre: "SIGNOS (1986)", trackId: "C5vRGvsbz0w", fondo: "https://i.ibb.co/LXQbmwRR/signos.png", conquistado: false, preguntas: [] },
-            { id: "doble_vida", nombre: "DOBLE VIDA (1988)", trackId: "4l3oYRETotc", fondo: "https://i.ibb.co/cXZpRnKk/doble-vida.png", conquistado: false, preguntas: [] },
-            { id: "cancion_animal", nombre: "CANCIÓN ANIMAL (1990)", trackId: "ex1qICH12Eg", fondo: "https://i.ibb.co/rRbsVPJc/cancion-animal.png", conquistado: false, preguntas: [] },
-            { id: "dynamo", nombre: "DYNAMO (1992)", trackId: "a5oUU6tGKFM", fondo: "https://i.ibb.co/S1G0p32/dynamo.png", conquistado: false, preguntas: [] },
-            { id: "sueno_stereo", nombre: "SUEÑO STEREO (1995)", trackId: "IqBK2UjnUVA", fondo: "https://i.ibb.co/whCCS4r1/sue-o-stereo.png", conquistado: false, preguntas: [] },
-            { id: "amor_amarillo", nombre: "AMOR AMARILLO (1993)", trackId: "ZOd-N9qGQK8", fondo: "https://i.ibb.co/KpPXvH5K/amor-amarillo.png", conquistado: false, preguntas: [] },
-            { id: "bocanada", nombre: "BOCANADA (1999)", trackId: "90SS2mXzPcA", fondo: "https://i.ibb.co/Gf9jPzVy/bocanada.png", conquistado: false, preguntas: [] },
-            { id: "ahi_vamos", nombre: "AHÍ VAMOS (2006)", trackId: "qfcwCrh4s7I", fondo: "https://i.ibb.co/prZnh9w4/ahi-vamos.png", conquistado: false, preguntas: [] },
-            { id: "fuerza_natural", nombre: "FUERZA NATURAL (2009)", trackId: "Z7ndVxqUb48", fondo: "https://i.ibb.co/V0yVhy8Y/fuerza-natural.png", conquistado: false, preguntas: [] }
+            { id: "nada_personal", nombre: "NADA PERSONAL (1985)", trackId: "uOlCYVXOyFI", fondo: "https://i.ibb.co/xq1TGpt8/nada-personal.png", conquistado: false },
+            { id: "signos", nombre: "SIGNOS (1986)", trackId: "C5vRGvsbz0w", fondo: "https://i.ibb.co/LXQbmwRR/signos.png", conquistado: false },
+            { id: "doble_vida", nombre: "DOBLE VIDA (1988)", trackId: "4l3oYRETotc", fondo: "https://i.ibb.co/cXZpRnKk/doble-vida.png", conquistado: false },
+            { id: "cancion_animal", nombre: "CANCIÓN ANIMAL (1990)", trackId: "ex1qICH12Eg", fondo: "https://i.ibb.co/rRbsVPJc/cancion-animal.png", conquistado: false },
+            { id: "dynamo", nombre: "DYNAMO (1992)", trackId: "a5oUU6tGKFM", fondo: "https://i.ibb.co/S1G0p32/dynamo.png", conquistado: false },
+            { id: "sueno_stereo", nombre: "SUEÑO STEREO (1995)", trackId: "IqBK2UjnUVA", fondo: "https://i.ibb.co/whCCS4r1/sue-o-stereo.png", conquistado: false },
+            { id: "amor_amarillo", nombre: "AMOR AMARILLO (1993)", trackId: "ZOd-N9qGQK8", fondo: "https://i.ibb.co/KpPXvH5K/amor-amarillo.png", conquistado: false },
+            { id: "bocanada", nombre: "BOCANADA (1999)", trackId: "90SS2mXzPcA", fondo: "https://i.ibb.co/Gf9jPzVy/bocanada.png", conquistado: false },
+            { id: "ahi_vamos", nombre: "AHÍ VAMOS (2006)", trackId: "qfcwCrh4s7I", fondo: "https://i.ibb.co/prZnh9w4/ahi-vamos.png", conquistado: false },
+            { id: "fuerza_natural", nombre: "FUERZA NATURAL (2009)", trackId: "Z7ndVxqUb48", fondo: "https://i.ibb.co/V0yVhy8Y/fuerza-natural.png", conquistado: false }
         ];
 
         function cambiarFondo(urlImagen) {
@@ -409,18 +397,18 @@
             }
         }
 
-        // --- MOTOR PAC-MAN CUADRÍCULA SODA 1984 ---
+        // --- MOTOR PAC-MAN TÁCTIL Y CLARO SODA 1984 ---
         function iniciarPacmanSoda84() {
             document.getElementById('pacman-game-modal').style.display = 'block';
             pacGridX = 1; pacGridY = 1;
-            pacDirX = 0; pacDirY = 0; pacNextDirX = 0; pacNextDirY = 0;
+            pacDirX = 0; pacDirY = 0;
 
-            // Colocar canciones correctas y trampa en los pasillos libres (valor 0 del mapa)
             itemsCuadricula = [];
+            // Menos elementos para que no se sature el celular
             for (let r = 0; r < mapaLaberinto.length; r++) {
                 for (let c = 0; c < mapaLaberinto[r].length; c++) {
-                    if (mapaLaberinto[r][c] === 0 && !(r === 1 && c === 1)) {
-                        let esCorrecta = Math.random() < 0.4;
+                    if (mapaLaberinto[r][c] === 0 && !(r === 1 && c === 1) && Math.random() < 0.5) {
+                        let esCorrecta = Math.random() < 0.5;
                         let nombreCancion = esCorrecta ? 
                             cancionesSoda84[Math.floor(Math.random() * cancionesSoda84.length)] : 
                             cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)];
@@ -431,29 +419,37 @@
             }
 
             if (!pacmanGameLoop) {
-                pacmanGameLoop = setInterval(actualizarYRenderizarPacmanCuadricula, 1000 / 6); // Movimiento por casillas estilo arcade retro
+                pacmanGameLoop = setInterval(actualizarYRenderizarPacmanCuadricula, 1000 / 4); // Velocidad justa y cómoda
             }
         }
 
-        document.getElementById('btn-arriba').onclick = () => { pacNextDirX = 0; pacNextDirY = -1; };
-        document.getElementById('btn-abajo').onclick = () => { pacNextDirX = 0; pacNextDirY = 1; };
-        document.getElementById('btn-izq').onclick = () => { pacNextDirX = -1; pacNextDirY = 0; };
-        document.getElementById('btn-der').onclick = () => { pacNextDirX = 1; pacNextDirY = 0; };
+        // Control táctil por deslizamiento (Swipe) o toque sobre el canvas
+        let touchStartX = 0, touchStartY = 0;
+        const canvasEl = document.getElementById('pacman-canvas');
+
+        canvasEl.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            e.preventDefault();
+        }, {passive: false});
+
+        canvasEl.addEventListener('touchend', (e) => {
+            let distX = e.changedTouches[0].clientX - touchStartX;
+            let distY = e.changedTouches[0].clientY - touchStartY;
+
+            if (Math.abs(distX) > Math.abs(distY)) {
+                pacDirX = distX > 0 ? 1 : -1;
+                pacDirY = 0;
+            } else {
+                pacDirX = 0;
+                pacDirY = distY > 0 ? 1 : -1;
+            }
+            e.preventDefault();
+        }, {passive: false});
 
         function actualizarYRenderizarPacmanCuadricula() {
             if (estadoActual !== "JUEGO_DISCO") return;
 
-            // Intentar aplicar la siguiente dirección si es pasillo libre
-            let testX = pacGridX + pacNextDirX;
-            let testY = pacGridY + pacNextDirY;
-            if (testY >= 0 && testY < mapaLaberinto.length && testX >= 0 && testX < mapaLaberinto[0].length) {
-                if (mapaLaberinto[testY][testX] === 0) {
-                    pacDirX = pacNextDirX;
-                    pacDirY = pacNextDirY;
-                }
-            }
-
-            // Mover en la dirección actual
             let nextX = pacGridX + pacDirX;
             let nextY = pacGridY + pacDirY;
             if (nextY >= 0 && nextY < mapaLaberinto.length && nextX >= 0 && nextX < mapaLaberinto[0].length) {
@@ -463,7 +459,7 @@
                 }
             }
 
-            // Revisar si comió alguna canción en esta casilla
+            // Comer canciones
             itemsCuadricula.forEach((item, index) => {
                 if (item.gx === pacGridX && item.gy === pacGridY) {
                     if (item.correcta) {
@@ -477,54 +473,53 @@
                 }
             });
 
-            // Si comió todas las correctas, conquista el disco
             let quedanCorrectas = itemsCuadricula.some(i => i.correcta);
             if (!quedanCorrectas) {
                 finalizarDiscoSoda84();
             }
 
-            // Renderizado en Canvas
+            // Renderizado claro y de alto contraste
             const canvas = document.getElementById('pacman-canvas');
             const ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Dibujar el Laberinto de Cuadrícula
+            // Laberinto con paredes muy finas y fondo negro puro
             for (let r = 0; r < mapaLaberinto.length; r++) {
                 for (let c = 0; c < mapaLaberinto[r].length; c++) {
                     let px = offsetX + c * tileSize;
                     let py = offsetY + r * tileSize;
                     if (mapaLaberinto[r][c] === 1) {
-                        ctx.fillStyle = '#0055ff';
-                        ctx.fillRect(px, py, tileSize, tileSize);
+                        ctx.fillStyle = '#00ffff'; // Paredes turquesas finas y brillantes
+                        ctx.fillRect(px + 2, py + 2, tileSize - 4, tileSize - 4);
                     } else {
-                        ctx.fillStyle = '#0a001a';
+                        ctx.fillStyle = '#000000';
                         ctx.fillRect(px, py, tileSize, tileSize);
                     }
                 }
             }
 
-            // Dibujar Canciones circulando por los pasillos
+            // Canciones grandes y legibles
             itemsCuadricula.forEach(item => {
                 let px = offsetX + item.gx * tileSize + tileSize / 2;
                 let py = offsetY + item.gy * tileSize + tileSize / 2;
 
-                ctx.fillStyle = item.correcta ? '#ff00ff' : '#00ffff';
+                ctx.fillStyle = item.correcta ? '#ff00ff' : '#00ffcc';
                 ctx.beginPath();
-                ctx.arc(px, py, 6, 0, Math.PI * 2);
+                ctx.arc(px, py, 8, 0, Math.PI * 2);
                 ctx.fill();
 
-                ctx.fillStyle = '#fff';
-                ctx.font = '9px sans-serif';
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 11px sans-serif'; // Letra grande legible en celu
                 ctx.textAlign = 'center';
-                ctx.fillText(item.texto, px, py - 8);
+                ctx.fillText(item.texto, px, py - 10);
             });
 
-            // Dibujar Pac-Man
+            // Pac-Man amarillo brillante
             let pacPx = offsetX + pacGridX * tileSize + tileSize / 2;
             let pacPy = offsetY + pacGridY * tileSize + tileSize / 2;
             ctx.fillStyle = '#ffcc00';
             ctx.beginPath();
-            ctx.arc(pacPx, pacPy, 10, 0.2 * Math.PI, 1.8 * Math.PI);
+            ctx.arc(pacPx, pacPy, 12, 0.2 * Math.PI, 1.8 * Math.PI);
             ctx.lineTo(pacPx, pacPy);
             ctx.fill();
         }
@@ -536,7 +531,7 @@
                 discosConquistadosCount++;
                 document.getElementById('txt-discos-conquistados').innerText = discosConquistadosCount;
             }
-            alert(`¡Impresionante! Conquistaste el universo de ${discoActual.nombre} comiendo todas sus canciones correctas.`);
+            alert(`¡Impresionante! Conquistaste ${discoActual.nombre} comiendo las canciones correctas.`);
             volverAlMultiverso();
         }
 
