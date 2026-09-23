@@ -136,9 +136,9 @@
     <!-- Mini-juego Ondas Dynamo (Disco 6) -->
     <div id="dynamo-game-modal" class="modal-juego" style="border-color: #00ffff;">
         <div class="hud-juego" style="color:#00ffff;">🎛️ DYNAMO (1992) - SINTONÍA SÓNICA</div>
-        <div class="objetivo-juego">🎯 SINTONIZÁ LA ONDA: <span id="txt-dynamo-meta">...</span></div>
+        <div class="objetivo-juego">🎯 MANTENÉ LA FRECUENCIA: <span id="txt-dynamo-meta">...</span></div>
         <canvas id="dynamo-canvas" class="canvas-juego" width="380" height="240" style="border-color: #00ffff;"></canvas>
-        <div style="color:#ff00ff; font-size:11px;">👆 ARRASTRÁ O TOCÁ PARA MOVER EL SINTONIZADOR DE FRECUENCIA</div>
+        <div style="color:#ff00ff; font-size:11px;">👆 MUNTÉNÉ EL CURSOR SOBRE LA ONDA PARA ESTABILIZAR LA SEÑAL</div>
     </div>
 
     <div id="trofeos-modal">
@@ -620,14 +620,15 @@
         let dynamoIndiceMeta = 0;
         let dynamoCursorX = 190;
         let dynamoOndaX = 100;
-        let dynamoOndaVelocidad = 2;
+        let dynamoOndaVelocidad = 2.5;
+        let dynamoProgresoSintonia = 0;
         let dynamoGameLoop = null;
 
         function iniciarDynamoOndas() {
             document.getElementById('dynamo-game-modal').style.display = 'block';
             dynamoIndiceMeta = 0;
             dynamoCursorX = 190;
-            dynamoOndaVelocidad = 2;
+            dynamoProgresoSintonia = 0;
             siguienteMetaDynamo();
             if (!dynamoGameLoop) dynamoGameLoop = setInterval(actualizarYRenderizarDynamo, 1000 / 30);
         }
@@ -639,6 +640,7 @@
             }
             document.getElementById('txt-dynamo-meta').innerText = dynamoCanciones[dynamoIndiceMeta].nombre;
             dynamoOndaX = Math.random() * 260 + 60;
+            dynamoProgresoSintonia = 0;
         }
 
         const canvasDynamo = document.getElementById('dynamo-canvas');
@@ -654,53 +656,55 @@
         function actualizarYRenderizarDynamo() {
             if (estadoActual !== "JUEGO_DISCO" || !discoActual || !discoActual.esDynamo) return;
             
-            // Movimiento oscilatorio de la onda
             dynamoOndaX += dynamoOndaVelocidad;
-            if (dynamoOndaX > 340 || dynamoOndaX < 40) dynamoOndaVelocidad *= -1;
+            if (dynamoOndaX > 330 || dynamoOndaX < 50) dynamoOndaVelocidad *= -1;
+
+            let distancia = Math.abs(dynamoCursorX - dynamoOndaX);
+            if (distancia < 25) {
+                dynamoProgresoSintonia += 1.5;
+            } else {
+                dynamoProgresoSintonia = Math.max(0, dynamoProgresoSintonia - 1);
+            }
+
+            if (dynamoProgresoSintonia >= 100) {
+                puntos += 40;
+                document.getElementById('txt-puntos').innerText = puntos;
+                let cancionActualObj = dynamoCanciones[dynamoIndiceMeta];
+                reproducirAudio(discoActual.trackId, cancionActualObj.segundos);
+                dynamoIndiceMeta++;
+                siguienteMetaDynamo();
+            }
 
             const ctx = canvasDynamo.getContext('2d');
             ctx.clearRect(0, 0, canvasDynamo.width, canvasDynamo.height);
 
-            // Dibujar panel de frecuencias de fondo
             ctx.strokeStyle = '#003333';
             ctx.lineWidth = 1;
-            for(let i=0; i<canvasDynamo.width; i+=30) {
+            for(let i = 0; i < canvasDynamo.width; i += 30) {
                 ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvasDynamo.height); ctx.stroke();
             }
 
-            // Dibujar Onda Sónica Desplazándose
-            ctx.strokeStyle = '#00ffff';
+            ctx.strokeStyle = distancia < 25 ? '#00ffcc' : '#00ffff';
             ctx.lineWidth = 3;
             ctx.beginPath();
             for (let x = 0; x < canvasDynamo.width; x++) {
-                let y = 120 + Math.sin((x + dynamoOndaX) * 0.05) * 40 + Math.cos((x) * 0.02) * 20;
+                let y = 110 + Math.sin((x + dynamoOndaX) * 0.05) * 35 + Math.cos(x * 0.02) * 15;
                 if (x === 0) ctx.moveTo(x, y);
                 else ctx.lineTo(x, y);
             }
             ctx.stroke();
 
-            // Dibujar Cursor de Sintonía (Jugador)
-            ctx.strokeStyle = '#ff00ff';
+            ctx.strokeStyle = distancia < 25 ? '#00ff00' : '#ff00ff';
             ctx.lineWidth = 4;
             ctx.beginPath();
-            ctx.moveTo(dynamoCursorX, 20);
-            ctx.lineTo(dynamoCursorX, 220);
+            ctx.moveTo(dynamoCursorX, 15);
+            ctx.lineTo(dynamoCursorX, 215);
             ctx.stroke();
 
-            // Comprobar coincidencia al hacer click o tocar la pantalla
-            canvasDynamo.onclick = () => {
-                let cancionActualObj = dynamoCanciones[dynamoIndiceMeta];
-                if (Math.abs(dynamoCursorX - dynamoOndaX) < 35) {
-                    puntos += 35;
-                    document.getElementById('txt-puntos').innerText = puntos;
-                    reproducirAudio(discoActual.trackId, cancionActualObj.segundos);
-                    dynamoIndiceMeta++;
-                    siguienteMetaDynamo();
-                } else {
-                    puntos = Math.max(0, puntos - 5);
-                    document.getElementById('txt-puntos').innerText = puntos;
-                }
-            };
+            ctx.fillStyle = 'rgba(255,0,255,0.2)';
+            ctx.fillRect(40, 220, 300, 10);
+            ctx.fillStyle = '#00ffcc';
+            ctx.fillRect(40, 220, (dynamoProgresoSintonia / 100) * 300, 10);
         }
 
         const listaDiscos = [
@@ -709,7 +713,7 @@
             { id: "signos", nombre: "SIGNOS (1986)", trackId: "xiYMsOtPa5c", fondo: "https://i.ibb.co/LXQbmwRR/signos.png", conquistado: false, esTetris: true },
             { id: "doble_vida", nombre: "DOBLE VIDA (1988)", trackId: "3TB0vkRalrQ&list=RD3TB0vkRalrQ&start_radio=1", fondo: "https://i.ibb.co/cXZpRnKk/doble-vida.png", conquistado: false, esCrucigrama: true },
             { id: "cancion_animal", nombre: "CANCIÓN ANIMAL (1990)", trackId: "jzLVaylmbJU&list=RDjzLVaylmbJU&start_radio=1", fondo: "https://i.ibb.co/rRbsVPJc/cancion-animal.png", conquistado: false, esBatallaNaval: true },
-            { id: "dynamo", nombre: "DYNAMO (1992)", trackId: "ofPx2dQmj_Y&list=RDofPx2dQmj_Y&start_radio=1", fondo: "https://i.ibb.co/S1G0p32/dynamo.png", conquistado: false, esDynamo: true },
+            { id: "dynamo", nombre: "DYNAMO (1992)", trackId: "a5oUU6tGKFM", fondo: "https://i.ibb.co/S1G0p32/dynamo.png", conquistado: false, esDynamo: true },
             { id: "sueno_stereo", nombre: "SUEÑO STEREO (1995)", trackId: "IqBK2UjnUVA", fondo: "https://i.ibb.co/whCCS4r1/sue-o-stereo.png", conquistado: false },
             { id: "amor_amarillo", nombre: "AMOR AMARILLO (1993)", trackId: "ZOd-N9qGQK8", fondo: "https://i.ibb.co/KpPXvH5K/amor-amarillo.png", conquistado: false },
             { id: "bocanada", nombre: "BOCANADA (1999)", trackId: "90SS2mXzPcA", fondo: "https://i.ibb.co/Gf9jPzVy/bocanada.png", conquistado: false },
