@@ -133,12 +133,12 @@
         </div>
     </div>
 
-    <!-- Mini-juego Ondas Dynamo (Disco 6) -->
+    <!-- Mini-juego Consola de Efectos Dynamo (Disco 6) -->
     <div id="dynamo-game-modal" class="modal-juego" style="border-color: #00ffff;">
-        <div class="hud-juego" style="color:#00ffff;">🎛️ DYNAMO (1992) - SINTONÍA SÓNICA</div>
-        <div class="objetivo-juego">🎯 MANTENÉ LA FRECUENCIA: <span id="txt-dynamo-meta">...</span></div>
+        <div class="hud-juego" style="color:#00ffff;">🎛️ DYNAMO (1992) - CONSOLA DE EFECTOS (FX)</div>
+        <div class="objetivo-juego">🎯 APLICAR EFECTO EN EL BEAT: <span id="txt-dynamo-meta">...</span></div>
         <canvas id="dynamo-canvas" class="canvas-juego" width="380" height="240" style="border-color: #00ffff;"></canvas>
-        <div style="color:#ff00ff; font-size:11px;">👆 MUNTÉNÉ EL CURSOR SOBRE LA ONDA PARA ESTABILIZAR LA SEÑAL</div>
+        <div style="color:#ff00ff; font-size:11px;">👆 TOCÁ LA PANTALLA PARA ACTIVAR (DELAY / REVERB / FLANGER)</div>
     </div>
 
     <div id="trofeos-modal">
@@ -602,33 +602,30 @@
 
         document.getElementById('btn-reiniciar-naval').onclick = () => { iniciarBatallaNavalCancionAnimal(); };
 
-        // --- DISCO 6 (Laberinto de Ondas - Dynamo 1992) ---
+        // --- DISCO 6 (Consola de Efectos FX - Dynamo 1992) ---
         const dynamoCanciones = [
-            { nombre: "Secuencia Inicial", segundos: 0 },
-            { nombre: "Toma la ruta", segundos: 232 },
-            { nombre: "En remolinos", segundos: 450 },
-            { nombre: "Primavera 0", segundos: 700 },
-            { nombre: "Camaleón", segundos: 960 },
-            { nombre: "Luna Roja", segundos: 1180 },
-            { nombre: "Sweet Sahumerio", segundos: 1420 },
-            { nombre: "Ameba", segundos: 1650 },
-            { nombre: "Nuestra Fe", segundos: 1890 },
-            { nombre: "Claroscuro", segundos: 2120 },
-            { nombre: "Fue", segundos: 2380 },
-            { nombre: "Texturas", segundos: 2650 }
+            { nombre: "Secuencia Inicial", segundos: 0, efecto: "DELAY 300ms" },
+            { nombre: "Toma la ruta", segundos: 232, efecto: "REVERB CATHEDRAL" },
+            { nombre: "En remolinos", segundos: 450, efecto: "FLANGER MOD" },
+            { nombre: "Primavera 0", segundos: 700, efecto: "DELAY PING-PONG" },
+            { nombre: "Camaleón", segundos: 960, efecto: "REVERB PLATE" },
+            { nombre: "Luna Roja", segundos: 1180, efecto: "CHORUS + DELAY" },
+            { nombre: "Sweet Sahumerio", segundos: 1420, efecto: "PHASER DENSE" },
+            { nombre: "Ameba", segundos: 1650, efecto: "REVERB REVERSE" },
+            { nombre: "Nuestra Fe", segundos: 1890, efecto: "DELAY DUAL" },
+            { nombre: "Claroscuro", segundos: 2120, efecto: "FLANGER DEEP" },
+            { nombre: "Fue", segundos: 2380, efecto: "REVERB INFINITE" },
+            { nombre: "Texturas", segundos: 2650, efecto: "MASTER FX MIX" }
         ];
         let dynamoIndiceMeta = 0;
-        let dynamoCursorX = 190;
-        let dynamoOndaX = 100;
-        let dynamoOndaVelocidad = 2.5;
-        let dynamoProgresoSintonia = 0;
+        let efectoPulsoX = 0;
+        let efectoActivoAnim = false;
         let dynamoGameLoop = null;
 
         function iniciarDynamoOndas() {
             document.getElementById('dynamo-game-modal').style.display = 'block';
             dynamoIndiceMeta = 0;
-            dynamoCursorX = 190;
-            dynamoProgresoSintonia = 0;
+            efectoPulsoX = 0;
             siguienteMetaDynamo();
             if (!dynamoGameLoop) dynamoGameLoop = setInterval(actualizarYRenderizarDynamo, 1000 / 30);
         }
@@ -638,73 +635,75 @@
                 finalizarDiscoActual();
                 return;
             }
-            document.getElementById('txt-dynamo-meta').innerText = dynamoCanciones[dynamoIndiceMeta].nombre;
-            dynamoOndaX = Math.random() * 260 + 60;
-            dynamoProgresoSintonia = 0;
+            let item = dynamoCanciones[dynamoIndiceMeta];
+            document.getElementById('txt-dynamo-meta').innerText = `${item.nombre} [${item.efecto}]`;
         }
 
         const canvasDynamo = document.getElementById('dynamo-canvas');
-        canvasDynamo.onmousemove = (e) => {
-            dynamoCursorX = e.clientX - canvasDynamo.getBoundingClientRect().left;
-        };
-        canvasDynamo.ontouchmove = (e) => {
-            if (e.touches.length > 0) {
-                dynamoCursorX = e.touches[0].clientX - canvasDynamo.getBoundingClientRect().left;
-            }
+        canvasDynamo.onclick = () => {
+            // Disparar procesamiento de efecto sobre la onda actual
+            let item = dynamoCanciones[dynamoIndiceMeta];
+            reproducirAudio(discoActual.trackId, item.segundos);
+            efectoActivoAnim = true;
+            puntos += 35;
+            document.getElementById('txt-puntos').innerText = puntos;
+            
+            setTimeout(() => {
+                efectoActivoAnim = false;
+                dynamoIndiceMeta++;
+                siguienteMetaDynamo();
+            }, 600);
         };
 
         function actualizarYRenderizarDynamo() {
             if (estadoActual !== "JUEGO_DISCO" || !discoActual || !discoActual.esDynamo) return;
             
-            dynamoOndaX += dynamoOndaVelocidad;
-            if (dynamoOndaX > 330 || dynamoOndaX < 50) dynamoOndaVelocidad *= -1;
-
-            let distancia = Math.abs(dynamoCursorX - dynamoOndaX);
-            if (distancia < 25) {
-                dynamoProgresoSintonia += 1.5;
-            } else {
-                dynamoProgresoSintonia = Math.max(0, dynamoProgresoSintonia - 1);
-            }
-
-            if (dynamoProgresoSintonia >= 100) {
-                puntos += 40;
-                document.getElementById('txt-puntos').innerText = puntos;
-                let cancionActualObj = dynamoCanciones[dynamoIndiceMeta];
-                reproducirAudio(discoActual.trackId, cancionActualObj.segundos);
-                dynamoIndiceMeta++;
-                siguienteMetaDynamo();
-            }
+            efectoPulsoX += 4;
+            if (efectoPulsoX > canvasDynamo.width) efectoPulsoX = 0;
 
             const ctx = canvasDynamo.getContext('2d');
             ctx.clearRect(0, 0, canvasDynamo.width, canvasDynamo.height);
 
-            ctx.strokeStyle = '#003333';
+            // Fondo estilo consola de mezclas
+            ctx.strokeStyle = '#1a0033';
             ctx.lineWidth = 1;
-            for(let i = 0; i < canvasDynamo.width; i += 30) {
+            for(let i = 0; i < canvasDynamo.width; i += 40) {
                 ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvasDynamo.height); ctx.stroke();
             }
 
-            ctx.strokeStyle = distancia < 25 ? '#00ffcc' : '#00ffff';
-            ctx.lineWidth = 3;
+            // Dibujar perillas virtuales de efectos decorativas
+            ctx.fillStyle = '#ff00ff';
+            ctx.beginPath(); ctx.arc(80, 40, 15, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = '#00ffff';
+            ctx.beginPath(); ctx.arc(190, 40, 15, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = '#ffcc00';
+            ctx.beginPath(); ctx.arc(300, 40, 15, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = '#fff'; ctx.font = '9px sans-serif'; ctx.textAlign = 'center';
+            ctx.fillText("DELAY", 80, 68);
+            ctx.fillText("REVERB", 190, 68);
+            ctx.fillText("FLANGER", 300, 68);
+
+            // Dibujar Onda de Audio Modulada por Efecto
+            ctx.strokeStyle = efectoActivoAnim ? '#00ff00' : '#00ffff';
+            ctx.lineWidth = efectoActivoAnim ? 5 : 3;
             ctx.beginPath();
             for (let x = 0; x < canvasDynamo.width; x++) {
-                let y = 110 + Math.sin((x + dynamoOndaX) * 0.05) * 35 + Math.cos(x * 0.02) * 15;
+                let frecuenciaMod = efectoActivoAnim ? 0.1 : 0.04;
+                let amplitudMod = efectoActivoAnim ? 50 : 25;
+                let y = 140 + Math.sin((x + efectoPulsoX) * frecuenciaMod) * amplitudMod + Math.cos(x * 0.03) * 15;
                 if (x === 0) ctx.moveTo(x, y);
                 else ctx.lineTo(x, y);
             }
             ctx.stroke();
 
-            ctx.strokeStyle = distancia < 25 ? '#00ff00' : '#ff00ff';
-            ctx.lineWidth = 4;
-            ctx.beginPath();
-            ctx.moveTo(dynamoCursorX, 15);
-            ctx.lineTo(dynamoCursorX, 215);
-            ctx.stroke();
-
-            ctx.fillStyle = 'rgba(255,0,255,0.2)';
-            ctx.fillRect(40, 220, 300, 10);
-            ctx.fillStyle = '#00ffcc';
-            ctx.fillRect(40, 220, (dynamoProgresoSintonia / 100) * 300, 10);
+            // Indicador de golpe de efecto (Beat visual)
+            if (efectoActivoAnim) {
+                ctx.fillStyle = 'rgba(0, 255, 255, 0.2)';
+                ctx.fillRect(0, 0, canvasDynamo.width, canvasDynamo.height);
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 16px sans-serif';
+                ctx.fillText("✨ ¡EFECTO APLICADO!", canvasDynamo.width / 2, 110);
+            }
         }
 
         const listaDiscos = [
