@@ -505,11 +505,15 @@
 
         // --- DISCO 4 (Crucigrama - Doble Vida 1988) ---
         const crucigramaDef = [
-            { palabra: "COMUN", r: 1, c: 6, dir: "H" }, { palabra: "CUARTO", r: 1, c: 6, dir: "V" },
-            { palabra: "FURIA", r: 3, c: 2, dir: "H" }, { palabra: "CUPULA", r: 2, c: 3, dir: "V" },
-            { palabra: "BORDE", r: 5, c: 1, dir: "V" }, { palabra: "DOBLE", r: 6, c: 0, dir: "H" },
-            { palabra: "DELATOR", r: 9, c: 0, dir: "H" }, { palabra: "INTENSIVA", r: 0, c: 10, dir: "V" },
-            { palabra: "OJOS", r: 7, c: 5, dir: "V" }
+            { palabra: "COMUN", r: 1, c: 6, dir: "H", segundos: 45 },
+            { palabra: "CUARTO", r: 1, c: 6, dir: "V", segundos: 120 },
+            { palabra: "FURIA", r: 3, c: 2, dir: "H", segundos: 135 },
+            { palabra: "CUPULA", r: 2, c: 3, dir: "V", segundos: 210 },
+            { palabra: "BORDE", r: 5, c: 1, dir: "V", segundos: 80 },
+            { palabra: "DOBLE", r: 6, c: 0, dir: "H", segundos: 15 },
+            { palabra: "DELATOR", r: 9, c: 0, dir: "H", segundos: 225 },
+            { palabra: "INTENSIVA", r: 0, c: 10, dir: "V", segundos: 190 },
+            { palabra: "OJOS", r: 7, c: 5, dir: "V", segundos: 95 }
         ];
 
         function iniciarCrucigramaDobleVida() {
@@ -533,6 +537,13 @@
                     if (celdaEl) {
                         celdaEl.classList.remove('vacia');
                         celdaEl.dataset.letra = item.palabra[i];
+                        
+                        // Vinculamos el evento de salto al segundo exacto de la canción al tocar/enfocar la celda
+                        celdaEl.addEventListener('focus', () => {
+                            if (discoActual) {
+                                reproducirAudio(discoActual.trackId, item.segundos);
+                            }
+                        });
                     }
                 }
             });
