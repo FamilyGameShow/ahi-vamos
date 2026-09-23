@@ -7,139 +7,69 @@
     <style>
         body { margin: 0; overflow: hidden; background-color: #02000a; font-family: sans-serif; touch-action: none; }
         #canvas-container { width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; z-index: 1; }
-        
-        #escenografia-fondo {
-            position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
-            background-size: cover; background-position: center; opacity: 0.35; z-index: 0;
-            transition: background-image 0.8s ease-in-out;
-        }
-
-        #pantalla-intro {
-            position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(2, 0, 10, 0.94); display: flex; flex-direction: column;
-            justify-content: center; align-items: center; z-index: 99999; text-align: center; padding: 20px; box-sizing: border-box;
-            pointer-events: auto;
-        }
-        #pantalla-intro h1 {
-            color: #fff; font-size: 26px; letter-spacing: 5px;
-            text-shadow: 0 0 20px #ff00ff, 0 0 40px #00ffff; margin-bottom: 10px;
-        }
-        #pantalla-intro p {
-            color: #00ffff; font-size: 14px; margin-bottom: 30px; max-width: 320px; line-height: 1.5;
-        }
-        .btn-inicio {
-            background: linear-gradient(45deg, #ff00ff, #00ffff); border: 2px solid #fff;
-            color: #fff; padding: 18px 45px; border-radius: 30px; font-size: 16px; font-weight: bold;
-            letter-spacing: 2px; box-shadow: 0 0 25px rgba(255, 0, 255, 0.7); cursor: pointer; 
-            pointer-events: auto !important; position: relative; z-index: 100000;
-        }
-
-        #pantalla-conteo {
-            position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(2, 0, 10, 0.85); display: flex; flex-direction: column;
-            justify-content: center; align-items: center; z-index: 90; text-align: center; display: none;
-        }
+        #escenografia-fondo { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background-size: cover; background-position: center; opacity: 0.35; z-index: 0; transition: background-image 0.8s ease-in-out; }
+        #pantalla-intro { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(2, 0, 10, 0.94); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 99999; text-align: center; padding: 20px; box-sizing: border-box; pointer-events: auto; }
+        #pantalla-intro h1 { color: #fff; font-size: 26px; letter-spacing: 5px; text-shadow: 0 0 20px #ff00ff, 0 0 40px #00ffff; margin-bottom: 10px; }
+        #pantalla-intro p { color: #00ffff; font-size: 14px; margin-bottom: 30px; max-width: 320px; line-height: 1.5; }
+        .btn-inicio { background: linear-gradient(45deg, #ff00ff, #00ffff); border: 2px solid #fff; color: #fff; padding: 18px 45px; border-radius: 30px; font-size: 16px; font-weight: bold; letter-spacing: 2px; box-shadow: 0 0 25px rgba(255, 0, 255, 0.7); cursor: pointer; pointer-events: auto !important; position: relative; z-index: 100000; }
+        #pantalla-conteo { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(2, 0, 10, 0.85); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 90; text-align: center; display: none; }
         #txt-conteo-numero { font-size: 80px; color: #00ffff; text-shadow: 0 0 30px #00ffff; font-weight: bold; margin-bottom: 10px; }
         #txt-conteo-texto { font-size: 16px; color: #ff00ff; letter-spacing: 3px; text-shadow: 0 0 10px #ff00ff; }
-
-        #ui-capa {
-            position: absolute; top: 15px; width: 100%; display: flex; justify-content: space-between;
-            padding: 0 20px; box-sizing: border-box; color: #fff; text-shadow: 0 0 10px #ff00ff;
-            z-index: 10; pointer-events: none; display: none;
-        }
+        #ui-capa { position: absolute; top: 15px; width: 100%; display: flex; justify-content: space-between; padding: 0 20px; box-sizing: border-box; color: #fff; text-shadow: 0 0 10px #ff00ff; z-index: 10; pointer-events: none; display: none; }
         .stats-box { font-size: 12px; font-weight: bold; background: rgba(10, 5, 30, 0.85); border: 1px solid #ff00ff; padding: 6px 10px; border-radius: 10px; }
-        
-        #btn-volver {
-            position: absolute; top: 65px; left: 20px; background: rgba(255, 0, 255, 0.3);
-            border: 1px solid #ff00ff; color: #fff; padding: 8px 14px; border-radius: 10px;
-            font-size: 11px; cursor: pointer; z-index: 15; display: none; pointer-events: auto;
-        }
-        #btn-trofeos {
-            position: absolute; top: 65px; right: 20px; background: rgba(0, 255, 255, 0.25);
-            border: 1px solid #00ffff; color: #fff; padding: 8px 14px; border-radius: 10px;
-            font-size: 11px; font-weight: bold; cursor: pointer; z-index: 15; display: none;
-            pointer-events: auto; box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
-        }
-
-        #disco-seleccionado-banner {
-            position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
-            background: rgba(10, 5, 30, 0.95); border: 2px solid #00ffff; border-radius: 20px;
-            padding: 15px 25px; text-align: center; z-index: 40; display: none;
-            box-shadow: 0 0 30px rgba(0, 255, 255, 0.6); pointer-events: auto; width: 85%; max-width: 320px;
-        }
+        #btn-volver { position: absolute; top: 65px; left: 20px; background: rgba(255, 0, 255, 0.3); border: 1px solid #ff00ff; color: #fff; padding: 8px 14px; border-radius: 10px; font-size: 11px; cursor: pointer; z-index: 15; display: none; pointer-events: auto; }
+        #btn-trofeos { position: absolute; top: 65px; right: 20px; background: rgba(0, 255, 255, 0.25); border: 1px solid #00ffff; color: #fff; padding: 8px 14px; border-radius: 10px; font-size: 11px; font-weight: bold; cursor: pointer; z-index: 15; display: none; pointer-events: auto; box-shadow: 0 0 10px rgba(0, 255, 255, 0.4); }
+        #disco-seleccionado-banner { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); background: rgba(10, 5, 30, 0.95); border: 2px solid #00ffff; border-radius: 20px; padding: 15px 25px; text-align: center; z-index: 40; display: none; box-shadow: 0 0 30px rgba(0, 255, 255, 0.6); pointer-events: auto; width: 85%; max-width: 320px; }
         #disco-seleccionado-titulo { color: #ff00ff; font-size: 15px; font-weight: bold; margin-bottom: 10px; letter-spacing: 1px; }
         .botones-grupo { display: flex; gap: 10px; justify-content: center; }
         .btn-accion-banner { padding: 10px 15px; border-radius: 12px; font-size: 12px; font-weight: bold; cursor: pointer; border: 1px solid #fff; }
         #btn-entrar-disco { background: linear-gradient(45deg, #ff00ff, #00ffff); color: #fff; box-shadow: 0 0 15px rgba(255,0,255,0.7); }
         #btn-cancelar-disco { background: rgba(255,255,255,0.1); color: #fff; }
-
-        .modal-juego {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: rgba(5, 2, 20, 0.98); border: 3px solid #ffcc00; border-radius: 15px;
-            padding: 10px; width: 98%; max-width: 500px; box-shadow: 0 0 40px rgba(255, 204, 0, 0.7);
-            z-index: 50; text-align: center; display: none; touch-action: none;
-        }
+        .modal-juego { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(5, 2, 20, 0.98); border: 3px solid #ffcc00; border-radius: 15px; padding: 10px; width: 98%; max-width: 500px; box-shadow: 0 0 40px rgba(255, 204, 0, 0.7); z-index: 50; text-align: center; display: none; touch-action: none; }
         .hud-juego { color: #ffcc00; font-size: 12px; font-weight: bold; margin-bottom: 3px; text-shadow: 0 0 8px #ffcc00; }
         .objetivo-juego { color: #ff00ff; font-size: 11px; font-weight: bold; margin-bottom: 4px; background: rgba(255,0,255,0.1); padding: 3px; border-radius: 6px; border: 1px dashed #ff00ff; }
         canvas.canvas-juego { background: #000; border: 2px solid #00ffff; border-radius: 8px; display: block; margin: 0 auto 8px auto; }
         .controles-tetris { display: flex; gap: 12px; justify-content: center; margin-top: 8px; }
         .btn-tetris { background: rgba(0,255,255,0.2); border: 1px solid #00ffff; color: #fff; padding: 10px 18px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px; }
-
         .crucigrama-wrapper { display: flex; flex-direction: column; align-items: center; max-height: 80vh; overflow-y: auto; }
         .crucigrama-grid-real { display: grid; grid-template-columns: repeat(11, 26px); gap: 2px; justify-content: center; margin: 4px 0; background: #000; padding: 4px; border: 2px solid #00ffff; border-radius: 6px; }
         .c-celda { width: 26px; height: 26px; background: #110033; border: 1px solid #00ffff; color: #fff; font-size: 13px; font-weight: bold; text-align: center; text-transform: uppercase; border-radius: 3px; }
         .c-celda:focus { background: #ff00ff; outline: none; }
         .c-celda.vacia { background: #ffe600; border: 1px solid #cca300; pointer-events: none; }
         .pistas-box { text-align: left; font-size: 10px; color: #00ffff; background: rgba(0,255,255,0.05); padding: 4px; border-radius: 8px; width: 100%; box-sizing: border-box; margin-bottom: 3px; line-height: 1.1; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
-
-        .naval-btn {
-            width: 26px; height: 26px; background: #0b132b; border: 1px solid #00ffff;
-            color: #00ffff; font-size: 11px; font-weight: bold; text-align: center;
-            border-radius: 3px; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center;
-        }
+        .naval-btn { width: 26px; height: 26px; background: #0b132b; border: 1px solid #00ffff; color: #00ffff; font-size: 11px; font-weight: bold; text-align: center; border-radius: 3px; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; }
         .naval-btn.agua { background: rgba(255,255,255,0.08); color: #888; border-color: #444; }
         .naval-btn.acierto { background: #ff00ff; color: #fff; border-color: #fff; text-shadow: 0 0 5px #fff; }
-
-        #trofeos-modal {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: rgba(5, 2, 18, 0.98); border: 2px solid #ff00ff; border-radius: 15px;
-            padding: 20px; width: 90%; max-width: 420px; max-height: 80vh; overflow-y: auto;
-            box-shadow: 0 0 40px rgba(255, 0, 255, 0.6); z-index: 60; text-align: center; display: none; pointer-events: auto;
-        }
+        #trofeos-modal { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(5, 2, 18, 0.98); border: 2px solid #ff00ff; border-radius: 15px; padding: 20px; width: 90%; max-width: 420px; max-height: 80vh; overflow-y: auto; box-shadow: 0 0 40px rgba(255, 0, 255, 0.6); z-index: 60; text-align: center; display: none; pointer-events: auto; }
         #trofeos-modal h2 { color: #00ffff; font-size: 18px; margin-top: 0; letter-spacing: 2px; text-shadow: 0 0 10px #00ffff; }
         .grid-trofeos { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; text-align: left; }
         .item-trofeo { background: rgba(255, 255, 255, 0.05); border: 1px solid #444; border-radius: 8px; padding: 8px; font-size: 11px; color: #aaa; display: flex; align-items: center; gap: 8px; }
         .item-trofeo.conquistado { border-color: #00ffff; color: #fff; background: rgba(0, 255, 255, 0.1); }
         .item-trofeo img { width: 35px; height: 35px; object-fit: cover; border-radius: 4px; }
         .btn-cerrar-trofeos { background: linear-gradient(45deg, #ff00ff, #00ffff); border: none; color: #fff; padding: 10px 20px; border-radius: 20px; font-size: 12px; font-weight: bold; margin-top: 20px; cursor: pointer; }
-
         #youtube-audio { position: absolute; top: -9999px; left: -9999px; visibility: hidden; }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
     <div id="escenografia-fondo"></div>
-    
     <div id="pantalla-intro">
         <h1>COLORES SANTOS</h1>
         <p>El Multiverso Sonoro de Soda y Gustavo.</p>
         <button class="btn-opcion btn-inicio" id="btn-entrar" onclick="iniciarConteoRegresivo()">✨ INICIAR VIAJE</button>
     </div>
-
     <div id="pantalla-conteo">
         <div id="txt-conteo-numero">3</div>
         <div id="txt-conteo-texto">SINTONIZANDO UNIVERSO CERATI...</div>
     </div>
-
     <div id="ui-capa">
         <div class="stats-box">PUNTOS: <span id="txt-puntos">0</span></div>
         <div class="stats-box" id="txt-estado">TOCA UN DISCO PARA VERLO</div>
         <div class="stats-box">CONQUISTADOS: <span id="txt-discos-conquistados">0</span>/11</div>
     </div>
-
     <button id="btn-volver">⬅️ VOLVER AL MULTIVERSO</button>
     <button id="btn-trofeos">🏆 TROFEOS</button>
-
+    
     <div id="disco-seleccionado-banner">
         <div id="disco-seleccionado-titulo">DISCO</div>
         <div class="botones-grupo">
@@ -201,6 +131,14 @@
             <div id="batalla-naval-grid" style="display: grid; grid-template-columns: repeat(11, 26px); gap: 2px; justify-content: center; margin: 4px 0; background: #000; padding: 4px; border: 2px solid #00ffff; border-radius: 6px;"></div>
             <button class="btn-tetris" id="btn-reiniciar-naval" style="width:100%; margin-top:6px;">🔄 REINICIAR RADAR</button>
         </div>
+    </div>
+
+    <!-- Mini-juego Ondas Dynamo (Disco 6) -->
+    <div id="dynamo-game-modal" class="modal-juego" style="border-color: #00ffff;">
+        <div class="hud-juego" style="color:#00ffff;">🎛️ DYNAMO (1992) - SINTONÍA SÓNICA</div>
+        <div class="objetivo-juego">🎯 SINTONIZÁ LA ONDA: <span id="txt-dynamo-meta">...</span></div>
+        <canvas id="dynamo-canvas" class="canvas-juego" width="380" height="240" style="border-color: #00ffff;"></canvas>
+        <div style="color:#ff00ff; font-size:11px;">👆 ARRASTRÁ O TOCÁ PARA MOVER EL SINTONIZADOR DE FRECUENCIA</div>
     </div>
 
     <div id="trofeos-modal">
@@ -268,7 +206,15 @@
         let cancionesSoda84 = ["Sobredosis de tv", "Dietético", "Tele-Ka", "Trátame Suavemente", "Afrodisiacos", "Jet Set", "Un Misil en mi Placard", "El Tiempo es dinero", "Ni un segundo", "Vitaminas", "Mi novia tiene biceps"];
         let indiceMetaSoda84 = 0;
         let pacmanGameLoop = null;
-        const mapaLaberinto = [[1,1,1,1,1,1,1,1,1,1,1,1],[2,0,0,0,1,0,0,0,1,0,0,2],[1,0,1,0,1,0,1,0,1,0,1,1],[2,0,0,0,0,0,0,0,0,0,0,2],[1,0,1,1,1,0,1,1,1,0,1,1],[2,0,0,0,0,0,0,0,0,0,0,2],[1,1,1,1,1,1,1,1,1,1,1,1]];
+        const mapaLaberinto = [
+            [1,1,1,1,1,1,1,1,1,1,1,1],
+            [2,0,0,0,1,0,0,0,1,0,0,2],
+            [1,0,1,0,1,0,1,0,1,0,1,1],
+            [2,0,0,0,0,0,0,0,0,0,0,2],
+            [1,0,1,1,1,0,1,1,1,0,1,1],
+            [2,0,0,0,0,0,0,0,0,0,0,2],
+            [1,1,1,1,1,1,1,1,1,1,1,1]
+        ];
         const tileSize = 30, offsetX = 10, offsetY = 15;
         const cancionesTrampa = ["Persiana", "Zoom", "Signos", "Crimen", "Puente", "De Música", "Prófugos"];
 
@@ -280,7 +226,10 @@
         }
 
         function generarItemsSoda84() {
-            if (indiceMetaSoda84 >= cancionesSoda84.length) { finalizarDiscoActual(); return; }
+            if (indiceMetaSoda84 >= cancionesSoda84.length) {
+                finalizarDiscoActual();
+                return;
+            }
             document.getElementById('txt-cancion-meta').innerText = cancionesSoda84[indiceMetaSoda84];
             itemsCuadricula = [];
             let colocadas = 0, meta = cancionesSoda84[indiceMetaSoda84];
@@ -348,7 +297,8 @@
                 ctx.fillText(item.texto, px, py - 12);
             });
             let pacPx = offsetX + pacGridX * tileSize + tileSize / 2, pacPy = offsetY + pacGridY * tileSize + tileSize / 2;
-            ctx.fillStyle = '#ffcc00'; ctx.beginPath(); ctx.arc(pacPx, pacPy, 13, 0.2 * Math.PI, 1.8 * Math.PI);
+            ctx.fillStyle = '#ffcc00'; ctx.beginPath();
+            ctx.arc(pacPx, pacPy, 13, 0.2 * Math.PI, 1.8 * Math.PI);
             ctx.lineTo(pacPx, pacPy); ctx.fill();
         }
 
@@ -361,12 +311,16 @@
 
         function iniciarGalaxyNadaPersonal() {
             document.getElementById('galaxy-game-modal').style.display = 'block';
-            naveX = 190; indiceMetaNadaPersonal = 0; generarObjetoGalaxy();
+            naveX = 190; indiceMetaNadaPersonal = 0;
+            generarObjetoGalaxy();
             if (!galaxyGameLoop) galaxyGameLoop = setInterval(actualizarYRenderizarGalaxy, 1000 / 30);
         }
 
         function generarObjetoGalaxy() {
-            if (indiceMetaNadaPersonal >= cancionesNadaPersonal.length) { finalizarDiscoActual(); return; }
+            if (indiceMetaNadaPersonal >= cancionesNadaPersonal.length) {
+                finalizarDiscoActual();
+                return;
+            }
             document.getElementById('txt-galaxy-meta').innerText = cancionesNadaPersonal[indiceMetaNadaPersonal];
             objetosGalaxia = [];
             let correcto = cancionesNadaPersonal[indiceMetaNadaPersonal];
@@ -378,6 +332,11 @@
         const canvasGalaxy = document.getElementById('galaxy-canvas');
         canvasGalaxy.onmousemove = (e) => {
             naveX = e.clientX - canvasGalaxy.getBoundingClientRect().left;
+        };
+        canvasGalaxy.ontouchmove = (e) => {
+            if(e.touches.length > 0) {
+                naveX = e.touches[0].clientX - canvasGalaxy.getBoundingClientRect().left;
+            }
         };
 
         function actualizarYRenderizarGalaxy() {
@@ -400,7 +359,8 @@
                     }
                 }
                 if (obj.y > 260) {
-                    if (obj.correcta) generarObjetoGalaxy(); else objetosGalaxia.splice(index, 1);
+                    if (obj.correcta) generarObjetoGalaxy();
+                    else objetosGalaxia.splice(index, 1);
                 }
             });
             ctx.fillStyle = '#ffcc00'; ctx.beginPath();
@@ -449,16 +409,22 @@
                     if (val && piezaActual.r + r >= 0) { tetrisGrid[piezaActual.r + r][piezaActual.c + c] = 1; }
                 });
             });
-            chequearLineasTetris(); crearPiezaTetris();
+            chequearLineasTetris();
+            crearPiezaTetris();
         }
 
         function chequearLineasTetris() {
             for (let r = tetrisRows - 1; r >= 0; r--) {
                 if (tetrisGrid[r].every(cell => cell === 1)) {
-                    tetrisGrid.splice(r, 1); tetrisGrid.unshift(Array(tetrisCols).fill(0));
-                    tetrisLineasCount++; puntos += 50; document.getElementById('txt-puntos').innerText = puntos;
+                    tetrisGrid.splice(r, 1);
+                    tetrisGrid.unshift(Array(tetrisCols).fill(0));
+                    tetrisLineasCount++; puntos += 50;
+                    document.getElementById('txt-puntos').innerText = puntos;
                     document.getElementById('txt-tetris-lineas').innerText = tetrisLineasCount;
-                    r++; if (tetrisLineasCount >= 5) { finalizarDiscoActual(); }
+                    r++;
+                    if (tetrisLineasCount >= 5) {
+                        finalizarDiscoActual();
+                    }
                 }
             }
         }
@@ -481,7 +447,8 @@
             for (let r = 0; r < tetrisRows; r++) {
                 for (let c = 0; c < tetrisCols; c++) {
                     if (tetrisGrid[r][c]) {
-                        ctx.fillStyle = '#ff00ff'; ctx.fillRect(c * boxW + 1, r * boxH + 1, boxW - 2, boxH - 2);
+                        ctx.fillStyle = '#ff00ff';
+                        ctx.fillRect(c * boxW + 1, r * boxH + 1, boxW - 2, boxH - 2);
                     }
                 }
             }
@@ -495,8 +462,14 @@
             }
         }
 
-        document.getElementById('btn-tetris-izq').onclick = () => { if (piezaActual && !chequearColisionTetris(piezaActual.r, piezaActual.c - 1, piezaActual.shape)) piezaActual.c--; renderizarTetris(); };
-        document.getElementById('btn-tetris-der').onclick = () => { if (piezaActual && !chequearColisionTetris(piezaActual.r, piezaActual.c + 1, piezaActual.shape)) piezaActual.c++; renderizarTetris(); };
+        document.getElementById('btn-tetris-izq').onclick = () => {
+            if (piezaActual && !chequearColisionTetris(piezaActual.r, piezaActual.c - 1, piezaActual.shape)) piezaActual.c--;
+            renderizarTetris();
+        };
+        document.getElementById('btn-tetris-der').onclick = () => {
+            if (piezaActual && !chequearColisionTetris(piezaActual.r, piezaActual.c + 1, piezaActual.shape)) piezaActual.c++;
+            renderizarTetris();
+        };
         document.getElementById('btn-tetris-rot').onclick = () => {
             let rotada = piezaActual.shape[0].map((val, index) => piezaActual.shape.map(row => row[index]).reverse());
             if (!chequearColisionTetris(piezaActual.r, piezaActual.c, rotada)) piezaActual.shape = rotada;
@@ -523,7 +496,8 @@
             for (let r = 0; r < 12; r++) {
                 for (let c = 0; c < 11; c++) {
                     let input = document.createElement('input');
-                    input.type = 'text'; input.maxLength = 1; input.className = 'c-celda vacia';
+                    input.type = 'text'; input.maxLength = 1;
+                    input.className = 'c-celda vacia';
                     input.dataset.r = r; input.dataset.c = c;
                     container.appendChild(input);
                 }
@@ -537,12 +511,8 @@
                     if (celdaEl) {
                         celdaEl.classList.remove('vacia');
                         celdaEl.dataset.letra = item.palabra[i];
-                        
-                        // Vinculamos el evento de salto al segundo exacto de la canción al tocar/enfocar la celda
                         celdaEl.addEventListener('focus', () => {
-                            if (discoActual) {
-                                reproducirAudio(discoActual.trackId, item.segundos);
-                            }
+                            if (discoActual) { reproducirAudio(discoActual.trackId, item.segundos); }
                         });
                     }
                 }
@@ -574,9 +544,164 @@
             { nombre: "Cae el Sol", segundos: 2220, coordenadas: [{r:8, c:6, letra:'S'}, {r:8, c:7, letra:'O'}, {r:8, c:8, letra:'L'}] },
             { nombre: "1990", segundos: 814, coordenadas: [{r:0, c:10, letra:'1'}, {r:1, c:10, letra:'9'}, {r:2, c:10, letra:'9'}, {r:3, c:10, letra:'0'}] },
             { nombre: "Hombre al agua", segundos: 1473, coordenadas: [{r:5, c:10, letra:'H'}, {r:6, c:10, letra:'O'}, {r:7, c:10, letra:'M'}, {r:8, c:10, letra:'B'}, {r:9, c:10, letra:'R'}, {r:10, c:10, letra:'E'}] },
-            { nombre: "Caníbales", segundos: 1828, coordenadas: [{r:10, c:0, letra:'C'}, {r:10, c:1, letra:'A'}, {r:10, c:2, letra:'N'}, {r:10, c:3, letra:'Í'}, {r:10, c:4, letra:'B'}, {r:10, c:5, letra:'A'}, {r:10, c:6, letra:'L'}, {r:10, c:7, letra:'E'}, {r:10, c:8, letra:'S'}] },
+            { nombre: "Caníbales", segundos: 1828, coordenadas: [{r:10, c:0, letra:'C'}, {r:10, c:1, letra:'A'}, {r:10, c:2, letra:'N'}, {r:10, c:3, letra:'Í'}, {r:10, c:4, letra:'B'}, {r:10, c:5, letra:'A'}, {r:10, c:6, letra:'L'}, {r:10, c:7, letra:'E'}, {r:10, c:8, letra:'S'}] }
         ];
         let barcosHundidosSet = new Set();
+
+        function iniciarBatallaNavalCancionAnimal() {
+            document.getElementById('batalla-naval-modal').style.display = 'block';
+            barcosHundidosSet.clear();
+            document.getElementById('txt-barcos-hundidos-contador').innerText = "0";
+            document.getElementById('txt-barco-meta').innerText = "🎯 HUNDÍ LOS BARCOS PARA REVELAR LAS CANCIONES";
+            generarGrillaBatallaNaval();
+        }
+
+        function generarGrillaBatallaNaval() {
+            const grid = document.getElementById('batalla-naval-grid');
+            grid.innerHTML = '';
+            for (let r = 0; r < 11; r++) {
+                for (let c = 0; c < 11; c++) {
+                    const btn = document.createElement('button');
+                    btn.className = 'naval-btn'; btn.innerText = '🌊';
+                    btn.dataset.r = r; btn.dataset.c = c;
+                    let barcoPropietario = null, coordenadaItem = null;
+                    barcosCancionAnimal.forEach(barco => {
+                        let encontrada = barco.coordenadas.find(coord => coord.r === r && coord.c === c);
+                        if (encontrada) { barcoPropietario = barco; coordenadaItem = encontrada; }
+                    });
+                    btn.onclick = () => {
+                        if (barcoPropietario) {
+                            btn.innerText = coordenadaItem.letra; btn.className = 'naval-btn acierto';
+                            puntos += 20; document.getElementById('txt-puntos').innerText = puntos;
+                            reproducirAudio(discoActual.trackId, barcoPropietario.segundos);
+                            document.getElementById('txt-barco-meta').innerText = `🎵 ¡BARCO TOCADO: ${barcoPropietario.nombre}!`;
+                            let celdasBarco = document.querySelectorAll(`button[data-r]`);
+                            let barcoCompleto = true;
+                            barcoPropietario.coordenadas.forEach(coord => {
+                                let celdaPart = Array.from(celdasBarco).find(b => b.dataset.r == coord.r && b.dataset.c == coord.c);
+                                if (!celdaPart || celdaPart.innerText !== coord.letra) { barcoCompleto = false; }
+                            });
+                            if (barcoCompleto && !barcosHundidosSet.has(barcoPropietario.nombre)) {
+                                barcosHundidosSet.add(barcoPropietario.nombre);
+                                document.getElementById('txt-barcos-hundidos-contador').innerText = barcosHundidosSet.size;
+                                document.getElementById('txt-barco-meta').innerText = `💥 ¡BARCO HUNDIDO: ${barcoPropietario.nombre}!`;
+                                if (barcosHundidosSet.size >= barcosCancionAnimal.length) {
+                                    setTimeout(() => { finalizarDiscoActual(); }, 2000);
+                                }
+                            }
+                        } else {
+                            btn.innerText = '❌'; btn.className = 'naval-btn agua';
+                            puntos = Math.max(0, puntos - 5); document.getElementById('txt-puntos').innerText = puntos;
+                            document.getElementById('txt-barco-meta').innerText = "❌ ¡AGUA! Seguí buscando en el radar.";
+                        }
+                    };
+                    grid.appendChild(btn);
+                }
+            }
+        }
+
+        document.getElementById('btn-reiniciar-naval').onclick = () => { iniciarBatallaNavalCancionAnimal(); };
+
+        // --- DISCO 6 (Laberinto de Ondas - Dynamo 1992) ---
+        const dynamoCanciones = [
+            { nombre: "Secuencia Inicial", segundos: 0 },
+            { nombre: "Toma la ruta", segundos: 232 },
+            { nombre: "En remolinos", segundos: 450 },
+            { nombre: "Primavera 0", segundos: 700 },
+            { nombre: "Camaleón", segundos: 960 },
+            { nombre: "Luna Roja", segundos: 1180 },
+            { nombre: "Sweet Sahumerio", segundos: 1420 },
+            { nombre: "Ameba", segundos: 1650 },
+            { nombre: "Nuestra Fe", segundos: 1890 },
+            { nombre: "Claroscuro", segundos: 2120 },
+            { nombre: "Fue", segundos: 2380 },
+            { nombre: "Texturas", segundos: 2650 }
+        ];
+        let dynamoIndiceMeta = 0;
+        let dynamoCursorX = 190;
+        let dynamoOndaX = 100;
+        let dynamoOndaVelocidad = 2;
+        let dynamoGameLoop = null;
+
+        function iniciarDynamoOndas() {
+            document.getElementById('dynamo-game-modal').style.display = 'block';
+            dynamoIndiceMeta = 0;
+            dynamoCursorX = 190;
+            dynamoOndaVelocidad = 2;
+            siguienteMetaDynamo();
+            if (!dynamoGameLoop) dynamoGameLoop = setInterval(actualizarYRenderizarDynamo, 1000 / 30);
+        }
+
+        function siguienteMetaDynamo() {
+            if (dynamoIndiceMeta >= dynamoCanciones.length) {
+                finalizarDiscoActual();
+                return;
+            }
+            document.getElementById('txt-dynamo-meta').innerText = dynamoCanciones[dynamoIndiceMeta].nombre;
+            dynamoOndaX = Math.random() * 260 + 60;
+        }
+
+        const canvasDynamo = document.getElementById('dynamo-canvas');
+        canvasDynamo.onmousemove = (e) => {
+            dynamoCursorX = e.clientX - canvasDynamo.getBoundingClientRect().left;
+        };
+        canvasDynamo.ontouchmove = (e) => {
+            if (e.touches.length > 0) {
+                dynamoCursorX = e.touches[0].clientX - canvasDynamo.getBoundingClientRect().left;
+            }
+        };
+
+        function actualizarYRenderizarDynamo() {
+            if (estadoActual !== "JUEGO_DISCO" || !discoActual || !discoActual.esDynamo) return;
+            
+            // Movimiento oscilatorio de la onda
+            dynamoOndaX += dynamoOndaVelocidad;
+            if (dynamoOndaX > 340 || dynamoOndaX < 40) dynamoOndaVelocidad *= -1;
+
+            const ctx = canvasDynamo.getContext('2d');
+            ctx.clearRect(0, 0, canvasDynamo.width, canvasDynamo.height);
+
+            // Dibujar panel de frecuencias de fondo
+            ctx.strokeStyle = '#003333';
+            ctx.lineWidth = 1;
+            for(let i=0; i<canvasDynamo.width; i+=30) {
+                ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvasDynamo.height); ctx.stroke();
+            }
+
+            // Dibujar Onda Sónica Desplazándose
+            ctx.strokeStyle = '#00ffff';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            for (let x = 0; x < canvasDynamo.width; x++) {
+                let y = 120 + Math.sin((x + dynamoOndaX) * 0.05) * 40 + Math.cos((x) * 0.02) * 20;
+                if (x === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            // Dibujar Cursor de Sintonía (Jugador)
+            ctx.strokeStyle = '#ff00ff';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.moveTo(dynamoCursorX, 20);
+            ctx.lineTo(dynamoCursorX, 220);
+            ctx.stroke();
+
+            // Comprobar coincidencia al hacer click o tocar la pantalla
+            canvasDynamo.onclick = () => {
+                let cancionActualObj = dynamoCanciones[dynamoIndiceMeta];
+                if (Math.abs(dynamoCursorX - dynamoOndaX) < 35) {
+                    puntos += 35;
+                    document.getElementById('txt-puntos').innerText = puntos;
+                    reproducirAudio(discoActual.trackId, cancionActualObj.segundos);
+                    dynamoIndiceMeta++;
+                    siguienteMetaDynamo();
+                } else {
+                    puntos = Math.max(0, puntos - 5);
+                    document.getElementById('txt-puntos').innerText = puntos;
+                }
+            };
+        }
 
         const listaDiscos = [
             { id: "soda_84", nombre: "SODA STEREO (1984)", trackId: "W0KTTiuw96A", fondo: "https://i.ibb.co/sT3L0VW/soda-stereo.png", conquistado: false, esPacman: true },
@@ -584,7 +709,7 @@
             { id: "signos", nombre: "SIGNOS (1986)", trackId: "xiYMsOtPa5c", fondo: "https://i.ibb.co/LXQbmwRR/signos.png", conquistado: false, esTetris: true },
             { id: "doble_vida", nombre: "DOBLE VIDA (1988)", trackId: "3TB0vkRalrQ&list=RD3TB0vkRalrQ&start_radio=1", fondo: "https://i.ibb.co/cXZpRnKk/doble-vida.png", conquistado: false, esCrucigrama: true },
             { id: "cancion_animal", nombre: "CANCIÓN ANIMAL (1990)", trackId: "jzLVaylmbJU&list=RDjzLVaylmbJU&start_radio=1", fondo: "https://i.ibb.co/rRbsVPJc/cancion-animal.png", conquistado: false, esBatallaNaval: true },
-            { id: "dynamo", nombre: "DYNAMO (1992)", trackId: "a5oUU6tGKFM", fondo: "https://i.ibb.co/S1G0p32/dynamo.png", conquistado: false },
+            { id: "dynamo", nombre: "DYNAMO (1992)", trackId: "ofPx2dQmj_Y&list=RDofPx2dQmj_Y&start_radio=1", fondo: "https://i.ibb.co/S1G0p32/dynamo.png", conquistado: false, esDynamo: true },
             { id: "sueno_stereo", nombre: "SUEÑO STEREO (1995)", trackId: "IqBK2UjnUVA", fondo: "https://i.ibb.co/whCCS4r1/sue-o-stereo.png", conquistado: false },
             { id: "amor_amarillo", nombre: "AMOR AMARILLO (1993)", trackId: "ZOd-N9qGQK8", fondo: "https://i.ibb.co/KpPXvH5K/amor-amarillo.png", conquistado: false },
             { id: "bocanada", nombre: "BOCANADA (1999)", trackId: "90SS2mXzPcA", fondo: "https://i.ibb.co/Gf9jPzVy/bocanada.png", conquistado: false },
@@ -648,7 +773,7 @@
 
             const textureLoader = new THREE.TextureLoader();
             const discosDisponibles = listaDiscos.filter(d => !d.conquistado);
-            
+
             discosDisponibles.forEach((disco, index) => {
                 const grupoDisco = new THREE.Group();
                 const geometry = new THREE.PlaneGeometry(4.2, 4.2);
@@ -663,18 +788,14 @@
                 grupoDisco.add(mesh);
 
                 const canvasTexto = document.createElement('canvas');
-                canvasTexto.width = 512;
-                canvasTexto.height = 128;
+                canvasTexto.width = 512; canvasTexto.height = 128;
                 const ctx = canvasTexto.getContext('2d');
                 ctx.fillStyle = 'rgba(10, 5, 30, 0.9)';
                 ctx.fillRect(0, 0, 512, 128);
-                ctx.strokeStyle = '#00ffff';
-                ctx.lineWidth = 6;
+                ctx.strokeStyle = '#00ffff'; ctx.lineWidth = 6;
                 ctx.strokeRect(0, 0, 512, 128);
-                ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 26px sans-serif';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
+                ctx.fillStyle = '#ffffff'; ctx.font = 'bold 26px sans-serif';
+                ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
                 ctx.fillText(disco.nombre, 256, 64);
 
                 const textureTexto = new THREE.CanvasTexture(canvasTexto);
@@ -712,7 +833,10 @@
             document.getElementById('btn-trofeos').style.display = 'none';
         }
 
-        function cancelarFocoDisco() { cargarMultiversoDiscos(); }
+        function cancelarFocoDisco() {
+            cargarMultiversoDiscos();
+        }
+
         function confirmarEntradaDisco() {
             if (!discoEnFoco) return;
             document.getElementById('disco-seleccionado-banner').style.display = 'none';
@@ -724,7 +848,6 @@
             estadoActual = "JUEGO_DISCO";
             discoActual = disco;
             reproducirAudio(disco.trackId);
-
             if (disco.esPacman) {
                 iniciarPacmanSoda84();
             } else if (disco.esGalaxy) {
@@ -735,86 +858,13 @@
                 iniciarCrucigramaDobleVida();
             } else if (disco.esBatallaNaval) {
                 iniciarBatallaNavalCancionAnimal();
+            } else if (disco.esDynamo) {
+                iniciarDynamoOndas();
             } else {
                 alert(`¡Próximamente minijuego para ${disco.nombre}!`);
                 volverAlMultiverso();
             }
         }
-
-        function iniciarBatallaNavalCancionAnimal() {
-            document.getElementById('batalla-naval-modal').style.display = 'block';
-            barcosHundidosSet.clear();
-            document.getElementById('txt-barcos-hundidos-contador').innerText = "0";
-            document.getElementById('txt-barco-meta').innerText = "🎯 HUNDÍ LOS BARCOS PARA REVELAR LAS CANCIONES";
-            generarGrillaBatallaNaval();
-        }
-
-        function generarGrillaBatallaNaval() {
-            const grid = document.getElementById('batalla-naval-grid');
-            grid.innerHTML = '';
-            
-            for (let r = 0; r < 11; r++) {
-                for (let c = 0; c < 11; c++) {
-                    const btn = document.createElement('button');
-                    btn.className = 'naval-btn';
-                    btn.innerText = '🌊';
-                    btn.dataset.r = r;
-                    btn.dataset.c = c;
-
-                    let barcoPropietario = null;
-                    let coordenadaItem = null;
-                    barcosCancionAnimal.forEach(barco => {
-                        let encontrada = barco.coordenadas.find(coord => coord.r === r && coord.c === c);
-                        if (encontrada) {
-                            barcoPropietario = barco;
-                            coordenadaItem = encontrada;
-                        }
-                    });
-
-                    btn.onclick = () => {
-                        if (barcoPropietario) {
-                            btn.innerText = coordenadaItem.letra;
-                            btn.className = 'naval-btn acierto';
-                            puntos += 20;
-                            document.getElementById('txt-puntos').innerText = puntos;
-                            
-                            reproducirAudio(discoActual.trackId, barcoPropietario.segundos);
-                            document.getElementById('txt-barco-meta').innerText = `🎵 ¡BARCO TOCADO: ${barcoPropietario.nombre}!`;
-
-                            let celdasBarco = document.querySelectorAll(`button[data-r]`);
-                            let barcoCompleto = true;
-                            barcoPropietario.coordenadas.forEach(coord => {
-                                let celdaPart = Array.from(celdasBarco).find(b => b.dataset.r == coord.r && b.dataset.c == coord.c);
-                                if (!celdaPart || celdaPart.innerText !== coord.letra) {
-                                    barcoCompleto = false;
-                                }
-                            });
-
-                            if (barcoCompleto && !barcosHundidosSet.has(barcoPropietario.nombre)) {
-                                barcosHundidosSet.add(barcoPropietario.nombre);
-                                document.getElementById('txt-barcos-hundidos-contador').innerText = barcosHundidosSet.size;
-                                document.getElementById('txt-barco-meta').innerText = `💥 ¡BARCO HUNDIDO: ${barcoPropietario.nombre}!`;
-
-                                if (barcosHundidosSet.size >= barcosCancionAnimal.length) {
-                                    setTimeout(() => { finalizarDiscoActual(); }, 2000);
-                                }
-                            }
-                        } else {
-                            btn.innerText = '❌';
-                            btn.className = 'naval-btn agua';
-                            puntos = Math.max(0, puntos - 5);
-                            document.getElementById('txt-puntos').innerText = puntos;
-                            document.getElementById('txt-barco-meta').innerText = "❌ ¡AGUA! Seguí buscando en el radar.";
-                        }
-                    };
-                    grid.appendChild(btn);
-                }
-            }
-        }
-
-        document.getElementById('btn-reiniciar-naval').onclick = () => {
-            iniciarBatallaNavalCancionAnimal();
-        };
 
         function finalizarDiscoActual() {
             document.getElementById('pacman-game-modal').style.display = 'none';
@@ -822,6 +872,7 @@
             document.getElementById('tetris-game-modal').style.display = 'none';
             document.getElementById('crucigrama-game-modal').style.display = 'none';
             document.getElementById('batalla-naval-modal').style.display = 'none';
+            document.getElementById('dynamo-game-modal').style.display = 'none';
             if (!discoActual.conquistado) {
                 discoActual.conquistado = true;
                 discosConquistadosCount++;
@@ -837,6 +888,7 @@
             document.getElementById('tetris-game-modal').style.display = 'none';
             document.getElementById('crucigrama-game-modal').style.display = 'none';
             document.getElementById('batalla-naval-modal').style.display = 'none';
+            document.getElementById('dynamo-game-modal').style.display = 'none';
             document.getElementById('trofeos-modal').style.display = 'none';
             document.getElementById('disco-seleccionado-banner').style.display = 'none';
             cargarMultiversoDiscos();
@@ -855,7 +907,9 @@
             document.getElementById('trofeos-modal').style.display = 'block';
         }
 
-        function cerrarVentanaTrofeos() { document.getElementById('trofeos-modal').style.display = 'none'; }
+        function cerrarVentanaTrofeos() {
+            document.getElementById('trofeos-modal').style.display = 'none';
+        }
 
         function manejarSeleccionToque(clientX, clientY) {
             if (!juegoIniciado || estadoActual !== "MENU_PRINCIPAL") return;
@@ -874,7 +928,10 @@
             }
         }
 
-        window.addEventListener('click', (e) => { manejarSeleccionToque(e.clientX, e.clientY); });
+        window.addEventListener('click', (e) => {
+            manejarSeleccionToque(e.clientX, e.clientY);
+        });
+
         window.addEventListener('touchend', (e) => {
             if(e.changedTouches.length > 0) {
                 manejarSeleccionToque(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
