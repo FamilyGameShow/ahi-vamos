@@ -165,7 +165,7 @@
         <div style="color:#ffcc00; font-size:11px;">👆 ARRASTRÁ EL DEDO PARA GUIAR EL AUTO Y NO CHOCAR</div>
     </div>
 
-    <!-- Mini-juego Bocanada (Disco 9) - Arco y Flecha Dinámico -->
+    <!-- Mini-juego Bocanada (Disco 9) - Arco y Flecha con Animación -->
     <div id="bocanada-modal" class="modal-juego" style="border-color: #00ffff;">
         <div class="hud-juego" style="color:#00ffff;">💨 BOCANADA (1999) - ARCO Y FLECHA</div>
         <div class="objetivo-juego">🎯 APUNTÁ Y DISPARÁ AL TEMA: <span id="txt-bocanada-meta">...</span></div>
@@ -917,15 +917,17 @@
             ctx.fillRect(autoX - 8, 200, 16, 10);
         }
 
-        // --- DISCO 9 (Bocanada 1999) - Arco y Flecha Dinámico ---
+        // --- DISCO 9 (Bocanada 1999) - Arco y Flecha con Animación de Disparo ---
         let blancosBocanada = [];
         let indiceMetaBocanada = 0;
         let bocanadaGameLoop = null;
         let anguloArco = 0;
-        let velocidadArco = 0.08; // Velocidad de oscilación del arco
+        let velocidadArco = 0.08;
         const origenArcoX = 190;
-        const origenArcoY = 220; // Pivote fijo abajo en el medio
-        const largoFlecha = 85;  // Más cortito para que sea fácil errar
+        const origenArcoY = 220;
+        const largoFlecha = 85;
+        
+        let flechaDisparada = null; // Control de animación de la flecha en vuelo
 
         const cancionesBocanadaDetalle = [
             { nombre: "Tabú", seg: 0 },
@@ -948,6 +950,7 @@
         function iniciarBocanada99() {
             document.getElementById('bocanada-modal').style.display = 'block';
             indiceMetaBocanada = 0;
+            flechaDisparada = null;
             generarBlancosBocanada();
             if (!bocanadaGameLoop) bocanadaGameLoop = setInterval(actualizarYRenderizarBocanada, 1000 / 30);
         }
@@ -971,7 +974,7 @@
                 blancosBocanada.push({
                     x: posX,
                     y: 60,
-                    r: 20, // Blancos chicos
+                    r: 20,
                     texto: nombreTema,
                     correcta: esCorrecto
                 });
@@ -980,9 +983,19 @@
 
         const canvasBocanada = document.getElementById('bocanada-canvas');
         canvasBocanada.onclick = (e) => {
-            // Calcular la punta actual de la flecha disparada en base al ángulo
-            let puntaX = origenArcoX + Math.sin(anguloArco) * largoFlecha;
-            let puntaY = origenArcoY - Math.cos(anguloArco) * largoFlecha;
+            if (flechaDisparada) return; // Evitar spam de clics mientras vuela la flecha
+
+            // Tomar el ángulo exacto en el momento del clic y lanzar la flecha
+            let anguloDisparo = anguloArco;
+            let puntaX = origenArcoX + Math.sin(anguloDisparo) * largoFlecha;
+            let puntaY = origenArcoY - Math.cos(anguloDisparo) * largoFlecha;
+
+            flechaDisparada = {
+                x: puntaX,
+                y: puntaY,
+                vx: Math.sin(anguloDisparo) * 12,
+                vy: -Math.cos(anguloDisparo) * 12
+            };
 
             let impactoRegistrado = false;
             blancosBocanada.forEach((blanco) => {
@@ -992,14 +1005,18 @@
                     if (blanco.correcta) {
                         puntos += 40;
                         document.getElementById('txt-puntos').innerText = puntos;
-                        indiceMetaBocanada++;
-                        generarBlancosBocanada();
+                        setTimeout(() => {
+                            indiceMetaBocanada++;
+                            generarBlancosBocanada();
+                        }, 300);
                     } else {
                         puntos = Math.max(0, puntos - 15);
                         document.getElementById('txt-puntos').innerText = puntos;
                         alert("¡Le pegaste a una canción incorrecta! Penalización y pasamos a la siguiente.");
-                        indiceMetaBocanada++;
-                        generarBlancosBocanada();
+                        setTimeout(() => {
+                            indiceMetaBocanada++;
+                            generarBlancosBocanada();
+                        }, 300);
                     }
                 }
             });
@@ -1018,13 +1035,13 @@
             ctx.fillStyle = '#020b1a';
             ctx.fillRect(0, 0, canvasBocanada.width, canvasBocanada.height);
 
-            // Oscilación del arco de izquierda a derecha (limitado a un ángulo de arco)
+            // Oscilación del arco
             anguloArco += velocidadArco;
             if (anguloArco > 0.9 || anguloArco < -0.9) {
                 velocidadArco *= -1;
             }
 
-            // Dibujar los blancos arriba
+            // Dibujar blancos
             blancosBocanada.forEach((blanco) => {
                 ctx.fillStyle = blanco.correcta ? 'rgba(0, 255, 255, 0.25)' : 'rgba(255, 0, 255, 0.25)';
                 ctx.strokeStyle = blanco.correcta ? '#00ffff' : '#ff00ff';
@@ -1040,11 +1057,28 @@
                 ctx.fillText(blanco.texto, blanco.x, blanco.y + 3);
             });
 
-            // Coordenadas de la punta de la flecha / arco apuntando
+            // Dibujar flecha en vuelo si el jugador disparó
+            if (flechaDisparada) {
+                ctx.strokeStyle = '#ff0055';
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.moveTo(flechaDisparada.x - flechaDisparada.vx * 1.5, flechaDisparada.y - flechaDisparada.vy * 1.5);
+                ctx.lineTo(flechaDisparada.x, flechaDisparada.y);
+                ctx.stroke();
+
+                flechaDisparada.x += flechaDisparada.vx;
+                flechaDisparada.y += flechaDisparada.vy;
+
+                // Si la flecha sale de la pantalla superior, se reinicia
+                if (flechaDisparada.y < 0) {
+                    flechaDisparada = null;
+                }
+            }
+
+            // Dibujar arco y flecha principal cargada
             let puntaX = origenArcoX + Math.sin(anguloArco) * largoFlecha;
             let puntaY = origenArcoY - Math.cos(anguloArco) * largoFlecha;
 
-            // Dibujar la flecha / mira estilo arco
             ctx.strokeStyle = '#ffcc00';
             ctx.lineWidth = 3;
             ctx.beginPath();
@@ -1052,13 +1086,11 @@
             ctx.lineTo(puntaX, puntaY);
             ctx.stroke();
 
-            // Punta de la flecha
             ctx.fillStyle = '#ff0055';
             ctx.beginPath();
             ctx.arc(puntaX, puntaY, 5, 0, Math.PI * 2);
             ctx.fill();
 
-            // Pivote fijo abajo
             ctx.fillStyle = '#00ffff';
             ctx.beginPath();
             ctx.arc(origenArcoX, origenArcoY, 8, 0, Math.PI * 2);
