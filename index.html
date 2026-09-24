@@ -165,12 +165,12 @@
         <div style="color:#ffcc00; font-size:11px;">👆 ARRASTRÁ EL DEDO PARA GUIAR EL AUTO Y NO CHOCAR</div>
     </div>
 
-    <!-- Mini-juego Bocanada (Disco 9) - Tiro al Blanco con Mira Dinámica -->
+    <!-- Mini-juego Bocanada (Disco 9) - Tiro al Blanco con Mayor Dificultad -->
     <div id="bocanada-modal" class="modal-juego" style="border-color: #00ffff;">
-        <div class="hud-juego" style="color:#00ffff;">💨 BOCANADA (1999) - TIRO AL BLANCO CON MIRA</div>
+        <div class="hud-juego" style="color:#00ffff;">💨 BOCANADA (1999) - TIRO AL BLANCO (DIFÍCIL)</div>
         <div class="objetivo-juego">🎯 APUNTÁ Y DISPARÁ AL TEMA: <span id="txt-bocanada-meta">...</span></div>
         <canvas id="bocanada-canvas" class="canvas-juego" width="380" height="240" style="border-color: #00ffff;"></canvas>
-        <div style="color:#00ffff; font-size:11px;">👆 TOCÁ LA PANTALLA PARA DISPARAR CUANDO LA MIRA ESTÉ EN EL BLANCO</div>
+        <div style="color:#00ffff; font-size:11px;">👆 TOCÁ LA PANTALLA PARA DISPARAR CON PRECISIÓN</div>
     </div>
 
     <div id="trofeos-modal">
@@ -917,12 +917,12 @@
             ctx.fillRect(autoX - 8, 200, 16, 10);
         }
 
-        // --- DISCO 9 (Bocanada 1999) - Tiro al Blanco con Mira Dinámica ---
+        // --- DISCO 9 (Bocanada 1999) - Tiro al Blanco con Dificultad Aumentada ---
         let blancosBocanada = [];
         let indiceMetaBocanada = 0;
         let bocanadaGameLoop = null;
         let miraAnguloX = 190;
-        let miraDireccion = 3;
+        let miraDireccion = 5; // Aumentado de 3 a 5 para mayor velocidad
         const cancionesBocanadaDetalle = [
             { nombre: "Tabú", seg: 0 },
             { nombre: "Engaña", seg: 286 },
@@ -958,7 +958,7 @@
             reproducirAudio(discoActual.trackId, metaObj.seg);
 
             blancosBocanada = [];
-            let posicionesX = [90, 190, 290];
+            let posicionesX = [80, 190, 300];
             let correctoIndex = Math.floor(Math.random() * 3);
 
             posicionesX.forEach((posX, idx) => {
@@ -967,7 +967,8 @@
                 blancosBocanada.push({
                     x: posX,
                     y: 70,
-                    r: 28,
+                    baseY: 70,
+                    r: 22, // Reducido para achicar el blanco y exigir mayor precisión
                     texto: nombreTema,
                     correcta: esCorrecto
                 });
@@ -978,7 +979,10 @@
         canvasBocanada.onclick = (e) => {
             let impactoRegistrado = false;
             blancosBocanada.forEach((blanco) => {
-                if (Math.abs(miraAnguloX - blanco.x) < blanco.r) {
+                let distanciaX = Math.abs(miraAnguloX - blanco.x);
+                let distanciaY = Math.abs(110 - blanco.y);
+                
+                if (distanciaX < blanco.r && distanciaY < (blanco.r + 15)) {
                     impactoRegistrado = true;
                     if (blanco.correcta) {
                         puntos += 40;
@@ -1010,11 +1014,13 @@
             ctx.fillRect(0, 0, canvasBocanada.width, canvasBocanada.height);
 
             miraAnguloX += miraDireccion;
-            if (miraAnguloX < 30 || miraAnguloX > canvasBocanada.width - 30) {
+            if (miraAnguloX < 25 || miraAnguloX > canvasBocanada.width - 25) {
                 miraDireccion *= -1;
             }
 
-            blancosBocanada.forEach(blanco => {
+            blancosBocanada.forEach((blanco, index) => {
+                blanco.y = blanco.baseY + Math.sin(Date.now() * 0.005 + index) * 15;
+
                 ctx.fillStyle = blanco.correcta ? 'rgba(0, 255, 255, 0.25)' : 'rgba(255, 0, 255, 0.25)';
                 ctx.strokeStyle = blanco.correcta ? '#00ffff' : '#ff00ff';
                 ctx.lineWidth = 3;
@@ -1024,7 +1030,7 @@
                 ctx.stroke();
 
                 ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 10px sans-serif';
+                ctx.font = 'bold 9px sans-serif';
                 ctx.textAlign = 'center';
                 ctx.fillText(blanco.texto, blanco.x, blanco.y + 3);
             });
