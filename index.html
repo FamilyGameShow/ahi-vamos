@@ -165,12 +165,12 @@
         <div style="color:#ffcc00; font-size:11px;">👆 ARRASTRÁ EL DEDO PARA GUIAR EL AUTO Y NO CHOCAR</div>
     </div>
 
-    <!-- Mini-juego Bocanada (Disco 9) - Tiro al Blanco con Mayor Dificultad -->
+    <!-- Mini-juego Bocanada (Disco 9) - Arco y Flecha Dinámico -->
     <div id="bocanada-modal" class="modal-juego" style="border-color: #00ffff;">
-        <div class="hud-juego" style="color:#00ffff;">💨 BOCANADA (1999) - TIRO AL BLANCO (DIFÍCIL)</div>
+        <div class="hud-juego" style="color:#00ffff;">💨 BOCANADA (1999) - ARCO Y FLECHA</div>
         <div class="objetivo-juego">🎯 APUNTÁ Y DISPARÁ AL TEMA: <span id="txt-bocanada-meta">...</span></div>
         <canvas id="bocanada-canvas" class="canvas-juego" width="380" height="240" style="border-color: #00ffff;"></canvas>
-        <div style="color:#00ffff; font-size:11px;">👆 TOCÁ LA PANTALLA PARA DISPARAR CON PRECISIÓN</div>
+        <div style="color:#00ffff; font-size:11px;">👆 TOCÁ LA PANTALLA PARA DISPARAR LA FLECHA</div>
     </div>
 
     <div id="trofeos-modal">
@@ -917,12 +917,16 @@
             ctx.fillRect(autoX - 8, 200, 16, 10);
         }
 
-        // --- DISCO 9 (Bocanada 1999) - Tiro al Blanco con Dificultad Aumentada ---
+        // --- DISCO 9 (Bocanada 1999) - Arco y Flecha Dinámico ---
         let blancosBocanada = [];
         let indiceMetaBocanada = 0;
         let bocanadaGameLoop = null;
-        let miraAnguloX = 190;
-        let miraDireccion = 5; // Aumentado de 3 a 5 para mayor velocidad
+        let anguloArco = 0;
+        let velocidadArco = 0.08; // Velocidad de oscilación del arco
+        const origenArcoX = 190;
+        const origenArcoY = 220; // Pivote fijo abajo en el medio
+        const largoFlecha = 85;  // Más cortito para que sea fácil errar
+
         const cancionesBocanadaDetalle = [
             { nombre: "Tabú", seg: 0 },
             { nombre: "Engaña", seg: 286 },
@@ -966,9 +970,8 @@
                 let nombreTema = esCorrecto ? metaObj.nombre : cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)];
                 blancosBocanada.push({
                     x: posX,
-                    y: 70,
-                    baseY: 70,
-                    r: 22, // Reducido para achicar el blanco y exigir mayor precisión
+                    y: 60,
+                    r: 20, // Blancos chicos
                     texto: nombreTema,
                     correcta: esCorrecto
                 });
@@ -977,12 +980,14 @@
 
         const canvasBocanada = document.getElementById('bocanada-canvas');
         canvasBocanada.onclick = (e) => {
+            // Calcular la punta actual de la flecha disparada en base al ángulo
+            let puntaX = origenArcoX + Math.sin(anguloArco) * largoFlecha;
+            let puntaY = origenArcoY - Math.cos(anguloArco) * largoFlecha;
+
             let impactoRegistrado = false;
             blancosBocanada.forEach((blanco) => {
-                let distanciaX = Math.abs(miraAnguloX - blanco.x);
-                let distanciaY = Math.abs(110 - blanco.y);
-                
-                if (distanciaX < blanco.r && distanciaY < (blanco.r + 15)) {
+                let distancia = Math.hypot(puntaX - blanco.x, puntaY - blanco.y);
+                if (distancia < blanco.r) {
                     impactoRegistrado = true;
                     if (blanco.correcta) {
                         puntos += 40;
@@ -1013,14 +1018,14 @@
             ctx.fillStyle = '#020b1a';
             ctx.fillRect(0, 0, canvasBocanada.width, canvasBocanada.height);
 
-            miraAnguloX += miraDireccion;
-            if (miraAnguloX < 25 || miraAnguloX > canvasBocanada.width - 25) {
-                miraDireccion *= -1;
+            // Oscilación del arco de izquierda a derecha (limitado a un ángulo de arco)
+            anguloArco += velocidadArco;
+            if (anguloArco > 0.9 || anguloArco < -0.9) {
+                velocidadArco *= -1;
             }
 
-            blancosBocanada.forEach((blanco, index) => {
-                blanco.y = blanco.baseY + Math.sin(Date.now() * 0.005 + index) * 15;
-
+            // Dibujar los blancos arriba
+            blancosBocanada.forEach((blanco) => {
                 ctx.fillStyle = blanco.correcta ? 'rgba(0, 255, 255, 0.25)' : 'rgba(255, 0, 255, 0.25)';
                 ctx.strokeStyle = blanco.correcta ? '#00ffff' : '#ff00ff';
                 ctx.lineWidth = 3;
@@ -1035,16 +1040,28 @@
                 ctx.fillText(blanco.texto, blanco.x, blanco.y + 3);
             });
 
+            // Coordenadas de la punta de la flecha / arco apuntando
+            let puntaX = origenArcoX + Math.sin(anguloArco) * largoFlecha;
+            let puntaY = origenArcoY - Math.cos(anguloArco) * largoFlecha;
+
+            // Dibujar la flecha / mira estilo arco
             ctx.strokeStyle = '#ffcc00';
-            ctx.lineWidth = 2;
+            ctx.lineWidth = 3;
             ctx.beginPath();
-            ctx.moveTo(miraAnguloX, canvasBocanada.height);
-            ctx.lineTo(miraAnguloX, 110);
+            ctx.moveTo(origenArcoX, origenArcoY);
+            ctx.lineTo(puntaX, puntaY);
             ctx.stroke();
 
+            // Punta de la flecha
             ctx.fillStyle = '#ff0055';
             ctx.beginPath();
-            ctx.arc(miraAnguloX, 110, 6, 0, Math.PI * 2);
+            ctx.arc(puntaX, puntaY, 5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Pivote fijo abajo
+            ctx.fillStyle = '#00ffff';
+            ctx.beginPath();
+            ctx.arc(origenArcoX, origenArcoY, 8, 0, Math.PI * 2);
             ctx.fill();
         }
 
