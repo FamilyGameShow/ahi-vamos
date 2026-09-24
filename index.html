@@ -165,6 +165,14 @@
         <div style="color:#ffcc00; font-size:11px;">👆 ARRASTRÁ EL DEDO PARA GUIAR EL AUTO Y NO CHOCAR</div>
     </div>
 
+    <!-- Mini-juego Bocanada (Disco 9) - Tiro al Blanco Onírico -->
+    <div id="bocanada-modal" class="modal-juego" style="border-color: #00ffff;">
+        <div class="hud-juego" style="color:#00ffff;">💨 BOCANADA (1999) - TIRO AL BLANCO ONÍRICO</div>
+        <div class="objetivo-juego">🎯 DISPARÁ AL BLANCO DE: <span id="txt-bocanada-meta">...</span></div>
+        <canvas id="bocanada-canvas" class="canvas-juego" width="380" height="240" style="border-color: #00ffff;"></canvas>
+        <div style="color:#00ffff; font-size:11px;">👆 TOCÁ PARA DISPARAR EL DARDO AL BLANCO CORRECTO</div>
+    </div>
+
     <div id="trofeos-modal">
         <h2>ESTANTERÍA DE TROFEOS</h2>
         <p style="font-size:12px; color:#ff00ff; margin-bottom:5px;">Tus discos conquistados en el multiverso:</p>
@@ -841,7 +849,6 @@
                     tiempoRutaSegundos++;
                     document.getElementById('txt-amarillo-tiempo').innerText = tiempoRutaSegundos;
                     if (tiempoRutaSegundos >= 60) {
-                        // ¡Pasó el minuto sin chocar! Canción aprobada y suma puntos
                         puntos += 50;
                         document.getElementById('txt-puntos').innerText = puntos;
                         siguienteCancionRuta();
@@ -885,38 +892,132 @@
             if (estadoActual !== "JUEGO_DISCO" || !discoActual || !discoActual.esAmorAmarillo) return;
             const ctx = canvasAmarillo.getContext('2d');
             ctx.clearRect(0, 0, canvasAmarillo.width, canvasAmarillo.height);
-
-            // Fondo de la ruta (asfalto y banquina)
             ctx.fillStyle = '#222';
             ctx.fillRect(40, 0, 300, canvasAmarillo.height);
-            ctx.fillStyle = '#ffcc00'; // Líneas divisorias centrales
+            ctx.fillStyle = '#ffcc00';
             ctx.fillRect(188, (Date.now() * 0.5) % 40 - 20, 4, 20);
             ctx.fillRect(188, ((Date.now() * 0.5) % 40 + 40) % canvasAmarillo.height, 4, 20);
 
-            // Actualizar y dibujar obstáculos (autos en contra / rocas)
             obstaculosRuta.forEach(obs => {
                 obs.y += 3.5;
                 if (obs.y > canvasAmarillo.height) {
                     obs.y = -40;
                     obs.x = Math.random() * 260 + 60;
                 }
-
                 ctx.fillStyle = '#ff0055';
                 ctx.fillRect(obs.x, obs.y, obs.w, obs.h);
-
-                // Colisión con el auto del jugador (ubicado fijo en y=200)
                 if (Math.abs(autoX - (obs.x + obs.w/2)) < 20 && Math.abs(200 - obs.y) < 20) {
-                    // ¡Chocó antes del minuto! No suma puntos y pasa de largo a la siguiente canción
                     alert("¡Chocaste! Perdiste el minuto de esta canción, pasamos a la siguiente.");
                     siguienteCancionRuta();
                 }
             });
-
-            // Dibujar el auto del jugador
             ctx.fillStyle = '#ffcc00';
             ctx.fillRect(autoX - 12, 195, 24, 32);
-            ctx.fillStyle = '#00ffff'; // Parabrisas
+            ctx.fillStyle = '#00ffff';
             ctx.fillRect(autoX - 8, 200, 16, 10);
+        }
+
+        // --- DISCO 9 (Bocanada 1999) - Tiro al Blanco Onírico ---
+        let blancosBocanada = [];
+        let indiceMetaBocanada = 0;
+        let bocanadaGameLoop = null;
+        const cancionesBocanadaDetalle = [
+            { nombre: "Tabú", seg: 0 },
+            { nombre: "Engaña", seg: 240 },
+            { nombre: "Bocanada", seg: 480 },
+            { nombre: "Puente", seg: 720 },
+            { nombre: "Río Babel", seg: 960 },
+            { nombre: "Verbo Carne", seg: 1200 },
+            { nombre: "Témpano", seg: 1440 },
+            { nombre: "A Pasear", seg: 1680 },
+            { nombre: "Venus", seg: 1920 },
+            { nombre: "Raíz", seg: 2160 },
+            { nombre: "Y Si El Humo Está en Foco...", seg: 2400 },
+            { nombre: "Paseo Inmoral", seg: 2640 },
+            { nombre: " Aquí y Ahora", seg: 2880 }
+        ];
+
+        function iniciarBocanada99() {
+            document.getElementById('bocanada-modal').style.display = 'block';
+            indiceMetaBocanada = 0;
+            generarBlancosBocanada();
+            if (!bocanadaGameLoop) bocanadaGameLoop = setInterval(actualizarYRenderizarBocanada, 1000 / 30);
+        }
+
+        function generarBlancosBocanada() {
+            if (indiceMetaBocanada >= cancionesBocanadaDetalle.length) {
+                finalizarDiscoActual();
+                return;
+            }
+            let metaObj = cancionesBocanadaDetalle[indiceMetaBocanada];
+            document.getElementById('txt-bocanada-meta').innerText = metaObj.nombre;
+            reproducirAudio(discoActual.trackId, metaObj.seg);
+
+            blancosBocanada = [];
+            // Blanco correcto
+            blancosBocanada.push({ x: Math.random() * 260 + 60, y: Math.random() * 120 + 60, r: 25, texto: metaObj.nombre, correcta: true, velX: 1.2 });
+            // Blancos trampa
+            for(let i = 0; i < 2; i++) {
+                let trampa = cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)];
+                blancosBocanada.push({ x: Math.random() * 260 + 60, y: Math.random() * 120 + 60, r: 25, texto: trampa, correcta: false, velX: -1.0 });
+            }
+        }
+
+        const canvasBocanada = document.getElementById('bocanada-canvas');
+        canvasBocanada.onclick = (e) => {
+            const rect = canvasBocanada.getBoundingClientRect();
+            let clickX = e.clientX - rect.left;
+            let clickY = e.clientY - rect.top;
+
+            let impacto = false;
+            blancosBocanada.forEach((blanco, index) => {
+                let distancia = Math.hypot(clickX - blanco.x, clickY - blanco.y);
+                if (distancia < blanco.r) {
+                    impacto = true;
+                    if (blanco.correcta) {
+                        puntos += 40;
+                        document.getElementById('txt-puntos').innerText = puntos;
+                        indiceMetaBocanada++;
+                        generarBlancosBocanada();
+                    } else {
+                        // Si le emboca a una incorrecta, penaliza y pasa a la siguiente
+                        puntos = Math.max(0, puntos - 15);
+                        document.getElementById('txt-puntos').innerText = puntos;
+                        alert("¡Le erraste de canción! Era otra, pasamos a la siguiente.");
+                        indiceMetaBocanada++;
+                        generarBlancosBocanada();
+                    }
+                }
+            });
+            // Si el dardo cae al vacío (fuera de cualquier blanco), la música sigue sonando y podés volver a tirar libremente
+        };
+
+        function actualizarYRenderizarBocanada() {
+            if (estadoActual !== "JUEGO_DISCO" || !discoActual || !discoActual.esBocanada) return;
+            const ctx = canvasBocanada.getContext('2d');
+            ctx.clearRect(0, 0, canvasBocanada.width, canvasBocanada.height);
+            
+            // Fondo etéreo de anillos de humo
+            ctx.fillStyle = '#020b1a';
+            ctx.fillRect(0, 0, canvasBocanada.width, canvasBocanada.height);
+
+            blancosBocanada.forEach(blanco => {
+                blanco.x += blanco.velX;
+                if (blanco.x < 40 || blanco.x > canvasBocanada.width - 40) blanco.velX *= -1;
+
+                ctx.fillStyle = blanco.correcta ? 'rgba(0, 255, 255, 0.2)' : 'rgba(255, 0, 255, 0.2)';
+                ctx.strokeStyle = blanco.correcta ? '#00ffff' : '#ff00ff';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(blanco.x, blanco.y, blanco.r, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 10px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(blanco.texto, blanco.x, blanco.y + 3);
+            });
         }
 
         const listaDiscos = [
@@ -928,7 +1029,7 @@
             { id: "dynamo", nombre: "DYNAMO (1992)", trackId: "a5oUU6tGKFM", fondo: "https://i.ibb.co/S1G0p32/dynamo.png", conquistado: false, esDynamo: true },
             { id: "sueno_stereo", nombre: "SUEÑO STEREO (1995)", trackId: "beqnuWH3pvo&list=RDbeqnuWH3pvo&start_radio=1", fondo: "https://i.ibb.co/whCCS4r1/sue-o-stereo.png", conquistado: false, esSuenoStereo: true },
             { id: "amor_amarillo", nombre: "AMOR AMARILLO (1993)", trackId: "WlracwwxpPM&list=RDWlracwwxpPM&start_radio=1", fondo: "https://i.ibb.co/KpPXvH5K/amor-amarillo.png", conquistado: false, esAmorAmarillo: true },
-            { id: "bocanada", nombre: "BOCANADA (1999)", trackId: "90SS2mXzPcA", fondo: "https://i.ibb.co/Gf9jPzVy/bocanada.png", conquistado: false },
+            { id: "bocanada", nombre: "BOCANADA (1999)", trackId: "90SS2mXzPcA", fondo: "https://i.ibb.co/Gf9jPzVy/bocanada.png", conquistado: false, esBocanada: true },
             { id: "siempre_es_hoy", nombre: "Siempre es hoy (2002)", trackId: "TEuFM0bhWtQ&list=PLWVo2tank-zzp8ii3HWMsOM4fCHQhkdvJ", fondo: "https://i.ibb.co/SDxsX5vw/siempre-es-hoy.png", conquistado: false },
             { id: "ahi_vamos", nombre: "AHÍ VAMOS (2006)", trackId: "qfcwCrh4s7I", fondo: "https://i.ibb.co/prZnh9w4/ahi-vamos.png", conquistado: false },
             { id: "fuerza_natural", nombre: "FUERZA NATURAL (2009)", trackId: "Z7ndVxqUb48", fondo: "https://i.ibb.co/V0yVhy8Y/fuerza-natural.png", conquistado: false }
@@ -1081,6 +1182,8 @@
                 iniciarSuenoStereo95();
             } else if (disco.esAmorAmarillo) {
                 iniciarAmorAmarillo93();
+            } else if (disco.esBocanada) {
+                iniciarBocanada99();
             } else {
                 alert(`¡Próximamente minijuego para ${disco.nombre}!`);
                 volverAlMultiverso();
@@ -1096,6 +1199,7 @@
             document.getElementById('dynamo-game-modal').style.display = 'none';
             document.getElementById('sueno-stereo-modal').style.display = 'none';
             document.getElementById('amor-amarillo-modal').style.display = 'none';
+            document.getElementById('bocanada-modal').style.display = 'none';
             if (!discoActual.conquistado) {
                 discoActual.conquistado = true;
                 discosConquistadosCount++;
@@ -1114,6 +1218,7 @@
             document.getElementById('dynamo-game-modal').style.display = 'none';
             document.getElementById('sueno-stereo-modal').style.display = 'none';
             document.getElementById('amor-amarillo-modal').style.display = 'none';
+            document.getElementById('bocanada-modal').style.display = 'none';
             document.getElementById('trofeos-modal').style.display = 'none';
             document.getElementById('disco-seleccionado-banner').style.display = 'none';
             cargarMultiversoDiscos();
