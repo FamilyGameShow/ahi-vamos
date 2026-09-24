@@ -165,12 +165,12 @@
         <div style="color:#ffcc00; font-size:11px;">👆 ARRASTRÁ EL DEDO PARA GUIAR EL AUTO Y NO CHOCAR</div>
     </div>
 
-    <!-- Mini-juego Bocanada (Disco 9) - Tiro al Blanco Onírico -->
+    <!-- Mini-juego Bocanada (Disco 9) - Tiro al Blanco con Mira Dinámica -->
     <div id="bocanada-modal" class="modal-juego" style="border-color: #00ffff;">
-        <div class="hud-juego" style="color:#00ffff;">💨 BOCANADA (1999) - TIRO AL BLANCO ONÍRICO</div>
-        <div class="objetivo-juego">🎯 DISPARÁ AL BLANCO DE: <span id="txt-bocanada-meta">...</span></div>
+        <div class="hud-juego" style="color:#00ffff;">💨 BOCANADA (1999) - TIRO AL BLANCO CON MIRA</div>
+        <div class="objetivo-juego">🎯 APUNTÁ Y DISPARÁ AL TEMA: <span id="txt-bocanada-meta">...</span></div>
         <canvas id="bocanada-canvas" class="canvas-juego" width="380" height="240" style="border-color: #00ffff;"></canvas>
-        <div style="color:#00ffff; font-size:11px;">👆 TOCÁ PARA DISPARAR EL DARDO AL BLANCO CORRECTO</div>
+        <div style="color:#00ffff; font-size:11px;">👆 TOCÁ LA PANTALLA PARA DISPARAR CUANDO LA MIRA ESTÉ EN EL BLANCO</div>
     </div>
 
     <div id="trofeos-modal">
@@ -833,7 +833,7 @@
             { nombre: "Rombos", seg: 1955 },
             { nombre: "Ahora es nunca", seg: 2218 },
             { nombre: "A merced", seg: 2499 },
-            { nombre: "Torteval", seg: 2888 },
+            { nombre: "Torteval", seg: 2888 }
         ];
 
         function iniciarAmorAmarillo93() {
@@ -917,10 +917,12 @@
             ctx.fillRect(autoX - 8, 200, 16, 10);
         }
 
-        // --- DISCO 9 (Bocanada 1999) - Tiro al Blanco Onírico ---
+        // --- DISCO 9 (Bocanada 1999) - Tiro al Blanco con Mira Dinámica ---
         let blancosBocanada = [];
         let indiceMetaBocanada = 0;
         let bocanadaGameLoop = null;
+        let miraAnguloX = 190;
+        let miraDireccion = 3;
         const cancionesBocanadaDetalle = [
             { nombre: "Tabú", seg: 0 },
             { nombre: "Engaña", seg: 240 },
@@ -934,7 +936,7 @@
             { nombre: "Raíz", seg: 2160 },
             { nombre: "Y Si El Humo Está en Foco...", seg: 2400 },
             { nombre: "Paseo Inmoral", seg: 2640 },
-            { nombre: " Aquí y Ahora", seg: 2880 }
+            { nombre: "Aquí y Ahora", seg: 2880 }
         ];
 
         function iniciarBocanada99() {
@@ -954,42 +956,47 @@
             reproducirAudio(discoActual.trackId, metaObj.seg);
 
             blancosBocanada = [];
-            // Blanco correcto
-            blancosBocanada.push({ x: Math.random() * 260 + 60, y: Math.random() * 120 + 60, r: 25, texto: metaObj.nombre, correcta: true, velX: 1.2 });
-            // Blancos trampa
-            for(let i = 0; i < 2; i++) {
-                let trampa = cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)];
-                blancosBocanada.push({ x: Math.random() * 260 + 60, y: Math.random() * 120 + 60, r: 25, texto: trampa, correcta: false, velX: -1.0 });
-            }
+            let posicionesX = [90, 190, 290];
+            let correctoIndex = Math.floor(Math.random() * 3);
+
+            posicionesX.forEach((posX, idx) => {
+                let esCorrecto = (idx === correctoIndex);
+                let nombreTema = esCorrecto ? metaObj.nombre : cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)];
+                blancosBocanada.push({
+                    x: posX,
+                    y: 70,
+                    r: 28,
+                    texto: nombreTema,
+                    correcta: esCorrecto
+                });
+            });
         }
 
         const canvasBocanada = document.getElementById('bocanada-canvas');
         canvasBocanada.onclick = (e) => {
-            const rect = canvasBocanada.getBoundingClientRect();
-            let clickX = e.clientX - rect.left;
-            let clickY = e.clientY - rect.top;
-
-            let impacto = false;
-            blancosBocanada.forEach((blanco, index) => {
-                let distancia = Math.hypot(clickX - blanco.x, clickY - blanco.y);
-                if (distancia < blanco.r) {
-                    impacto = true;
+            let impactoRegistrado = false;
+            blancosBocanada.forEach((blanco) => {
+                if (Math.abs(miraAnguloX - blanco.x) < blanco.r) {
+                    impactoRegistrado = true;
                     if (blanco.correcta) {
                         puntos += 40;
                         document.getElementById('txt-puntos').innerText = puntos;
                         indiceMetaBocanada++;
                         generarBlancosBocanada();
                     } else {
-                        // Si le emboca a una incorrecta, penaliza y pasa a la siguiente
                         puntos = Math.max(0, puntos - 15);
                         document.getElementById('txt-puntos').innerText = puntos;
-                        alert("¡Le erraste de canción! Era otra, pasamos a la siguiente.");
+                        alert("¡Le pegaste a una canción incorrecta! Penalización y pasamos a la siguiente.");
                         indiceMetaBocanada++;
                         generarBlancosBocanada();
                     }
                 }
             });
-            // Si el dardo cae al vacío (fuera de cualquier blanco), la música sigue sonando y podés volver a tirar libremente
+
+            if (!impactoRegistrado) {
+                puntos = Math.max(0, puntos - 5);
+                document.getElementById('txt-puntos').innerText = puntos;
+            }
         };
 
         function actualizarYRenderizarBocanada() {
@@ -997,15 +1004,16 @@
             const ctx = canvasBocanada.getContext('2d');
             ctx.clearRect(0, 0, canvasBocanada.width, canvasBocanada.height);
             
-            // Fondo etéreo de anillos de humo
             ctx.fillStyle = '#020b1a';
             ctx.fillRect(0, 0, canvasBocanada.width, canvasBocanada.height);
 
-            blancosBocanada.forEach(blanco => {
-                blanco.x += blanco.velX;
-                if (blanco.x < 40 || blanco.x > canvasBocanada.width - 40) blanco.velX *= -1;
+            miraAnguloX += miraDireccion;
+            if (miraAnguloX < 30 || miraAnguloX > canvasBocanada.width - 30) {
+                miraDireccion *= -1;
+            }
 
-                ctx.fillStyle = blanco.correcta ? 'rgba(0, 255, 255, 0.2)' : 'rgba(255, 0, 255, 0.2)';
+            blancosBocanada.forEach(blanco => {
+                ctx.fillStyle = blanco.correcta ? 'rgba(0, 255, 255, 0.25)' : 'rgba(255, 0, 255, 0.25)';
                 ctx.strokeStyle = blanco.correcta ? '#00ffff' : '#ff00ff';
                 ctx.lineWidth = 3;
                 ctx.beginPath();
@@ -1018,6 +1026,18 @@
                 ctx.textAlign = 'center';
                 ctx.fillText(blanco.texto, blanco.x, blanco.y + 3);
             });
+
+            ctx.strokeStyle = '#ffcc00';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(miraAnguloX, canvasBocanada.height);
+            ctx.lineTo(miraAnguloX, 110);
+            ctx.stroke();
+
+            ctx.fillStyle = '#ff0055';
+            ctx.beginPath();
+            ctx.arc(miraAnguloX, 110, 6, 0, Math.PI * 2);
+            ctx.fill();
         }
 
         const listaDiscos = [
