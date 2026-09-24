@@ -165,7 +165,7 @@
         <div style="color:#ffcc00; font-size:11px;">👆 ARRASTRÁ EL DEDO PARA GUIAR EL AUTO Y NO CHOCAR</div>
     </div>
 
-    <!-- Mini-juego Bocanada (Disco 9) - Arco y Flecha con Animación -->
+    <!-- Mini-juego Bocanada (Disco 9) - Arco y Flecha con Impacto Real -->
     <div id="bocanada-modal" class="modal-juego" style="border-color: #00ffff;">
         <div class="hud-juego" style="color:#00ffff;">💨 BOCANADA (1999) - ARCO Y FLECHA</div>
         <div class="objetivo-juego">🎯 APUNTÁ Y DISPARÁ AL TEMA: <span id="txt-bocanada-meta">...</span></div>
@@ -917,7 +917,7 @@
             ctx.fillRect(autoX - 8, 200, 16, 10);
         }
 
-        // --- DISCO 9 (Bocanada 1999) - Arco y Flecha con Animación de Disparo ---
+        // --- DISCO 9 (Bocanada 1999) - Arco y Flecha con Impacto Real ---
         let blancosBocanada = [];
         let indiceMetaBocanada = 0;
         let bocanadaGameLoop = null;
@@ -926,8 +926,7 @@
         const origenArcoX = 190;
         const origenArcoY = 220;
         const largoFlecha = 85;
-        
-        let flechaDisparada = null; // Control de animación de la flecha en vuelo
+        let flechaDisparada = null; // Guarda la flecha en vuelo y dónde impactó
 
         const cancionesBocanadaDetalle = [
             { nombre: "Tabú", seg: 0 },
@@ -983,48 +982,30 @@
 
         const canvasBocanada = document.getElementById('bocanada-canvas');
         canvasBocanada.onclick = (e) => {
-            if (flechaDisparada) return; // Evitar spam de clics mientras vuela la flecha
+            if (flechaDisparada) return; // Evitar spam mientras vuela
 
-            // Tomar el ángulo exacto en el momento del clic y lanzar la flecha
             let anguloDisparo = anguloArco;
-            let puntaX = origenArcoX + Math.sin(anguloDisparo) * largoFlecha;
-            let puntaY = origenArcoY - Math.cos(anguloDisparo) * largoFlecha;
+            let destinoX = origenArcoX + Math.sin(anguloDisparo) * largoFlecha;
+            let destinoY = origenArcoY - Math.cos(anguloDisparo) * largoFlecha;
 
-            flechaDisparada = {
-                x: puntaX,
-                y: puntaY,
-                vx: Math.sin(anguloDisparo) * 12,
-                vy: -Math.cos(anguloDisparo) * 12
-            };
-
-            let impactoRegistrado = false;
+            // Verificar impacto exacto contra los blancos antes de disparar
+            let blancoImpactado = null;
             blancosBocanada.forEach((blanco) => {
-                let distancia = Math.hypot(puntaX - blanco.x, puntaY - blanco.y);
+                let distancia = Math.hypot(destinoX - blanco.x, destinoY - blanco.y);
                 if (distancia < blanco.r) {
-                    impactoRegistrado = true;
-                    if (blanco.correcta) {
-                        puntos += 40;
-                        document.getElementById('txt-puntos').innerText = puntos;
-                        setTimeout(() => {
-                            indiceMetaBocanada++;
-                            generarBlancosBocanada();
-                        }, 300);
-                    } else {
-                        puntos = Math.max(0, puntos - 15);
-                        document.getElementById('txt-puntos').innerText = puntos;
-                        alert("¡Le pegaste a una canción incorrecta! Penalización y pasamos a la siguiente.");
-                        setTimeout(() => {
-                            indiceMetaBocanada++;
-                            generarBlancosBocanada();
-                        }, 300);
-                    }
+                    blancoImpactado = blanco;
                 }
             });
 
-            if (!impactoRegistrado) {
-                puntos = Math.max(0, puntos - 5);
-                document.getElementById('txt-puntos').innerText = puntos;
-            }
+            // Iniciar animación de vuelo hacia el blanco o tope superior
+            flechaDisparada = {
+                x: origenArcoX,
+                y: origenArcoY,
+                metaX: blancoImpactado ? blancoImpactado.x : destinoX,
+                metaY: blancoImpactado ? blancoImpactado.y : destinoY,
+                progreso: 0,
+                acerto: blancoImpactado ? blancoImpactado.correcta : null
+            };
         };
 
         function actualizarYRenderizarBocanada() {
@@ -1035,10 +1016,12 @@
             ctx.fillStyle = '#020b1a';
             ctx.fillRect(0, 0, canvasBocanada.width, canvasBocanada.height);
 
-            // Oscilación del arco
-            anguloArco += velocidadArco;
-            if (anguloArco > 0.9 || anguloArco < -0.9) {
-                velocidadArco *= -1;
+            // Oscilación del arco solo si no se disparó
+            if (!flechaDisparada) {
+                anguloArco += velocidadArco;
+                if (anguloArco > 0.9 || anguloArco < -0.9) {
+                    velocidadArco *= -1;
+                }
             }
 
             // Dibujar blancos
@@ -1057,39 +1040,71 @@
                 ctx.fillText(blanco.texto, blanco.x, blanco.y + 3);
             });
 
-            // Dibujar flecha en vuelo si el jugador disparó
+            // Animación de la flecha en vuelo y clavada
             if (flechaDisparada) {
+                flechaDisparada.progreso += 0.2; // Velocidad de la flecha
+                let actualX = origenArcoX + (flechaDisparada.metaX - origenArcoX) * Math.min(flechaDisparada.progreso, 1);
+                let actualY = origenArcoY + (flechaDisparada.metaY - origenArcoY) * Math.min(flechaDisparada.progreso, 1);
+
                 ctx.strokeStyle = '#ff0055';
                 ctx.lineWidth = 4;
                 ctx.beginPath();
-                ctx.moveTo(flechaDisparada.x - flechaDisparada.vx * 1.5, flechaDisparada.y - flechaDisparada.vy * 1.5);
-                ctx.lineTo(flechaDisparada.x, flechaDisparada.y);
+                ctx.moveTo(origenArcoX, origenArcoY);
+                ctx.lineTo(actualX, actualY);
                 ctx.stroke();
 
-                flechaDisparada.x += flechaDisparada.vx;
-                flechaDisparada.y += flechaDisparada.vy;
+                // Al llegar al objetivo (progreso >= 1) evaluamos el resultado
+                if (flechaDisparada.progreso >= 1 && !flechaDisparada.procesado) {
+                    flechaDisparada.procesado = true;
+                    let acertoBlanco = flechaDisparada.acerto !== null;
 
-                // Si la flecha sale de la pantalla superior, se reinicia
-                if (flechaDisparada.y < 0) {
-                    flechaDisparada = null;
+                    if (acertoBlanco) {
+                        if (flechaDisparada.acerto) {
+                            puntos += 40;
+                            document.getElementById('txt-puntos').innerText = puntos;
+                            setTimeout(() => {
+                                flechaDisparada = null;
+                                indiceMetaBocanada++;
+                                generarBlancosBocanada();
+                            }, 400);
+                        } else {
+                            puntos = Math.max(0, puntos - 15);
+                            document.getElementById('txt-puntos').innerText = puntos;
+                            alert("¡Le pegaste a una canción incorrecta! Penalización y pasamos a la siguiente.");
+                            setTimeout(() => {
+                                flechaDisparada = null;
+                                indiceMetaBocanada++;
+                                generarBlancosBocanada();
+                            }, 400);
+                        }
+                    } else {
+                        // Erró por completo al aire
+                        puntos = Math.max(0, puntos - 5);
+                        document.getElementById('txt-puntos').innerText = puntos;
+                        setTimeout(() => {
+                            flechaDisparada = null;
+                        }, 200);
+                    }
                 }
             }
 
-            // Dibujar arco y flecha principal cargada
+            // Dibujar arco base abajo si no está en vuelo completo
             let puntaX = origenArcoX + Math.sin(anguloArco) * largoFlecha;
             let puntaY = origenArcoY - Math.cos(anguloArco) * largoFlecha;
 
-            ctx.strokeStyle = '#ffcc00';
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            ctx.moveTo(origenArcoX, origenArcoY);
-            ctx.lineTo(puntaX, puntaY);
-            ctx.stroke();
+            if (!flechaDisparada) {
+                ctx.strokeStyle = '#ffcc00';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(origenArcoX, origenArcoY);
+                ctx.lineTo(puntaX, puntaY);
+                ctx.stroke();
 
-            ctx.fillStyle = '#ff0055';
-            ctx.beginPath();
-            ctx.arc(puntaX, puntaY, 5, 0, Math.PI * 2);
-            ctx.fill();
+                ctx.fillStyle = '#ff0055';
+                ctx.beginPath();
+                ctx.arc(puntaX, puntaY, 5, 0, Math.PI * 2);
+                ctx.fill();
+            }
 
             ctx.fillStyle = '#00ffff';
             ctx.beginPath();
