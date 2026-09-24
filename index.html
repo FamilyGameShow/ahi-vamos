@@ -157,12 +157,12 @@
         <div style="color:#00ffff; font-size:11px;">👆 TOCÁ LAS BURBUJAS FLOTANTES CORRECTAS</div>
     </div>
 
-    <!-- Mini-juego Amor Amarillo (Disco 8) -->
+    <!-- Mini-juego Amor Amarillo (Disco 8) - Conducción en Ruta -->
     <div id="amor-amarillo-modal" class="modal-juego" style="border-color: #ffcc00;">
-        <div class="hud-juego" style="color:#ffcc00;">💛 AMOR AMARILLO (1993) - ORBES SOLARES</div>
-        <div class="objetivo-juego">🎯 ATRAPÁ EL ORBE DE: <span id="txt-amarillo-meta">...</span></div>
+        <div class="hud-juego" style="color:#ffcc00;">💛 AMOR AMARILLO (1993) - VIAJE EN RUTA</div>
+        <div class="objetivo-juego">⏱️ TIEMPO EN RUTA: <span id="txt-amarillo-tiempo">0</span>s / 60s (TEMA: <span id="txt-amarillo-cancion">...</span>)</div>
         <canvas id="amarillo-canvas" class="canvas-juego" width="380" height="240" style="border-color: #ffcc00;"></canvas>
-        <div style="color:#ffcc00; font-size:11px;">👆 TOCÁ LOS ORBES CELESTES Y AMARILLOS CORRECTOS</div>
+        <div style="color:#ffcc00; font-size:11px;">👆 ARRASTRÁ EL DEDO PARA GUIAR EL AUTO Y NO CHOCAR</div>
     </div>
 
     <div id="trofeos-modal">
@@ -807,8 +807,13 @@
             });
         }
 
-        // --- DISCO 8 (Amor Amarillo 1993) ---
-        let orbesAmarillos = [];
+        // --- DISCO 8 (Amor Amarillo 1993) - Conducción en Ruta ---
+        let autoX = 190;
+        let obstaculosRuta = [];
+        let tiempoRutaSegundos = 0;
+        let indiceCancionAmarillo = 0;
+        let amarilloGameLoop = null;
+        let contadorRutaTimer = null;
         const cancionesAmorAmarilloDetalle = [
             { nombre: "Amor amarillo", seg: 0 },
             { nombre: "Bombón", seg: 180 },
@@ -818,78 +823,96 @@
             { nombre: "Avenida Alcorta", seg: 900 },
             { nombre: "Cactus", seg: 1080 }
         ];
-        let indiceMetaAmarillo = 0;
-        let amarilloGameLoop = null;
 
         function iniciarAmorAmarillo93() {
             document.getElementById('amor-amarillo-modal').style.display = 'block';
-            indiceMetaAmarillo = 0;
-            generarOrbesAmorAmarillo();
-            if (!amarilloGameLoop) amarilloGameLoop = setInterval(actualizarYRenderizarAmarillo, 1000 / 30);
+            autoX = 190;
+            tiempoRutaSegundos = 0;
+            indiceCancionAmarillo = 0;
+            obstaculosRuta = [];
+            cargarSiguienteTemaRuta();
+            if (!amarilloGameLoop) amarilloGameLoop = setInterval(actualizarYRenderizarRuta, 1000 / 30);
+            if (!contadorRutaTimer) contadorRutaTimer = setInterval(() => {
+                if (estadoActual === "JUEGO_DISCO" && discoActual && discoActual.esAmorAmarillo) {
+                    tiempoRutaSegundos++;
+                    document.getElementById('txt-amarillo-tiempo').innerText = tiempoRutaSegundos;
+                    if (tiempoRutaSegundos >= 60) {
+                        // ¡Pasó el minuto sin chocar! Canción aprobada y suma puntos
+                        puntos += 50;
+                        document.getElementById('txt-puntos').innerText = puntos;
+                        siguienteCancionRuta();
+                    }
+                }
+            }, 1000);
         }
 
-        function generarOrbesAmorAmarillo() {
-            if (indiceMetaAmarillo >= cancionesAmorAmarilloDetalle.length) {
+        function cargarSiguienteTemaRuta() {
+            if (indiceCancionAmarillo >= cancionesAmorAmarilloDetalle.length) {
                 finalizarDiscoActual();
                 return;
             }
-            let temaActualObj = cancionesAmorAmarilloDetalle[indiceMetaAmarillo];
-            document.getElementById('txt-amarillo-meta').innerText = temaActualObj.nombre;
-            orbesAmarillos = [];
-            orbesAmarillos.push({ x: Math.random() * 300 + 40, y: 260, texto: temaActualObj.nombre, segundos: temaActualObj.seg, correcta: true, velY: 1.4 });
-            for(let i = 0; i < 2; i++) {
-                let trampa = cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)];
-                orbesAmarillos.push({ x: Math.random() * 300 + 40, y: 260, texto: trampa, segundos: 0, correcta: false, velY: 1.1 });
-            }
+            let temaObj = cancionesAmorAmarilloDetalle[indiceCancionAmarillo];
+            document.getElementById('txt-amarillo-cancion').innerText = temaObj.nombre;
+            reproducirAudio(discoActual.trackId, temaObj.seg);
+            tiempoRutaSegundos = 0;
+            document.getElementById('txt-amarillo-tiempo').innerText = tiempoRutaSegundos;
+            obstaculosRuta = [
+                { x: Math.random() * 260 + 60, y: -50, w: 30, h: 20 },
+                { x: Math.random() * 260 + 60, y: -180, w: 30, h: 20 }
+            ];
+        }
+
+        function siguienteCancionRuta() {
+            indiceCancionAmarillo++;
+            cargarSiguienteTemaRuta();
         }
 
         const canvasAmarillo = document.getElementById('amarillo-canvas');
-        canvasAmarillo.onclick = (e) => {
-            const rect = canvasAmarillo.getBoundingClientRect();
-            let clickX = e.clientX - rect.left;
-            let clickY = e.clientY - rect.top;
-            orbesAmarillos.forEach((orbe, index) => {
-                let distancia = Math.hypot(clickX - orbe.x, clickY - orbe.y);
-                if (distancia < 25) {
-                    if (orbe.correcta) {
-                        puntos += 40;
-                        document.getElementById('txt-puntos').innerText = puntos;
-                        reproducirAudio(discoActual.trackId, orbe.segundos);
-                        indiceMetaAmarillo++;
-                        generarOrbesAmorAmarillo();
-                    } else {
-                        puntos = Math.max(0, puntos - 10);
-                        document.getElementById('txt-puntos').innerText = puntos;
-                        orbesAmarillos.splice(index, 1);
-                    }
-                }
-            });
+        canvasAmarillo.onmousemove = (e) => {
+            autoX = e.clientX - canvasAmarillo.getBoundingClientRect().left;
+        };
+        canvasAmarillo.ontouchmove = (e) => {
+            if(e.touches.length > 0) {
+                autoX = e.touches[0].clientX - canvasAmarillo.getBoundingClientRect().left;
+            }
         };
 
-        function actualizarYRenderizarAmarillo() {
+        function actualizarYRenderizarRuta() {
             if (estadoActual !== "JUEGO_DISCO" || !discoActual || !discoActual.esAmorAmarillo) return;
             const ctx = canvasAmarillo.getContext('2d');
             ctx.clearRect(0, 0, canvasAmarillo.width, canvasAmarillo.height);
-            ctx.fillStyle = '#1a1802';
-            ctx.fillRect(0, 0, canvasAmarillo.width, canvasAmarillo.height);
-            orbesAmarillos.forEach((orbe, index) => {
-                orbe.y -= orbe.velY;
-                ctx.fillStyle = orbe.correcta ? 'rgba(255, 204, 0, 0.3)' : 'rgba(0, 255, 255, 0.3)';
-                ctx.strokeStyle = orbe.correcta ? '#ffcc00' : '#00ffff';
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.arc(orbe.x, orbe.y, 22, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.stroke();
-                ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 10px sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillText(orbe.texto, orbe.x, orbe.y + 3);
-                if (orbe.y < -30) {
-                    if (orbe.correcta) generarOrbesAmorAmarillo();
-                    else orbesAmarillos.splice(index, 1);
+
+            // Fondo de la ruta (asfalto y banquina)
+            ctx.fillStyle = '#222';
+            ctx.fillRect(40, 0, 300, canvasAmarillo.height);
+            ctx.fillStyle = '#ffcc00'; // Líneas divisorias centrales
+            ctx.fillRect(188, (Date.now() * 0.5) % 40 - 20, 4, 20);
+            ctx.fillRect(188, ((Date.now() * 0.5) % 40 + 40) % canvasAmarillo.height, 4, 20);
+
+            // Actualizar y dibujar obstáculos (autos en contra / rocas)
+            obstaculosRuta.forEach(obs => {
+                obs.y += 3.5;
+                if (obs.y > canvasAmarillo.height) {
+                    obs.y = -40;
+                    obs.x = Math.random() * 260 + 60;
+                }
+
+                ctx.fillStyle = '#ff0055';
+                ctx.fillRect(obs.x, obs.y, obs.w, obs.h);
+
+                // Colisión con el auto del jugador (ubicado fijo en y=200)
+                if (Math.abs(autoX - (obs.x + obs.w/2)) < 20 && Math.abs(200 - obs.y) < 20) {
+                    // ¡Chocó antes del minuto! No suma puntos y pasa de largo a la siguiente canción
+                    alert("¡Chocaste! Perdiste el minuto de esta canción, pasamos a la siguiente.");
+                    siguienteCancionRuta();
                 }
             });
+
+            // Dibujar el auto del jugador
+            ctx.fillStyle = '#ffcc00';
+            ctx.fillRect(autoX - 12, 195, 24, 32);
+            ctx.fillStyle = '#00ffff'; // Parabrisas
+            ctx.fillRect(autoX - 8, 200, 16, 10);
         }
 
         const listaDiscos = [
