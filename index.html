@@ -149,6 +149,14 @@
         <button class="btn-tetris" id="btn-siguiente-dyn" style="width:100%; margin-top:6px;" onclick="siguienteCancionDynamo()">➡️ SIGUIENTE TEMA</button>
     </div>
 
+    <!-- Mini-juego Sueño Stereo (Disco 7) -->
+    <div id="sueno-stereo-modal" class="modal-juego" style="border-color: #00ffff;">
+        <div class="hud-juego" style="color:#00ffff;">☁️ SUEÑO STEREO (1995) - ONDAS ONÍRICAS</div>
+        <div class="objetivo-juego">🎯 ATRAPÁ LAS BURBUJAS DE: <span id="txt-sueno-meta">...</span></div>
+        <canvas id="sueno-canvas" class="canvas-juego" width="380" height="240" style="border-color: #00ffff;"></canvas>
+        <div style="color:#00ffff; font-size:11px;">👆 TOCÁ LAS BURBUJAS FLOTANTES CORRECTAS</div>
+    </div>
+
     <div id="trofeos-modal">
         <h2>ESTANTERÍA DE TROFEOS</h2>
         <p style="font-size:12px; color:#ff00ff; margin-bottom:5px;">Tus discos conquistados en el multiverso:</p>
@@ -683,14 +691,12 @@
             const ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Fondo visualizador de consola
             ctx.strokeStyle = '#003333';
             ctx.lineWidth = 1;
             for(let i = 0; i < canvas.width; i += 30) {
                 ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
             }
 
-            // Onda de audio oscilante según canal activo
             let colorOnda = '#00ffff';
             if (canalActualSeleccionado === 'voz') colorOnda = '#ff00ff';
             if (canalActualSeleccionado === 'inst') colorOnda = '#ffcc00';
@@ -705,11 +711,95 @@
             }
             ctx.stroke();
 
-            // Indicador visual del canal en el canvas
             ctx.fillStyle = '#ffffff';
             ctx.font = 'bold 11px sans-serif';
             ctx.textAlign = 'left';
             ctx.fillText(`CANAL ACTIVO: ${canalActualSeleccionado.toUpperCase()}`, 15, 25);
+        }
+
+        // --- DISCO 7 (Sueño Stereo 1995) ---
+        let burbujasSueno = [];
+        let cancionesSuenoStereo = ["Zoom", "Ella usó mi cabeza", "Disco Eterno", "Crema de Estrellas", "Paseo Inmoral", "Comfort y Música", "Planeador", "Luna Roja"];
+        let indiceMetaSueno = 0;
+        let suenoGameLoop = null;
+
+        function iniciarSuenoStereo95() {
+            document.getElementById('sueno-stereo-modal').style.display = 'block';
+            indiceMetaSueno = 0;
+            generarBurbujasSuenoWave();
+            if (!suenoGameLoop) suenoGameLoop = setInterval(actualizarYRenderizarSueno, 1000 / 30);
+        }
+
+        function generarBurbujasSuenoWave() {
+            if (indiceMetaSueno >= cancionesSuenoStereo.length) {
+                finalizarDiscoActual();
+                return;
+            }
+            document.getElementById('txt-sueno-meta').innerText = cancionesSuenoStereo[indiceMetaSueno];
+            burbujasSueno = [];
+            let meta = cancionesSuenoStereo[indiceMetaSueno];
+            
+            burbujasSueno.push({ x: Math.random() * 300 + 40, y: 260, texto: meta, correcta: true, velY: 1.5 });
+            
+            for(let i = 0; i < 2; i++) {
+                let trampa = cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)];
+                burbujasSueno.push({ x: Math.random() * 300 + 40, y: 260, texto: trampa, correcta: false, velY: 1.2 });
+            }
+        }
+
+        const canvasSueno = document.getElementById('sueno-canvas');
+        canvasSueno.onclick = (e) => {
+            const rect = canvasSueno.getBoundingClientRect();
+            let clickX = e.clientX - rect.left;
+            let clickY = e.clientY - rect.top;
+            
+            burbujasSueno.forEach((burbuja, index) => {
+                let distancia = Math.hypot(clickX - burbuja.x, clickY - burbuja.y);
+                if (distancia < 25) {
+                    if (burbuja.correcta) {
+                        puntos += 35;
+                        document.getElementById('txt-puntos').innerText = puntos;
+                        reproducirAudio(discoActual.trackId, 1200 + (indiceMetaSueno * 150));
+                        indiceMetaSueno++;
+                        generarBurbujasSuenoWave();
+                    } else {
+                        puntos = Math.max(0, puntos - 10);
+                        document.getElementById('txt-puntos').innerText = puntos;
+                        burbujasSueno.splice(index, 1);
+                    }
+                }
+            });
+        };
+
+        function actualizarYRenderizarSueno() {
+            if (estadoActual !== "JUEGO_DISCO" || !discoActual || !discoActual.esSuenoStereo) return;
+            const ctx = canvasSueno.getContext('2d');
+            ctx.clearRect(0, 0, canvasSueno.width, canvasSueno.height);
+            
+            ctx.fillStyle = '#05021a';
+            ctx.fillRect(0, 0, canvasSueno.width, canvasSueno.height);
+
+            burbujasSueno.forEach((burbuja, index) => {
+                burbuja.y -= burbuja.velY;
+                
+                ctx.fillStyle = burbuja.correcta ? 'rgba(0, 255, 255, 0.25)' : 'rgba(255, 0, 255, 0.25)';
+                ctx.strokeStyle = burbuja.correcta ? '#00ffff' : '#ff00ff';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(burbuja.x, burbuja.y, 22, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 10px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(burbuja.texto, burbuja.x, burbuja.y + 3);
+
+                if (burbuja.y < -30) {
+                    if (burbuja.correcta) generarBurbujasSuenoWave();
+                    else burbujasSueno.splice(index, 1);
+                }
+            });
         }
 
         const listaDiscos = [
@@ -719,7 +809,7 @@
             { id: "doble_vida", nombre: "DOBLE VIDA (1988)", trackId: "3TB0vkRalrQ&list=RD3TB0vkRalrQ&start_radio=1", fondo: "https://i.ibb.co/cXZpRnKk/doble-vida.png", conquistado: false, esCrucigrama: true },
             { id: "cancion_animal", nombre: "CANCIÓN ANIMAL (1990)", trackId: "jzLVaylmbJU&list=RDjzLVaylmbJU&start_radio=1", fondo: "https://i.ibb.co/rRbsVPJc/cancion-animal.png", conquistado: false, esBatallaNaval: true },
             { id: "dynamo", nombre: "DYNAMO (1992)", trackId: "a5oUU6tGKFM", fondo: "https://i.ibb.co/S1G0p32/dynamo.png", conquistado: false, esDynamo: true },
-            { id: "sueno_stereo", nombre: "SUEÑO STEREO (1995)", trackId: "IqBK2UjnUVA", fondo: "https://i.ibb.co/whCCS4r1/sue-o-stereo.png", conquistado: false },
+            { id: "sueno_stereo", nombre: "SUEÑO STEREO (1995)", trackId: "IqBK2UjnUVA", fondo: "https://i.ibb.co/whCCS4r1/sue-o-stereo.png", conquistado: false, esSuenoStereo: true },
             { id: "amor_amarillo", nombre: "AMOR AMARILLO (1993)", trackId: "ZOd-N9qGQK8", fondo: "https://i.ibb.co/KpPXvH5K/amor-amarillo.png", conquistado: false },
             { id: "bocanada", nombre: "BOCANADA (1999)", trackId: "90SS2mXzPcA", fondo: "https://i.ibb.co/Gf9jPzVy/bocanada.png", conquistado: false },
             { id: "ahi_vamos", nombre: "AHÍ VAMOS (2006)", trackId: "qfcwCrh4s7I", fondo: "https://i.ibb.co/prZnh9w4/ahi-vamos.png", conquistado: false },
@@ -869,6 +959,8 @@
                 iniciarBatallaNavalCancionAnimal();
             } else if (disco.esDynamo) {
                 iniciarDynamoOndas();
+            } else if (disco.esSuenoStereo) {
+                iniciarSuenoStereo95();
             } else {
                 alert(`¡Próximamente minijuego para ${disco.nombre}!`);
                 volverAlMultiverso();
@@ -882,6 +974,7 @@
             document.getElementById('crucigrama-game-modal').style.display = 'none';
             document.getElementById('batalla-naval-modal').style.display = 'none';
             document.getElementById('dynamo-game-modal').style.display = 'none';
+            document.getElementById('sueno-stereo-modal').style.display = 'none';
             if (!discoActual.conquistado) {
                 discoActual.conquistado = true;
                 discosConquistadosCount++;
@@ -898,6 +991,7 @@
             document.getElementById('crucigrama-game-modal').style.display = 'none';
             document.getElementById('batalla-naval-modal').style.display = 'none';
             document.getElementById('dynamo-game-modal').style.display = 'none';
+            document.getElementById('sueno-stereo-modal').style.display = 'none';
             document.getElementById('trofeos-modal').style.display = 'none';
             document.getElementById('disco-seleccionado-banner').style.display = 'none';
             cargarMultiversoDiscos();
