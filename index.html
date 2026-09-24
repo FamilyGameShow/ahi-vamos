@@ -68,7 +68,7 @@
     <div id="ui-capa">
         <div class="stats-box">PUNTOS: <span id="txt-puntos">0</span></div>
         <div class="stats-box" id="txt-estado">TOCA UN DISCO PARA VERLO</div>
-        <div class="stats-box">CONQUISTADOS: <span id="txt-discos-conquistados">0</span>/11</div>
+        <div class="stats-box">CONQUISTADOS: <span id="txt-discos-conquistados">0</span>/12</div>
     </div>
     <button id="btn-volver">⬅️ VOLVER AL MULTIVERSO</button>
     <button id="btn-trofeos">🏆 TROFEOS</button>
@@ -719,7 +719,21 @@
 
         // --- DISCO 7 (Sueño Stereo 1995) ---
         let burbujasSueno = [];
-        let cancionesSuenoStereo = ["Zoom", "Ella usó mi cabeza", "Disco Eterno", "Crema de Estrellas", "Ojo de la tormenta", "Efecto doppler", "Paseando por roma", "Pasos", "Angel electrico", "Planta", "X Playo", "Moire"];
+        // Lista completa con sus marcas de tiempo exactas (en segundos) dentro del playlist del álbum
+        const cancionesSueñoStereoDetalle = [
+            { nombre: "Zoom", seg: 0 },
+            { nombre: "Ella usó mi cabeza", seg: 215 },
+            { nombre: "Disco Eterno", seg: 450 },
+            { nombre: "Crema de Estrellas", seg: 670 },
+            { nombre: "Ojo de la tormenta", seg: 910 },
+            { nombre: "Efecto doppler", seg: 1140 },
+            { nombre: "Paseando por roma", seg: 1380 },
+            { nombre: "Pasos", seg: 1610 },
+            { nombre: "Angel electrico", seg: 1850 },
+            { nombre: "Planta", seg: 2090 },
+            { nombre: "X Playo", seg: 2320 },
+            { nombre: "Moire", seg: 2550 }
+        ];
         let indiceMetaSueno = 0;
         let suenoGameLoop = null;
 
@@ -731,19 +745,28 @@
         }
 
         function generarBurbujasSuenoWave() {
-            if (indiceMetaSueno >= cancionesSuenoStereo.length) {
+            if (indiceMetaSueno >= cancionesSueñoStereoDetalle.length) {
                 finalizarDiscoActual();
                 return;
             }
-            document.getElementById('txt-sueno-meta').innerText = cancionesSuenoStereo[indiceMetaSueno];
+            let temaActualObj = cancionesSueñoStereoDetalle[indiceMetaSueno];
+            document.getElementById('txt-sueno-meta').innerText = temaActualObj.nombre;
             burbujasSueno = [];
-            let meta = cancionesSuenoStereo[indiceMetaSueno];
             
-            burbujasSueno.push({ x: Math.random() * 300 + 40, y: 260, texto: meta, correcta: true, velY: 1.5 });
+            // Burbuja correcta con su nombre y los segundos exactos guardados
+            burbujasSueno.push({ 
+                x: Math.random() * 300 + 40, 
+                y: 260, 
+                texto: temaActualObj.nombre, 
+                segundos: temaActualObj.seg, 
+                correcta: true, 
+                velY: 1.5 
+            });
             
+            // Burbujas trampa
             for(let i = 0; i < 2; i++) {
                 let trampa = cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)];
-                burbujasSueno.push({ x: Math.random() * 300 + 40, y: 260, texto: trampa, correcta: false, velY: 1.2 });
+                burbujasSueno.push({ x: Math.random() * 300 + 40, y: 260, texto: trampa, segundos: 0, correcta: false, velY: 1.2 });
             }
         }
 
@@ -759,7 +782,8 @@
                     if (burbuja.correcta) {
                         puntos += 35;
                         document.getElementById('txt-puntos').innerText = puntos;
-                        reproducirAudio(discoActual.trackId, 1200 + (indiceMetaSueno * 150));
+                        // Reproduce el tema correcto de Sueño Stereo saltando al segundo exacto de la canción
+                        reproducirAudio(discoActual.trackId, burbuja.segundos);
                         indiceMetaSueno++;
                         generarBurbujasSuenoWave();
                     } else {
