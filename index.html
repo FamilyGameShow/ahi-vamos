@@ -914,14 +914,15 @@ function actualizarYRenderizarBocanada() {
 
 // --- DISCO 10 (Siempre es hoy 2002) - Rompecabezas Sonoro ---
 const cancionesSiempreEsHoy = [
-    { nombre: "Cactus", seg: 0 }, { nombre: "Cositas rudimentarias", seg: 245 },
-    { nombre: "Arte verbal", seg: 480 }, { nombre: "Cosas imposibles", seg: 710 },
-    { nombre: "No te creo", seg: 990 }, { nombre: "Sudestada", seg: 1250 },
-    { nombre: "Especie", seg: 1520 }, { nombre: "Kermesse", seg: 1790 },
-    { nombre: "Caravana", seg: 2040 }, { nombre: "Al fin sucede", seg: 2310 },
-    { nombre: "Null", seg: 2560 }, { nombre: "Amo dejarte así", seg: 2800 },
-    { nombre: "Tu medicina", seg: 3070 }, { nombre: "Fancy", seg: 3340 },
-    { nombre: "Fade Away", seg: 3600 }
+    { nombre: "Cosas imposibles", seg: 0 }, { nombre: "No te creo", seg: 245 },
+    { nombre: "Artefacto", seg: 480 }, { nombre: "Naci para esto", seg: 710 },
+    { nombre: "Amo dejarte asi", seg: 990 }, { nombre: "Tu cicatriz en mi", seg: 1250 },
+    { nombre: "Señales luminosas", seg: 1520 }, { nombre: "Karaoke", seg: 1790 },
+    { nombre: "Sulky", seg: 2040 }, { nombre: "casa", seg: 2310 },
+    { nombre: "Camuflaje", seg: 2560 }, { nombre: "Altar", seg: 2800 },
+    { nombre: "Torre de marfil", seg: 3070 }, { nombre: "Fantasma", seg: 3340 },
+    { nombre: "Vivo", seg: 3600 }, { nombre: "Sudestada", seg: 3340 }
+    { nombre: "Especie", seg: 3600 }
 ];
 
 let siempreIndiceMeta = 0;
@@ -1018,13 +1019,18 @@ function renderizarRompecabezasSiempre() {
 
 // --- DISCO 11 (Ahí Vamos 2006) - Lluvia de Letras para Deletrear ---
 const cancionesAhiVamosPalabras = [
-    { nombre: "CRIMEN", seg: 240 },
+    { nombre: "AL FIN SUCEDE", seg: 240 },
     { nombre: "LA EXCEPCION", seg: 510 },
-    { nombre: "UNO EN MIL", seg: 780 },
+    { nombre: "UNO ENTRE MIL", seg: 780 },
     { nombre: "ADIOS", seg: 1320 },
+    { nombre: "ME QUEDO AQUI", seg: 1320 },
     { nombre: "LAGO EN EL CIELO", seg: 2110 },
+    { nombre: "DIOS NOS LIBRE", seg: 1320 },
     { nombre: "OTRA PIEL", seg: 2650 },
-    { nombre: "MEDIUM", seg: 2920 }
+    { nombre: "MEDIUM", seg: 2920 },
+    { nombre: "BOMBA DE TIEMPO", seg: 1320 },
+    { nombre: "CRIMEN", seg: 1320 },
+    { nombre: "JUGO DE LUNA", seg: 1320 }
 ];
 
 let ahiTemaIdx = 0;
@@ -1159,12 +1165,13 @@ function actualizarYRenderizarAhiVamosLetras() {
 
 // --- DISCO 12 (Fuerza Natural 2009) - Vuelo Cósmico ---
 const cancionesFuerzaNaturalDetalle = [
-    { nombre: "Fuerza Natural", seg: 0 }, { nombre: "Magia", seg: 240 },
-    { nombre: "Deja Vu", seg: 510 }, { nombre: "Cactus", seg: 760 },
-    { nombre: "Ofelia", seg: 1020 }, { nombre: "Tracción a sangre", seg: 1280 },
-    { nombre: "Despertar", seg: 1540 }, { nombre: "Campo minado", seg: 1800 },
-    { nombre: "Ojos de videotape", seg: 2060 }, { nombre: "Naturaleza sangre", seg: 2320 },
-    { nombre: "Dominó", seg: 2580 }, { nombre: "Sal", seg: 2840 }
+    { nombre: "Fuerza Natural", seg: 0 }, { nombre: "Deja vu", seg: 240 },
+    { nombre: "Magia", seg: 510 }, { nombre: "Amor sin rodeos", seg: 760 },
+    { nombre: "Traccion a sangra", seg: 1020 }, { nombre: "Desastre", seg: 1280 },
+    { nombre: "Rapto", seg: 1540 }, { nombre: "Cactus", seg: 1800 },
+    { nombre: "Naturaleza muerta", seg: 2060 }, { nombre: "Dominó", seg: 2320 },
+    { nombre: "Sal", seg: 2580 }, { nombre: "Convoy", seg: 2840 }
+    { nombre: "He visto a Lucy", seg: 2580 }, { nombre: "# - Numeral", seg: 2840 }
 ];
 
 let fuerzaIndice = 0;
@@ -1275,8 +1282,8 @@ const listaDiscos = [
     { id: "amor_amarillo", nombre: "AMOR AMARILLO (1993)", trackId: "WlracwwxpPM&list=RDWlracwwxpPM&start_radio=1", fondo: "https://i.ibb.co/KpPXvH5K/amor-amarillo.png", conquistado: false, esAmorAmarillo: true },
     { id: "bocanada", nombre: "BOCANADA (1999)", trackId: "IMw21ADHgJI&list=RDIMw21ADHgJI&start_radio=1", fondo: "https://i.ibb.co/Gf9jPzVy/bocanada.png", conquistado: false, esBocanada: true },
     { id: "siempre_es_hoy", nombre: "Siempre es hoy (2002)", trackId: "TEuFM0bhWtQ&list=PLWVo2tank-zzp8ii3HWMsOM4fCHQhkdvJ", fondo: "https://i.ibb.co/SDxsX5vw/siempre-es-hoy.png", conquistado: false, esSiempreEsHoy: true },
-    { id: "ahi_vamos", nombre: "AHÍ VAMOS (2006)", trackId: "qfcwCrh4s7I", fondo: "https://i.ibb.co/prZnh9w4/ahi-vamos.png", conquistado: false, esAhiVamos: true },
-    { id: "fuerza_natural", nombre: "FUERZA NATURAL (2009)", trackId: "Z7ndVxqUb48", fondo: "https://i.ibb.co/V0yVhy8Y/fuerza-natural.png", conquistado: false, esFuerzaNatural: true }
+    { id: "ahi_vamos", nombre: "AHÍ VAMOS (2006)", trackId: "2eW4gfPP7j8&list=RD2eW4gfPP7j8&start_radio=1", fondo: "https://i.ibb.co/prZnh9w4/ahi-vamos.png", conquistado: false, esAhiVamos: true },
+    { id: "fuerza_natural", nombre: "FUERZA NATURAL (2009)", trackId: "9gkUnFGsHtE&list=RD9gkUnFGsHtE&start_radio=1", fondo: "https://i.ibb.co/V0yVhy8Y/fuerza-natural.png", conquistado: false, esFuerzaNatural: true }
 ];
 
 function cambiarFondo(urlImagen) { document.getElementById('escenografia-fondo').style.backgroundImage = `url('${urlImagen}')`; }
