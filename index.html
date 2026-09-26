@@ -51,9 +51,6 @@
     .consola-canales-btns { display: flex; gap: 8px; justify-content: center; margin-top: 8px; }
     .btn-canal { background: rgba(255, 0, 255, 0.2); border: 1px solid #ff00ff; color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 10px; font-weight: bold; cursor: pointer; }
     .btn-canal.activo { background: #00ffff; color: #000; border-color: #fff; box-shadow: 0 0 8px #00ffff; }
-    .lista-canciones-box { max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; margin: 8px 0; padding-right: 4px; }
-    .btn-cancion-item { background: rgba(0,255,255,0.1); border: 1px solid #00ffff; color: #fff; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; text-align: left; display: flex; justify-content: space-between; align-items: center; }
-    .btn-cancion-item:hover { background: rgba(255,0,255,0.3); border-color: #ff00ff; }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
@@ -183,12 +180,12 @@
     <div style="color:#00ffff; font-size:11px;">👆 TOCÁ DOS PIEZAS PARA INTERCAMBIARLAS Y ARMAR LA TAPA</div>
 </div>
 
-<!-- Disco 11 (Ahí Vamos 2006) - Reproductor Completo de Temas -->
+<!-- Mini-juego Ahí Vamos (Disco 11) - Lluvia de Letras / Deletreo -->
 <div id="ahi-vamos-modal" class="modal-juego" style="border-color: #ff00ff;">
-    <div class="hud-juego" style="color:#ff00ff;">🎸 AHÍ VAMOS (2006) - REPRODUCTOR OFICIAL</div>
-    <div class="objetivo-juego">🎵 TOCÁ CUALQUIER TEMA PARA ESCUCHARLO (Escuchados: <span id="txt-ahi-tocados">0</span>/<span id="txt-ahi-total">13</span>)</div>
-    <div class="lista-canciones-box" id="lista-canciones-ahi-vamos"></div>
-    <button class="btn-tetris" onclick="finalizarDiscoActual()" style="width:100%; margin-top:8px;">✨ CONQUISTAR DISCO</button>
+    <div class="hud-juego" style="color:#ff00ff;">🎸 AHÍ VAMOS (2006) - ATRAPA LETRAS</div>
+    <div class="objetivo-juego">🔤 FORMÁ EL TEMA: <span id="txt-ahi-palabra" style="color:#00ffff; font-size:13px; letter-spacing:2px;">...</span></div>
+    <canvas id="ahi-vamos-canvas" class="canvas-juego" width="360" height="240" style="border-color: #ff00ff;"></canvas>
+    <div style="color:#ff00ff; font-size:11px;">👆 TOCá LA LETRA CORRECTA QUE CAE EN PANTALLA</div>
 </div>
 
 <!-- Mini-juego Fuerza Natural (Disco 12) - Vuelo Cósmico / Cometa -->
@@ -1019,47 +1016,144 @@ function renderizarRompecabezasSiempre() {
     });
 }
 
-// --- DISCO 11 (Ahí Vamos 2006) - Reproductor Oficial de Todas las Canciones ---
-const cancionesAhiVamosCompleto = [
-    { nombre: "Danza rota (Intro / Versión)", seg: 0 },
-    { nombre: "Crimen", seg: 240 },
-    { nombre: "La excepción", seg: 510 },
-    { nombre: "Uno en mil", seg: 780 },
-    { nombre: "Caravan", seg: 1040 },
-    { nombre: "Adiós", seg: 1320 },
-    { nombre: "Me quedo aquí", seg: 1590 },
-    { nombre: "Lago en el cielo", seg: 2110 },
-    { nombre: "Dios nos libre", seg: 2380 },
-    { nombre: "Otra piel", seg: 2650 },
-    { nombre: "Medium", seg: 2920 },
-    { nombre: "Bomba de tiempo", seg: 3190 },
-    { nombre: "La fabulosa carrera", seg: 3450 }
+// --- DISCO 11 (Ahí Vamos 2006) - Lluvia de Letras para Deletrear ---
+const cancionesAhiVamosPalabras = [
+    { nombre: "CRIMEN", seg: 240 },
+    { nombre: "LA EXCEPCION", seg: 510 },
+    { nombre: "UNO EN MIL", seg: 780 },
+    { nombre: "ADIOS", seg: 1320 },
+    { nombre: "LAGO EN EL CIELO", seg: 2110 },
+    { nombre: "OTRA PIEL", seg: 2650 },
+    { nombre: "MEDIUM", seg: 2920 }
 ];
 
-let ahiTocadasSet = new Set();
+let ahiTemaIdx = 0;
+let palabraActualStr = "";
+let letraProgresoIdx = 0;
+let letrasCaidasAhi = [];
+let ahiVamosGameLoop = null;
 
 function iniciarAhiVamos06() {
     document.getElementById('ahi-vamos-modal').style.display = 'block';
-    ahiTocadasSet.clear();
-    document.getElementById('txt-ahi-tocados').innerText = "0";
-    document.getElementById('txt-ahi-total').innerText = cancionesAhiVamosCompleto.length;
-    
-    const container = document.getElementById('lista-canciones-ahi-vamos');
-    container.innerHTML = '';
-    
-    cancionesAhiVamosCompleto.forEach((tema, idx) => {
-        const btn = document.createElement('button');
-        btn.className = 'btn-cancion-item';
-        btn.innerHTML = `<span>🎵 ${tema.nombre}</span> <span id="chk-${idx}">⏳</span>`;
-        btn.onclick = () => {
-            reproducirAudio(discoActual.trackId, tema.seg);
-            ahiTocadasSet.add(idx);
-            document.getElementById('txt-ahi-tocados').innerText = ahiTocadasSet.size;
-            document.getElementById(`chk-${idx}`).innerText = "✅";
-            puntos += 10;
-            document.getElementById('txt-puntos').innerText = puntos;
-        };
-        container.appendChild(btn);
+    ahiTemaIdx = 0;
+    cargarSiguientePalabraAhiVamos();
+    if (!ahiVamosGameLoop) {
+        ahiVamosGameLoop = setInterval(actualizarYRenderizarAhiVamosLetras, 1000 / 30);
+    }
+}
+
+function cargarSiguientePalabraAhiVamos() {
+    if (ahiTemaIdx >= cancionesAhiVamosPalabras.length) {
+        finalizarDiscoActual();
+        return;
+    }
+    let temaObj = cancionesAhiVamosPalabras[ahiTemaIdx];
+    palabraActualStr = temaObj.nombre.toUpperCase();
+    letraProgresoIdx = 0;
+    actualizarProgresoPalabraUI();
+    reproducirAudio(discoActual.trackId, temaObj.seg);
+    letrasCaidasAhi = [];
+}
+
+function actualizarProgresoPalabraUI() {
+    let htmlStr = "";
+    for(let i=0; i<palabraActualStr.length; i++) {
+        let l = palabraActualStr[i];
+        if(l === " ") {
+            htmlStr += "&nbsp;&nbsp;";
+        } else if(i < letraProgresoIdx) {
+            htmlStr += `<span style="color:#00ffaa;">${l}</span>`;
+        } else if(i === letraProgresoIdx) {
+            htmlStr += `<span style="color:#ffcc00; text-decoration:underline;">${l}</span>`;
+        } else {
+            htmlStr += `<span style="color:#666;">_</span>`;
+        }
+    }
+    document.getElementById('txt-ahi-palabra').innerHTML = htmlStr;
+}
+
+const canvasAhiVamos = document.getElementById('ahi-vamos-canvas');
+canvasAhiVamos.onclick = (e) => {
+    const rect = canvasAhiVamos.getBoundingClientRect();
+    let clickX = e.clientX - rect.left;
+    let clickY = e.clientY - rect.top;
+
+    letrasCaidasAhi.forEach((letraObj, index) => {
+        let distancia = Math.hypot(clickX - letraObj.x, clickY - letraObj.y);
+        if (distancia < 22) {
+            let letraEsperada = palabraActualStr[letraProgresoIdx];
+            if(letraEsperada === " ") {
+                letraProgresoIdx++;
+                letraEsperada = palabraActualStr[letraProgresoIdx];
+            }
+            if (letraObj.caracter === letraEsperada) {
+                // Acierto de letra
+                puntos += 15;
+                document.getElementById('txt-puntos').innerText = puntos;
+                letraProgresoIdx++;
+                actualizarProgresoPalabraUI();
+                letrasCaidasAhi.splice(index, 1);
+
+                if (letraProgresoIdx >= palabraActualStr.length) {
+                    puntos += 50;
+                    document.getElementById('txt-puntos').innerText = puntos;
+                    ahiTemaIdx++;
+                    setTimeout(cargarSiguientePalabraAhiVamos, 600);
+                }
+            } else {
+                // Letra incorrecta
+                puntos = Math.max(0, puntos - 10);
+                document.getElementById('txt-puntos').innerText = puntos;
+                letrasCaidasAhi.splice(index, 1);
+            }
+        }
+    });
+};
+
+function actualizarYRenderizarAhiVamosLetras() {
+    if (estadoActual !== "JUEGO_DISCO" || !discoActual || !discoActual.esAhiVamos) return;
+    const ctx = canvasAhiVamos.getContext('2d');
+    ctx.clearRect(0, 0, canvasAhiVamos.width, canvasAhiVamos.height);
+
+    ctx.fillStyle = '#05021a';
+    ctx.fillRect(0, 0, canvasAhiVamos.width, canvasAhiVamos.height);
+
+    // Generar nuevas letras si faltan en pantalla
+    if (letrasCaidasAhi.length < 4 && Math.random() < 0.1) {
+        let letraAleatoria;
+        if(Math.random() < 0.4 && letraProgresoIdx < palabraActualStr.length) {
+            letraAleatoria = palabraActualStr[letraProgresoIdx]; // Letra correcta para facilitar
+        } else {
+            let alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            letraAleatoria = alfabeto[Math.floor(Math.random() * alfabeto.length)];
+        }
+        letrasCaidasAhi.push({
+            x: Math.random() * (canvasAhiVamos.width - 50) + 25,
+            y: -20,
+            caracter: letraAleatoria,
+            velY: 1.8 + Math.random() * 1.2
+        });
+    }
+
+    letrasCaidasAhi.forEach((letraObj, index) => {
+        letraObj.y += letraObj.velY;
+        ctx.fillStyle = 'rgba(255, 0, 255, 0.25)';
+        ctx.strokeStyle = '#ff00ff';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(letraObj.x, letraObj.y, 18, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 16px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(letraObj.caracter, letraObj.x, letraObj.y);
+
+        if (letraObj.y > canvasAhiVamos.height + 25) {
+            letrasCaidasAhi.splice(index, 1);
+        }
     });
 }
 
