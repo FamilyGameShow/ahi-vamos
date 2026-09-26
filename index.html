@@ -792,7 +792,7 @@ function iniciarAmorAmarillo93() {
     if (!contadorRutaTimer) contadorRutaTimer = setInterval(() => {
         if (estadoActual === "JUEGO_DISCO" && discoActual && discoActual.esAmorAmarillo) {
             tiempoRutaSegundos++; document.getElementById('txt-amarillo-tiempo').innerText = tiempoRutaSegundos;
-            if (tiempoRutaSegundos >= 60) {
+            if (tiempoRutaSegundos >= 30) {
                 puntos += 50; document.getElementById('txt-puntos').innerText = puntos;
                 siguienteCancionRuta();
             }
@@ -914,15 +914,15 @@ function actualizarYRenderizarBocanada() {
 
 // --- DISCO 10 (Siempre es hoy 2002) - Rompecabezas Sonoro ---
 const cancionesSiempreEsHoy = [
-    { nombre: "Cosas imposibles", seg: 0 }, { nombre: "No te creo", seg: 245 },
-    { nombre: "Artefacto", seg: 480 }, { nombre: "Naci para esto", seg: 710 },
-    { nombre: "Amo dejarte asi", seg: 990 }, { nombre: "Tu cicatriz en mi", seg: 1250 },
-    { nombre: "Señales luminosas", seg: 1520 }, { nombre: "Karaoke", seg: 1790 },
-    { nombre: "Sulky", seg: 2040 }, { nombre: "casa", seg: 2310 },
-    { nombre: "Camuflaje", seg: 2560 }, { nombre: "Altar", seg: 2800 },
-    { nombre: "Torre de marfil", seg: 3070 }, { nombre: "Fantasma", seg: 3340 },
-    { nombre: "Vivo", seg: 3600 }, { nombre: "Sudestada", seg: 3340 }
-    { nombre: "Especie", seg: 3600 }
+    { nombre: "Cosas imposibles", seg: 0 }, { nombre: "No te creo", seg: 307 },
+    { nombre: "Artefacto", seg: 535 }, { nombre: "Naci para esto", seg: 790 },
+    { nombre: "Amo dejarte asi", seg: 981 }, { nombre: "Tu cicatriz en mi", seg: 1306 },
+    { nombre: "Señales luminosas", seg: 1564 }, { nombre: "Karaoke", seg: 1769 },
+    { nombre: "Sulky", seg: 2005 }, { nombre: "casa", seg: 2275 },
+    { nombre: "Camuflaje", seg: 2550 }, { nombre: "Altar", seg: 2788 },
+    { nombre: "Torre de marfil", seg: 3031 }, { nombre: "Fantasma", seg: 1312 },
+    { nombre: "Vivo", seg: 1512 }, { nombre: "Sudestada", seg: 3773 }
+    { nombre: "Especie", seg: 4045 }
 ];
 
 let siempreIndiceMeta = 0;
@@ -1019,18 +1019,19 @@ function renderizarRompecabezasSiempre() {
 
 // --- DISCO 11 (Ahí Vamos 2006) - Lluvia de Letras para Deletrear ---
 const cancionesAhiVamosPalabras = [
-    { nombre: "AL FIN SUCEDE", seg: 240 },
-    { nombre: "LA EXCEPCION", seg: 510 },
-    { nombre: "UNO ENTRE MIL", seg: 780 },
-    { nombre: "ADIOS", seg: 1320 },
-    { nombre: "ME QUEDO AQUI", seg: 1320 },
-    { nombre: "LAGO EN EL CIELO", seg: 2110 },
-    { nombre: "DIOS NOS LIBRE", seg: 1320 },
-    { nombre: "OTRA PIEL", seg: 2650 },
-    { nombre: "MEDIUM", seg: 2920 },
-    { nombre: "BOMBA DE TIEMPO", seg: 1320 },
-    { nombre: "CRIMEN", seg: 1320 },
-    { nombre: "JUGO DE LUNA", seg: 1320 }
+    { nombre: "AL FIN SUCEDE", seg: 0 },
+    { nombre: "LA EXCEPCION", seg: 208 },
+    { nombre: "UNO ENTRE MIL", seg: 458 },
+    { nombre: "CARAVANA", seg: 714 },
+    { nombre: "ADIOS", seg: 954 },
+    { nombre: "ME QUEDO AQUI", seg: 1186 },
+    { nombre: "LAGO EN EL CIELO", seg: 1404 },
+    { nombre: "DIOS NOS LIBRE", seg: 1730 },
+    { nombre: "OTRA PIEL", seg: 1983 },
+    { nombre: "MEDIUM", seg: 2264 },
+    { nombre: "BOMBA DE TIEMPO", seg: 2595 },
+    { nombre: "CRIMEN", seg: 2903 },
+    { nombre: "JUGO DE LUNA", seg: 3134 }
 ];
 
 let ahiTemaIdx = 0;
@@ -1165,8 +1166,8 @@ function actualizarYRenderizarAhiVamosLetras() {
 
 // --- DISCO 12 (Fuerza Natural 2009) - Vuelo Cósmico ---
 const cancionesFuerzaNaturalDetalle = [
-    { nombre: "Fuerza Natural", seg: 0 }, { nombre: "Deja vu", seg: 240 },
-    { nombre: "Magia", seg: 510 }, { nombre: "Amor sin rodeos", seg: 760 },
+    { nombre: "Fuerza Natural", seg: 0 }, { nombre: "Deja vu", seg: 290 },
+    { nombre: "Magia", seg: 495 }, { nombre: "Amor sin rodeos", seg: 760 },
     { nombre: "Traccion a sangra", seg: 1020 }, { nombre: "Desastre", seg: 1280 },
     { nombre: "Rapto", seg: 1540 }, { nombre: "Cactus", seg: 1800 },
     { nombre: "Naturaleza muerta", seg: 2060 }, { nombre: "Dominó", seg: 2320 },
