@@ -914,23 +914,23 @@ function actualizarYRenderizarBocanada() {
 
 // --- DISCO 10 (Siempre es hoy 2002) - Rompecabezas Sonoro ---
 const cancionesSiempreEsHoy = [
-    { nombre: "Cosas imposibles", seg: 0 }, { nombre: "No te creo", seg: 307 },
-    { nombre: "Artefacto", seg: 535 }, { nombre: "Naci para esto", seg: 790 },
-    { nombre: "Amo dejarte asi", seg: 981 }, { nombre: "Tu cicatriz en mi", seg: 1306 },
-    { nombre: "Señales luminosas", seg: 1564 }, { nombre: "Karaoke", seg: 1769 },
-    { nombre: "Sulky", seg: 2005 }, { nombre: "casa", seg: 2275 },
-    { nombre: "Camuflaje", seg: 2550 }, { nombre: "Altar", seg: 2788 },
-    { nombre: "Torre de marfil", seg: 3031 }, { nombre: "Fantasma", seg: 1312 },
-    { nombre: "Vivo", seg: 1512 }, { nombre: "Sudestada", seg: 3773 },
-    { nombre: "Especie", seg: 4045 }
-];
-
-const frasesSiempre = [
-    "COSAS IMPOSIBLES", "DE MÚSICA LIGERA", "ARTE FACTOR", 
-    "SEÑALES", "CON HASTÍO", "MANZANA", 
-    "NUEVO", "CASA", "CASAMIENTO", 
-    "VENENO", "FIN DE LA FUGA", "CAMALEÓN", 
-    "OLVIDO", "TORMENTA", "SIEMPRE ES HOY"
+    { nombre: "Cosas imposibles", seg: 0, frase: "UN MUNDO DE SENSACIONES" },
+    { nombre: "No te creo", seg: 307, frase: "YA NO SÉ QUE CREER" },
+    { nombre: "Artefacto", seg: 535, frase: "ESTO NO ES UN INVENTO" },
+    { nombre: "Naci para esto", seg: 790, frase: "FUE UNA DECISIÓN" },
+    { nombre: "Amo dejarte asi", seg: 981, frase: "DULCE HASTA EL FINAL" },
+    { nombre: "Tu cicatriz en mi", seg: 1306, frase: "QUEDÓ TU CICATRIZ" },
+    { nombre: "Señales luminosas", seg: 1564, frase: "BUSCANDO SEÑALES" },
+    { nombre: "Karaoke", seg: 1769, frase: "UN NUEVO KAREOKE" },
+    { nombre: "Sulky", seg: 2005, frase: "ANDANDO EN SULKY" },
+    { nombre: "casa", seg: 2275, frase: "VOLVIENDO A CASA" },
+    { nombre: "Camuflaje", seg: 2550, frase: "PURO CAMUFLAJE" },
+    { nombre: "Altar", seg: 2788, frase: "FRENTE AL ALTAR" },
+    { nombre: "Torre de marfil", seg: 3031, frase: "EN SU TORRE DE MARFIL" },
+    { nombre: "Fantasma", seg: 1312, frase: "COMO UN FANTASMA" },
+    { nombre: "Vivo", seg: 1512, frase: "SIEMPRE ESTOY VIVO" },
+    { nombre: "Sudestada", seg: 3773, frase: "VIENTO DE SUDESTADA" },
+    { nombre: "Especie", seg: 4045, frase: "RARA ESPECIE" }
 ];
 
 let siempreIndiceMeta = 0;
@@ -1005,6 +1005,8 @@ function renderizarRompecabezasSiempre() {
     ctx.clearRect(0, 0, canvasSiempre.width, canvasSiempre.height);
 
     let tamPieza = canvasSiempre.width / puzzleGridSize;
+    let temaActual = cancionesSiempreEsHoy[siempreIndiceMeta];
+    let palabrasFrase = temaActual.frase.split(" ");
 
     puzzlePiezas.forEach((valOriginal, idxActual) => {
         let filaActual = Math.floor(idxActual / puzzleGridSize);
@@ -1025,8 +1027,8 @@ function renderizarRompecabezasSiempre() {
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
 
-        let textoFrase = frasesSiempre[valOriginal % frasesSiempre.length];
-        ctx.fillText(textoFrase, x + (tamPieza / 2), y + (tamPieza / 2));
+        let textoPieza = palabrasFrase[valOriginal % palabrasFrase.length];
+        ctx.fillText(textoPieza, x + (tamPieza / 2), y + (tamPieza / 2));
     });
 }
 
