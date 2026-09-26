@@ -925,6 +925,14 @@ const cancionesSiempreEsHoy = [
     { nombre: "Especie", seg: 4045 }
 ];
 
+const frasesSiempre = [
+    "COSAS IMPOSIBLES", "DE MÚSICA LIGERA", "ARTE FACTOR", 
+    "SEÑALES", "CON HASTÍO", "MANZANA", 
+    "NUEVO", "CASA", "CASAMIENTO", 
+    "VENENO", "FIN DE LA FUGA", "CAMALEÓN", 
+    "OLVIDO", "TORMENTA", "SIEMPRE ES HOY"
+];
+
 let siempreIndiceMeta = 0;
 let puzzlePiezas = [];
 let piezaSeleccionadaIdx = null;
@@ -1001,19 +1009,24 @@ function renderizarRompecabezasSiempre() {
     puzzlePiezas.forEach((valOriginal, idxActual) => {
         let filaActual = Math.floor(idxActual / puzzleGridSize);
         let colActual = idxActual % puzzleGridSize;
+
+        let x = colActual * tamPieza;
+        let y = filaActual * tamPieza;
         
-        ctx.fillStyle = (valOriginal % 2 === 0) ? '#0a192f' : '#172a45';
-        ctx.fillRect(colActual * tamPieza, filaActual * tamPieza, tamPieza - 2, tamPieza - 2);
+        ctx.fillStyle = (valOriginal % 2 === 0) ? '#1a0033' : '#002233';
+        ctx.fillRect(x, y, tamPieza, tamPieza);
 
         ctx.strokeStyle = (piezaSeleccionadaIdx === idxActual) ? '#ff00ff' : '#00ffff';
         ctx.lineWidth = (piezaSeleccionadaIdx === idxActual) ? 4 : 2;
-        ctx.strokeRect(colActual * tamPieza, filaActual * tamPieza, tamPieza - 2, tamPieza - 2);
+        ctx.strokeRect(x, y, tamPieza, tamPieza);
 
         ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 18px sans-serif';
+        ctx.font = 'bold 10px sans-serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText(`P${valOriginal + 1}`, colActual * tamPieza + tamPieza / 2, filaActual * tamPieza + tamPieza / 2);
+
+        let textoFrase = frasesSiempre[valOriginal % frasesSiempre.length];
+        ctx.fillText(textoFrase, x + (tamPieza / 2), y + (tamPieza / 2));
     });
 }
 
