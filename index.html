@@ -194,6 +194,14 @@
     </div>
 </div>
 
+<!-- Mini-juego Fuerza Natural (Disco 12) - Vuelo Cósmico / Cometa -->
+<div id="fuerza-natural-modal" class="modal-juego" style="border-color: #00ffaa;">
+    <div class="hud-juego" style="color:#00ffaa;">🌿 FUERZA NATURAL (2009) - VIAJE CÓSMICO</div>
+    <div class="objetivo-juego">🎯 CAPTURÁ LA CONSTELACIÓN DE: <span id="txt-fuerza-meta">...</span> (Puntos: <span id="txt-fuerza-puntos">0</span>/5)</div>
+    <canvas id="fuerza-canvas" class="canvas-juego" width="360" height="240" style="border-color: #00ffaa;"></canvas>
+    <div style="color:#00ffaa; font-size:11px;">👆 ARRASTRÁ EL DEDO PARA GUIAR EL COMETA Y EVITAR METEORITOS</div>
+</div>
+
 <div id="trofeos-modal">
     <h2>ESTANTERÍA DE TROFEOS</h2>
     <p style="font-size:12px; color:#ff00ff; margin-bottom:5px;">Tus discos conquistados en el multiverso:</p>
@@ -1051,7 +1059,6 @@ function cargarSiguienteNotaAhiVamos() {
     reproducirAudio(discoActual.trackId, temaObj.seg);
 
     notasGuitarraCaidas = [];
-    // Generar 3 carriles de notas en cascada
     let carrilCorrecto = Math.floor(Math.random() * 3);
     for (let i = 0; i < 3; i++) {
         notasGuitarraCaidas.push({
@@ -1096,7 +1103,6 @@ function actualizarYRenderizarAhiVamos() {
     const ctx = canvasAhiVamos.getContext('2d');
     ctx.clearRect(0, 0, canvasAhiVamos.width, canvasAhiVamos.height);
 
-    // Dibujar carriles de la sala de ensayo
     let anchoCarril = canvasAhiVamos.width / 3;
     ctx.strokeStyle = 'rgba(255, 0, 255, 0.2)';
     ctx.lineWidth = 1;
@@ -1107,7 +1113,6 @@ function actualizarYRenderizarAhiVamos() {
         ctx.stroke();
     }
 
-    // Línea de pulsación
     ctx.strokeStyle = '#00ffff';
     ctx.lineWidth = 3;
     ctx.beginPath();
@@ -1115,7 +1120,6 @@ function actualizarYRenderizarAhiVamos() {
     ctx.lineTo(canvasAhiVamos.width, 190);
     ctx.stroke();
 
-    // Mover y dibujar notas
     notasGuitarraCaidas.forEach(nota => {
         nota.y += 2.5;
         if (nota.y > canvasAhiVamos.height + 20) {
@@ -1134,6 +1138,116 @@ function actualizarYRenderizarAhiVamos() {
     });
 }
 
+// --- DISCO 12 (Fuerza Natural 2009) - Vuelo Cósmico ---
+const cancionesFuerzaNaturalDetalle = [
+    { nombre: "Fuerza Natural", seg: 0 }, { nombre: "Magia", seg: 240 },
+    { nombre: "Deja Vu", seg: 510 }, { nombre: "Cactus", seg: 760 },
+    { nombre: "Ofelia", seg: 1020 }, { nombre: "Tracción a sangre", seg: 1280 },
+    { nombre: "Despertar", seg: 1540 }, { nombre: "Campo minado", seg: 1800 },
+    { nombre: "Ojos de videotape", seg: 2060 }, { nombre: "Naturaleza sangre", seg: 2320 },
+    { nombre: "Dominó", seg: 2580 }, { nombre: "Sal", seg: 2840 }
+];
+
+let fuerzaIndice = 0;
+let fuerzaPuntosAciertos = 0;
+let cometaX = 180;
+let objetosFuerza = [];
+let fuerzaGameLoop = null;
+
+function iniciarFuerzaNatural09() {
+    document.getElementById('fuerza-natural-modal').style.display = 'block';
+    fuerzaIndice = 0;
+    fuerzaPuntosAciertos = 0;
+    cometaX = 180;
+    document.getElementById('txt-fuerza-puntos').innerText = fuerzaPuntosAciertos;
+    cargarSiguienteFuerzaNatural();
+    if (!fuerzaGameLoop) {
+        fuerzaGameLoop = setInterval(actualizarYRenderizarFuerza, 1000 / 30);
+    }
+}
+
+function cargarSiguienteFuerzaNatural() {
+    if (fuerzaIndice >= cancionesFuerzaNaturalDetalle.length) {
+        finalizarDiscoActual();
+        return;
+    }
+    let temaObj = cancionesFuerzaNaturalDetalle[fuerzaIndice];
+    document.getElementById('txt-fuerza-meta').innerText = temaObj.nombre;
+    reproducirAudio(discoActual.trackId, temaObj.seg);
+
+    objetosFuerza = [
+        { x: Math.random() * 300 + 30, y: -20, texto: temaObj.nombre, correcta: true, velY: 2 },
+        { x: Math.random() * 300 + 30, y: -120, texto: cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)], correcta: false, velY: 1.8 }
+    ];
+}
+
+const canvasFuerza = document.getElementById('fuerza-canvas');
+canvasFuerza.onmousemove = (e) => { cometaX = e.clientX - canvasFuerza.getBoundingClientRect().left; };
+canvasFuerza.ontouchmove = (e) => { if(e.touches.length > 0) { cometaX = e.touches[0].clientX - canvasFuerza.getBoundingClientRect().left; } };
+
+function actualizarYRenderizarFuerza() {
+    if (estadoActual !== "JUEGO_DISCO" || !discoActual || !discoActual.esFuerzaNatural) return;
+    const ctx = canvasFuerza.getContext('2d');
+    ctx.clearRect(0, 0, canvasFuerza.width, canvasFuerza.height);
+
+    // Fondo estelar dinámico
+    ctx.fillStyle = '#020b14';
+    ctx.fillRect(0, 0, canvasFuerza.width, canvasFuerza.height);
+
+    objetosFuerza.forEach((obj, idx) => {
+        obj.y += obj.velY;
+        ctx.fillStyle = obj.correcta ? 'rgba(0, 255, 170, 0.3)' : 'rgba(255, 0, 100, 0.3)';
+        ctx.strokeStyle = obj.correcta ? '#00ffaa' : '#ff0066';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(obj.x, obj.y, 20, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 10px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(obj.texto, obj.x, obj.y + 4);
+
+        // Colisión con la nave/cometa abajo (y ~ 205)
+        if (obj.y >= 190 && obj.y <= 225 && Math.abs(obj.x - cometaX) < 30) {
+            if (obj.correcta) {
+                fuerzaPuntosAciertos++;
+                puntos += 40;
+                document.getElementById('txt-puntos').innerText = puntos;
+                document.getElementById('txt-fuerza-puntos').innerText = fuerzaPuntosAciertos;
+                if (fuerzaPuntosAciertos >= 5) {
+                    finalizarDiscoActual();
+                } else {
+                    fuerzaIndice++;
+                    cargarSiguienteFuerzaNatural();
+                }
+            } else {
+                puntos = Math.max(0, puntos - 10);
+                document.getElementById('txt-puntos').innerText = puntos;
+                objetosFuerza.splice(idx, 1);
+            }
+        }
+
+        if (obj.y > canvasFuerza.height + 30) {
+            if (obj.correcta) {
+                cargarSiguienteFuerzaNatural();
+            } else {
+                objetosFuerza.splice(idx, 1);
+            }
+        }
+    });
+
+    // Dibujar nave / cometa
+    ctx.fillStyle = '#00ffaa';
+    ctx.beginPath();
+    ctx.moveTo(cometaX, 200);
+    ctx.lineTo(cometaX - 15, 230);
+    ctx.lineTo(cometaX + 15, 230);
+    ctx.closePath();
+    ctx.fill();
+}
+
 const listaDiscos = [
     { id: "soda_84", nombre: "SODA STEREO (1984)", trackId: "W0KTTiuw96A", fondo: "https://i.ibb.co/sT3L0VW/soda-stereo.png", conquistado: false, esPacman: true },
     { id: "nada_personal", nombre: "NADA PERSONAL (1985)", trackId: "uOlCYVXOyFI", fondo: "https://i.ibb.co/xq1TGpt8/nada-personal.png", conquistado: false, esGalaxy: true },
@@ -1146,7 +1260,7 @@ const listaDiscos = [
     { id: "bocanada", nombre: "BOCANADA (1999)", trackId: "IMw21ADHgJI&list=RDIMw21ADHgJI&start_radio=1", fondo: "https://i.ibb.co/Gf9jPzVy/bocanada.png", conquistado: false, esBocanada: true },
     { id: "siempre_es_hoy", nombre: "Siempre es hoy (2002)", trackId: "TEuFM0bhWtQ&list=PLWVo2tank-zzp8ii3HWMsOM4fCHQhkdvJ", fondo: "https://i.ibb.co/SDxsX5vw/siempre-es-hoy.png", conquistado: false, esSiempreEsHoy: true },
     { id: "ahi_vamos", nombre: "AHÍ VAMOS (2006)", trackId: "qfcwCrh4s7I", fondo: "https://i.ibb.co/prZnh9w4/ahi-vamos.png", conquistado: false, esAhiVamos: true },
-    { id: "fuerza_natural", nombre: "FUERZA NATURAL (2009)", trackId: "Z7ndVxqUb48", fondo: "https://i.ibb.co/V0yVhy8Y/fuerza-natural.png", conquistado: false }
+    { id: "fuerza_natural", nombre: "FUERZA NATURAL (2009)", trackId: "Z7ndVxqUb48", fondo: "https://i.ibb.co/V0yVhy8Y/fuerza-natural.png", conquistado: false, esFuerzaNatural: true }
 ];
 
 function cambiarFondo(urlImagen) { document.getElementById('escenografia-fondo').style.backgroundImage = `url('${urlImagen}')`; }
@@ -1284,6 +1398,7 @@ function entrarADisco(disco) {
     else if (disco.esBocanada) { iniciarBocanada99(); }
     else if (disco.esSiempreEsHoy) { iniciarSiempreEsHoy02(); }
     else if (disco.esAhiVamos) { iniciarAhiVamos06(); }
+    else if (disco.esFuerzaNatural) { iniciarFuerzaNatural09(); }
     else {
         alert(`¡Próximamente minijuego para ${disco.nombre}!`);
         volverAlMultiverso();
@@ -1302,6 +1417,7 @@ function finalizarDiscoActual() {
     document.getElementById('bocanada-modal').style.display = 'none';
     document.getElementById('siempre-es-hoy-modal').style.display = 'none';
     document.getElementById('ahi-vamos-modal').style.display = 'none';
+    document.getElementById('fuerza-natural-modal').style.display = 'none';
 
     if (!discoActual.conquistado) {
         discoActual.conquistado = true;
@@ -1324,6 +1440,7 @@ function volverAlMultiverso() {
     document.getElementById('bocanada-modal').style.display = 'none';
     document.getElementById('siempre-es-hoy-modal').style.display = 'none';
     document.getElementById('ahi-vamos-modal').style.display = 'none';
+    document.getElementById('fuerza-natural-modal').style.display = 'none';
     document.getElementById('trofeos-modal').style.display = 'none';
     document.getElementById('disco-seleccionado-banner').style.display = 'none';
     cargarMultiversoDiscos();
