@@ -51,8 +51,9 @@
     .consola-canales-btns { display: flex; gap: 8px; justify-content: center; margin-top: 8px; }
     .btn-canal { background: rgba(255, 0, 255, 0.2); border: 1px solid #ff00ff; color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 10px; font-weight: bold; cursor: pointer; }
     .btn-canal.activo { background: #00ffff; color: #000; border-color: #fff; box-shadow: 0 0 8px #00ffff; }
-    .controles-guitarra { display: flex; gap: 8px; justify-content: center; margin-top: 8px; }
-    .btn-guitarra { background: rgba(255,0,255,0.2); border: 1px solid #ff00ff; color: #fff; padding: 10px 14px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 12px; flex: 1; }
+    .lista-canciones-box { max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; margin: 8px 0; padding-right: 4px; }
+    .btn-cancion-item { background: rgba(0,255,255,0.1); border: 1px solid #00ffff; color: #fff; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; text-align: left; display: flex; justify-content: space-between; align-items: center; }
+    .btn-cancion-item:hover { background: rgba(255,0,255,0.3); border-color: #ff00ff; }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
@@ -182,16 +183,12 @@
     <div style="color:#00ffff; font-size:11px;">👆 TOCÁ DOS PIEZAS PARA INTERCAMBIARLAS Y ARMAR LA TAPA</div>
 </div>
 
-<!-- Mini-juego Ahí vamos (Disco 11) - Sala de Ensayo / Acordes -->
+<!-- Disco 11 (Ahí Vamos 2006) - Reproductor Completo de Temas -->
 <div id="ahi-vamos-modal" class="modal-juego" style="border-color: #ff00ff;">
-    <div class="hud-juego" style="color:#ff00ff;">🎸 AHÍ VAMOS (2006) - SALA DE ENSAYO</div>
-    <div class="objetivo-juego">🎯 TOCÁ EL ACORDE EN EL MOMENTO JUSTO: <span id="txt-ahi-vamos-meta">...</span> (Aciertos: <span id="txt-ahi-aciertos">0</span>/5)</div>
-    <canvas id="ahi-vamos-canvas" class="canvas-juego" width="360" height="240" style="border-color: #ff00ff;"></canvas>
-    <div class="controles-guitarra">
-        <button class="btn-guitarra" onclick="pulsarNotaGuitarra(0)">🎸 1</button>
-        <button class="btn-guitarra" onclick="pulsarNotaGuitarra(1)">🎸 2</button>
-        <button class="btn-guitarra" onclick="pulsarNotaGuitarra(2)">🎸 3</button>
-    </div>
+    <div class="hud-juego" style="color:#ff00ff;">🎸 AHÍ VAMOS (2006) - REPRODUCTOR OFICIAL</div>
+    <div class="objetivo-juego">🎵 TOCÁ CUALQUIER TEMA PARA ESCUCHARLO (Escuchados: <span id="txt-ahi-tocados">0</span>/<span id="txt-ahi-total">13</span>)</div>
+    <div class="lista-canciones-box" id="lista-canciones-ahi-vamos"></div>
+    <button class="btn-tetris" onclick="finalizarDiscoActual()" style="width:100%; margin-top:8px;">✨ CONQUISTAR DISCO</button>
 </div>
 
 <!-- Mini-juego Fuerza Natural (Disco 12) - Vuelo Cósmico / Cometa -->
@@ -1022,119 +1019,47 @@ function renderizarRompecabezasSiempre() {
     });
 }
 
-// --- DISCO 11 (Ahí Vamos 2006) - Sala de Ensayo / Acordes ---
-const cancionesAhiVamosDetalle = [
-    { nombre: "Al fin sola", seg: 0 }, { nombre: "Crimen", seg: 240 },
-    { nombre: "La excepción", seg: 510 }, { nombre: "Uno en mil", seg: 780 },
-    { nombre: "Caravan", seg: 1040 }, { nombre: "Adiós", seg: 1320 },
-    { nombre: "Me quedo aquí", seg: 1590 }, { nombre: "Música ligera (en vivo/versión)", seg: 1850 },
-    { nombre: "Lago en el cielo", seg: 2110 }, { nombre: "Dios nos libre", seg: 2380 },
-    { nombre: "Otra piel", seg: 2650 }, { nombre: "Medium", seg: 2920 },
-    { nombre: "Bomba de tiempo", seg: 3190 }, { nombre: "La fabulosa carrera", seg: 3450 }
+// --- DISCO 11 (Ahí Vamos 2006) - Reproductor Oficial de Todas las Canciones ---
+const cancionesAhiVamosCompleto = [
+    { nombre: "Danza rota (Intro / Versión)", seg: 0 },
+    { nombre: "Crimen", seg: 240 },
+    { nombre: "La excepción", seg: 510 },
+    { nombre: "Uno en mil", seg: 780 },
+    { nombre: "Caravan", seg: 1040 },
+    { nombre: "Adiós", seg: 1320 },
+    { nombre: "Me quedo aquí", seg: 1590 },
+    { nombre: "Lago en el cielo", seg: 2110 },
+    { nombre: "Dios nos libre", seg: 2380 },
+    { nombre: "Otra piel", seg: 2650 },
+    { nombre: "Medium", seg: 2920 },
+    { nombre: "Bomba de tiempo", seg: 3190 },
+    { nombre: "La fabulosa carrera", seg: 3450 }
 ];
 
-let ahiVamosIndice = 0;
-let ahiAciertos = 0;
-let notasGuitarraCaidas = [];
-let ahiVamosGameLoop = null;
+let ahiTocadasSet = new Set();
 
 function iniciarAhiVamos06() {
     document.getElementById('ahi-vamos-modal').style.display = 'block';
-    ahiVamosIndice = 0;
-    ahiAciertos = 0;
-    document.getElementById('txt-ahi-aciertos').innerText = ahiAciertos;
-    cargarSiguienteNotaAhiVamos();
-    if (!ahiVamosGameLoop) {
-        ahiVamosGameLoop = setInterval(actualizarYRenderizarAhiVamos, 1000 / 30);
-    }
-}
-
-function cargarSiguienteNotaAhiVamos() {
-    if (ahiVamosIndice >= cancionesAhiVamosDetalle.length) {
-        finalizarDiscoActual();
-        return;
-    }
-    let temaObj = cancionesAhiVamosDetalle[ahiVamosIndice];
-    document.getElementById('txt-ahi-vamos-meta').innerText = temaObj.nombre;
-    reproducirAudio(discoActual.trackId, temaObj.seg);
-
-    notasGuitarraCaidas = [];
-    let carrilCorrecto = Math.floor(Math.random() * 3);
-    for (let i = 0; i < 3; i++) {
-        notasGuitarraCaidas.push({
-            carril: i,
-            y: -50 - (i * 30),
-            correcta: (i === carrilCorrecto)
-        });
-    }
-}
-
-function pulsarNotaGuitarra(carrilElegido) {
-    let notaObjetivo = notasGuitarraCaidas.find(n => n.y >= 160 && n.y <= 220 && n.carril === carrilElegido);
-    if (notaObjetivo) {
-        if (notaObjetivo.correcta) {
-            ahiAciertos++;
-            puntos += 35;
+    ahiTocadasSet.clear();
+    document.getElementById('txt-ahi-tocados').innerText = "0";
+    document.getElementById('txt-ahi-total').innerText = cancionesAhiVamosCompleto.length;
+    
+    const container = document.getElementById('lista-canciones-ahi-vamos');
+    container.innerHTML = '';
+    
+    cancionesAhiVamosCompleto.forEach((tema, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-cancion-item';
+        btn.innerHTML = `<span>🎵 ${tema.nombre}</span> <span id="chk-${idx}">⏳</span>`;
+        btn.onclick = () => {
+            reproducirAudio(discoActual.trackId, tema.seg);
+            ahiTocadasSet.add(idx);
+            document.getElementById('txt-ahi-tocados').innerText = ahiTocadasSet.size;
+            document.getElementById(`chk-${idx}`).innerText = "✅";
+            puntos += 10;
             document.getElementById('txt-puntos').innerText = puntos;
-            document.getElementById('txt-ahi-aciertos').innerText = ahiAciertos;
-            if (ahiAciertos >= 5) {
-                finalizarDiscoActual();
-            } else {
-                ahiVamosIndice++;
-                cargarSiguienteNotaAhiVamos();
-            }
-        } else {
-            puntos = Math.max(0, puntos - 10);
-            document.getElementById('txt-puntos').innerText = puntos;
-        }
-    }
-}
-
-const canvasAhiVamos = document.getElementById('ahi-vamos-canvas');
-canvasAhiVamos.onclick = (e) => {
-    let rect = canvasAhiVamos.getBoundingClientRect();
-    let x = e.clientX - rect.left;
-    let carril = Math.floor(x / (canvasAhiVamos.width / 3));
-    pulsarNotaGuitarra(carril);
-};
-
-function actualizarYRenderizarAhiVamos() {
-    if (estadoActual !== "JUEGO_DISCO" || !discoActual || !discoActual.esAhiVamos) return;
-    const ctx = canvasAhiVamos.getContext('2d');
-    ctx.clearRect(0, 0, canvasAhiVamos.width, canvasAhiVamos.height);
-
-    let anchoCarril = canvasAhiVamos.width / 3;
-    ctx.strokeStyle = 'rgba(255, 0, 255, 0.2)';
-    ctx.lineWidth = 1;
-    for (let i = 1; i < 3; i++) {
-        ctx.beginPath();
-        ctx.moveTo(i * anchoCarril, 0);
-        ctx.lineTo(i * anchoCarril, canvasAhiVamos.height);
-        ctx.stroke();
-    }
-
-    ctx.strokeStyle = '#00ffff';
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.moveTo(0, 190);
-    ctx.lineTo(canvasAhiVamos.width, 190);
-    ctx.stroke();
-
-    notasGuitarraCaidas.forEach(nota => {
-        nota.y += 2.5;
-        if (nota.y > canvasAhiVamos.height + 20) {
-            nota.y = -20;
-        }
-        let posX = nota.carril * anchoCarril + anchoCarril / 2;
-        ctx.fillStyle = nota.correcta ? '#ff00ff' : '#00ffff';
-        ctx.beginPath();
-        ctx.arc(posX, nota.y, 16, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 12px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(`🎸`, posX, nota.y);
+        };
+        container.appendChild(btn);
     });
 }
 
@@ -1190,7 +1115,6 @@ function actualizarYRenderizarFuerza() {
     const ctx = canvasFuerza.getContext('2d');
     ctx.clearRect(0, 0, canvasFuerza.width, canvasFuerza.height);
 
-    // Fondo estelar dinámico
     ctx.fillStyle = '#020b14';
     ctx.fillRect(0, 0, canvasFuerza.width, canvasFuerza.height);
 
@@ -1209,7 +1133,6 @@ function actualizarYRenderizarFuerza() {
         ctx.textAlign = 'center';
         ctx.fillText(obj.texto, obj.x, obj.y + 4);
 
-        // Colisión con la nave/cometa abajo (y ~ 205)
         if (obj.y >= 190 && obj.y <= 225 && Math.abs(obj.x - cometaX) < 30) {
             if (obj.correcta) {
                 fuerzaPuntosAciertos++;
@@ -1238,7 +1161,6 @@ function actualizarYRenderizarFuerza() {
         }
     });
 
-    // Dibujar nave / cometa
     ctx.fillStyle = '#00ffaa';
     ctx.beginPath();
     ctx.moveTo(cometaX, 200);
