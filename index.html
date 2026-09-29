@@ -94,15 +94,15 @@
 <!-- Mini-juego Galaxy (Disco 2 - Nada Personal) -->
 <div id="galaxy-game-modal" class="modal-juego">
     <div class="hud-juego">🚀 NADA PERSONAL (1985)</div>
-    <div class="objetivo-juego">🎯 ATRAPÁ EL TEMA: <span id="txt-galaxy-meta">...</span></div>
+    <div class="objetivo-juego">🎯 ESCUCHÁ EL TEMA Y ATRAPÁ LA BOLA CORRECTA</div>
     <canvas id="galaxy-canvas" class="canvas-juego" width="380" height="240"></canvas>
     <div style="color:#00ffff; font-size:11px;">👆 ARRASTRÁ EL DEDO PARA MOVER LA NAVE</div>
 </div>
 
-<!-- Mini-juego Tetris (Disco 3) -->
+<!-- Mini-juego Tetris (Disco 3 - Signos con 3 líneas por canción) -->
 <div id="tetris-game-modal" class="modal-juego" style="border-color: #ff00ff;">
     <div class="hud-juego" style="color:#ff00ff;">🧱 SIGNOS (1986) - TETRIS MUSICAL</div>
-    <div class="objetivo-juego">🎯 LÍNEAS COMPLETADAS: <span id="txt-tetris-lineas">0</span>/5</div>
+    <div class="objetivo-juego">🎯 TEMA: <span id="txt-tetris-tema" style="color:#00ffff;">...</span> | LÍNEAS: <span id="txt-tetris-lineas">0</span>/3</div>
     <canvas id="tetris-canvas" class="canvas-juego" width="220" height="300" style="border-color: #ff00ff;"></canvas>
     <div class="controles-tetris">
         <button class="btn-tetris" id="btn-tetris-izq">⬅️</button>
@@ -384,7 +384,7 @@ function actualizarYRenderizarPacman() {
     ctx.lineTo(pacPx, pacPy); ctx.fill();
 }
 
-// --- DISCO 2 (Galaxy - Nada Personal 1985 con bolas rojas y nombres escritos) ---
+// --- DISCO 2 (Galaxy - Nada Personal 1985 con juego por escucha y sin cartel arriba) ---
 let naveX = 190;
 const cancionesNadaPersonalDetalle = [
     { nombre: "Nada Personal", seg: 0 },
@@ -415,8 +415,10 @@ function generarObjetoGalaxy() {
         return; 
     }
     let temaObj = cancionesNadaPersonalDetalle[indiceMetaNadaPersonal];
-    document.getElementById('txt-galaxy-meta').innerText = temaObj.nombre;
     
+    // Reproducir la canción actual para que el jugador la adivine escuchando
+    reproducirAudio(discoActual.trackId, temaObj.seg);
+
     objetosGalaxia = [];
     let correcto = temaObj.nombre;
     objetosGalaxia.push({ x: Math.random() * 260 + 60, y: -30, texto: correcto, correcta: true, velocidad: 2.2 });
@@ -437,7 +439,6 @@ function actualizarYRenderizarGalaxy() {
     objetosGalaxia.forEach((obj, index) => {
         obj.y += obj.velocidad;
         
-        // BOLAS ROJAS BRILLANTES (#ff0055) CON EL NOMBRE DEL TEMA ESCRITO
         ctx.fillStyle = '#ff0055';
         ctx.beginPath(); 
         ctx.arc(obj.x, obj.y, 14, 0, Math.PI * 2); 
@@ -451,11 +452,6 @@ function actualizarYRenderizarGalaxy() {
         if (obj.y >= 195 && obj.y <= 225 && Math.abs(obj.x - naveX) < 30) {
             if (obj.correcta) {
                 puntos += 30; document.getElementById('txt-puntos').innerText = puntos;
-                // Al atrapar la correcta, suena la canción correspondiente
-                let temaActualObj = cancionesNadaPersonalDetalle[indiceMetaNadaPersonal];
-                reproducirAudio(discoActual.trackId, temaActualObj.seg);
-                mostrarCartelPacman(`SONANDO: ${temaActualObj.nombre}`);
-                
                 indiceMetaNadaPersonal++; 
                 generarObjetoGalaxy();
             } else {
@@ -474,18 +470,41 @@ function actualizarYRenderizarGalaxy() {
     ctx.closePath(); ctx.fill();
 }
 
-// --- DISCO 3 (Tetris - Signos 1986) ---
+// --- DISCO 3 (Tetris - Signos 1986 con 3 líneas por canción y todas las pistas) ---
 let tetrisCols = 10, tetrisRows = 14;
 let tetrisGrid = Array(tetrisRows).fill().map(() => Array(tetrisCols).fill(0));
 let piezaActual = null, tetrisLineasCount = 0, tetrisGameLoop = null;
 const tetrisPiezas = [[[1,1,1,1]], [[1,1],[1,1]], [[0,1,0],[1,1,1]], [[1,0],[1,0],[1,1]], [[0,1],[0,1],[1,1]]];
 
+const cancionesSignosDetalle = [
+    { nombre: "Signos", seg: 0 },
+    { nombre: "El rito", seg: 260 },
+    { nombre: "Prófugos", seg: 480 },
+    { nombre: "No existes", seg: 750 },
+    { nombre: "Persiana americana", seg: 980 },
+    { nombre: "En camino", seg: 1250 },
+    { nombre: "Inexcusa / Final", seg: 1500 }
+];
+let tetrisIndiceTema = 0;
+let tetrisLineasTemaActual = 0;
+
 function iniciarTetrisSignos() {
     document.getElementById('tetris-game-modal').style.display = 'block';
     tetrisGrid = Array(tetrisRows).fill().map(() => Array(tetrisCols).fill(0));
-    tetrisLineasCount = 0; document.getElementById('txt-tetris-lineas').innerText = tetrisLineasCount;
+    tetrisLineasCount = 0;
+    tetrisIndiceTema = 0;
+    tetrisLineasTemaActual = 0;
+    
+    actualizarUIDTetrisSignos();
+    reproducirAudio(discoActual.trackId, cancionesSignosDetalle[tetrisIndiceTema].seg);
     crearPiezaTetris();
     if (!tetrisGameLoop) tetrisGameLoop = setInterval(actualizarTetris, 600);
+}
+
+function actualizarUIDTetrisSignos() {
+    let temaActual = cancionesSignosDetalle[tetrisIndiceTema];
+    document.getElementById('txt-tetris-tema').innerText = temaActual.nombre;
+    document.getElementById('txt-tetris-lineas').innerText = `${tetrisLineasTemaActual}/3`;
 }
 
 function crearPiezaTetris() {
@@ -522,12 +541,26 @@ function fijarPiezaTetris() {
 function chequearLineasTetris() {
     for (let r = tetrisRows - 1; r >= 0; r--) {
         if (tetrisGrid[r].every(cell => cell === 1)) {
-            tetrisGrid.splice(r, 1); tetrisGrid.unshift(Array(tetrisCols).fill(0));
-            tetrisLineasCount++; puntos += 50;
+            tetrisGrid.splice(r, 1); 
+            tetrisGrid.unshift(Array(tetrisCols).fill(0));
+            tetrisLineasCount++; 
+            tetrisLineasTemaActual++;
+            puntos += 50;
             document.getElementById('txt-puntos').innerText = puntos;
-            document.getElementById('txt-tetris-lineas').innerText = tetrisLineasCount;
+            actualizarUIDTetrisSignos();
             r++;
-            if (tetrisLineasCount >= 5) { finalizarDiscoActual(); }
+
+            // Si completa 3 líneas para esta canción de Signos
+            if (tetrisLineasTemaActual >= 3) {
+                tetrisIndiceTema++;
+                tetrisLineasTemaActual = 0;
+                if (tetrisIndiceTema < cancionesSignosDetalle.length) {
+                    let siguienteTema = cancionesSignosDetalle[tetrisIndiceTema];
+                    reproducirAudio(discoActual.trackId, siguienteTema.seg);
+                } else {
+                    finalizarDiscoActual(); // ¡Signos conquistado por completo!
+                }
+            }
         }
     }
 }
