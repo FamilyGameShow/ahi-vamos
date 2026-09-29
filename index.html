@@ -384,7 +384,7 @@ function actualizarYRenderizarPacman() {
     ctx.lineTo(pacPx, pacPy); ctx.fill();
 }
 
-// --- DISCO 2 (Galaxy - Nada Personal con velocidad más moderada y espaciada) ---
+// --- DISCO 2 (Galaxy - Nada Personal) ---
 let naveX = 190;
 const cancionesNadaPersonalDetalle = [
     { nombre: "Nada Personal", seg: 0 },
@@ -401,83 +401,114 @@ const cancionesNadaPersonalDetalle = [
 let indiceMetaNadaPersonal = 0;
 let objetosGalaxia = [];
 let galaxyGameLoop = null;
+let contadorBolasLanzadas = 0;
 
 function iniciarGalaxyNadaPersonal() {
     document.getElementById('galaxy-game-modal').style.display = 'block';
-    naveX = 190; indiceMetaNadaPersonal = 0; generarObjetoGalaxy();
-    if (!galaxyGameLoop) galaxyGameLoop = setInterval(actualizarYRenderizarGalaxy, 1000 / 30);
-}
-
-let contadorIntentosGalaxy = 0; // Lleva la cuenta de cuántas bolas pasaron
-
-function generarObjetoGalaxy() {
-    if (indiceMetaNadaPersonal >= cancionesNadaPersonalDetalle.length) {
-        document.getElementById('cartel-tema-pacman').style.display = 'none';
-        finalizarDiscoActual();
-        return;
-    }
+    naveX = 190;
+    indiceMetaNadaPersonal = 0;
+    contadorBolasLanzadas = 0;
     
     let temaObj = cancionesNadaPersonalDetalle[indiceMetaNadaPersonal];
     reproducirAudio(discoActual.trackId, temaObj.seg);
+    
     objetosGalaxia = [];
+    if (!galaxyGameLoop) galaxyGameLoop = setInterval(actualizarYRenderizarGalaxy, 1000 / 30);
+}
+
+function generarObjetoGalaxyContinuo() {
+    if (indiceMetaNadaPersonal >= cancionesNadaPersonalDetalle.length) return;
     
-    // Si todavía no pasaron 10 bolas de prueba, tiramos puras trampas para hacer tiempo y escuchar
-    let esCorrectaEstaTanda = (contadorIntentosGalaxy >= 10);
+    let temaObj = cancionesNadaPersonalDetalle[indiceMetaNadaPersonal];
     
-    let textoElegido = esCorrectaEstaTanda ? temaObj.nombre : cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)];
-    let posicionesX = [70, 150, 230, 310];
+    // Cada 12 burbujas que pasan, la siguiente obligatoriamente es la verdadera
+    let esCorrecta = (contadorBolasLanzadas >= 12);
+    let textoElegido = esCorrecta ? temaObj.nombre : cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)];
+    
+    let posicionesX = [60, 130, 200, 270, 340];
     let posX = posicionesX[Math.floor(Math.random() * posicionesX.length)];
     
     objetosGalaxia.push({
         x: posX,
-        y: -40,
+        y: -30,
         texto: textoElegido,
-        correcta: esCorrectaEstaTanda,
-        velocidad: 1.2 + Math.random() * 0.4
+        correcta: esCorrecta,
+        velocidad: 1.1 + Math.random() * 0.4
     });
+    
+    contadorBolasLanzadas++;
 }
 
 const canvasGalaxy = document.getElementById('galaxy-canvas');
-canvasGalaxy.onmousemove = (e) => { naveX = e.clientX - canvasGalaxy.getBoundingClientRect().left; };
-canvasGalaxy.ontouchmove = (e) => { if(e.touches.length > 0) { naveX = e.touches[0].clientX - canvasGalaxy.getBoundingClientRect().left; } };
+canvasGalaxy.onmousemove = (e) => {
+    naveX = e.clientX - canvasGalaxy.getBoundingClientRect().left;
+};
+canvasGalaxy.ontouchmove = (e) => {
+    if(e.touches.length > 0) {
+        naveX = e.touches[0].clientX - canvasGalaxy.getBoundingClientRect().left;
+    }
+};
 
 function actualizarYRenderizarGalaxy() {
     if (estadoActual !== "JUEGO_DISCO" || !discoActual || !discoActual.esGalaxy) return;
+    
+    // Generamos nuevas burbujas periódicamente si hay pocas en pantalla
+    if (objetosGalaxia.length < 5 && Math.random() < 0.15) {
+        generarObjetoGalaxyContinuo();
+    }
+    
     const ctx = canvasGalaxy.getContext('2d');
     ctx.clearRect(0, 0, canvasGalaxy.width, canvasGalaxy.height);
     
     objetosGalaxia.forEach((obj, index) => {
         obj.y += obj.velocidad;
         
-        ctx.fillStyle = '#ff0055';
-        ctx.beginPath(); 
-        ctx.arc(obj.x, obj.y, 14, 0, Math.PI * 2); 
+        ctx.fillStyle = obj.correcta ? '#00ffff' : '#ff0055';
+        ctx.beginPath();
+        ctx.arc(obj.x, obj.y, 14, 0, Math.PI * 2);
         ctx.fill();
-
-        ctx.fillStyle = '#ffffff'; 
-        ctx.font = 'bold 11px sans-serif'; 
+        
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 11px sans-serif';
         ctx.textAlign = 'center';
         ctx.fillText(obj.texto, obj.x, obj.y - 18);
-
+        
+        // Colisión con la nave
         if (obj.y >= 205 && obj.y <= 235 && Math.abs(obj.x - naveX) < 30) {
             if (obj.correcta) {
-                puntos += 30; document.getElementById('txt-puntos').innerText = puntos;
-                indiceMetaNadaPersonal++; 
-                generarObjetoGalaxy();
+                puntos += 50;
+                document.getElementById('txt-puntos').innerText = puntos;
+                indiceMetaNadaPersonal++;
+                contadorBolasLanzadas = 0; // Reiniciamos el contador para la siguiente canción
+                objetosGalaxia = []; // Limpiamos pantalla
+                
+                if (indiceMetaNadaPersonal >= cancionesNadaPersonalDetalle.length) {
+                    finalizarDiscoActual();
+                } else {
+                    let nuevoTema = cancionesNadaPersonalDetalle[indiceMetaNadaPersonal];
+                    reproducirAudio(discoActual.trackId, nuevoTema.seg);
+                }
             } else {
-                puntos = Math.max(0, puntos - 10); document.getElementById('txt-puntos').innerText = puntos;
-                objetosGalaxia.splice(index, 1);
+                puntos = Math.max(0, puntos - 10);
+                document.getElementById('txt-puntos').innerText = puntos;
+                objetosGalaxia.splice(index, 1); // Borra la trampa errada
             }
         }
+        
+        // Si la burbuja pasa de largo abajo sin tocarla
         if (obj.y > 280) {
-            if (obj.correcta) generarObjetoGalaxy();
-            else objetosGalaxia.splice(index, 1);
+            objetosGalaxia.splice(index, 1);
         }
     });
-
-    ctx.fillStyle = '#ffcc00'; ctx.beginPath();
-    ctx.moveTo(naveX, 205); ctx.lineTo(naveX - 22, 230); ctx.lineTo(naveX + 22, 230);
-    ctx.closePath(); ctx.fill();
+    
+    // Dibujar la nave
+    ctx.fillStyle = '#ffcc00';
+    ctx.beginPath();
+    ctx.moveTo(naveX, 205);
+    ctx.lineTo(naveX - 22, 230);
+    ctx.lineTo(naveX + 22, 230);
+    ctx.closePath();
+    ctx.fill();
 }
 
 // --- DISCO 3 (Tetris - Signos) ---
