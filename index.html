@@ -870,47 +870,82 @@ function actualizarYRenderizarDynamo() {
 // --- DISCO 7 (Sueño Stereo 1995) ---
 let burbujasSueno = [];
 const cancionesSueñoStereoDetalle = [
-    { nombre: "Ella usó mi cabeza", seg: 55 }, { nombre: "Disco Eterno", seg: 279 },
-    { nombre: "Zoom", seg: 626 }, { nombre: "Ojo de la tormenta", seg: 833 },
-    { nombre: "Efecto doppler", seg: 1107 }, { nombre: "Paseando por roma", seg: 1413 },
-    { nombre: "Pasos", seg: 1632 }, { nombre: "Angel electrico", seg: 1867 },
-    { nombre: "Crema de Estrellas", seg: 2143 }, { nombre: "Planta", seg: 2422 },
-    { nombre: "X Playo", seg: 2715 }, { nombre: "Moire", seg: 2962 }
+    { nombre: "Ella usó mi cabeza", seg: 55 },
+    { nombre: "Disco Eterno", seg: 279 },
+    { nombre: "Zoom", seg: 626 },
+    { nombre: "Ojo de la tormenta", seg: 833 },
+    { nombre: "Efecto doppler", seg: 1107 },
+    { nombre: "Paseando por roma", seg: 1413 },
+    { nombre: "Pasos", seg: 1632 },
+    { nombre: "Angel electrico", seg: 1867 },
+    { nombre: "Crema de Estrellas", seg: 2143 },
+    { nombre: "Planta", seg: 2422 },
+    { nombre: "X Playo", seg: 2715 },
+    { nombre: "Moire", seg: 2962 }
 ];
 let indiceMetaSueno = 0, suenoGameLoop = null;
 
 function iniciarSuenoStereo95() {
     document.getElementById('sueno-stereo-modal').style.display = 'block';
-    indiceMetaSueno = 0; generarBurbujasSuenoWave();
+    indiceMetaSueno = 0;
+    
+    // Arrancamos reproduciendo el tema actual sin mostrar el nombre arriba
+    let temaActualObj = cancionesSueñoStereoDetalle[indiceMetaMetaSuenoSeguro()];
+    reproducirAudio(discoActual.trackId, temaActualObj.seg);
+    
+    burbujasSueno = [];
     if (!suenoGameLoop) suenoGameLoop = setInterval(actualizarYRenderizarSueno, 1000 / 30);
 }
 
-function generarBurbujasSuenoWave() {
-    if (indiceMetaSueno >= cancionesSueñoStereoDetalle.length) { finalizarDiscoActual(); return; }
-    let temaActualObj = cancionesSueñoStereoDetalle[indiceMetaSueno];
-    document.getElementById('txt-sueno-meta').innerText = temaActualObj.nombre;
-    burbujasSueno = [];
-    burbujasSueno.push({ x: Math.random() * 300 + 40, y: 260, texto: temaActualObj.nombre, segundos: temaActualObj.seg, correcta: true, velY: 1.5 });
-    for(let i = 0; i < 2; i++) {
-        let trampa = cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)];
-        burbujasSueno.push({ x: Math.random() * 300 + 40, y: 260, texto: trampa, segundos: 0, correcta: false, velY: 1.2 });
+function indiceMetaMetaSuenoSeguro() {
+    return Math.min(indiceMetaSueno, cancionesSueñoStereoDetalle.length - 1);
+}
+
+function generarBurbujasSuenoContinuas() {
+    if (indiceMetaSueno >= cancionesSueñoStereoDetalle.length) {
+        finalizarDiscoActual();
+        return;
     }
+    let temaActualObj = cancionesSueñoStereoDetalle[indiceMetaSueno];
+    
+    // 25% de probabilidad de que sea la correcta mezclada en la tanda
+    let esCorrecta = Math.random() < 0.25;
+    let textoElegido = esCorrecta ? temaActualObj.nombre : cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)];
+    
+    burbujasSueno.push({
+        x: Math.random() * 320 + 30,
+        y: 260,
+        texto: textoElegido,
+        segundos: temaActualObj.seg,
+        correcta: esCorrecta,
+        velY: 1.2 + Math.random() * 0.6
+    });
 }
 
 const canvasSueno = document.getElementById('sueno-canvas');
 canvasSueno.onclick = (e) => {
     const rect = canvasSueno.getBoundingClientRect();
     let clickX = e.clientX - rect.left, clickY = e.clientY - rect.top;
+    
     burbujasSueno.forEach((burbuja, index) => {
         let distancia = Math.hypot(clickX - burbuja.x, clickY - burbuja.y);
         if (distancia < 25) {
             if (burbuja.correcta) {
-                puntos += 35; document.getElementById('txt-puntos').innerText = puntos;
-                reproducirAudio(discoActual.trackId, burbuja.segundos);
-                indiceMetaSueno++; generarBurbujasSuenoWave();
+                puntos += 35;
+                document.getElementById('txt-puntos').innerText = puntos;
+                indiceMetaSueno++;
+                burbujasSueno = []; // Limpiamos pantalla para el siguiente tema
+                
+                if (indiceMetaSueno >= cancionesSueñoStereoDetalle.length) {
+                    finalizarDiscoActual();
+                } else {
+                    let siguienteTema = cancionesSueñoStereoDetalle[indiceMetaSueno];
+                    reproducirAudio(discoActual.trackId, siguienteTema.seg);
+                }
             } else {
-                puntos = Math.max(0, puntos - 10); document.getElementById('txt-puntos').innerText = puntos;
-                burbujasSueno.splice(index, 1);
+                puntos = Math.max(0, puntos - 10);
+                document.getElementById('txt-puntos').innerText = puntos;
+                burbujasSueno.splice(index, 1); // Borra la trampa errada
             }
         }
     });
@@ -918,19 +953,37 @@ canvasSueno.onclick = (e) => {
 
 function actualizarYRenderizarSueno() {
     if (estadoActual !== "JUEGO_DISCO" || !discoActual || !discoActual.esSuenoStereo) return;
+    
+    // Generamos nuevas burbujas continuamente si hay pocas
+    if (burbujasSueno.length < 6 && Math.random() < 0.2) {
+        generarBurbujasSuenoContinuas();
+    }
+    
     const ctx = canvasSueno.getContext('2d');
     ctx.clearRect(0, 0, canvasSueno.width, canvasSueno.height);
-    ctx.fillStyle = '#05021a'; ctx.fillRect(0, 0, canvasSueno.width, canvasSueno.height);
+    ctx.fillStyle = '#05021a';
+    ctx.fillRect(0, 0, canvasSueno.width, canvasSueno.height);
+    
     burbujasSueno.forEach((burbuja, index) => {
         burbuja.y -= burbuja.velY;
-        ctx.fillStyle = burbuja.correcta ? 'rgba(0, 255, 255, 0.25)' : 'rgba(255, 0, 255, 0.25)';
-        ctx.strokeStyle = burbuja.correcta ? '#00ffff' : '#ff00ff'; ctx.lineWidth = 2;
-        ctx.beginPath(); ctx.arc(burbuja.x, burbuja.y, 22, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-        ctx.fillStyle = '#ffffff'; ctx.font = 'bold 10px sans-serif'; ctx.textAlign = 'center';
+        
+        // Mismo estilo para todas (color fucsia/rosa idéntico) para no delatar cuál es
+        ctx.fillStyle = 'rgba(255, 0, 85, 0.25)';
+        ctx.strokeStyle = '#ff0055';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(burbuja.x, burbuja.y, 22, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 10px sans-serif';
+        ctx.textAlign = 'center';
         ctx.fillText(burbuja.texto, burbuja.x, burbuja.y + 3);
+        
+        // Si la burbuja se va arriba de todo sin tocarla
         if (burbuja.y < -30) {
-            if (burbuja.correcta) generarBurbujasSuenoWave();
-            else burbujasSueno.splice(index, 1);
+            burbujasSueno.splice(index, 1);
         }
     });
 }
