@@ -486,6 +486,7 @@ function actualizarYRenderizarGalaxy() {
                 document.getElementById('txt-puntos').innerText = puntos;
                 indiceMetaNadaPersonal++;
                 contadorBolasLanzadas = 0;
+                indiceGanadorRandom = Math.floor(Math.random() * 6) + 5; // Nuevo número aleatorio para la siguiente canción
                 objetosGalaxia = [];
                 
                 if (indiceMetaNadaPersonal >= cancionesNadaPersonalDetalle.length) {
