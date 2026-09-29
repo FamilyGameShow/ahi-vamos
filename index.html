@@ -436,7 +436,8 @@ let galaxyGameLoop = null;
 let contadorBolasLanzadas = 0;
 
 function iniciarGalaxyNadaPersonal() {
-    document.getElementById('galaxy-game-modal').style.display = 'block';
+    let modal = document.getElementById('galaxy-game-modal');
+    if (modal) modal.style.display = 'block';
     naveX = 190;
     indiceMetaNadaPersonal = 0;
     contadorBolasLanzadas = 0;
@@ -453,7 +454,7 @@ function generarObjetoGalaxyContinuo() {
     
     let temaObj = cancionesNadaPersonalDetalle[indiceMetaNadaPersonal];
     
-    // Cada 12 burbujas que pasan, la siguiente obligatoriamente es la verdadera
+    // Cada 12 burbujas, la verdadera se mezcla junto a las demás con el mismo formato
     let esCorrecta = (contadorBolasLanzadas >= 12);
     let textoElegido = esCorrecta ? temaObj.nombre : cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)];
     
@@ -472,19 +473,20 @@ function generarObjetoGalaxyContinuo() {
 }
 
 const canvasGalaxy = document.getElementById('galaxy-canvas');
-canvasGalaxy.onmousemove = (e) => {
-    naveX = e.clientX - canvasGalaxy.getBoundingClientRect().left;
-};
-canvasGalaxy.ontouchmove = (e) => {
-    if(e.touches.length > 0) {
-        naveX = e.touches[0].clientX - canvasGalaxy.getBoundingClientRect().left;
-    }
-};
+if (canvasGalaxy) {
+    canvasGalaxy.onmousemove = (e) => {
+        naveX = e.clientX - canvasGalaxy.getBoundingClientRect().left;
+    };
+    canvasGalaxy.ontouchmove = (e) => {
+        if(e.touches.length > 0) {
+            naveX = e.touches[0].clientX - canvasGalaxy.getBoundingClientRect().left;
+        }
+    };
+}
 
 function actualizarYRenderizarGalaxy() {
     if (estadoActual !== "JUEGO_DISCO" || !discoActual || !discoActual.esGalaxy) return;
     
-    // Generamos nuevas burbujas periódicamente si hay pocas en pantalla
     if (objetosGalaxia.length < 5 && Math.random() < 0.15) {
         generarObjetoGalaxyContinuo();
     }
@@ -495,7 +497,8 @@ function actualizarYRenderizarGalaxy() {
     objetosGalaxia.forEach((obj, index) => {
         obj.y += obj.velocidad;
         
-        ctx.fillStyle = obj.correcta ? '#00ffff' : '#ff0055';
+        // Mismo color y estilo para todas para que no se delate la correcta
+        ctx.fillStyle = '#ff0055';
         ctx.beginPath();
         ctx.arc(obj.x, obj.y, 14, 0, Math.PI * 2);
         ctx.fill();
@@ -511,8 +514,8 @@ function actualizarYRenderizarGalaxy() {
                 puntos += 50;
                 document.getElementById('txt-puntos').innerText = puntos;
                 indiceMetaNadaPersonal++;
-                contadorBolasLanzadas = 0; // Reiniciamos el contador para la siguiente canción
-                objetosGalaxia = []; // Limpiamos pantalla
+                contadorBolasLanzadas = 0;
+                objetosGalaxia = [];
                 
                 if (indiceMetaNadaPersonal >= cancionesNadaPersonalDetalle.length) {
                     finalizarDiscoActual();
@@ -523,11 +526,10 @@ function actualizarYRenderizarGalaxy() {
             } else {
                 puntos = Math.max(0, puntos - 10);
                 document.getElementById('txt-puntos').innerText = puntos;
-                objetosGalaxia.splice(index, 1); // Borra la trampa errada
+                objetosGalaxia.splice(index, 1);
             }
         }
         
-        // Si la burbuja pasa de largo abajo sin tocarla
         if (obj.y > 280) {
             objetosGalaxia.splice(index, 1);
         }
