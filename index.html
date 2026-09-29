@@ -417,12 +417,14 @@ function iniciarGalaxyNadaPersonal() {
     if (!galaxyGameLoop) galaxyGameLoop = setInterval(actualizarYRenderizarGalaxy, 1000 / 30);
 }
 
+let contadorBolasPasadas = 0;
+let indiceGanadorRandom = Math.floor(Math.random() * 6) + 5; // Sale aleatoriamente entre la bola 5 y la 10
+
 function generarObjetoGalaxyContinuo() {
     if (indiceMetaNadaPersonal >= cancionesNadaPersonalDetalle.length) return;
     let temaObj = cancionesNadaPersonalDetalle[indiceMetaNadaPersonal];
     
-    // Con una probabilidad del 20% sale la correcta, de lo contrario sale una trampa al azar
-    let esCorrecta = Math.random() < 0.20;
+    let esCorrecta = (contadorBolasPasadas === indiceGanadorRandom);
     let textoElegido = esCorrecta ? temaObj.nombre : cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)];
     
     let posicionesX = [60, 130, 200, 270, 340];
@@ -435,6 +437,8 @@ function generarObjetoGalaxyContinuo() {
         correcta: esCorrecta,
         velocidad: 1.1 + Math.random() * 0.4
     });
+    
+    contadorBolasPasadas++;
 }
 
 setTimeout(() => {
