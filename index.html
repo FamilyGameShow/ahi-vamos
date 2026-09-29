@@ -901,6 +901,9 @@ function indiceMetaMetaSuenoSeguro() {
     return Math.min(indiceMetaSueno, cancionesSueñoStereoDetalle.length - 1);
 }
 
+let contadorBolasSuenoPasadas = 0;
+let indiceGanadorSuenoRandom = Math.floor(Math.random() * 6) + 4; // Sale al azar entre la bola 4 y la 9
+
 function generarBurbujasSuenoContinuas() {
     if (indiceMetaSueno >= cancionesSueñoStereoDetalle.length) {
         finalizarDiscoActual();
@@ -908,8 +911,8 @@ function generarBurbujasSuenoContinuas() {
     }
     let temaActualObj = cancionesSueñoStereoDetalle[indiceMetaSueno];
     
-    // 25% de probabilidad de que sea la correcta mezclada en la tanda
-    let esCorrecta = Math.random() < 0.25;
+    // Aparece una sola vez exacta de manera aleatoria en esta tanda
+    let esCorrecta = (contadorBolasSuenoPasadas === indiceGanadorSuenoRandom);
     let textoElegido = esCorrecta ? temaActualObj.nombre : cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)];
     
     burbujasSueno.push({
@@ -920,6 +923,8 @@ function generarBurbujasSuenoContinuas() {
         correcta: esCorrecta,
         velY: 1.2 + Math.random() * 0.6
     });
+    
+    contadorBolasSuenoPasadas++;
 }
 
 const canvasSueno = document.getElementById('sueno-canvas');
