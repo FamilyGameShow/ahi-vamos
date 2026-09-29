@@ -409,30 +409,32 @@ function iniciarGalaxyNadaPersonal() {
 }
 
 function generarObjetoGalaxy() {
-    if (indiceMetaNadaPersonal >= cancionesNadaPersonalDetalle.length) { 
-        document.getElementById('cartel-tema-pacman').style.display = 'none';
-        finalizarDiscoActual(); 
-        return; 
-    }
-    let temaObj = cancionesNadaPersonalDetalle[indiceMetaNadaPersonal];
+    // Elegimos una canción meta al azar de todo el disco
+    let temaObj = cancionesNadaPersonalDetalle[Math.floor(Math.random() * cancionesNadaPersonalDetalle.length)];
     reproducirAudio(discoActual.trackId, temaObj.seg);
-
+    
     objetosGalaxia = [];
+    
+    // Armamos un grupo con la correcta y 4 opciones trampa para que haya muchas en pantalla
     let opciones = [
         { texto: temaObj.nombre, correcta: true },
+        { texto: cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)], correcta: false },
+        { texto: cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)], correcta: false },
         { texto: cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)], correcta: false },
         { texto: cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)], correcta: false }
     ];
     opciones.sort(() => Math.random() - 0.5);
-
-    let posicionesX = [70, 190, 310];
+    
+    // Distribuimos las posiciones en X a lo largo de la pantalla
+    let posicionesX = [40, 110, 190, 270, 340];
+    
     opciones.forEach((op, idx) => {
         objetosGalaxia.push({
             x: posicionesX[idx],
-            y:-80 - (idx *140), // Más espaciadas verticalmente para que caigan de forma más natural y no tan juntas
+            y: -60 - (Math.random() * 80), // Escalonadas para que caigan fluidas
             texto: op.texto,
             correcta: op.correcta,
-            velocidad: 0.9 + Math.random() * 0.3 // Velocidad más suave y disfrutable
+            velocidad: 1.5 + Math.random() * 0.8 // Velocidad justa para que se disfruten sin desaparecer antes
         });
     });
 }
@@ -459,7 +461,7 @@ function actualizarYRenderizarGalaxy() {
         ctx.textAlign = 'center';
         ctx.fillText(obj.texto, obj.x, obj.y - 18);
 
-        if (obj.y >= 195 && obj.y <= 225 && Math.abs(obj.x - naveX) < 30) {
+        if (obj.y >= 205 && obj.y <= 235 && Math.abs(obj.x - naveX) < 30) {
             if (obj.correcta) {
                 puntos += 30; document.getElementById('txt-puntos').innerText = puntos;
                 indiceMetaNadaPersonal++; 
@@ -469,7 +471,7 @@ function actualizarYRenderizarGalaxy() {
                 objetosGalaxia.splice(index, 1);
             }
         }
-        if (obj.y > 260) {
+        if (obj.y > 280) {
             if (obj.correcta) generarObjetoGalaxy();
             else objetosGalaxia.splice(index, 1);
         }
