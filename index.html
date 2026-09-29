@@ -36,7 +36,8 @@
     .c-celda { width: 26px; height: 26px; background: #110033; border: 1px solid #00ffff; color: #fff; font-size: 13px; font-weight: bold; text-align: center; text-transform: uppercase; border-radius: 3px; }
     .c-celda:focus { background: #ff00ff; outline: none; }
     .c-celda.vacia { background: #ffe600; border: 1px solid #cca300; pointer-events: none; }
-    .pistas-box { text-align: left; font-size: 10px; color: #00ffff; background: rgba(0,255,255,0.05); padding: 4px; border-radius: 8px; width: 100%; box-sizing: border-box; margin-bottom: 3px; line-height: 1.1; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+    .pista-fila { display: flex; align-items: center; justify-content: space-between; font-size: 10px; color: #00ffff; background: rgba(0,255,255,0.05); padding: 4px 8px; border-radius: 6px; margin-bottom: 2px; border: 1px solid rgba(0,255,255,0.2); width: 100%; box-sizing: border-box; }
+    .btn-play-pista { background: #ff00ff; border: none; color: #fff; border-radius: 4px; padding: 2px 6px; font-size: 10px; cursor: pointer; font-weight: bold; }
     .naval-btn { width: 26px; height: 26px; background: #0b132b; border: 1px solid #00ffff; color: #00ffff; font-size: 11px; font-weight: bold; text-align: center; border-radius: 3px; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; }
     .naval-btn.agua { background: rgba(255,255,255,0.08); color: #888; border-color: #444; }
     .naval-btn.acierto { background: #ff00ff; color: #fff; border-color: #fff; text-shadow: 0 0 5px #fff; }
@@ -99,7 +100,7 @@
     <div style="color:#00ffff; font-size:11px;">👆 ARRASTRÁ EL DEDO PARA MOVER LA NAVE</div>
 </div>
 
-<!-- Mini-juego Tetris (Disco 3 - Signos con 3 líneas por canción) -->
+<!-- Mini-juego Tetris (Disco 3 - Signos) -->
 <div id="tetris-game-modal" class="modal-juego" style="border-color: #ff00ff;">
     <div class="hud-juego" style="color:#ff00ff;">🧱 SIGNOS (1986) - TETRIS MUSICAL</div>
     <div class="objetivo-juego">🎯 TEMA: <span id="txt-tetris-tema" style="color:#00ffff;">...</span> | LÍNEAS: <span id="txt-tetris-lineas">0</span>/3</div>
@@ -111,13 +112,12 @@
     </div>
 </div>
 
-<!-- Mini-juego Crucigrama (Disco 4) -->
+<!-- Mini-juego Crucigrama (Disco 4 - Doble Vida con Flechas y Auto-avance) -->
 <div id="crucigrama-game-modal" class="modal-juego" style="border-color: #00ffff;">
     <div class="hud-juego" style="color:#ff00ff;">📝 DOBLE VIDA (1988) - CRUCIGRAMA</div>
     <div class="crucigrama-wrapper">
-        <div class="pistas-box">
-            <div><b>HORIZONTALES:</b><br>• Es un dia ……., en la superficie<br>• Ciudad de la …….<br>• Todos tenemos una ……, vida <br>• Corazon ……..</div>
-            <div><b>VERTICALES:</b><br>• Picnic en el ……. B<br>• Lo que sangra, la ……….<br>• Esta en el ……., sobre algun lugar<br>• Terapia de amor ………..<br>• El ritmo de tus …….</div>
+        <div class="pistas-box" id="crucigrama-pistas-container" style="display: flex; flex-direction: column; gap: 4px; max-height: 130px; overflow-y: auto;">
+            <!-- Se generan dinámicamente con flecha 🎵 -->
         </div>
         <div class="crucigrama-grid-real" id="crucigrama-matriz-container"></div>
         <button class="btn-tetris" id="btn-verificar-crucigrama" style="width:100%; margin-top:4px;">✨ VERIFICAR CRUCIGRAMA</button>
@@ -153,7 +153,7 @@
 
 <!-- Mini-juego Sueño Stereo (Disco 7) -->
 <div id="sueno-stereo-modal" class="modal-juego" style="border-color: #00ffff;">
-    <div class="hud-juego" style="color:#00ffff;">☁️ SUEÑO STEREO (1995) - ONDAS ONÍRICAS</div>
+    <div class="hud-juego" style="color:#ff00ff;">☁️ SUEÑO STEREO (1995) - ONDAS ONÍRICAS</div>
     <div class="objetivo-juego">🎯 ATRAPÁ LAS BURBUJAS DE: <span id="txt-sueno-meta">...</span></div>
     <canvas id="sueno-canvas" class="canvas-juego" width="380" height="240" style="border-color: #ff00ff;"></canvas>
     <div style="color:#00ffff; font-size:11px;">👆 TOCÁ LAS BURBUJAS FLOTANTES CORRECTAS</div>
@@ -169,17 +169,17 @@
 
 <!-- Mini-juego Bocanada (Disco 9) - Tiro al Blanco -->
 <div id="bocanada-modal" class="modal-juego" style="border-color: #00ffff;">
-    <div class="hud-juego" style="color:#00ffff;">💨 BOCANADA (1999) - TIRO AL BLANCO</div>
+    <div class="hud-juego" style="color:#ff00ff;">💨 BOCANADA (1999) - TIRO AL BLANCO</div>
     <div class="objetivo-juego">🎯 APUNTÁ Y DISPARÁ AL TEMA: <span id="txt-bocanada-meta">...</span></div>
-    <canvas id="bocanada-canvas" class="canvas-juego" width="380" height="240" style="border-color: #00ffff;"></canvas>
+    <canvas id="bocanada-canvas" class="canvas-juego" width="380" height="240" style="border-color: #ff00ff;"></canvas>
     <div style="color:#00ffff; font-size:11px;">👆 TOCÁ LA PANTALLA PARA DISPARAR LA MIRA</div>
 </div>
 
 <!-- Mini-juego Siempre es hoy (Disco 10) - Rompecabezas Sonoro -->
 <div id="siempre-es-hoy-modal" class="modal-juego" style="border-color: #00ffff;">
-    <div class="hud-juego" style="color:#00ffff;">🧩 SIEMPRE ES HOY (2002) - ROMPECABEZAS SONORO</div>
+    <div class="hud-juego" style="color:#ff00ff;">🧩 SIEMPRE ES HOY (2002) - ROMPECABEZAS SONORO</div>
     <div class="objetivo-juego">🎯 ARMAR EL PUZZLE DE: <span id="txt-siempre-meta">...</span></div>
-    <canvas id="siempre-canvas" class="canvas-juego" width="300" height="300" style="border-color: #00ffff;"></canvas>
+    <canvas id="siempre-canvas" class="canvas-juego" width="300" height="300" style="border-color: #ff00ff;"></canvas>
     <div style="color:#00ffff; font-size:11px;">👆 TOCÁ DOS PIEZAS PARA INTERCAMBIARLAS Y ARMAR LA TAPA</div>
 </div>
 
@@ -384,7 +384,7 @@ function actualizarYRenderizarPacman() {
     ctx.lineTo(pacPx, pacPy); ctx.fill();
 }
 
-// --- DISCO 2 (Galaxy - Nada Personal 1985 con juego por escucha y sin cartel arriba) ---
+// --- DISCO 2 (Galaxy - Nada Personal con posición aleatoria y varias opciones) ---
 let naveX = 190;
 const cancionesNadaPersonalDetalle = [
     { nombre: "Nada Personal", seg: 0 },
@@ -415,16 +415,28 @@ function generarObjetoGalaxy() {
         return; 
     }
     let temaObj = cancionesNadaPersonalDetalle[indiceMetaNadaPersonal];
-    
-    // Reproducir la canción actual para que el jugador la adivine escuchando
     reproducirAudio(discoActual.trackId, temaObj.seg);
 
     objetosGalaxia = [];
-    let correcto = temaObj.nombre;
-    objetosGalaxia.push({ x: Math.random() * 260 + 60, y: -30, texto: correcto, correcta: true, velocidad: 2.2 });
-    
-    let trampa = cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)];
-    objetosGalaxia.push({ x: Math.random() * 260 + 60, y: -120, texto: trampa, correcta: false, velocidad: 1.8 });
+    // Generar 3 opciones (1 correcta y 2 trampas) distribuidas horizontalmente al azar
+    let opciones = [
+        { texto: temaObj.nombre, correcta: true },
+        { texto: cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)], correcta: false },
+        { texto: cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)], correcta: false }
+    ];
+    // Mezclar orden para que la correcta no sea siempre la primera
+    opciones.sort(() => Math.random() - 0.5);
+
+    let posicionesX = [80, 190, 300];
+    opciones.forEach((op, idx) => {
+        objetosGalaxia.push({
+            x: posicionesX[idx],
+            y: -30 - (idx * 40),
+            texto: op.texto,
+            correcta: op.correcta,
+            velocidad: 1.8 + Math.random() * 0.5
+        });
+    });
 }
 
 const canvasGalaxy = document.getElementById('galaxy-canvas');
@@ -460,6 +472,7 @@ function actualizarYRenderizarGalaxy() {
             }
         }
         if (obj.y > 260) {
+            // Si pasan de largo y era la correcta, regenerar para no trabar
             if (obj.correcta) generarObjetoGalaxy();
             else objetosGalaxia.splice(index, 1);
         }
@@ -470,7 +483,7 @@ function actualizarYRenderizarGalaxy() {
     ctx.closePath(); ctx.fill();
 }
 
-// --- DISCO 3 (Tetris - Signos 1986 con 3 líneas por canción y todas las pistas) ---
+// --- DISCO 3 (Tetris - Signos con 3 líneas por tema y todas las pistas) ---
 let tetrisCols = 10, tetrisRows = 14;
 let tetrisGrid = Array(tetrisRows).fill().map(() => Array(tetrisCols).fill(0));
 let piezaActual = null, tetrisLineasCount = 0, tetrisGameLoop = null;
@@ -550,7 +563,6 @@ function chequearLineasTetris() {
             actualizarUIDTetrisSignos();
             r++;
 
-            // Si completa 3 líneas para esta canción de Signos
             if (tetrisLineasTemaActual >= 3) {
                 tetrisIndiceTema++;
                 tetrisLineasTemaActual = 0;
@@ -558,7 +570,7 @@ function chequearLineasTetris() {
                     let siguienteTema = cancionesSignosDetalle[tetrisIndiceTema];
                     reproducirAudio(discoActual.trackId, siguienteTema.seg);
                 } else {
-                    finalizarDiscoActual(); // ¡Signos conquistado por completo!
+                    finalizarDiscoActual();
                 }
             }
         }
@@ -605,31 +617,59 @@ document.getElementById('btn-tetris-rot').onclick = () => {
     renderizarTetris();
 };
 
-// --- DISCO 4 (Crucigrama - Doble Vida 1988) ---
+// --- DISCO 4 (Crucigrama - Doble Vida con auto-avance y flechas de audio 🎵) ---
 const crucigramaDef = [
-    { palabra: "COMUN", r: 1, c: 6, dir: "H", segundos: 1405 },
-    { palabra: "CUARTO", r: 1, c: 6, dir: "V", segundos: 65 },
-    { palabra: "FURIA", r: 3, c: 2, dir: "H", segundos: 261 },
-    { palabra: "CUPULA", r: 2, c: 3, dir: "V", segundos: 638 },
-    { palabra: "BORDE", r: 5, c: 1, dir: "V", segundos: 894 },
-    { palabra: "DOBLE", r: 6, c: 0, dir: "H", segundos: 1513 },
-    { palabra: "DELATOR", r: 9, c: 0, dir: "H", segundos: 1713 },
-    { palabra: "INTENSIVA", r: 0, c: 10, dir: "V", segundos: 2255 },
-    { palabra: "OJOS", r: 7, c: 5, dir: "V", segundos: 2008 }
+    { palabra: "COMUN", r: 1, c: 6, dir: "H", segundos: 1405, pista: "Es un día común..." },
+    { palabra: "CUARTO", r: 1, c: 6, dir: "V", segundos: 65, pista: "En el cuarto..." },
+    { palabra: "FURIA", r: 3, c: 2, dir: "H", segundos: 261, pista: "Furia natural..." },
+    { .palabra: "CUPULA", r: 2, c: 3, dir: "V", segundos: 638, pista: "Cúpula de amor..." },
+    { palabra: "BORDE", r: 5, c: 1, dir: "V", segundos: 894, pista: "Al borde..." },
+    { palabra: "DOBLE", r: 6, c: 0, dir: "H", segundos: 1513, pista: "Doble vida..." },
+    { palabra: "DELATOR", r: 9, c: 0, dir: "H", segundos: 1713, pista: "El delator..." },
+    { palabra: "INTENSIVA", r: 0, c: 10, dir: "V", segundos: 2255, pista: "Terapia intensiva..." },
+    { palabra: "OJOS", r: 7, c: 5, dir: "V", segundos: 2008, pista: "Ojos de fuego..." }
 ];
 
 function iniciarCrucigramaDobleVida() {
     document.getElementById('crucigrama-game-modal').style.display = 'block';
     const container = document.getElementById('crucigrama-matriz-container');
     container.innerHTML = '';
+    
+    // Generar grilla de celdas
     for (let r = 0; r < 12; r++) {
         for (let c = 0; c < 11; c++) {
             let input = document.createElement('input');
             input.type = 'text'; input.maxLength = 1; input.className = 'c-celda vacia';
             input.dataset.r = r; input.dataset.c = c;
+            
+            // Auto-avance al tipear una letra
+            input.addEventListener('input', (e) => {
+                let val = e.target.value.toUpperCase();
+                e.target.value = val;
+                if (val.length === 1) {
+                    let nextInput = e.target.nextElementSibling;
+                    while(nextInput && nextInput.classList.contains('vacia')) {
+                        nextInput = nextInput.nextElementSibling;
+                    }
+                    if (nextInput && !nextInput.classList.contains('vacia')) {
+                        nextInput.focus();
+                    }
+                }
+            });
             container.appendChild(input);
         }
     }
+
+    // Generar panel de pistas con botón de reproducción 🎵
+    const pistasContainer = document.getElementById('crucigrama-pistas-container');
+    pistasContainer.innerHTML = '';
+    crucigramaDef.forEach((item, idx) => {
+        let filaPista = document.createElement('div');
+        filaPista.className = 'pista-fila';
+        filaPista.innerHTML = `<span><b>${idx+1}.</b> ${item.pista} (${item.dir})</span> <button class="btn-play-pista" onclick="reproducirAudio(discoActual.trackId, ${item.segundos})">🎵 ESCuchar</button>`;
+        pistasContainer.appendChild(filaPista);
+    });
+
     crucigramaDef.forEach(item => {
         for (let i = 0; i < item.palabra.length; i++) {
             let cellR = item.dir === "H" ? item.r : item.r + i;
@@ -639,9 +679,6 @@ function iniciarCrucigramaDobleVida() {
             if (celdaEl) {
                 celdaEl.classList.remove('vacia');
                 celdaEl.dataset.letra = item.palabra[i];
-                celdaEl.addEventListener('focus', () => {
-                    if (discoActual) { reproducirAudio(discoActual.trackId, item.segundos); }
-                });
             }
         }
     });
