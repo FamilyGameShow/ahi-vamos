@@ -86,7 +86,7 @@
 <!-- Mini-juego Pacman (Disco 1) -->
 <div id="pacman-game-modal" class="modal-juego">
     <div class="hud-juego">🟡 SODA STEREO (1984)</div>
-    <div class="objetivo-juego">🎯 BUSCÁ Y COMÉ LAS BOLITAS FUCSIA</div>
+    <div class="objetivo-juego">🎯 BUSCÁ Y COMÉ: <span id="txt-cancion-meta">...</span></div>
     <canvas id="pacman-canvas" class="canvas-juego" width="380" height="240"></canvas>
     <div style="color:#00ffff; font-size:11px;">👆 TOCÁ EL TABLERO PARA DIRIGIR A PAC-MAN</div>
 </div>
@@ -94,7 +94,7 @@
 <!-- Mini-juego Galaxy (Disco 2 - Nada Personal) -->
 <div id="galaxy-game-modal" class="modal-juego">
     <div class="hud-juego">🚀 NADA PERSONAL (1985)</div>
-    <div class="objetivo-juego">🎯 ATRAPÁ LAS BOLITAS ROJAS (ADIVINÁ EL TEMA)</div>
+    <div class="objetivo-juego">🎯 ATRAPÁ EL TEMA: <span id="txt-galaxy-meta">...</span></div>
     <canvas id="galaxy-canvas" class="canvas-juego" width="380" height="240"></canvas>
     <div style="color:#00ffff; font-size:11px;">👆 ARRASTRÁ EL DEDO PARA MOVER LA NAVE</div>
 </div>
@@ -262,17 +262,17 @@ function comenzarJuegoReal() {
 let pacGridX = 5, pacGridY = 3, pacDirX = 0, pacDirY = 0;
 let itemsCuadricula = [];
 const cancionesSoda84Detalle = [
-    { nombre: "Sobredosis de TV", seg: 0 },
-    { nombre: "Dietético", seg: 195 },
-    { nombre: "Tele-Ka", seg: 380 },
-    { nombre: "Trátame Suavemente", seg: 570 },
-    { nombre: "Afrodisíacos", seg: 780 },
-    { nombre: "Jet Set", seg: 990 },
-    { nombre: "Un Misil en mi Placard", seg: 1190 },
-    { nombre: "El Tiempo es dinero", seg: 1410 },
-    { nombre: "Ni un segundo", seg: 1650 },
-    { nombre: "Vitaminas", seg: 1890 },
-    { nombre: "Mi novia tiene bíceps", seg: 2100 }
+    { nombre: "Jet Set", seg: 0 },
+    { nombre: "Sobredosis de TV", seg: 140 },
+    { nombre: "Vitaminas", seg: 389 },
+    { nombre: "Trátame Suavemente", seg: 548 },
+    { nombre: "Dietético", seg: 748 },
+    { nombre: "Tele-Ka", seg: 975 },
+    { nombre: "Ni un segundo", seg: 1120 },
+    { nombre: "Un Misil en mi Placard", seg: 1327 },
+    { nombre: "El Tiempo es dinero", seg: 1515 },
+    { nombre: "Afrodisíacos", seg: 1692 },
+    { nombre: "Mi novia tiene bíceps", seg: 1956 }
 ];
 let indiceMetaSoda84 = 0;
 let pacmanGameLoop = null;
@@ -384,19 +384,19 @@ function actualizarYRenderizarPacman() {
     ctx.lineTo(pacPx, pacPy); ctx.fill();
 }
 
-// --- DISCO 2 (Galaxy - Nada Personal 1985 con bolas rojas y sin texto de consigna) ---
+// --- DISCO 2 (Galaxy - Nada Personal 1985 con bolas rojas y nombres escritos) ---
 let naveX = 190;
 const cancionesNadaPersonalDetalle = [
     { nombre: "Nada Personal", seg: 0 },
-    { nombre: "Dynamo / Ecos", seg: 220 },
-    { nombre: "Imágenes Retro", seg: 450 },
-    { nombre: "Cuando Pase el Temblor", seg: 680 },
-    { nombre: "Juego de Seducción", seg: 940 },
-    { nombre: "Si no fuera por", seg: 1180 },
-    { nombre: "Estoy azulado", seg: 1420 },
-    { nombre: "Danza Rota", seg: 1690 },
-    { nombre: "Observándonos", seg: 1950 },
-    { nombre: "El cuerpo del delito", seg: 2200 }
+    { nombre: "Si no fuera por", seg: 292 },
+    { nombre: "Cuando Pase el Temblor", seg: 499 },
+    { nombre: "Danza Rota", seg: 728 },
+    { nombre: "El cuerpo del delito", seg: 940 }
+    { nombre: "Juego de Seducción", seg: 1167 },
+    { nombre: "Estoy azulado", seg: 1364 },
+    { nombre: "Observándonos", seg: 1681 },
+    { nombre: "Imágenes Retro", seg: 1868 },
+    { nombre: "Ecos", seg: 2097 },
 ];
 let indiceMetaNadaPersonal = 0;
 let objetosGalaxia = [];
@@ -415,17 +415,14 @@ function generarObjetoGalaxy() {
         return; 
     }
     let temaObj = cancionesNadaPersonalDetalle[indiceMetaNadaPersonal];
+    document.getElementById('txt-galaxy-meta').innerText = temaObj.nombre;
     
-    // Reproducir audio sin mostrar el nombre en pantalla (adivinar escuchando)
-    reproducirAudio(discoActual.trackId, temaObj.seg);
-    mostrarCartelPacman(`🎶 ESCUCHÁ Y ADIVINÁ EL TEMA DE NADA PERSONAL`);
-
     objetosGalaxia = [];
     let correcto = temaObj.nombre;
-    objetosGalaxia.push({ x: Math.random() * 300 + 40, y: -20, texto: correcto, correcta: true, velocidad: 2.5 });
+    objetosGalaxia.push({ x: Math.random() * 260 + 60, y: -30, texto: correcto, correcta: true, velocidad: 2.2 });
     
     let trampa = cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)];
-    objetosGalaxia.push({ x: Math.random() * 300 + 40, y: -80, texto: trampa, correcta: false, velocidad: 2 });
+    objetosGalaxia.push({ x: Math.random() * 260 + 60, y: -120, texto: trampa, correcta: false, velocidad: 1.8 });
 }
 
 const canvasGalaxy = document.getElementById('galaxy-canvas');
@@ -440,16 +437,27 @@ function actualizarYRenderizarGalaxy() {
     objetosGalaxia.forEach((obj, index) => {
         obj.y += obj.velocidad;
         
-        // TODAS LAS BOLITAS SON ROJAS BRILLANTES (#ff0055) Y SIN TEXTO DEL TEMA ARRIBA
+        // BOLAS ROJAS BRILLANTES (#ff0055) CON EL NOMBRE DEL TEMA ESCRITO
         ctx.fillStyle = '#ff0055';
         ctx.beginPath(); 
-        ctx.arc(obj.x, obj.y, 16, 0, Math.PI * 2); 
+        ctx.arc(obj.x, obj.y, 14, 0, Math.PI * 2); 
         ctx.fill();
+
+        ctx.fillStyle = '#ffffff'; 
+        ctx.font = 'bold 11px sans-serif'; 
+        ctx.textAlign = 'center';
+        ctx.fillText(obj.texto, obj.x, obj.y - 18);
 
         if (obj.y >= 195 && obj.y <= 225 && Math.abs(obj.x - naveX) < 30) {
             if (obj.correcta) {
                 puntos += 30; document.getElementById('txt-puntos').innerText = puntos;
-                indiceMetaNadaPersonal++; generarObjetoGalaxy();
+                // Al atrapar la correcta, suena la canción correspondiente
+                let temaActualObj = cancionesNadaPersonalDetalle[indiceMetaNadaPersonal];
+                reproducirAudio(discoActual.trackId, temaActualObj.seg);
+                mostrarCartelPacman(`SONANDO: ${temaActualObj.nombre}`);
+                
+                indiceMetaNadaPersonal++; 
+                generarObjetoGalaxy();
             } else {
                 puntos = Math.max(0, puntos - 10); document.getElementById('txt-puntos').innerText = puntos;
                 objetosGalaxia.splice(index, 1);
@@ -972,7 +980,7 @@ function actualizarYRenderizarBocanada() {
 // --- DISCO 10 (Siempre es hoy 2002) - Rompecabezas Sonoro ---
 const cancionesSiempreEsHoy = [
     { nombre: "Cosas imposibles", seg: 0, frase: "VOY A HACER QUE MIS CENIZAS VUELVAN AL PAPEL" },
-    { nombre: "No te creo", seg: 307, frase: "HACE TANTO que ES LO MISMO, YO SOY PARTE" },
+    { nombre: "No te creo", seg: 307, frase: "HACE TANTO QUE ES LO MISMO, YO SOY PARTE" },
     { nombre: "Artefacto", seg: 535, frase: "ESTO NO ES UN INVENTO PARA PASAR EL RATO" },
     { nombre: "Naci para esto", seg: 790, frase: "YO-SEGUI A-LA ESTRELLA MAS BORAZ, NUNCA-ME LLEVO TAN LEJOS" },
     { nombre: "Amo dejarte asi", seg: 981, frase: "PALABRAS PROFANAS DE-TU-BOCA PURA, TODA MI-DULZURA PENDULA SOBRE TI" },
