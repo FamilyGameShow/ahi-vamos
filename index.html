@@ -421,9 +421,10 @@ function generarObjetoGalaxyContinuo() {
     if (indiceMetaNadaPersonal >= cancionesNadaPersonalDetalle.length) return;
     let temaObj = cancionesNadaPersonalDetalle[indiceMetaNadaPersonal];
     
-    // Hacemos que aparezca la correcta UNA SOLA VEZ al llegar a 12, y no en todas las siguientes
-    let esCorrecta = (contadorBolasLanzadas === 12);
+    // Con una probabilidad del 20% sale la correcta, de lo contrario sale una trampa al azar
+    let esCorrecta = Math.random() < 0.20;
     let textoElegido = esCorrecta ? temaObj.nombre : cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)];
+    
     let posicionesX = [60, 130, 200, 270, 340];
     let posX = posicionesX[Math.floor(Math.random() * posicionesX.length)];
     
@@ -434,6 +435,7 @@ function generarObjetoGalaxyContinuo() {
         correcta: esCorrecta,
         velocidad: 1.1 + Math.random() * 0.4
     });
+}
     
     // Si todavía no salió la correcta, seguimos sumando al contador; si ya salió, lo frenamos
     if (contadorBolasLanzadas < 12) {
