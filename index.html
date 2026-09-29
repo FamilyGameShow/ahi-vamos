@@ -909,9 +909,14 @@ function generarBurbujasSuenoContinuas() {
         finalizarDiscoActual();
         return;
     }
-    let temaActualObj = cancionesSueñoStereoDetalle[indiceMetaSueno];
     
-    // Aparece una sola vez exacta de manera aleatoria en esta tanda
+    // Si por alguna razón el contador quedó desfasado, nos aseguramos de que siga generando chances
+    if (contadorBolasSuenoPasadas > 15) {
+        contadorBolasSuenoPasadas = 0;
+        indiceGanadorSuenoRandom = Math.floor(Math.random() * 6) + 4;
+    }
+
+    let temaActualObj = cancionesSueñoStereoDetalle[indiceMetaSueno];
     let esCorrecta = (contadorBolasSuenoPasadas === indiceGanadorSuenoRandom);
     let textoElegido = esCorrecta ? temaActualObj.nombre : cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)];
     
