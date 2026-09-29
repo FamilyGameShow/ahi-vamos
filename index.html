@@ -480,13 +480,14 @@ function actualizarYRenderizarGalaxy() {
         ctx.textAlign = 'center';
         ctx.fillText(obj.texto, obj.x, obj.y - 18);
         
+    // Colisión con la nave
         if (obj.y >= 205 && obj.y <= 235 && Math.abs(obj.x - naveX) < 30) {
             if (obj.correcta) {
                 puntos += 50;
                 document.getElementById('txt-puntos').innerText = puntos;
                 indiceMetaNadaPersonal++;
-                contadorBolasLanzadas = 0;
-                indiceGanadorRandom = Math.floor(Math.random() * 6) + 5; // Nuevo número aleatorio para la siguiente canción
+                contadorBolasPasadas = 0;
+                indiceGanadorRandom = Math.floor(Math.random() * 6) + 5; // Nuevo número al azar para la siguiente canción
                 objetosGalaxia = [];
                 
                 if (indiceMetaNadaPersonal >= cancionesNadaPersonalDetalle.length) {
@@ -502,9 +503,15 @@ function actualizarYRenderizarGalaxy() {
             }
         }
         
+        // Si la burbuja pasa de largo abajo sin tocarla
         if (obj.y > 280) {
+            if (obj.correcta) {
+                // ¡Si se te escapó la correcta, recalculamos otro turno para que vuelva a salir pronto y no se trabe!
+                contadorBolasPasadas = 0;
+                indiceGanadorRandom = Math.floor(Math.random() * 6) + 5;
+            }
             objetosGalaxia.splice(index, 1);
-        }
+        }    
     });
     
     ctx.fillStyle = '#ffcc00';
