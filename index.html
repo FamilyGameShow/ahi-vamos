@@ -409,32 +409,36 @@ function iniciarGalaxyNadaPersonal() {
 }
 
 function generarObjetoGalaxy() {
-    // Elegimos una canción meta al azar de todo el disco
-    let temaObj = cancionesNadaPersonalDetalle[Math.floor(Math.random() * cancionesNadaPersonalDetalle.length)];
+    // Si ya completamos todas, finalizamos el disco
+    if (indiceMetaNadaPersonal >= cancionesNadaPersonalDetalle.length) {
+        document.getElementById('cartel-tema-pacman').style.display = 'none';
+        finalizarDiscoActual();
+        return;
+    }
+    
+    let temaObj = cancionesNadaPersonalDetalle[indiceMetaNadaPersonal];
+    // La música se mantiene sonando el mismo tema actual hasta que le pegues
     reproducirAudio(discoActual.trackId, temaObj.seg);
     
     objetosGalaxia = [];
     
-    // Armamos un grupo con la correcta y 4 opciones trampa para que haya muchas en pantalla
+    // Hacemos que bajen solo 3 opciones a la vez (1 correcta y 2 trampas) para que se pueda esquivar bien
     let opciones = [
         { texto: temaObj.nombre, correcta: true },
-        { texto: cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)], correcta: false },
-        { texto: cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)], correcta: false },
         { texto: cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)], correcta: false },
         { texto: cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)], correcta: false }
     ];
     opciones.sort(() => Math.random() - 0.5);
     
-    // Distribuimos las posiciones en X a lo largo de la pantalla
-    let posicionesX = [40, 110, 190, 270, 340];
+    let posicionesX = [90, 190, 290];
     
     opciones.forEach((op, idx) => {
         objetosGalaxia.push({
             x: posicionesX[idx],
-            y: -60 - (Math.random() * 80), // Escalonadas para que caigan fluidas
+            y: -50 - (idx * 160), // Bien separadas verticalmente para que bajan en cascada y dé tiempo a escuchar
             texto: op.texto,
             correcta: op.correcta,
-            velocidad: 1.5 + Math.random() * 0.8 // Velocidad justa para que se disfruten sin desaparecer antes
+            velocidad: 1.1 + Math.random() * 0.3 // Velocidad moderada para pensar y disfrutar el tema
         });
     });
 }
