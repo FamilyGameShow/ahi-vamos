@@ -436,12 +436,6 @@ function generarObjetoGalaxyContinuo() {
         velocidad: 1.1 + Math.random() * 0.4
     });
 }
-    
-    // Si todavía no salió la correcta, seguimos sumando al contador; si ya salió, lo frenamos
-    if (contadorBolasLanzadas < 12) {
-        contadorBolasLanzadas++;
-    }
-}
 
 setTimeout(() => {
     const canvasGalaxy = document.getElementById('galaxy-canvas');
