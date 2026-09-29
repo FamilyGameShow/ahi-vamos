@@ -36,8 +36,7 @@
     .c-celda { width: 26px; height: 26px; background: #110033; border: 1px solid #00ffff; color: #fff; font-size: 13px; font-weight: bold; text-align: center; text-transform: uppercase; border-radius: 3px; }
     .c-celda:focus { background: #ff00ff; outline: none; }
     .c-celda.vacia { background: #ffe600; border: 1px solid #cca300; pointer-events: none; }
-    .pista-fila { display: flex; align-items: center; justify-content: space-between; font-size: 10px; color: #00ffff; background: rgba(0,255,255,0.05); padding: 4px 8px; border-radius: 6px; margin-bottom: 2px; border: 1px solid rgba(0,255,255,0.2); width: 100%; box-sizing: border-box; }
-    .btn-play-pista { background: #ff00ff; border: none; color: #fff; border-radius: 4px; padding: 2px 6px; font-size: 10px; cursor: pointer; font-weight: bold; }
+    .pistas-box { text-align: left; font-size: 10px; color: #00ffff; background: rgba(0,255,255,0.05); padding: 4px; border-radius: 8px; width: 100%; box-sizing: border-box; margin-bottom: 3px; line-height: 1.1; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
     .naval-btn { width: 26px; height: 26px; background: #0b132b; border: 1px solid #00ffff; color: #00ffff; font-size: 11px; font-weight: bold; text-align: center; border-radius: 3px; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; }
     .naval-btn.agua { background: rgba(255,255,255,0.08); color: #888; border-color: #444; }
     .naval-btn.acierto { background: #ff00ff; color: #fff; border-color: #fff; text-shadow: 0 0 5px #fff; }
@@ -112,11 +111,14 @@
     </div>
 </div>
 
-<!-- Mini-juego Crucigrama (Disco 4 - Doble Vida) -->
+<!-- Mini-juego Crucigrama (Disco 4 - Doble Vida, restaurado a selección manual y pistas originales) -->
 <div id="crucigrama-game-modal" class="modal-juego" style="border-color: #00ffff;">
     <div class="hud-juego" style="color:#ff00ff;">📝 DOBLE VIDA (1988) - CRUCIGRAMA</div>
     <div class="crucigrama-wrapper">
-        <div class="pistas-box" id="crucigrama-pistas-container" style="display: flex; flex-direction: column; gap: 4px; max-height: 130px; overflow-y: auto;"></div>
+        <div class="pistas-box">
+            <div><b>HORIZONTALES:</b><br>• Es un dia ……., en la superficie<br>• Ciudad de la …….<br>• Todos tenemos una ……, vida <br>• Corazon ……..</div>
+            <div><b>VERTICALES:</b><br>• Picnic en el ……. B<br>• Lo que sangra, la ……….<br>• Esta en el ……., sobre algun lugar<br>• Terapia de amor ………..<br>• El ritmo de tus …….</div>
+        </div>
         <div class="crucigrama-grid-real" id="crucigrama-matriz-container"></div>
         <button class="btn-tetris" id="btn-verificar-crucigrama" style="width:100%; margin-top:4px;">✨ VERIFICAR CRUCIGRAMA</button>
     </div>
@@ -169,7 +171,7 @@
 <div id="bocanada-modal" class="modal-juego" style="border-color: #00ffff;">
     <div class="hud-juego" style="color:#ff00ff;">💨 BOCANADA (1999) - TIRO AL BLANCO</div>
     <div class="objetivo-juego">🎯 APUNTÁ Y DISPARÁ AL TEMA: <span id="txt-bocanada-meta">...</span></div>
-    <canvas id="bocanada-canvas" class="canvas-juego" width="380" height="240" style="border-color: #ff00ff;"></canvas>
+    <canvas id="bocanada-canvas" class="canvas-juego" width="380" height="240" style="border-color: #00ffff;"></canvas>
     <div style="color:#00ffff; font-size:11px;">👆 TOCÁ LA PANTALLA PARA DISPARAR LA MIRA</div>
 </div>
 
@@ -382,7 +384,7 @@ function actualizarYRenderizarPacman() {
     ctx.lineTo(pacPx, pacPy); ctx.fill();
 }
 
-// --- DISCO 2 (Galaxy - Nada Personal con posición aleatoria y varias opciones) ---
+// --- DISCO 2 (Galaxy - Nada Personal con velocidad más moderada y espaciada) ---
 let naveX = 190;
 const cancionesNadaPersonalDetalle = [
     { nombre: "Nada Personal", seg: 0 },
@@ -423,14 +425,14 @@ function generarObjetoGalaxy() {
     ];
     opciones.sort(() => Math.random() - 0.5);
 
-    let posicionesX = [80, 190, 300];
+    let posicionesX = [70, 190, 310];
     opciones.forEach((op, idx) => {
         objetosGalaxia.push({
             x: posicionesX[idx],
-            y: -30 - (idx * 40),
+            y: -50 - (idx * 90), // Más espaciadas verticalmente para que caigan de forma más natural y no tan juntas
             texto: op.texto,
             correcta: op.correcta,
-            velocidad: 1.8 + Math.random() * 0.5
+            velocidad: 1.2 + Math.random() * 0.3 // Velocidad más suave y disfrutable
         });
     });
 }
@@ -612,38 +614,35 @@ document.getElementById('btn-tetris-rot').onclick = () => {
     renderizarTetris();
 };
 
-// --- DISCO 4 (Crucigrama - Doble Vida con auto-avance y flechas de audio 🎵) ---
+// --- DISCO 4 (Crucigrama - Doble Vida original restaurado) ---
 const crucigramaDef = [
-    { palabra: "COMUN", r: 1, c: 6, dir: "H", segundos: 1405, pista: "Es un día común..." },
-    { palabra: "CUARTO", r: 1, c: 6, dir: "V", segundos: 65, pista: "En el cuarto..." },
-    { palabra: "FURIA", r: 3, c: 2, dir: "H", segundos: 261, pista: "Furia natural..." },
-    { palabra: "CUPULA", r: 2, c: 3, dir: "V", segundos: 638, pista: "Cúpula de amor..." },
-    { palabra: "BORDE", r: 5, c: 1, dir: "V", segundos: 894, pista: "Al borde..." },
-    { palabra: "DOBLE", r: 6, c: 0, dir: "H", segundos: 1513, pista: "Doble vida..." },
-    { palabra: "DELATOR", r: 9, c: 0, dir: "H", segundos: 1713, pista: "El delator..." },
-    { palabra: "INTENSIVA", r: 0, c: 10, dir: "V", segundos: 2255, pista: "Terapia intensiva..." },
-    { palabra: "OJOS", r: 7, c: 5, dir: "V", segundos: 2008, pista: "Ojos de fuego..." }
+    { palabra: "COMUN", r: 1, c: 6, dir: "H", segundos: 1405 },
+    { palabra: "CUARTO", r: 1, c: 6, dir: "V", segundos: 65 },
+    { palabra: "FURIA", r: 3, c: 2, dir: "H", segundos: 261 },
+    { palabra: "CUPULA", r: 2, c: 3, dir: "V", segundos: 638 },
+    { palabra: "BORDE", r: 5, c: 1, dir: "V", segundos: 894 },
+    { palabra: "DOBLE", r: 6, c: 0, dir: "H", segundos: 1513 },
+    { palabra: "DELATOR", r: 9, c: 0, dir: "H", segundos: 1713 },
+    { palabra: "INTENSIVA", r: 0, c: 10, dir: "V", segundos: 2255 },
+    { palabra: "OJOS", r: 7, c: 5, dir: "V", segundos: 2008 }
 ];
 
 function iniciarCrucigramaDobleVida() {
     document.getElementById('crucigrama-game-modal').style.display = 'block';
     const container = document.getElementById('crucigrama-matriz-container');
     container.innerHTML = '';
-    
     for (let r = 0; r < 12; r++) {
         for (let c = 0; c < 11; c++) {
             let input = document.createElement('input');
             input.type = 'text'; input.maxLength = 1; input.className = 'c-celda vacia';
             input.dataset.r = r; input.dataset.c = c;
             
+            // Salto horizontal fluido al escribir una letra
             input.addEventListener('input', (e) => {
                 let val = e.target.value.toUpperCase();
                 e.target.value = val;
                 if (val.length === 1) {
                     let nextInput = e.target.nextElementSibling;
-                    while(nextInput && nextInput.classList.contains('vacia')) {
-                        nextInput = nextInput.nextElementSibling;
-                    }
                     if (nextInput && !nextInput.classList.contains('vacia')) {
                         nextInput.focus();
                     }
@@ -652,16 +651,6 @@ function iniciarCrucigramaDobleVida() {
             container.appendChild(input);
         }
     }
-
-    const pistasContainer = document.getElementById('crucigrama-pistas-container');
-    pistasContainer.innerHTML = '';
-    crucigramaDef.forEach((item, idx) => {
-        let filaPista = document.createElement('div');
-        filaPista.className = 'pista-fila';
-        filaPista.innerHTML = `<span><b>${idx+1}.</b> ${item.pista} (${item.dir})</span> <button class="btn-play-pista" onclick="reproducirAudio(discoActual.trackId, ${item.segundos})">🎵 ESCuchar</button>`;
-        pistasContainer.appendChild(filaPista);
-    });
-
     crucigramaDef.forEach(item => {
         for (let i = 0; i < item.palabra.length; i++) {
             let cellR = item.dir === "H" ? item.r : item.r + i;
@@ -671,6 +660,9 @@ function iniciarCrucigramaDobleVida() {
             if (celdaEl) {
                 celdaEl.classList.remove('vacia');
                 celdaEl.dataset.letra = item.palabra[i];
+                celdaEl.addEventListener('focus', () => {
+                    if (discoActual) { reproducirAudio(discoActual.trackId, item.segundos); }
+                });
             }
         }
     });
