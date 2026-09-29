@@ -408,8 +408,9 @@ function iniciarGalaxyNadaPersonal() {
     if (!galaxyGameLoop) galaxyGameLoop = setInterval(actualizarYRenderizarGalaxy, 1000 / 30);
 }
 
+let contadorIntentosGalaxy = 0; // Lleva la cuenta de cuántas bolas pasaron
+
 function generarObjetoGalaxy() {
-    // Si ya completamos todas, finalizamos el disco
     if (indiceMetaNadaPersonal >= cancionesNadaPersonalDetalle.length) {
         document.getElementById('cartel-tema-pacman').style.display = 'none';
         finalizarDiscoActual();
@@ -417,29 +418,22 @@ function generarObjetoGalaxy() {
     }
     
     let temaObj = cancionesNadaPersonalDetalle[indiceMetaNadaPersonal];
-    // La música se mantiene sonando el mismo tema actual hasta que le pegues
     reproducirAudio(discoActual.trackId, temaObj.seg);
-    
     objetosGalaxia = [];
     
-    // Hacemos que bajen solo 3 opciones a la vez (1 correcta y 2 trampas) para que se pueda esquivar bien
-    let opciones = [
-        { texto: temaObj.nombre, correcta: true },
-        { texto: cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)], correcta: false },
-        { texto: cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)], correcta: false }
-    ];
-    opciones.sort(() => Math.random() - 0.5);
+    // Si todavía no pasaron 10 bolas de prueba, tiramos puras trampas para hacer tiempo y escuchar
+    let esCorrectaEstaTanda = (contadorIntentosGalaxy >= 10);
     
-    let posicionesX = [90, 190, 290];
+    let textoElegido = esCorrectaEstaTanda ? temaObj.nombre : cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)];
+    let posicionesX = [70, 150, 230, 310];
+    let posX = posicionesX[Math.floor(Math.random() * posicionesX.length)];
     
-    opciones.forEach((op, idx) => {
-        objetosGalaxia.push({
-            x: posicionesX[idx],
-            y: -50 - (idx * 160), // Bien separadas verticalmente para que bajan en cascada y dé tiempo a escuchar
-            texto: op.texto,
-            correcta: op.correcta,
-            velocidad: 1.1 + Math.random() * 0.3 // Velocidad moderada para pensar y disfrutar el tema
-        });
+    objetosGalaxia.push({
+        x: posX,
+        y: -40,
+        texto: textoElegido,
+        correcta: esCorrectaEstaTanda,
+        velocidad: 1.2 + Math.random() * 0.4
     });
 }
 
