@@ -51,11 +51,14 @@
     .consola-canales-btns { display: flex; gap: 8px; justify-content: center; margin-top: 8px; }
     .btn-canal { background: rgba(255, 0, 255, 0.2); border: 1px solid #ff00ff; color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 10px; font-weight: bold; cursor: pointer; }
     .btn-canal.activo { background: #00ffff; color: #000; border-color: #fff; box-shadow: 0 0 8px #00ffff; }
+    #cartel-tema-pacman { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(255, 0, 127, 0.95); color: #fff; padding: 10px 20px; font-family: sans-serif; font-size: 15px; font-weight: bold; border-radius: 8px; box-shadow: 0 0 15px rgba(255, 0, 127, 0.8); z-index: 99999; display: none; pointer-events: none; }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
 <div id="escenografia-fondo"></div>
+<div id="cartel-tema-pacman">🎵 SONANDO: ...</div>
+
 <div id="pantalla-intro">
     <h1>COLORES SANTOS</h1>
     <p>El Multiverso Sonoro de Soda y Gustavo.</p>
@@ -258,7 +261,19 @@ function comenzarJuegoReal() {
 // --- DISCO 1 (Pac-Man - Soda Stereo 1984) ---
 let pacGridX = 5, pacGridY = 3, pacDirX = 0, pacDirY = 0;
 let itemsCuadricula = [];
-let cancionesSoda84 = ["Sobredosis de tv", "Dietético", "Tele-Ka", "Trátame Suavemente", "Afrodisiacos", "Jet Set", "Un Misil en mi Placard", "El Tiempo es dinero", "Ni un segundo", "Vitaminas", "Mi novia tiene biceps"];
+const cancionesSoda84Detalle = [
+    { nombre: "Sobredosis de TV", seg: 0 },
+    { nombre: "Dietético", seg: 195 },
+    { nombre: "Tele-Ka", seg: 380 },
+    { nombre: "Trátame Suavemente", seg: 570 },
+    { nombre: "Afrodisíacos", seg: 780 },
+    { nombre: "Jet Set", seg: 990 },
+    { nombre: "Un Misil en mi Placard", seg: 1190 },
+    { nombre: "El Tiempo es dinero", seg: 1410 },
+    { nombre: "Ni un segundo", seg: 1650 },
+    { nombre: "Vitaminas", seg: 1890 },
+    { nombre: "Mi novia tiene bíceps", seg: 2100 }
+];
 let indiceMetaSoda84 = 0;
 let pacmanGameLoop = null;
 const mapaLaberinto = [
@@ -275,21 +290,31 @@ const cancionesTrampa = ["Persiana", "Zoom", "Signos", "Crimen", "Puente", "De M
 
 function iniciarPacmanSoda84() {
     document.getElementById('pacman-game-modal').style.display = 'block';
+    document.getElementById('cartel-tema-pacman').style.display = 'block';
     pacGridX = 5; pacGridY = 3; pacDirX = 0; pacDirY = 0; indiceMetaSoda84 = 0;
     generarItemsSoda84();
     if (!pacmanGameLoop) pacmanGameLoop = setInterval(actualizarYRenderizarPacman, 1000 / 5);
 }
 
 function generarItemsSoda84() {
-    if (indiceMetaSoda84 >= cancionesSoda84.length) { finalizarDiscoActual(); return; }
-    document.getElementById('txt-cancion-meta').innerText = cancionesSoda84[indiceMetaSoda84];
+    if (indiceMetaSoda84 >= cancionesSoda84Detalle.length) { 
+        document.getElementById('cartel-tema-pacman').style.display = 'none';
+        finalizarDiscoActual(); 
+        return; 
+    }
+    let temaObj = cancionesSoda84Detalle[indiceMetaSoda84];
+    document.getElementById('txt-cancion-meta').innerText = temaObj.nombre;
+    
+    reproducirAudio(discoActual.trackId, temaObj.seg);
+    mostrarCartelPacman(`SONANDO: ${temaObj.nombre}`);
+
     itemsCuadricula = [];
-    let colocadas = 0, meta = cancionesSoda84[indiceMetaSoda84];
+    let colocadas = 0;
     while(colocadas < 1) {
         let rx = Math.floor(Math.random() * mapaLaberinto[0].length);
         let ry = Math.floor(Math.random() * mapaLaberinto.length);
         if (mapaLaberinto[ry][rx] !== 1 && !(ry === pacGridY && rx === pacGridX)) {
-            itemsCuadricula.push({ gx: rx, gy: ry, texto: meta, correcta: true });
+            itemsCuadricula.push({ gx: rx, gy: ry, texto: temaObj.nombre, correcta: true });
             colocadas++;
         }
     }
@@ -299,6 +324,12 @@ function generarItemsSoda84() {
         let trampa = cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)];
         if (mapaLaberinto[ry][rx] !== 1) itemsCuadricula.push({ gx: rx, gy: ry, texto: trampa, correcta: false });
     }
+}
+
+function mostrarCartelPacman(texto) {
+    const cartel = document.getElementById('cartel-tema-pacman');
+    cartel.innerText = `🎵 ${texto}`;
+    cartel.style.display = 'block';
 }
 
 const canvasPacman = document.getElementById('pacman-canvas');
@@ -343,7 +374,8 @@ function actualizarYRenderizarPacman() {
     }
     itemsCuadricula.forEach(item => {
         let px = offsetX + item.gx * tileSize + tileSize / 2, py = offsetY + item.gy * tileSize + tileSize / 2;
-        ctx.fillStyle = item.correcta ? '#ff00ff' : '#00ffcc';
+        // TODAS LAS BOLITAS EN COLOR FUCSIA BRILLANTE (#ff007f)
+        ctx.fillStyle = '#ff007f';
         ctx.beginPath(); ctx.arc(px, py, 9, 0, Math.PI * 2); ctx.fill();
         ctx.fillStyle = '#ffffff'; ctx.font = 'bold 11px sans-serif'; ctx.textAlign = 'center';
         ctx.fillText(item.texto, px, py - 12);
@@ -1032,48 +1064,30 @@ function renderizarRompecabezasSiempre() {
     });
 }
 
-// --- DISCO 11 (Ahí Vamos 2006) - Lluvia de Letras para Deletrear ---
+// --- DISCO 11 (Ahí Vamos 2006) - Lluvia de Letras ---
 const cancionesAhiVamosPalabras = [
-    { nombre: "AL FIN SUCEDE", seg: 0 },
-    { nombre: "LA EXCEPCION", seg: 208 },
-    { nombre: "UNO ENTRE MIL", seg: 458 },
-    { nombre: "CARAVANA", seg: 714 },
-    { nombre: "ADIOS", seg: 954 },
-    { nombre: "ME QUEDO AQUI", seg: 1186 },
-    { nombre: "LAGO EN EL CIELO", seg: 1404 },
-    { nombre: "DIOS NOS LIBRE", seg: 1730 },
-    { nombre: "OTRA PIEL", seg: 1983 },
-    { nombre: "MEDIUM", seg: 2264 },
-    { nombre: "BOMBA DE TIEMPO", seg: 2595 },
-    { nombre: "CRIMEN", seg: 2903 },
+    { nombre: "AL FIN SUCEDE", seg: 0 }, { nombre: "LA EXCEPCION", seg: 208 },
+    { nombre: "UNO ENTRE MIL", seg: 458 }, { nombre: "CARAVANA", seg: 714 },
+    { nombre: "ADIOS", seg: 954 }, { nombre: "ME QUEDO AQUI", seg: 1186 },
+    { nombre: "LAGO EN EL CIELO", seg: 1404 }, { nombre: "DIOS NOS LIBRE", seg: 1730 },
+    { nombre: "OTRA PIEL", seg: 1983 }, { nombre: "MEDIUM", seg: 2264 },
+    { nombre: "BOMBA DE TIEMPO", seg: 2595 }, { nombre: "CRIMEN", seg: 2903 },
     { nombre: "JUGO DE LUNA", seg: 3134 }
 ];
 
-let ahiTemaIdx = 0;
-let palabraActualStr = "";
-let letraProgresoIdx = 0;
-let letrasCaidasAhi = [];
-let ahiVamosGameLoop = null;
+let ahiTemaIdx = 0, palabraActualStr = "", letraProgresoIdx = 0, letrasCaidasAhi = [], ahiVamosGameLoop = null;
 
 function iniciarAhiVamos06() {
     document.getElementById('ahi-vamos-modal').style.display = 'block';
-    ahiTemaIdx = 0;
-    cargarSiguientePalabraAhiVamos();
-    if (!ahiVamosGameLoop) {
-        ahiVamosGameLoop = setInterval(actualizarYRenderizarAhiVamosLetras, 1000 / 30);
-    }
+    ahiTemaIdx = 0; cargarSiguientePalabraAhiVamos();
+    if (!ahiVamosGameLoop) ahiVamosGameLoop = setInterval(actualizarYRenderizarAhiVamosLetras, 1000 / 30);
 }
 
 function cargarSiguientePalabraAhiVamos() {
-    if (ahiTemaIdx >= cancionesAhiVamosPalabras.length) {
-        finalizarDiscoActual();
-        return;
-    }
+    if (ahiTemaIdx >= cancionesAhiVamosPalabras.length) { finalizarDiscoActual(); return; }
     let temaObj = cancionesAhiVamosPalabras[ahiTemaIdx];
-    palabraActualStr = temaObj.nombre.toUpperCase();
-    letraProgresoIdx = 0;
-    actualizarProgresoPalabraUI();
-    reproducirAudio(discoActual.trackId, temaObj.seg);
+    palabraActualStr = temaObj.nombre.toUpperCase(); letraProgresoIdx = 0;
+    actualizarProgresoPalabraUI(); reproducirAudio(discoActual.trackId, temaObj.seg);
     letrasCaidasAhi = [];
 }
 
@@ -1081,15 +1095,10 @@ function actualizarProgresoPalabraUI() {
     let htmlStr = "";
     for(let i=0; i<palabraActualStr.length; i++) {
         let l = palabraActualStr[i];
-        if(l === " ") {
-            htmlStr += "&nbsp;&nbsp;";
-        } else if(i < letraProgresoIdx) {
-            htmlStr += `<span style="color:#00ffaa;">${l}</span>`;
-        } else if(i === letraProgresoIdx) {
-            htmlStr += `<span style="color:#ffcc00; text-decoration:underline;">${l}</span>`;
-        } else {
-            htmlStr += `<span style="color:#666;">_</span>`;
-        }
+        if(l === " ") htmlStr += "&nbsp;&nbsp;";
+        else if(i < letraProgresoIdx) htmlStr += `<span style="color:#00ffaa;">${l}</span>`;
+        else if(i === letraProgresoIdx) htmlStr += `<span style="color:#ffcc00; text-decoration:underline;">${l}</span>`;
+        else htmlStr += `<span style="color:#666;">_</span>`;
     }
     document.getElementById('txt-ahi-palabra').innerHTML = htmlStr;
 }
@@ -1097,35 +1106,21 @@ function actualizarProgresoPalabraUI() {
 const canvasAhiVamos = document.getElementById('ahi-vamos-canvas');
 canvasAhiVamos.onclick = (e) => {
     const rect = canvasAhiVamos.getBoundingClientRect();
-    let clickX = e.clientX - rect.left;
-    let clickY = e.clientY - rect.top;
-
+    let clickX = e.clientX - rect.left, clickY = e.clientY - rect.top;
     letrasCaidasAhi.forEach((letraObj, index) => {
-        let distancia = Math.hypot(clickX - letraObj.x, clickY - letraObj.y);
-        if (distancia < 22) {
+        if (Math.hypot(clickX - letraObj.x, clickY - letraObj.y) < 22) {
             let letraEsperada = palabraActualStr[letraProgresoIdx];
-            if(letraEsperada === " ") {
-                letraProgresoIdx++;
-                letraEsperada = palabraActualStr[letraProgresoIdx];
-            }
+            if(letraEsperada === " ") { letraProgresoIdx++; letraEsperada = palabraActualStr[letraProgresoIdx]; }
             if (letraObj.caracter === letraEsperada) {
-                // Acierto de letra
-                puntos += 15;
-                document.getElementById('txt-puntos').innerText = puntos;
-                letraProgresoIdx++;
-                actualizarProgresoPalabraUI();
+                puntos += 15; document.getElementById('txt-puntos').innerText = puntos;
+                letraProgresoIdx++; actualizarProgresoPalabraUI();
                 letrasCaidasAhi.splice(index, 1);
-
                 if (letraProgresoIdx >= palabraActualStr.length) {
-                    puntos += 50;
-                    document.getElementById('txt-puntos').innerText = puntos;
-                    ahiTemaIdx++;
-                    setTimeout(cargarSiguientePalabraAhiVamos, 600);
+                    puntos += 50; document.getElementById('txt-puntos').innerText = puntos;
+                    ahiTemaIdx++; setTimeout(cargarSiguientePalabraAhiVamos, 600);
                 }
             } else {
-                // Letra incorrecta
-                puntos = Math.max(0, puntos - 10);
-                document.getElementById('txt-puntos').innerText = puntos;
+                puntos = Math.max(0, puntos - 10); document.getElementById('txt-puntos').innerText = puntos;
                 letrasCaidasAhi.splice(index, 1);
             }
         }
@@ -1136,50 +1131,22 @@ function actualizarYRenderizarAhiVamosLetras() {
     if (estadoActual !== "JUEGO_DISCO" || !discoActual || !discoActual.esAhiVamos) return;
     const ctx = canvasAhiVamos.getContext('2d');
     ctx.clearRect(0, 0, canvasAhiVamos.width, canvasAhiVamos.height);
-
-    ctx.fillStyle = '#05021a';
-    ctx.fillRect(0, 0, canvasAhiVamos.width, canvasAhiVamos.height);
-
-    // Generar nuevas letras si faltan en pantalla
+    ctx.fillStyle = '#05021a'; ctx.fillRect(0, 0, canvasAhiVamos.width, canvasAhiVamos.height);
     if (letrasCaidasAhi.length < 4 && Math.random() < 0.1) {
-        let letraAleatoria;
-        if(Math.random() < 0.4 && letraProgresoIdx < palabraActualStr.length) {
-            letraAleatoria = palabraActualStr[letraProgresoIdx]; // Letra correcta para facilitar
-        } else {
-            let alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            letraAleatoria = alfabeto[Math.floor(Math.random() * alfabeto.length)];
-        }
-        letrasCaidasAhi.push({
-            x: Math.random() * (canvasAhiVamos.width - 50) + 25,
-            y: -20,
-            caracter: letraAleatoria,
-            velY: 1.8 + Math.random() * 1.2
-        });
+        let letraAleatoria = (Math.random() < 0.4 && letraProgresoIdx < palabraActualStr.length) ? palabraActualStr[letraProgresoIdx] : "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[Math.floor(Math.random() * 26)];
+        letrasCaidasAhi.push({ x: Math.random() * (canvasAhiVamos.width - 50) + 25, y: -20, caracter: letraAleatoria, velY: 1.8 + Math.random() * 1.2 });
     }
-
     letrasCaidasAhi.forEach((letraObj, index) => {
         letraObj.y += letraObj.velY;
-        ctx.fillStyle = 'rgba(255, 0, 255, 0.25)';
-        ctx.strokeStyle = '#ff00ff';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(letraObj.x, letraObj.y, 18, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
-
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 16px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
+        ctx.fillStyle = 'rgba(255, 0, 255, 0.25)'; ctx.strokeStyle = '#ff00ff'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(letraObj.x, letraObj.y, 18, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = '#ffffff'; ctx.font = 'bold 16px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
         ctx.fillText(letraObj.caracter, letraObj.x, letraObj.y);
-
-        if (letraObj.y > canvasAhiVamos.height + 25) {
-            letrasCaidasAhi.splice(index, 1);
-        }
+        if (letraObj.y > canvasAhiVamos.height + 25) letrasCaidasAhi.splice(index, 1);
     });
 }
 
-// --- DISCO 12 (Fuerza Natural 2009) - Vuelo Cósmico ---
+// --- DISCO 12 (Fuerza Natural 2009) ---
 const cancionesFuerzaNaturalDetalle = [
     { nombre: "Fuerza Natural", seg: 0 }, { nombre: "Deja vu", seg: 290 },
     { nombre: "Magia", seg: 495 }, { nombre: "Amor sin rodeos", seg: 760 },
@@ -1189,34 +1156,21 @@ const cancionesFuerzaNaturalDetalle = [
     { nombre: "Sal", seg: 2580 }, { nombre: "Convoy", seg: 2840 },
     { nombre: "He visto a Lucy", seg: 2580 }, { nombre: "# - Numeral", seg: 2840 }
 ];
-
-let fuerzaIndice = 0;
-let fuerzaPuntosAciertos = 0;
-let cometaX = 180;
-let objetosFuerza = [];
-let fuerzaGameLoop = null;
+let fuerzaIndice = 0, fuerzaPuntosAciertos = 0, cometaX = 180, objetosFuerza = [], fuerzaGameLoop = null;
 
 function iniciarFuerzaNatural09() {
     document.getElementById('fuerza-natural-modal').style.display = 'block';
-    fuerzaIndice = 0;
-    fuerzaPuntosAciertos = 0;
-    cometaX = 180;
+    fuerzaIndice = 0; fuerzaPuntosAciertos = 0; cometaX = 180;
     document.getElementById('txt-fuerza-puntos').innerText = fuerzaPuntosAciertos;
     cargarSiguienteFuerzaNatural();
-    if (!fuerzaGameLoop) {
-        fuerzaGameLoop = setInterval(actualizarYRenderizarFuerza, 1000 / 30);
-    }
+    if (!fuerzaGameLoop) fuerzaGameLoop = setInterval(actualizarYRenderizarFuerza, 1000 / 30);
 }
 
 function cargarSiguienteFuerzaNatural() {
-    if (fuerzaIndice >= cancionesFuerzaNaturalDetalle.length) {
-        finalizarDiscoActual();
-        return;
-    }
+    if (fuerzaIndice >= cancionesFuerzaNaturalDetalle.length) { finalizarDiscoActual(); return; }
     let temaObj = cancionesFuerzaNaturalDetalle[fuerzaIndice];
     document.getElementById('txt-fuerza-meta').innerText = temaObj.nombre;
     reproducirAudio(discoActual.trackId, temaObj.seg);
-
     objetosFuerza = [
         { x: Math.random() * 300 + 30, y: -20, texto: temaObj.nombre, correcta: true, velY: 2 },
         { x: Math.random() * 300 + 30, y: -120, texto: cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)], correcta: false, velY: 1.8 }
@@ -1231,69 +1185,43 @@ function actualizarYRenderizarFuerza() {
     if (estadoActual !== "JUEGO_DISCO" || !discoActual || !discoActual.esFuerzaNatural) return;
     const ctx = canvasFuerza.getContext('2d');
     ctx.clearRect(0, 0, canvasFuerza.width, canvasFuerza.height);
-
-    ctx.fillStyle = '#020b14';
-    ctx.fillRect(0, 0, canvasFuerza.width, canvasFuerza.height);
-
+    ctx.fillStyle = '#020b14'; ctx.fillRect(0, 0, canvasFuerza.width, canvasFuerza.height);
     objetosFuerza.forEach((obj, idx) => {
         obj.y += obj.velY;
         ctx.fillStyle = obj.correcta ? 'rgba(0, 255, 170, 0.3)' : 'rgba(255, 0, 100, 0.3)';
-        ctx.strokeStyle = obj.correcta ? '#00ffaa' : '#ff0066';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(obj.x, obj.y, 20, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
-
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 10px sans-serif';
-        ctx.textAlign = 'center';
+        ctx.strokeStyle = obj.correcta ? '#00ffaa' : '#ff0066'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(obj.x, obj.y, 20, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = '#ffffff'; ctx.font = 'bold 10px sans-serif'; ctx.textAlign = 'center';
         ctx.fillText(obj.texto, obj.x, obj.y + 4);
-
         if (obj.y >= 190 && obj.y <= 225 && Math.abs(obj.x - cometaX) < 30) {
             if (obj.correcta) {
-                fuerzaPuntosAciertos++;
-                puntos += 40;
+                fuerzaPuntosAciertos++; puntos += 40;
                 document.getElementById('txt-puntos').innerText = puntos;
                 document.getElementById('txt-fuerza-puntos').innerText = fuerzaPuntosAciertos;
-                if (fuerzaPuntosAciertos >= 5) {
-                    finalizarDiscoActual();
-                } else {
-                    fuerzaIndice++;
-                    cargarSiguienteFuerzaNatural();
-                }
+                if (fuerzaPuntosAciertos >= 5) finalizarDiscoActual();
+                else { fuerzaIndice++; cargarSiguienteFuerzaNatural(); }
             } else {
-                puntos = Math.max(0, puntos - 10);
-                document.getElementById('txt-puntos').innerText = puntos;
+                puntos = Math.max(0, puntos - 10); document.getElementById('txt-puntos').innerText = puntos;
                 objetosFuerza.splice(idx, 1);
             }
         }
-
         if (obj.y > canvasFuerza.height + 30) {
-            if (obj.correcta) {
-                cargarSiguienteFuerzaNatural();
-            } else {
-                objetosFuerza.splice(idx, 1);
-            }
+            if (obj.correcta) cargarSiguienteFuerzaNatural();
+            else objetosFuerza.splice(idx, 1);
         }
     });
-
-    ctx.fillStyle = '#00ffaa';
-    ctx.beginPath();
-    ctx.moveTo(cometaX, 200);
-    ctx.lineTo(cometaX - 15, 230);
-    ctx.lineTo(cometaX + 15, 230);
-    ctx.closePath();
-    ctx.fill();
+    ctx.fillStyle = '#00ffaa'; ctx.beginPath();
+    ctx.moveTo(cometaX, 200); ctx.lineTo(cometaX - 15, 230); ctx.lineTo(cometaX + 15, 230);
+    ctx.closePath(); ctx.fill();
 }
 
 const listaDiscos = [
-    { id: "soda_84", nombre: "SODA STEREO (1984)", trackId: "W0KTTiuw96A", fondo: "https://i.ibb.co/sT3L0VW/soda-stereo.png", conquistado: false, esPacman: true },
-    { id: "nada_personal", nombre: "NADA PERSONAL (1985)", trackId: "uOlCYVXOyFI", fondo: "https://i.ibb.co/xq1TGpt8/nada-personal.png", conquistado: false, esGalaxy: true },
-    { id: "signos", nombre: "SIGNOS (1986)", trackId: "xiYMsOtPa5c", fondo: "https://i.ibb.co/LXQbmwRR/signos.png", conquistado: false, esTetris: true },
+    { id: "soda_84", nombre: "SODA STEREO (1984)", trackId: "PwmNExAF1zg&list=RDPwmNExAF1zg&start_radio=1", fondo: "https://i.ibb.co/sT3L0VW/soda-stereo.png", conquistado: false, esPacman: true },
+    { id: "nada_personal", nombre: "NADA PERSONAL (1985)", trackId: "kpnoe1j3a7A&list=RDkpnoe1j3a7A&start_radio=1", fondo: "https://i.ibb.co/xq1TGpt8/nada-personal.png", conquistado: false, esGalaxy: true },
+    { id: "signos", nombre: "SIGNOS (1986)", trackId: "ipGHC4FAP0E&list=RDipGHC4FAP0E&start_radio=1", fondo: "https://i.ibb.co/LXQbmwRR/signos.png", conquistado: false, esTetris: true },
     { id: "doble_vida", nombre: "DOBLE VIDA (1988)", trackId: "3TB0vkRalrQ&list=RD3TB0vkRalrQ&start_radio=1", fondo: "https://i.ibb.co/cXZpRnKk/doble-vida.png", conquistado: false, esCrucigrama: true },
     { id: "cancion_animal", nombre: "CANCIÓN ANIMAL (1990)", trackId: "jzLVaylmbJU&list=RDjzLVaylmbJU&start_radio=1", fondo: "https://i.ibb.co/rRbsVPJc/cancion-animal.png", conquistado: false, esBatallaNaval: true },
-    { id: "dynamo", nombre: "DYNAMO (1992)", trackId: "a5oUU6tGKFM", fondo: "https://i.ibb.co/S1G0p32/dynamo.png", conquistado: false, esDynamo: true },
+    { id: "dynamo", nombre: "DYNAMO (1992)", trackId: "ofPx2dQmj_Y&list=RDofPx2dQmj_Y&start_radio=1&t=556s", fondo: "https://i.ibb.co/S1G0p32/dynamo.png", conquistado: false, esDynamo: true },
     { id: "sueno_stereo", nombre: "SUEÑO STEREO (1995)", trackId: "beqnuWH3pvo&list=RDbeqnuWH3pvo&start_radio=1", fondo: "https://i.ibb.co/whCCS4r1/sue-o-stereo.png", conquistado: false, esSuenoStereo: true },
     { id: "amor_amarillo", nombre: "AMOR AMARILLO (1993)", trackId: "WlracwwxpPM&list=RDWlracwwxpPM&start_radio=1", fondo: "https://i.ibb.co/KpPXvH5K/amor-amarillo.png", conquistado: false, esAmorAmarillo: true },
     { id: "bocanada", nombre: "BOCANADA (1999)", trackId: "IMw21ADHgJI&list=RDIMw21ADHgJI&start_radio=1", fondo: "https://i.ibb.co/Gf9jPzVy/bocanada.png", conquistado: false, esBocanada: true },
@@ -1444,7 +1372,7 @@ function entrarADisco(disco) {
     }
 }
 
-function finalizarDiscoActual() {
+function ocultarTodosLosModales() {
     document.getElementById('pacman-game-modal').style.display = 'none';
     document.getElementById('galaxy-game-modal').style.display = 'none';
     document.getElementById('tetris-game-modal').style.display = 'none';
@@ -1457,7 +1385,11 @@ function finalizarDiscoActual() {
     document.getElementById('siempre-es-hoy-modal').style.display = 'none';
     document.getElementById('ahi-vamos-modal').style.display = 'none';
     document.getElementById('fuerza-natural-modal').style.display = 'none';
+    document.getElementById('cartel-tema-pacman').style.display = 'none';
+}
 
+function finalizarDiscoActual() {
+    ocultarTodosLosModales();
     if (!discoActual.conquistado) {
         discoActual.conquistado = true;
         discosConquistadosCount++;
@@ -1468,18 +1400,7 @@ function finalizarDiscoActual() {
 }
 
 function volverAlMultiverso() {
-    document.getElementById('pacman-game-modal').style.display = 'none';
-    document.getElementById('galaxy-game-modal').style.display = 'none';
-    document.getElementById('tetris-game-modal').style.display = 'none';
-    document.getElementById('crucigrama-game-modal').style.display = 'none';
-    document.getElementById('batalla-naval-modal').style.display = 'none';
-    document.getElementById('dynamo-game-modal').style.display = 'none';
-    document.getElementById('sueno-stereo-modal').style.display = 'none';
-    document.getElementById('amor-amarillo-modal').style.display = 'none';
-    document.getElementById('bocanada-modal').style.display = 'none';
-    document.getElementById('siempre-es-hoy-modal').style.display = 'none';
-    document.getElementById('ahi-vamos-modal').style.display = 'none';
-    document.getElementById('fuerza-natural-modal').style.display = 'none';
+    ocultarTodosLosModales();
     document.getElementById('trofeos-modal').style.display = 'none';
     document.getElementById('disco-seleccionado-banner').style.display = 'none';
     cargarMultiversoDiscos();
