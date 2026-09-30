@@ -213,8 +213,8 @@
                 <button class="btn-radio" onclick="accionarCassette('play')">▶ PLAY</button>
                 <button class="btn-radio" onclick="accionarCassette('stop')">⏹ STOP</button>
                 <button class="btn-radio" onclick="accionarCassette('eject')">⏏ EJECT</button>
-                <button class="btn-radio" onclick="accionarCassette('forward')">⏏ FORWARD</button>
-                <button class="btn-radio" onclick="accionarCassette('random')">⏏ RANDOM</button>
+                <button class="btn-radio" onclick="accionarCassette('forward')">⏭ FORWARD</button>
+                <button class="btn-radio" onclick="accionarCassette('random')">🔀 RANDOM</button>
             </div>
         </div>
 
@@ -378,24 +378,27 @@
         }
 
         function iniciarConteoRegresivo() {
-            juegoIniciado = true;
-            document.getElementById('pantalla-intro').style.display = 'none';
-            document.getElementById('pantalla-conteo').style.display = 'flex';
-            cambiarFondo("https://i.ibb.co/9Hy8h9fL/colores-santos.png");
-            reproducirAudio("Wun6zDSpwkg");
-            let cuenta = 3;
-            const numEl = document.getElementById('txt-conteo-numero');
-            numEl.innerText = cuenta;
-            let timer = setInterval(() => {
-                cuenta--;
-                if (cuenta > 0) {
-                    numEl.innerText = cuenta;
-                } else {
-                    clearInterval(timer);
-                    document.getElementById('pantalla-conteo').style.display = 'none';
-                    mostrarHallCentral();
-                }
-            }, 1000);
+    const pantallaIntro = document.getElementById('pantalla-intro');
+    const pantallaConteo = document.getElementById('pantalla-conteo');
+    
+    if (pantallaIntro) pantallaIntro.style.display = 'none';
+    if (pantallaConteo) pantallaConteo.style.display = 'flex';
+
+    // Lógica del conteo o transición al Hall Central
+    let contador = 3;
+    const txtNumero = document.getElementById('txt-conteo-numero');
+    
+    const intervalo = setInterval(() => {
+        contador--;
+        if (txtNumero) txtNumero.innerText = contador;
+        
+        if (contador <= 0) {
+            clearInterval(intervalo);
+            if (pantallaConteo) pantallaConteo.style.display = 'none';
+            mostrarHallCentral(); // Abre el menú principal
+        }
+    }, 1000);
+}
         }
 
         function mostrarHallCentral() {
@@ -1800,6 +1803,35 @@ function abrirSalaGaleria() {
         });
 
         animate();
-    </script>
+    <script>
+function iniciarConteoRegresivo() {
+    const pantallaIntro = document.getElementById('pantalla-intro');
+    const pantallaConteo = document.getElementById('pantalla-conteo');
+    
+    if (pantallaIntro) pantallaIntro.style.display = 'none';
+    if (pantallaConteo) pantallaConteo.style.display = 'flex';
+
+    let contador = 3;
+    const txtNumero = document.getElementById('txt-conteo-numero');
+    
+    const intervalo = setInterval(() => {
+        contador--;
+        if (txtNumero) txtNumero.innerText = contador;
+        
+        if (contador <= 0) {
+            clearInterval(intervalo);
+            if (pantallaConteo) pantallaConteo.style.display = 'none';
+            
+            // Abre el Hall Central o muestra el menú de salas
+            const hall = document.getElementById('hall-central-modal');
+            if (hall) {
+                hall.style.display = 'flex';
+            } else if (typeof mostrarHallCentral === 'function') {
+                mostrarHallCentral();
+            }
+        }
+    }, 1000);
+}
+</script>
 </body>
 </html>
