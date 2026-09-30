@@ -367,16 +367,7 @@ let discoEnFoco = null;
 let discoActual = null;
 let cancionActualId = "";
 
-function reproducirAudio(videoId, segundos = 0) {
-    const cleanId = videoId.split('&')[0];
-    const idKey = `${cleanId}_${segundos}`;
-    if (cancionActualId !== idKey) {
-        cancionActualId = idKey;
-        const ytPlayer = document.getElementById('yt-player');
-        ytPlayer.src = `https://www.youtube.com/embed/${cleanId}?autoplay=1&start=${segundos}&loop=1&playlist=${cleanId}`;
-    }
-}
-
+// --- FUNCIÓN DE INICIO CORREGIDA ---
 function iniciarConteoRegresivo() {
     const pantallaIntro = document.getElementById('pantalla-intro');
     const pantallaConteo = document.getElementById('pantalla-conteo');
@@ -1789,34 +1780,6 @@ function abrirSalaGaleria() {
 
         animate();
     <script>
-function iniciarConteoRegresivo() {
-    const pantallaIntro = document.getElementById('pantalla-intro');
-    const pantallaConteo = document.getElementById('pantalla-conteo');
-    
-    if (pantallaIntro) pantallaIntro.style.display = 'none';
-    if (pantallaConteo) pantallaConteo.style.display = 'flex';
 
-    let contador = 3;
-    const txtNumero = document.getElementById('txt-conteo-numero');
-    
-    const intervalo = setInterval(() => {
-        contador--;
-        if (txtNumero) txtNumero.innerText = contador;
-        
-        if (contador <= 0) {
-            clearInterval(intervalo);
-            if (pantallaConteo) pantallaConteo.style.display = 'none';
-            
-            // Abre el Hall Central o muestra el menú de salas
-            const hall = document.getElementById('hall-central-modal');
-            if (hall) {
-                hall.style.display = 'flex';
-            } else if (typeof mostrarHallCentral === 'function') {
-                mostrarHallCentral();
-            }
-        }
-    }, 1000);
-}
-</script>
 </body>
 </html>
