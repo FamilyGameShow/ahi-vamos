@@ -358,61 +358,55 @@
     </div>
 
     <script>
-        let juegoIniciado = false;
-        let puntos = 0;
-        let discosConquistadosCount = 0;
-        let estadoActual = "MENU_PRINCIPAL";
-        let meshesDiscos = [];
-        let discoEnFoco = null;
-        let discoActual = null;
-        let cancionActualId = "";
+let juegoIniciado = false;
+let puntos = 0;
+let discosConquistadosCount = 0;
+let estadoActual = "MENU_PRINCIPAL";
+let meshesDiscos = [];
+let discoEnFoco = null;
+let discoActual = null;
+let cancionActualId = "";
 
-        function reproducirAudio(videoId, segundos = 0) {
-            const cleanId = videoId.split('&')[0];
-            const idKey = `${cleanId}_${segundos}`;
-            if (cancionActualId !== idKey) {
-                cancionActualId = idKey;
-                const ytPlayer = document.getElementById('yt-player');
-                ytPlayer.src = `https://www.youtube.com/embed/${cleanId}?autoplay=1&start=${segundos}&loop=1&playlist=${cleanId}`;
-            }
-        }
+function reproducirAudio(videoId, segundos = 0) {
+    const cleanId = videoId.split('&')[0];
+    const idKey = `${cleanId}_${segundos}`;
+    if (cancionActualId !== idKey) {
+        cancionActualId = idKey;
+        const ytPlayer = document.getElementById('yt-player');
+        ytPlayer.src = `https://www.youtube.com/embed/${cleanId}?autoplay=1&start=${segundos}&loop=1&playlist=${cleanId}`;
+    }
+}
 
-        function iniciarConteoRegresivo() {
+function iniciarConteoRegresivo() {
     const pantallaIntro = document.getElementById('pantalla-intro');
     const pantallaConteo = document.getElementById('pantalla-conteo');
-    
     if (pantallaIntro) pantallaIntro.style.display = 'none';
     if (pantallaConteo) pantallaConteo.style.display = 'flex';
 
-    // Lógica del conteo o transición al Hall Central
     let contador = 3;
     const txtNumero = document.getElementById('txt-conteo-numero');
-    
     const intervalo = setInterval(() => {
         contador--;
         if (txtNumero) txtNumero.innerText = contador;
-        
         if (contador <= 0) {
             clearInterval(intervalo);
             if (pantallaConteo) pantallaConteo.style.display = 'none';
-            mostrarHallCentral(); // Abre el menú principal
+            mostrarHallCentral();
         }
     }, 1000);
 }
-        }
 
-        function mostrarHallCentral() {
-            ocultarTodosLosModales();
-            document.getElementById('hall-central-modal').style.display = 'flex';
-            document.getElementById('ui-capa').style.display = 'flex';
-            document.getElementById('btn-trofeos').style.display = 'block';
-            document.getElementById('btn-volver').style.display = 'none';
-            document.getElementById('btn-hall').style.display = 'none';
-            estadoActual = "HALL_CENTRAL";
-        }
+function mostrarHallCentral() {
+    ocultarTodosLosModales();
+    document.getElementById('hall-central-modal').style.display = 'flex';
+    document.getElementById('ui-capa').style.display = 'flex';
+    document.getElementById('btn-trofeos').style.display = 'block';
+    document.getElementById('btn-volver').style.display = 'none';
+    document.getElementById('btn-hall').style.display = 'none';
+    estadoActual = "HALL_CENTRAL";
+}
 
-        function irASala(nombreSala) {
-           function irASala(nombreSala) {
+function irASala(nombreSala) {
     document.getElementById('hall-central-modal').style.display = 'none';
     if (nombreSala === 'juegos') {
         estadoActual = "MENU_PRINCIPAL";
@@ -426,15 +420,15 @@
         abrirSalaCine();
     } else if (nombreSala === 'galeria') {
         abrirSalaGaleria();
-    } else if (nombreSala === 'tocadiscos') {
-    abrirSalaTocadiscos();
+    } else if (nombreSala === 'vinilos') {
+        abrirSalaTocadiscos();
     } else {
         alert(`¡Espacio en construcción dentro del multiverso! Volviendo al Hall.`);
         mostrarHallCentral();
-        
-            }
-        }
-            // --- SALA DE TOCADISCOS / VINILOS ---
+    }
+}
+
+// --- SALA DE TOCADISCOS / VINILOS ---
 let viniloActual = null;
 let puaBajada = false;
 
@@ -449,7 +443,6 @@ function abrirSalaTocadiscos() {
 
     const estanteVinilos = document.getElementById('estante-vinilos-grid');
     estanteVinilos.innerHTML = '';
-    
     listaDiscos.forEach(disco => {
         const div = document.createElement('div');
         div.className = 'cassette-item';
@@ -465,7 +458,6 @@ function seleccionarVinilo(disco) {
     etiqueta.innerText = disco.nombre;
     etiqueta.style.backgroundImage = `url(${disco.fondo})`;
     etiqueta.style.backgroundSize = 'cover';
-    
     if (puaBajada) {
         reproducirViniloAudio();
     }
@@ -475,7 +467,6 @@ function accionarPua() {
     puaBajada = !puaBajada;
     const textoPua = document.getElementById('estado-pua');
     const plato = document.getElementById('plato-vinilo');
-    
     if (puaBajada) {
         textoPua.innerText = "Reproduciendo (Bajada)";
         plato.style.animation = "girarVinilo 2s linear infinite";
@@ -493,19 +484,14 @@ function accionarPua() {
 
 function reproducirViniloAudio() {
     if (!viniloActual) return;
-    // Utiliza el sistema de reproducción de audio o iframe global que ya tengas en la plataforma
-    if (typeof reproducirAudioTrack === 'function') {
-        reproducirAudioTrack(viniloActual.trackId);
-    }
+    reproducirAudio(viniloActual.trackId, 0);
 }
 
 function detenerAudioVinilo() {
-    if (typeof pausarAudioTrack === 'function') {
-        pausarAudioTrack();
-    }
+    reproducirAudio("Wun6zDSpwkg");
 }
 
-            // --- SALA DE CINE ---
+// --- SALA DE CINE ---
 const listaProyeccionesCine = [
     { nombre: "Gira Bocanada - En Vivo", trackId: "IMw21ADHgJI" },
     { nombre: "Concierto Zeta, Charly y Gustavo (Soda)", trackId: "jzLVaylmbJU" },
@@ -522,7 +508,6 @@ function abrirSalaCine() {
     document.getElementById('btn-trofeos').style.display = 'none';
     estadoActual = "CINE";
 
-    // Cargar primer video por defecto
     reproducirCine(listaProyeccionesCine[0].trackId);
 
     const estanteCine = document.getElementById('estante-cine-grid');
