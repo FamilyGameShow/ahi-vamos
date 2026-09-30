@@ -17,6 +17,25 @@
         #pantalla-conteo { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(2, 0, 10, 0.85); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 90; text-align: center; display: none; }
         #txt-conteo-numero { font-size: 80px; color: #00ffff; text-shadow: 0 0 30px #00ffff; font-weight: bold; margin-bottom: 10px; }
         #txt-conteo-texto { font-size: 16px; color: #ff00ff; letter-spacing: 3px; text-shadow: 0 0 10px #ff00ff; }
+        
+        <!-- Sala de Cine / Proyecciones -->
+<div id="cine-modal" class="modal-juego" style="border-color: #00ffff;">
+    <div class="hud-juego" style="color:#00ffff;">🎬 SALA DE CINE - DOCUMENTALES Y RECITALES</div>
+    <div class="objetivo-juego">🎥 SELECCIONÁ UNA PROYECCIÓN DEL MULTIVERSO</div>
+    <div id="cine-player-container" style="margin: 10px 0; position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px; border: 2px solid #00ffff;">
+        <iframe id="cine-iframe" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    </div>
+    <div class="estante-cassettes" id="estante-cine-grid" style="max-height: 25vh;"></div>
+    <button class="btn-tetris" onclick="mostrarHallCentral()" style="width:100%; margin-top:8px;">🏛️ VOLVER AL HALL</button>
+</div>
+
+<!-- Sala de Arte / Galería Visual -->
+<div id="galeria-modal" class="modal-juego" style="border-color: #ff00ff;">
+    <div class="hud-juego" style="color:#ff00ff;">🖼️ GALERÍA DE ARTE - MUNDO VISUAL</div>
+    <div class="objetivo-juego">✨ EXPOSICIÓN DE ESTÉTICA Y FOTOGRAFÍA</div>
+    <div class="biblioteca-grid" id="galeria-grid-items" style="max-height: 50vh; grid-template-columns: repeat(2, 1fr);"></div>
+    <button class="btn-tetris" onclick="mostrarHallCentral()" style="width:100%; margin-top:8px;">🏛️ VOLVER AL HALL</button>
+</div>
 
         /* Hall Central / Selector de Habitaciones */
         #hall-central-modal { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(2, 0, 10, 0.95); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 80; padding: 20px; box-sizing: border-box; display: none; }
@@ -174,6 +193,8 @@
                 <button class="btn-radio" onclick="accionarCassette('play')">▶ PLAY</button>
                 <button class="btn-radio" onclick="accionarCassette('stop')">⏹ STOP</button>
                 <button class="btn-radio" onclick="accionarCassette('eject')">⏏ EJECT</button>
+                <button class="btn-radio" onclick="accionarCassette('forward')">⏏ FORWARD</button>
+                <button class="btn-radio" onclick="accionarCassette('random')">⏏ RANDOM</button>
             </div>
         </div>
 
@@ -368,20 +389,92 @@
         }
 
         function irASala(nombreSala) {
-            document.getElementById('hall-central-modal').style.display = 'none';
-            if (nombreSala === 'juegos') {
-                estadoActual = "MENU_PRINCIPAL";
-                document.getElementById('btn-hall').style.display = 'block';
-                cargarMultiversoDiscos();
-            } else if (nombreSala === 'biblioteca') {
-                abrirSalaBiblioteca();
-            } else if (nombreSala === 'cassettes') {
-                abrirSalaCassettes();
-            } else {
-                alert(`¡Sala de ${nombreSala.toUpperCase()} en construcción dentro del multiverso! Volviendo al Hall.`);
-                mostrarHallCentral();
+           function irASala(nombreSala) {
+    document.getElementById('hall-central-modal').style.display = 'none';
+    if (nombreSala === 'juegos') {
+        estadoActual = "MENU_PRINCIPAL";
+        document.getElementById('btn-hall').style.display = 'block';
+        cargarMultiversoDiscos();
+    } else if (nombreSala === 'biblioteca') {
+        abrirSalaBiblioteca();
+    } else if (nombreSala === 'cassettes') {
+        abrirSalaCassettes();
+    } else if (nombreSala === 'cine') {
+        abrirSalaCine();
+    } else if (nombreSala === 'galeria') {
+        abrirSalaGaleria();
+    } else {
+        alert(`¡Espacio en construcción dentro del multiverso! Volviendo al Hall.`);
+        mostrarHallCentral();
+        
             }
         }
+
+            // --- SALA DE CINE ---
+const listaProyeccionesCine = [
+    { nombre: "Gira Bocanada - En Vivo", trackId: "IMw21ADHgJI" },
+    { nombre: "Concierto Zeta, Charly y Gustavo (Soda)", trackId: "jzLVaylmbJU" },
+    { nombre: "Ahí Vamos - Detrás de la Escena", trackId: "2eW4gfPP7j8" },
+    { nombre: "Fuerza Natural - En Vivo en Monterrey", trackId: "9gkUnFGsHtE" }
+];
+
+function abrirSalaCine() {
+    ocultarTodosLosModales();
+    document.getElementById('cine-modal').style.display = 'flex';
+    document.getElementById('ui-capa').style.display = 'flex';
+    document.getElementById('btn-volver').style.display = 'none';
+    document.getElementById('btn-hall').style.display = 'block';
+    document.getElementById('btn-trofeos').style.display = 'none';
+    estadoActual = "CINE";
+
+    // Cargar primer video por defecto
+    reproducirCine(listaProyeccionesCine[0].trackId);
+
+    const estanteCine = document.getElementById('estante-cine-grid');
+    estanteCine.innerHTML = '';
+    listaProyeccionesCine.forEach(proyeccion => {
+        const div = document.createElement('div');
+        div.className = 'cassette-item';
+        div.innerHTML = `<span style="font-size:10px;">🎞️ ${proyeccion.nombre}</span>`;
+        div.onclick = () => reproducirCine(proyeccion.trackId);
+        estanteCine.appendChild(div);
+    });
+}
+
+function reproducirCine(videoId) {
+    const iframe = document.getElementById('cine-iframe');
+    const cleanId = videoId.split('&')[0];
+    iframe.src = `https://www.youtube.com/embed/${cleanId}?autoplay=1`;
+}
+
+// --- SALA DE ARTE / GALERÍA ---
+const galeriaArteItems = [
+    { titulo: "Colores Santos (Multiverso)", img: "https://i.ibb.co/9Hy8h9fL/colores-santos.png" },
+    { titulo: "Soda Stereo 1984", img: "https://i.ibb.co/sT3L0VW/soda-stereo.png" },
+    { titulo: "Signos 1986", img: "https://i.ibb.co/LXQbmwRR/signos.png" },
+    { titulo: "Canción Animal", img: "https://i.ibb.co/rRbsVPJc/cancion-animal.png" },
+    { titulo: "Amor Amarillo", img: "https://i.ibb.co/KpPXvH5K/amor-amarillo.png" },
+    { titulo: "Bocanada 1999", img: "https://i.ibb.co/Gf9jPzVy/bocanada.png" }
+];
+
+function abrirSalaGaleria() {
+    ocultarTodosLosModales();
+    document.getElementById('galeria-modal').style.display = 'flex';
+    document.getElementById('ui-capa').style.display = 'flex';
+    document.getElementById('btn-volver').style.display = 'none';
+    document.getElementById('btn-hall').style.display = 'block';
+    document.getElementById('btn-trofeos').style.display = 'none';
+    estadoActual = "GALERIA";
+
+    const gridGaleria = document.getElementById('galeria-grid-items');
+    gridGaleria.innerHTML = '';
+    galeriaArteItems.forEach(arte => {
+        const div = document.createElement('div');
+        div.className = 'libro-item';
+        div.innerHTML = `<img src="${arte.img}" alt="${arte.titulo}" style="width:100%; height:110px;"><span>${arte.titulo}</span>`;
+        gridGaleria.appendChild(div);
+    });
+}
 
         // --- SALA DE BIBLIOTECA / LIBROS ---
         function abrirSalaBiblioteca() {
