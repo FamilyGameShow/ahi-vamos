@@ -24,6 +24,23 @@
         .btn-sala { background: rgba(10, 5, 30, 0.9); border: 2px solid #ff00ff; color: #fff; padding: 15px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; cursor: pointer; box-shadow: 0 0 15px rgba(255, 0, 255, 0.4); transition: all 0.3s ease; text-align: center; }
         .btn-sala:hover { border-color: #00ffff; box-shadow: 0 0 20px rgba(0, 255, 255, 0.7); transform: scale(1.03); }
 
+        /* Sala de Biblioteca / Estantería de Libros */
+        #biblioteca-modal { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(5, 2, 15, 0.98); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 85; padding: 20px; box-sizing: border-box; display: none; }
+        .biblioteca-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; max-width: 420px; max-height: 68vh; overflow-y: auto; padding: 5px; }
+        .libro-item { background: rgba(20, 10, 40, 0.9); border: 2px solid #ff00ff; border-radius: 8px; padding: 8px; text-align: center; cursor: pointer; transition: transform 0.3s; }
+        .libro-item:hover { transform: scale(1.05); border-color: #00ffff; }
+        .libro-item img { width: 50px; height: 50px; object-fit: cover; border-radius: 4px; margin-bottom: 4px; }
+        .libro-item span { color: #fff; font-size: 9px; font-weight: bold; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        /* Visor del Libro Abierto */
+        #visor-libro-modal { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #120826; border: 3px solid #00ffff; border-radius: 12px; width: 92%; max-width: 460px; height: 80vh; max-height: 520px; z-index: 90; display: none; flex-direction: column; box-shadow: 0 0 40px rgba(0, 255, 255, 0.6); padding: 15px; box-sizing: border-box; }
+        .libro-hoja { flex: 1; background: #f4eedb; color: #1a0808; border-radius: 6px; padding: 15px; overflow-y: auto; font-family: 'Georgia', serif; position: relative; box-shadow: inset 0 0 15px rgba(0,0,0,0.3); }
+        .libro-hoja h3 { margin-top: 0; color: #b30059; font-size: 15px; border-bottom: 2px solid #b30059; padding-bottom: 5px; text-align: center; }
+        .lista-canciones-libro { list-style: none; padding: 0; margin: 10px 0; }
+        .lista-canciones-libro li { padding: 8px 10px; margin-bottom: 5px; background: rgba(0,0,0,0.05); border-left: 3px solid #b30059; cursor: pointer; font-size: 11px; font-weight: bold; transition: background 0.2s; }
+        .lista-canciones-libro li:hover { background: rgba(179, 0, 89, 0.15); }
+        .letra-contenedor { font-size: 12px; line-height: 1.6; color: #222; white-space: pre-line; margin-top: 10px; background: rgba(255,255,255,0.7); padding: 10px; border-radius: 6px; }
+
         #ui-capa { position: absolute; top: 15px; width: 100%; display: flex; justify-content: space-between; padding: 0 20px; box-sizing: border-box; color: #fff; text-shadow: 0 0 10px #ff00ff; z-index: 10; pointer-events: none; display: none; }
         .stats-box { font-size: 12px; font-weight: bold; background: rgba(10, 5, 30, 0.85); border: 1px solid #ff00ff; padding: 6px 10px; border-radius: 10px; }
         
@@ -104,6 +121,25 @@
         </div>
     </div>
 
+    <!-- Sala de Biblioteca / Estantería de Libros -->
+    <div id="biblioteca-modal">
+        <h2 style="color: #00ffff; font-size: 18px; letter-spacing: 2px; margin-bottom: 5px; text-shadow: 0 0 10px #00ffff;">BIBLIOTECA DE DISCOS</h2>
+        <p style="color: #ff00ff; font-size: 11px; margin-bottom: 12px;">Elegí un libro para abrirlo, ver sus canciones y escuchar la música</p>
+        <div class="biblioteca-grid" id="biblioteca-estanteria"></div>
+        <button class="btn-cerrar-trofeos" onclick="mostrarHallCentral()">VOLVER AL HALL</button>
+    </div>
+
+    <!-- Visor del Libro Abierto -->
+    <div id="visor-libro-modal">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <h3 id="titulo-libro-abierto" style="color: #ffcc00; margin: 0; font-size: 14px;">TÍTULO DISCO</h3>
+            <button onclick="cerrarVisorLibro()" style="background: #ff0055; border: none; color: #fff; padding: 5px 10px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 11px;">📖 CERRAR LIBRO</button>
+        </div>
+        <div class="libro-hoja" id="contenido-hoja-libro">
+            <!-- Contenido dinámico del índice y letras -->
+        </div>
+    </div>
+
     <div id="ui-capa">
         <div class="stats-box">PUNTOS: <span id="txt-puntos">0</span></div>
         <div class="stats-box" id="txt-estado">TOCA UN DISCO PARA VERLO</div>
@@ -148,7 +184,7 @@
         </div>
     </div>
 
-    <div id="crucigrama-game-modal" class="modal-juego" style="border-color: #00ffff;">
+    <div id="crucigrama-game-modal" class="modal-juego" style="border-color: #ff00ff;">
         <div class="hud-juego" style="color:#ff00ff;">📝 DOBLE VIDA (1988) - CRUCIGRAMA</div>
         <div class="crucigrama-wrapper">
             <div class="pistas-box">
@@ -173,7 +209,7 @@
         </div>
     </div>
 
-    <div id="dynamo-game-modal" class="modal-juego" style="border-color: #00ffff;">
+    <div id="dynamo-game-modal" class="modal-juego" style="border-color: #ff00ff;">
         <div class="hud-juego" style="color:#ff00ff;">🎛️ DYNAMO (1992) - MESA DE MEZCLAS</div>
         <div class="objetivo-juego">🎵 TEMA ACTUAL: <span id="txt-dynamo-meta">...</span></div>
         <canvas id="dynamo-canvas" class="canvas-juego" width="380" height="170" style="border-color: #ff00ff;"></canvas>
@@ -185,7 +221,7 @@
         <button class="btn-tetris" id="btn-siguiente-dyn" style="width:100%; margin-top:6px;" onclick="siguienteCancionDynamo()">➡️ SIGUIENTE TEMA</button>
     </div>
 
-    <div id="sueno-stereo-modal" class="modal-juego" style="border-color: #00ffff;">
+    <div id="sueno-stereo-modal" class="modal-juego" style="border-color: #ff00ff;">
         <div class="hud-juego" style="color:#ff00ff;">☁️ SUEÑO STEREO (1995) - ONDAS ONÍRICAS</div>
         <div class="objetivo-juego">🎯 ATRAPÁ LAS BURBUJAS DE: <span id="txt-sueno-meta">...</span></div>
         <canvas id="sueno-canvas" class="canvas-juego" width="380" height="240" style="border-color: #ff00ff;"></canvas>
@@ -199,14 +235,14 @@
         <div style="color:#ffcc00; font-size:11px;">👆 ARRASTRÁ EL DEDO PARA GUIAR EL AUTO Y NO CHOCAR</div>
     </div>
 
-    <div id="bocanada-modal" class="modal-juego" style="border-color: #00ffff;">
+    <div id="bocanada-modal" class="modal-juego" style="border-color: #ff00ff;">
         <div class="hud-juego" style="color:#ff00ff;">💨 BOCANADA (1999) - TIRO AL BLANCO</div>
         <div class="objetivo-juego">🎯 APUNTÁ Y DISPARÁ AL TEMA: <span id="txt-bocanada-meta">...</span></div>
         <canvas id="bocanada-canvas" class="canvas-juego" width="380" height="240" style="border-color: #ff00ff;"></canvas>
         <div style="color:#00ffff; font-size:11px;">👆 TOCÁ LA PANTALLA PARA DISPARAR LA MIRA</div>
     </div>
 
-    <div id="siempre-es-hoy-modal" class="modal-juego" style="border-color: #00ffff;">
+    <div id="siempre-es-hoy-modal" class="modal-juego" style="border-color: #ff00ff;">
         <div class="hud-juego" style="color:#ff00ff;">🧩 SIEMPRE ES HOY (2002) - ROMPECABEZAS SONORO</div>
         <div class="objetivo-juego">🎯 ARMAR EL PUZZLE DE: <span id="txt-siempre-meta">...</span></div>
         <canvas id="siempre-canvas" class="canvas-juego" width="300" height="300" style="border-color: #ff00ff;"></canvas>
@@ -295,10 +331,78 @@
                 estadoActual = "MENU_PRINCIPAL";
                 document.getElementById('btn-hall').style.display = 'block';
                 cargarMultiversoDiscos();
+            } else if (nombreSala === 'biblioteca') {
+                abrirSalaBiblioteca();
             } else {
                 alert(`¡Sala de ${nombreSala.toUpperCase()} en construcción dentro del multiverso! Volviendo al Hall.`);
                 mostrarHallCentral();
             }
+        }
+
+        // --- SALA DE BIBLIOTECA / LIBROS ---
+        function abrirSalaBiblioteca() {
+            ocultarTodosLosModales();
+            document.getElementById('biblioteca-modal').style.display = 'flex';
+            document.getElementById('ui-capa').style.display = 'flex';
+            document.getElementById('btn-volver').style.display = 'none';
+            document.getElementById('btn-hall').style.display = 'block';
+            document.getElementById('btn-trofeos').style.display = 'none';
+            estadoActual = "BIBLIOTECA";
+
+            const estanteria = document.getElementById('biblioteca-estanteria');
+            estanteria.innerHTML = '';
+            listaDiscos.forEach(disco => {
+                const div = document.createElement('div');
+                div.className = 'libro-item';
+                div.innerHTML = `<img src="${disco.fondo}" alt="${disco.nombre}"><span>${disco.nombre}</span>`;
+                div.onclick = () => abrirLibroDisco(disco);
+                estanteria.appendChild(div);
+            });
+        }
+
+        function abrirLibroDisco(disco) {
+            document.getElementById('titulo-libro-abierto').innerText = disco.nombre;
+            const hoja = document.getElementById('contenido-hoja-libro');
+            
+            let cancionesDelDisco = [];
+            if (disco.id === "soda_84") cancionesDelDisco = cancionesSoda84Detalle;
+            else if (disco.id === "nada_personal") cancionesDelDisco = cancionesNadaPersonalDetalle;
+            else if (disco.id === "signos") cancionesSignosDetalle.forEach(t => cancionesDelDisco.push(t));
+            else if (disco.id === "cancion_animal") barcosCancionAnimal.forEach(b => cancionesDelDisco.push({nombre: b.nombre, seg: b.segundos}));
+            else if (disco.id === "dynamo") dynamoCanciones.forEach(d => cancionesDelDisco.push({nombre: d.nombre, seg: d.seg}));
+            else if (disco.id === "sueno_stereo") cancionesSueñoStereoDetalle.forEach(s => cancionesDelDisco.push(s));
+            else if (disco.id === "amor_amarillo") cancionesAmorAmarilloDetalle.forEach(a => cancionesDelDisco.push(a));
+            else if (disco.id === "bocanada") cancionesBocanadaDetalle.forEach(bc => cancionesDelDisco.push(bc));
+            else if (disco.id === "siempre_es_hoy") cancionesSiempreEsHoy.forEach(sh => cancionesDelDisco.push(sh));
+            else if (disco.id === "ahi_vamos") cancionesAhiVamosPalabras.forEach(av => cancionesDelDisco.push(av));
+            else if (disco.id === "fuerza_natural") cancionesFuerzaNaturalDetalle.forEach(fn => cancionesDelDisco.push(fn));
+            else cancionesDelDisco = [{nombre: "Tema Principal", seg: 0}];
+
+            let htmlIndice = `<h3>Índice de Canciones</h3><ul class="lista-canciones-libro">`;
+            cancionesDelDisco.forEach((cancion, idx) => {
+                htmlIndice += `<li onclick="reproducirYVerLetra('${disco.trackId}', ${cancion.seg || 0}, '${cancion.nombre.replace(/'/g, "")}', '${disco.nombre}')">${idx + 1}. ${cancion.nombre}</li>`;
+            });
+            htmlIndice += `</ul>`;
+            
+            hoja.innerHTML = htmlIndice;
+            document.getElementById('visor-libro-modal').style.display = 'flex';
+        }
+
+        function reproducirYVerLetra(trackId, segundos, nombreTema, nombreDisco) {
+            reproducirAudio(trackId, segundos);
+            const hoja = document.getElementById('contenido-hoja-libro');
+            hoja.innerHTML = `
+                <button onclick="abrirLibroDisco(listaDiscos.find(d => d.nombre === '${nombreDisco}'))" style="background:#b30059; color:#fff; border:none; padding:4px 10px; border-radius:4px; font-size:10px; cursor:pointer; margin-bottom:10px;">⬅️ VOLVER AL ÍNDICE</button>
+                <h3>🎵 ${nombreTema}</h3>
+                <p style="text-align:center; font-size:11px; color:#666; margin:0;">Disco: ${nombreDisco}</p>
+                <div class="letra-contenedor">
+                    Reproduciendo sintonía del Universo Cerati... Disfrutá de la música de fondo mientras recorrés las páginas de la biblioteca.
+                </div>
+            `;
+        }
+
+        function cerrarVisorLibro() {
+            document.getElementById('visor-libro-modal').style.display = 'none';
         }
 
         // --- DISCO 1 (Pac-Man - Soda Stereo 1984) ---
@@ -1330,6 +1434,8 @@
             document.getElementById('fuerza-natural-modal').style.display = 'none';
             document.getElementById('cartel-tema-pacman').style.display = 'none';
             document.getElementById('hall-central-modal').style.display = 'none';
+            document.getElementById('biblioteca-modal').style.display = 'none';
+            document.getElementById('visor-libro-modal').style.display = 'none';
         }
 
         function finalizarDiscoActual() {
