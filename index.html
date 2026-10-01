@@ -254,7 +254,7 @@
 
     <div id="dynamo-game-modal" class="modal-juego" style="border-color: #ff00ff;">
         <div class="hud-juego" style="color:#ff00ff;">🎵 DYNAMO (1992) - JUEGO DE RITMO</div>
-        <div class="objetivo-juego">🎵 TEMA ACTUAL: <span id="txt-dynamo-meta">...</span></div>
+        <div class="objetivo-juego">🎵 TEMA <span id="txt-dynamo-numero">1/12</span>: <span id="txt-dynamo-meta">...</span></div>
         <div class="objetivo-juego">🎯 TOCÁ CUANDO LA NOTA LLEGUE A LA LÍNEA · 5 ACIERTOS PARA AVANZAR</div>
         <canvas id="dynamo-canvas" class="canvas-juego" width="380" height="170" style="border-color: #ff00ff; touch-action: none;"></canvas>
         <div id="txt-dynamo-estado" class="hud-juego" aria-live="polite">PREPARATE PARA SEGUIR EL RITMO</div>
@@ -298,14 +298,14 @@
 
     <div id="fuerza-natural-modal" class="modal-juego" style="border-color: #00ffaa;">
         <div class="hud-juego" style="color:#00ffaa;">🌿 FUERZA NATURAL (2009) - AVENTURA CÓSMICA</div>
-        <div class="objetivo-juego">🎵 JUNTÁ 5 NOTAS VERDES DE <span id="txt-fuerza-meta">...</span> · ESQUIVÁ LAS ROSAS · INSTRUMENTOS = VIDAS · ⭐ <span id="txt-fuerza-puntos">0</span>/5 · ❤️ <span id="txt-fuerza-vidas">3</span>/5</div>
+        <div class="objetivo-juego">🎵 5 NOTAS VERDES DE <span id="txt-fuerza-meta">...</span> · EVITÁ LAS ROSAS · INSTRUMENTOS = +1 VIDA · ⭐ <span id="txt-fuerza-puntos">0</span>/5 · ❤️ <span id="txt-fuerza-vidas">3</span>/5</div>
         <canvas id="fuerza-canvas" class="canvas-juego" width="360" height="240" style="border-color: #00ffaa;"></canvas>
         <div class="controles-fuerza">
             <button class="btn-tetris" id="btn-fuerza-izq" aria-label="Mover a la izquierda">◀</button>
             <button class="btn-tetris" id="btn-fuerza-saltar">⬆ SALTAR</button>
             <button class="btn-tetris" id="btn-fuerza-der" aria-label="Mover a la derecha">▶</button>
         </div>
-        <div id="txt-fuerza-estado" class="hud-juego" aria-live="polite">USÁ ◀ ▶ PARA MOVERTE Y ESPACIO O ⬆ PARA SALTAR</div>
+        <div id="txt-fuerza-estado" class="hud-juego" aria-live="polite">◀ ▶ MOVER · ⬆ SALTAR · VERDE: NOTA · ROSA: PELIGRO · INSTRUMENTOS: VIDA</div>
         <button class="btn-tetris" id="btn-fuerza-reintentar" style="display:none; width:100%; margin-top:4px;">🔄 VOLVER A INTENTAR</button>
     </div>
 
@@ -907,18 +907,18 @@
 
         // --- DISCO 6 (Consola Dynamo 1992) ---
         const dynamoCanciones = [
-            { nombre: "Secuencia Inicial", seg: 0 },
-            { nombre: "Toma la ruta", seg: 232 },
-            { nombre: "En remolinos", seg: 450 },
-            { nombre: "Primavera 0", seg: 700 },
-            { nombre: "Camaleón", seg: 960 },
-            { nombre: "Luna Roja", seg: 1180 },
-            { nombre: "Sweet Sahumerio", seg: 1420 },
-            { nombre: "Ameba", seg: 1650 },
-            { nombre: "Nuestra Fe", seg: 1890 },
-            { nombre: "Claroscuro", seg: 2120 },
-            { nombre: "Fue", seg: 2380 },
-            { nombre: "Texturas", seg: 2650 }
+            { nombre: "Secuencia Inicial", mixId: "a5oUU6tGKFM", vozId: "itlEeVvisd0", instId: "K5eALPyo_1A", seg: 0 },
+            { nombre: "Toma la ruta", mixId: "a5oUU6tGKFM", vozId: "uOlCYVXOyFI", instId: "a5oUU6tGKFM", seg: 232 },
+            { nombre: "En remolinos", mixId: "a5oUU6tGKFM", vozId: "xiYMsOtPa5c", instId: "a5oUU6tGKFM", seg: 450 },
+            { nombre: "Primavera 0", mixId: "a5oUU6tGKFM", vozId: "3TB0vkRalrQ", instId: "a5oUU6tGKFM", seg: 700 },
+            { nombre: "Camaleón", mixId: "a5oUU6tGKFM", vozId: "jzLVaylmbJU", instId: "a5oUU6tGKFM", seg: 960 },
+            { nombre: "Luna Roja", mixId: "a5oUU6tGKFM", vozId: "ZOd-N9qGQK8", instId: "a5oUU6tGKFM", seg: 1180 },
+            { nombre: "Sweet Sahumerio", mixId: "a5oUU6tGKFM", vozId: "90SS2mXzPcA", instId: "a5oUU6tGKFM", seg: 1420 },
+            { nombre: "Ameba", mixId: "a5oUU6tGKFM", vozId: "qfcwCrh4s7I", instId: "a5oUU6tGKFM", seg: 1650 },
+            { nombre: "Nuestra Fe", mixId: "a5oUU6tGKFM", vozId: "Z7ndVxqUb48", instId: "a5oUU6tGKFM", seg: 1890 },
+            { nombre: "Claroscuro", mixId: "a5oUU6tGKFM", vozId: "IqBK2UjnUVA", instId: "a5oUU6tGKFM", seg: 2120 },
+            { nombre: "Fue", mixId: "a5oUU6tGKFM", vozId: "W0KTTiuw96A", instId: "a5oUU6tGKFM", seg: 2380 },
+            { nombre: "Texturas", mixId: "a5oUU6tGKFM", vozId: "uOlCYVXOyFI", instId: "a5oUU6tGKFM", seg: 2650 }
         ];
         let dynamoIndiceMeta = 0, dynamoAnimX = 0, dynamoGameLoop = null;
         let dynamoNotaActiva = null, dynamoTiempoHastaNota = 0, dynamoAciertosTema = 0;
@@ -935,12 +935,16 @@
         function iniciarTemaDynamo() {
             if (dynamoIndiceMeta >= dynamoCanciones.length) { finalizarDiscoActual(); return; }
             const item = dynamoCanciones[dynamoIndiceMeta];
-            document.getElementById('txt-dynamo-meta').innerText = item.nombre;
-            reproducirAudio(item.mixId, item.seg);
-            dynamoAciertosTema = 0;
             dynamoNotaActiva = null;
             dynamoTiempoHastaNota = 35;
-            mostrarMensajeDynamo("¡PREPARATE!", 45);
+            dynamoAciertosTema = 0;
+            document.getElementById('txt-dynamo-meta').innerText = item.nombre;
+            document.getElementById('txt-dynamo-numero').innerText = `${dynamoIndiceMeta + 1}/${dynamoCanciones.length}`;
+            dynamoUltimoMensaje = `SIGUE: ${item.nombre.toUpperCase()}`;
+            dynamoMensajeFrames = 90;
+            cancionActualId = "";
+            reproducirAudio(item.mixId, item.seg);
+            document.getElementById('txt-dynamo-estado').innerText = `TEMA ${dynamoIndiceMeta + 1}/${dynamoCanciones.length} · ${item.nombre}`;
         }
 
         function mostrarMensajeDynamo(mensaje, frames = 24) {
@@ -960,7 +964,7 @@
                 mostrarMensajeDynamo(diferencia <= 6 ? `¡A TIEMPO! +${puntosGanados}` : `¡BIEN! +${puntosGanados}`);
                 dynamoNotaActiva = null;
                 dynamoTiempoHastaNota = 16;
-                if (dynamoAciertosTema >= 5) {
+                if (dynamoAciertosTema === 5) {
                     dynamoIndiceMeta++;
                     iniciarTemaDynamo();
                 }
@@ -1036,7 +1040,7 @@
                 document.getElementById('txt-dynamo-estado').innerText = dynamoUltimoMensaje;
                 dynamoMensajeFrames--;
             } else {
-                document.getElementById('txt-dynamo-estado').innerText = "TOCÁ GOLPEAR O USÁ LA BARRA ESPACIADORA";
+                document.getElementById('txt-dynamo-estado').innerText = `TEMA ${dynamoIndiceMeta + 1}/${dynamoCanciones.length} · ${dynamoAciertosTema}/5 ACIERTOS · TOCÁ GOLPEAR`;
             }
         }
 
@@ -1492,7 +1496,7 @@
         ];
         let fuerzaIndice = 0, fuerzaPuntosAciertos = 0, fuerzaVidas = 3, fuerzaGameLoop = null;
         let fuerzaJugador = { x: 48, y: 184, vy: 0, ancho: 18, alto: 26, invulnerable: 0, enSuelo: true };
-        let notasFuerza = [], guitarrasFuerza = [], disparosFuerza = [], instrumentosFuerza = [], teclasFuerza = { izquierda: false, derecha: false };
+        let notasFuerza = [], instrumentosFuerza = [], teclasFuerza = { izquierda: false, derecha: false };
         let fuerzaTiempo = 0, fuerzaEstado = "jugando", fuerzaMensajeFrames = 0;
 
         function iniciarFuerzaNatural09() {
@@ -1506,8 +1510,6 @@
             teclasFuerza.izquierda = false;
             teclasFuerza.derecha = false;
             notasFuerza = [];
-            guitarrasFuerza = [];
-            disparosFuerza = [];
             instrumentosFuerza = [];
             document.getElementById('txt-fuerza-puntos').innerText = fuerzaPuntosAciertos;
             document.getElementById('txt-fuerza-vidas').innerText = fuerzaVidas;
@@ -1523,13 +1525,11 @@
             reproducirAudio(discoActual.trackId, temaObj.seg);
             fuerzaPuntosAciertos = 0;
             notasFuerza = [];
-            guitarrasFuerza = [];
-            disparosFuerza = [];
             instrumentosFuerza = [];
             document.getElementById('txt-fuerza-puntos').innerText = fuerzaPuntosAciertos;
             fuerzaTiempo = 0;
             fuerzaMensajeFrames = 50;
-            document.getElementById('txt-fuerza-estado').innerText = "¡JUNTÁ 5 NOTAS Y ESQUIVÁ LOS DISPAROS!";
+            document.getElementById('txt-fuerza-estado').innerText = "¡JUNTÁ NOTAS VERDES, ESQUIVÁ ROSAS Y BUSCÁ GUITARRA, BAJO, BATERÍA O TECLADO!";
         }
 
         const canvasFuerza = document.getElementById('fuerza-canvas');
@@ -1584,6 +1584,18 @@
             const sueloY = 210;
             ctx.fillStyle = '#102b38'; ctx.fillRect(0, sueloY, canvasFuerza.width, canvasFuerza.height - sueloY);
             ctx.strokeStyle = '#00ffaa'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(0, sueloY); ctx.lineTo(canvasFuerza.width, sueloY); ctx.stroke();
+            ctx.font = 'bold 7px sans-serif'; ctx.textAlign = 'left';
+            [
+                { y: 105, color: 'rgba(255, 204, 0, 0.2)', label: 'INSTRUMENTOS' },
+                { y: 155, color: 'rgba(0, 255, 170, 0.2)', label: 'NOTAS DEL TEMA' },
+                { y: 195, color: 'rgba(255, 59, 134, 0.22)', label: 'PELIGRO' }
+            ].forEach(carril => {
+                ctx.strokeStyle = carril.color;
+                ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.moveTo(0, carril.y); ctx.lineTo(canvasFuerza.width, carril.y); ctx.stroke();
+                ctx.fillStyle = carril.color;
+                ctx.fillText(carril.label, 4, carril.y - 4);
+            });
 
             if (fuerzaEstado === "jugando") {
                 fuerzaTiempo++;
@@ -1617,33 +1629,25 @@
                 }
                 if (fuerzaJugador.invulnerable > 0) fuerzaJugador.invulnerable--;
 
-                if (fuerzaTiempo % 72 === 0) {
+                if (fuerzaTiempo % 90 === 0) {
                     const tema = cancionesFuerzaNaturalDetalle[fuerzaIndice];
-                    notasFuerza.push({ x: canvasFuerza.width + 15, y: 108 + Math.random() * 68, texto: tema.nombre, radio: 15, peligrosa: false });
+                    notasFuerza.push({ x: canvasFuerza.width + 15, y: 155, texto: tema.nombre, radio: 15, peligrosa: false });
                 }
-                if (fuerzaTiempo % 105 === 45) {
-                    notasFuerza.push({ x: canvasFuerza.width + 15, y: 112 + Math.random() * 65, texto: "!", radio: 15, peligrosa: true });
+                if (fuerzaTiempo % 150 === 65) {
+                    notasFuerza.push({ x: canvasFuerza.width + 15, y: 195, texto: "!", radio: 15, peligrosa: true });
                 }
-                if (fuerzaTiempo % 360 === 250) {
+                if (fuerzaTiempo % 240 === 180) {
                     const instrumentos = [
                         { nombre: "GUITARRA", simbolo: "🎸" },
                         { nombre: "BAJO", simbolo: "🎸" },
-                        { nombre: "BATERÍA", simbolo: "🥁" }
+                        { nombre: "BATERÍA", simbolo: "🥁" },
+                        { nombre: "TECLADO", simbolo: "🎹" }
                     ];
-                    const instrumento = instrumentos[Math.floor(Math.random() * instrumentos.length)];
-                    instrumentosFuerza.push({ x: canvasFuerza.width + 15, y: 115 + Math.random() * 50, ...instrumento });
-                }
-                if (fuerzaTiempo % 220 === 100) {
-                    guitarrasFuerza.push({ x: canvasFuerza.width + 20, y: sueloY - 24, disparoEn: fuerzaTiempo + 48 });
-                }
-                if (fuerzaTiempo % 220 === 148 && guitarrasFuerza.length) {
-                    const guitarra = guitarrasFuerza[guitarrasFuerza.length - 1];
-                    disparosFuerza.push({ x: guitarra.x - 6, y: guitarra.y - 12, vx: -3.2 });
+                    const instrumento = instrumentos[Math.floor(fuerzaTiempo / 240) % instrumentos.length];
+                    instrumentosFuerza.push({ x: canvasFuerza.width + 15, y: 105, ...instrumento });
                 }
 
                 notasFuerza.forEach(nota => { nota.x -= 2.1; });
-                guitarrasFuerza.forEach(guitarra => { guitarra.x -= 1.8; });
-                disparosFuerza.forEach(disparo => { disparo.x += disparo.vx; });
 
                 for (let i = notasFuerza.length - 1; i >= 0; i--) {
                     const nota = notasFuerza[i];
@@ -1658,7 +1662,7 @@
                             puntos += 40;
                             document.getElementById('txt-puntos').innerText = puntos;
                             document.getElementById('txt-fuerza-puntos').innerText = fuerzaPuntosAciertos;
-                            document.getElementById('txt-fuerza-estado').innerText = `¡NOTA DE ${cancionesFuerzaNaturalDetalle[fuerzaIndice].nombre.toUpperCase()}! +40`;
+                            document.getElementById('txt-fuerza-estado').innerText = `¡NOTA CORRECTA! ${fuerzaPuntosAciertos}/5 · +40`;
                             fuerzaMensajeFrames = 35;
                             if (fuerzaPuntosAciertos >= 5) {
                                 fuerzaIndice++;
@@ -1688,34 +1692,6 @@
                     } else if (instrumento.x < -25) instrumentosFuerza.splice(i, 1);
                 }
 
-                if (fuerzaJugador.invulnerable === 0) {
-                    const disparoImpacta = disparosFuerza.some(disparo =>
-                        Math.abs(disparo.x - (fuerzaJugador.x + fuerzaJugador.ancho / 2)) < 13 &&
-                        Math.abs(disparo.y - (fuerzaJugador.y + fuerzaJugador.alto / 2)) < 15
-                    );
-                    const guitarraImpacta = guitarrasFuerza.some(guitarra =>
-                        Math.abs(guitarra.x - (fuerzaJugador.x + fuerzaJugador.ancho / 2)) < 20 &&
-                        Math.abs(guitarra.y - (fuerzaJugador.y + fuerzaJugador.alto / 2)) < 22
-                    );
-                    if (disparoImpacta || guitarraImpacta) {
-                        if (disparoImpacta) {
-                            const index = disparosFuerza.findIndex(disparo =>
-                                Math.abs(disparo.x - (fuerzaJugador.x + fuerzaJugador.ancho / 2)) < 13 &&
-                                Math.abs(disparo.y - (fuerzaJugador.y + fuerzaJugador.alto / 2)) < 15
-                            );
-                            if (index >= 0) disparosFuerza.splice(index, 1);
-                        } else {
-                            const index = guitarrasFuerza.findIndex(guitarra =>
-                                Math.abs(guitarra.x - (fuerzaJugador.x + fuerzaJugador.ancho / 2)) < 20 &&
-                                Math.abs(guitarra.y - (fuerzaJugador.y + fuerzaJugador.alto / 2)) < 22
-                            );
-                            if (index >= 0) guitarrasFuerza.splice(index, 1);
-                        }
-                        perderVidaFuerza(disparoImpacta ? "¡TE ALCANZÓ UN DISPARO!" : "¡CHOCASTE CON UNA GUITARRA!");
-                    }
-                }
-                disparosFuerza = disparosFuerza.filter(disparo => disparo.x > -12);
-                guitarrasFuerza = guitarrasFuerza.filter(guitarra => guitarra.x > -30);
                 instrumentosFuerza.forEach(instrumento => { instrumento.x -= 1.7; });
             }
 
@@ -1755,16 +1731,6 @@
                 ctx.fillStyle = '#ffecaa'; ctx.font = 'bold 7px sans-serif';
                 ctx.fillText(instrumento.nombre, instrumento.x, instrumento.y + 27);
             });
-            guitarrasFuerza.forEach(guitarra => {
-                ctx.fillStyle = '#ff5577';
-                ctx.beginPath(); ctx.moveTo(guitarra.x, guitarra.y - 16); ctx.lineTo(guitarra.x + 10, guitarra.y - 7);
-                ctx.lineTo(guitarra.x + 7, guitarra.y + 10); ctx.lineTo(guitarra.x - 7, guitarra.y + 10);
-                ctx.lineTo(guitarra.x - 10, guitarra.y - 7); ctx.closePath(); ctx.fill();
-                ctx.strokeStyle = '#ffe0e8'; ctx.lineWidth = 2;
-                ctx.beginPath(); ctx.moveTo(guitarra.x, guitarra.y - 8); ctx.lineTo(guitarra.x, guitarra.y + 14); ctx.stroke();
-            });
-            ctx.fillStyle = '#ff5577';
-            disparosFuerza.forEach(disparo => { ctx.beginPath(); ctx.arc(disparo.x, disparo.y, 4, 0, Math.PI * 2); ctx.fill(); });
             if (fuerzaJugador.invulnerable > 0 && Math.floor(fuerzaJugador.invulnerable / 6) % 2 === 0) {
                 ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2; ctx.strokeRect(fuerzaJugador.x - 3, fuerzaJugador.y - 2, fuerzaJugador.ancho + 6, fuerzaJugador.alto + 4);
             }
