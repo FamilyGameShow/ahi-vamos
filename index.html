@@ -81,6 +81,8 @@
         
         .controles-tetris { display: flex; gap: 12px; justify-content: center; margin-top: 8px; }
         .btn-tetris { background: rgba(0,255,255,0.2); border: 1px solid #00ffff; color: #fff; padding: 10px 18px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px; }
+        .controles-fuerza { display: flex; gap: 10px; justify-content: center; margin: 4px 0; touch-action: none; }
+        .controles-fuerza .btn-tetris { flex: 1; max-width: 120px; padding: 8px 12px; }
         
         .crucigrama-wrapper { display: flex; flex-direction: column; align-items: center; max-height: 80vh; overflow-y: auto; }
         .crucigrama-grid-real { display: grid; grid-template-columns: repeat(11, 26px); gap: 2px; justify-content: center; margin: 4px 0; background: #000; padding: 4px; border: 2px solid #00ffff; border-radius: 6px; }
@@ -251,15 +253,12 @@
     </div>
 
     <div id="dynamo-game-modal" class="modal-juego" style="border-color: #ff00ff;">
-        <div class="hud-juego" style="color:#ff00ff;">🎛️ DYNAMO (1992) - MESA DE MEZCLAS</div>
+        <div class="hud-juego" style="color:#ff00ff;">🎵 DYNAMO (1992) - JUEGO DE RITMO</div>
         <div class="objetivo-juego">🎵 TEMA ACTUAL: <span id="txt-dynamo-meta">...</span></div>
-        <canvas id="dynamo-canvas" class="canvas-juego" width="380" height="170" style="border-color: #ff00ff;"></canvas>
-        <div class="consola-canales-btns">
-            <button class="btn-canal activo" id="btn-mix-full" onclick="cambiarCanalDynamo('mix')">🎧 MIX COMPLETO</button>
-            <button class="btn-canal" id="btn-mix-voz" onclick="cambiarCanalDynamo('voz')">🎤 SOLO VOCES</button>
-            <button class="btn-canal" id="btn-mix-inst" onclick="cambiarCanalDynamo('inst')">🎸 INSTRUMENTAL</button>
-        </div>
-        <button class="btn-tetris" id="btn-siguiente-dyn" style="width:100%; margin-top:6px;" onclick="siguienteCancionDynamo()">➡️ SIGUIENTE TEMA</button>
+        <div class="objetivo-juego">🎯 TOCÁ CUANDO LA NOTA LLEGUE A LA LÍNEA · 5 ACIERTOS PARA AVANZAR</div>
+        <canvas id="dynamo-canvas" class="canvas-juego" width="380" height="170" style="border-color: #ff00ff; touch-action: none;"></canvas>
+        <div id="txt-dynamo-estado" class="hud-juego" aria-live="polite">PREPARATE PARA SEGUIR EL RITMO</div>
+        <button class="btn-tetris" id="btn-golpear-dyn" style="width:100%; margin-top:4px;">🎵 ¡GOLPEAR!</button>
     </div>
 
     <div id="sueno-stereo-modal" class="modal-juego" style="border-color: #ff00ff;">
@@ -277,10 +276,10 @@
     </div>
 
     <div id="bocanada-modal" class="modal-juego" style="border-color: #ff00ff;">
-        <div class="hud-juego" style="color:#ff00ff;">💨 BOCANADA (1999) - TIRO AL BLANCO</div>
-        <div class="objetivo-juego">🎯 APUNTÁ Y DISPARÁ AL TEMA: <span id="txt-bocanada-meta">...</span></div>
+        <div class="hud-juego" style="color:#ff00ff;">💨 BOCANADA (1999) - CAZÁ LAS NOTAS</div>
+        <div class="objetivo-juego">🎵 ESCUCHÁ EL TEMA Y DISPARÁ A SU NOMBRE</div>
         <canvas id="bocanada-canvas" class="canvas-juego" width="380" height="240" style="border-color: #ff00ff;"></canvas>
-        <div style="color:#00ffff; font-size:11px;">👆 TOCÁ LA PANTALLA PARA DISPARAR LA MIRA</div>
+        <div style="color:#00ffff; font-size:11px;">🎯 LA MIRA SE MUEVE SOLA: TOCÁ O HACÉ CLIC PARA DISPARAR</div>
     </div>
 
     <div id="siempre-es-hoy-modal" class="modal-juego" style="border-color: #ff00ff;">
@@ -298,10 +297,16 @@
     </div>
 
     <div id="fuerza-natural-modal" class="modal-juego" style="border-color: #00ffaa;">
-        <div class="hud-juego" style="color:#00ffaa;">🌿 FUERZA NATURAL (2009) - VIAJE CÓSMICO</div>
-        <div class="objetivo-juego">🎯 CAPTURÁ LA CONSTELACIÓN DE: <span id="txt-fuerza-meta">...</span> (Puntos: <span id="txt-fuerza-puntos">0</span>/5)</div>
+        <div class="hud-juego" style="color:#00ffaa;">🌿 FUERZA NATURAL (2009) - AVENTURA CÓSMICA</div>
+        <div class="objetivo-juego">🎵 JUNTÁ 5 NOTAS VERDES DE <span id="txt-fuerza-meta">...</span> · ESQUIVÁ LAS ROSAS · INSTRUMENTOS = VIDAS · ⭐ <span id="txt-fuerza-puntos">0</span>/5 · ❤️ <span id="txt-fuerza-vidas">3</span>/5</div>
         <canvas id="fuerza-canvas" class="canvas-juego" width="360" height="240" style="border-color: #00ffaa;"></canvas>
-        <div style="color:#00ffaa; font-size:11px;">👆 ARRASTRÁ EL DEDO PARA GUIAR EL COMETA Y EVITAR METEORITOS</div>
+        <div class="controles-fuerza">
+            <button class="btn-tetris" id="btn-fuerza-izq" aria-label="Mover a la izquierda">◀</button>
+            <button class="btn-tetris" id="btn-fuerza-saltar">⬆ SALTAR</button>
+            <button class="btn-tetris" id="btn-fuerza-der" aria-label="Mover a la derecha">▶</button>
+        </div>
+        <div id="txt-fuerza-estado" class="hud-juego" aria-live="polite">USÁ ◀ ▶ PARA MOVERTE Y ESPACIO O ⬆ PARA SALTAR</div>
+        <button class="btn-tetris" id="btn-fuerza-reintentar" style="display:none; width:100%; margin-top:4px;">🔄 VOLVER A INTENTAR</button>
     </div>
 
     <div id="trofeos-modal">
@@ -915,52 +920,124 @@
             { nombre: "Fue", mixId: "a5oUU6tGKFM", vozId: "W0KTTiuw96A", instId: "a5oUU6tGKFM", seg: 2380 },
             { nombre: "Texturas", mixId: "a5oUU6tGKFM", vozId: "uOlCYVXOyFI", instId: "a5oUU6tGKFM", seg: 2650 }
         ];
-        let dynamoIndiceMeta = 0, canalActualSeleccionado = 'mix', dynamoAnimX = 0, dynamoGameLoop = null;
+        let dynamoIndiceMeta = 0, dynamoAnimX = 0, dynamoGameLoop = null;
+        let dynamoNotaActiva = null, dynamoTiempoHastaNota = 0, dynamoAciertosTema = 0;
+        let dynamoRacha = 0, dynamoUltimoMensaje = "", dynamoMensajeFrames = 0;
 
         function iniciarDynamoOndas() {
             document.getElementById('dynamo-game-modal').style.display = 'block';
-            dynamoIndiceMeta = 0; canalActualSeleccionado = 'mix';
-            actualizarBotonesCanalesUI(); reproducirTemaDynamoActual();
+            dynamoIndiceMeta = 0;
+            dynamoRacha = 0;
+            iniciarTemaDynamo();
             if (!dynamoGameLoop) dynamoGameLoop = setInterval(actualizarYRenderizarDynamo, 1000 / 30);
         }
 
-        function reproducirTemaDynamoActual() {
+        function iniciarTemaDynamo() {
             if (dynamoIndiceMeta >= dynamoCanciones.length) { finalizarDiscoActual(); return; }
-            let item = dynamoCanciones[dynamoIndiceMeta];
-            document.getElementById('txt-dynamo-meta').innerText = `${item.nombre} [Canal: ${canalActualSeleccionado.toUpperCase()}]`;
-            let idUsar = item.mixId;
-            if (canalActualSeleccionado === 'voz') idUsar = item.vozId;
-            else if (canalActualSeleccionado === 'inst') idUsar = item.instId;
-            reproducirAudio(idUsar, item.seg);
+            const item = dynamoCanciones[dynamoIndiceMeta];
+            document.getElementById('txt-dynamo-meta').innerText = item.nombre;
+            reproducirAudio(item.mixId, item.seg);
+            dynamoAciertosTema = 0;
+            dynamoNotaActiva = null;
+            dynamoTiempoHastaNota = 35;
+            mostrarMensajeDynamo("¡PREPARATE!", 45);
         }
 
-        function cambiarCanalDynamo(canal) { canalActualSeleccionado = canal; actualizarBotonesCanalesUI(); reproducirTemaDynamoActual(); }
-        function actualizarBotonesCanalesUI() {
-            document.getElementById('btn-mix-full').className = `btn-canal ${canalActualSeleccionado === 'mix' ? 'activo' : ''}`;
-            document.getElementById('btn-mix-voz').className = `btn-canal ${canalActualSeleccionado === 'voz' ? 'activo' : ''}`;
-            document.getElementById('btn-mix-inst').className = `btn-canal ${canalActualSeleccionado === 'inst' ? 'activo' : ''}`;
+        function mostrarMensajeDynamo(mensaje, frames = 24) {
+            dynamoUltimoMensaje = mensaje;
+            dynamoMensajeFrames = frames;
         }
-        function siguienteCancionDynamo() { puntos += 30; document.getElementById('txt-puntos').innerText = puntos; dynamoIndiceMeta++; reproducirTemaDynamoActual(); }
+
+        function golpearDynamo() {
+            if (estadoActual !== "JUEGO_DISCO" || !discoActual || !discoActual.esDynamo || !dynamoNotaActiva) return;
+            const diferencia = Math.abs(dynamoNotaActiva.y - 126);
+            if (diferencia <= 15) {
+                const puntosGanados = diferencia <= 6 ? 30 : 20;
+                puntos += puntosGanados;
+                dynamoRacha++;
+                dynamoAciertosTema++;
+                document.getElementById('txt-puntos').innerText = puntos;
+                mostrarMensajeDynamo(diferencia <= 6 ? `¡A TIEMPO! +${puntosGanados}` : `¡BIEN! +${puntosGanados}`);
+                dynamoNotaActiva = null;
+                dynamoTiempoHastaNota = 16;
+                if (dynamoAciertosTema >= 5) {
+                    dynamoIndiceMeta++;
+                    iniciarTemaDynamo();
+                }
+            } else {
+                puntos = Math.max(0, puntos - 5);
+                document.getElementById('txt-puntos').innerText = puntos;
+                dynamoRacha = 0;
+                mostrarMensajeDynamo(dynamoNotaActiva.y < 111 ? "¡MUY PRONTO! -5" : "¡TARDE! -5");
+                dynamoNotaActiva = null;
+                dynamoTiempoHastaNota = 16;
+            }
+        }
+
+        document.getElementById('btn-golpear-dyn').addEventListener('click', golpearDynamo);
+        document.getElementById('dynamo-canvas').addEventListener('pointerdown', (e) => {
+            e.preventDefault();
+            golpearDynamo();
+        });
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' && estadoActual === "JUEGO_DISCO" && discoActual && discoActual.esDynamo) {
+                e.preventDefault();
+                golpearDynamo();
+            }
+        });
 
         function actualizarYRenderizarDynamo() {
             if (estadoActual !== "JUEGO_DISCO" || !discoActual || !discoActual.esDynamo) return;
-            dynamoAnimX += 3; if (dynamoAnimX > 380) dynamoAnimX = 0;
             const canvas = document.getElementById('dynamo-canvas');
             const ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.strokeStyle = '#003333'; ctx.lineWidth = 1;
-            for(let i = 0; i < canvas.width; i += 30) { ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke(); }
-            let colorOnda = '#00ffff';
-            if (canalActualSeleccionado === 'voz') colorOnda = '#ff00ff';
-            if (canalActualSeleccionado === 'inst') colorOnda = '#ffcc00';
-            ctx.strokeStyle = colorOnda; ctx.lineWidth = 3; ctx.beginPath();
-            for (let x = 0; x < canvas.width; x++) {
-                let y = 85 + Math.sin((x + dynamoAnimX) * 0.05) * 30 + Math.cos(x * 0.02) * 12;
-                if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            ctx.fillStyle = '#080019';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = 'rgba(0, 255, 255, 0.12)';
+            ctx.lineWidth = 1;
+            for (let x = 20; x < canvas.width; x += 34) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
             }
-            ctx.stroke();
-            ctx.fillStyle = '#ffffff'; ctx.font = 'bold 11px sans-serif'; ctx.textAlign = 'left';
-            ctx.fillText(`CANAL ACTIVO: ${canalActualSeleccionado.toUpperCase()}`, 15, 25);
+            ctx.fillStyle = 'rgba(255, 0, 255, 0.12)';
+            ctx.fillRect(0, 112, canvas.width, 28);
+            ctx.strokeStyle = '#00ffff'; ctx.lineWidth = 3;
+            ctx.beginPath(); ctx.moveTo(0, 126); ctx.lineTo(canvas.width, 126); ctx.stroke();
+            ctx.fillStyle = '#ffffff'; ctx.font = 'bold 10px sans-serif'; ctx.textAlign = 'left';
+            ctx.fillText(`ACIERTOS ${dynamoAciertosTema}/5   RACHA ${dynamoRacha}`, 10, 17);
+
+            if (!dynamoNotaActiva) {
+                if (dynamoTiempoHastaNota > 0) dynamoTiempoHastaNota--;
+                else dynamoNotaActiva = { x: 40 + Math.random() * (canvas.width - 80), y: -12, tipo: Math.floor(Math.random() * 3) };
+            }
+            if (dynamoNotaActiva) {
+                dynamoNotaActiva.y += 2.7;
+                ctx.fillStyle = '#ff00ff';
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.ellipse(dynamoNotaActiva.x - 3, dynamoNotaActiva.y + 3, 9, 6, -0.35, 0, Math.PI * 2);
+                ctx.fill(); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(dynamoNotaActiva.x + 5, dynamoNotaActiva.y + 1); ctx.lineTo(dynamoNotaActiva.x + 5, dynamoNotaActiva.y - 20); ctx.stroke();
+                for (let i = 0; i < dynamoNotaActiva.tipo; i++) {
+                    const y = dynamoNotaActiva.y - 20 + i * 7;
+                    ctx.beginPath(); ctx.moveTo(dynamoNotaActiva.x + 5, y);
+                    ctx.quadraticCurveTo(dynamoNotaActiva.x + 20, y + 3, dynamoNotaActiva.x + 7, y + 12); ctx.stroke();
+                }
+                if (dynamoNotaActiva.y > 146) {
+                    dynamoNotaActiva = null;
+                    dynamoTiempoHastaNota = 16;
+                    dynamoRacha = 0;
+                    mostrarMensajeDynamo("¡SE TE PASÓ! -5");
+                    puntos = Math.max(0, puntos - 5);
+                    document.getElementById('txt-puntos').innerText = puntos;
+                }
+            }
+            if (dynamoMensajeFrames > 0) {
+                document.getElementById('txt-dynamo-estado').innerText = dynamoUltimoMensaje;
+                dynamoMensajeFrames--;
+            } else {
+                document.getElementById('txt-dynamo-estado').innerText = "TOCÁ GOLPEAR O USÁ LA BARRA ESPACIADORA";
+            }
         }
 
         // --- DISCO 7 (Sueño Stereo 1995) ---
@@ -1086,7 +1163,8 @@
         }
 
         // --- DISCO 9 (Bocanada 1999) ---
-        let blancosBocanada = [], indiceMetaBocanada = 0, bocanadaGameLoop = null, miraAnguloX = 190, miraDireccion = 4;
+        let notasBocanada = [], indiceMetaBocanada = 0, bocanadaGameLoop = null, miraAnguloX = 190, miraDireccion = 3;
+        let balaBocanada = null, mensajeBocanada = "", mensajeBocanadaFrames = 0;
         const cancionesBocanadaDetalle = [
             { nombre: "Tabú", seg: 0 }, { nombre: "Engaña", seg: 286 }, { nombre: "Bocanada", seg: 537 }, { nombre: "Puente", seg: 784 },
             { nombre: "Río Babel", seg: 1057 }, { nombre: "Beautiful", seg: 1340 }, { nombre: "Perdonar es divino", seg: 1712 },
@@ -1097,44 +1175,113 @@
 
         function iniciarBocanada99() {
             document.getElementById('bocanada-modal').style.display = 'block';
-            indiceMetaBocanada = 0; generarBlancosBocanada();
+            indiceMetaBocanada = 0;
+            miraAnguloX = canvasBocanada.width / 2;
+            miraDireccion = 3;
+            balaBocanada = null;
+            mensajeBocanada = "";
+            generarNotasBocanada();
             if (!bocanadaGameLoop) bocanadaGameLoop = setInterval(actualizarYRenderizarBocanada, 1000 / 30);
         }
 
-        function generarBlancosBocanada() {
-            if (indiceMetaBocanada >= cancionesBocanadaDetalle.length) { finalizarDiscoActual(); return; }
+        function generarNotasBocanada() {
+            if (indiceMetaBocanada >= cancionesBocanadaDetalle.length) {
+                balaBocanada = null;
+                finalizarDiscoActual();
+                return;
+            }
             let metaObj = cancionesBocanadaDetalle[indiceMetaBocanada];
-            document.getElementById('txt-bocanada-meta').innerText = metaObj.nombre;
             reproducirAudio(discoActual.trackId, metaObj.seg);
-            blancosBocanada = [];
-            let posicionesX = [90, 190, 290];
-            let correctoIndex = Math.floor(Math.random() * 3);
+            notasBocanada = [];
+            let posicionesX = [75, 190, 305];
+            let correctoIndex = Math.floor(Math.random() * posicionesX.length);
             posicionesX.forEach((posX, idx) => {
-                let esCorrecto = (idx === correctoIndex);
-                let nombreTema = esCorrecto ? metaObj.nombre : cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)];
-                blancosBocanada.push({x: posX, y: 70, r: 32, texto: nombreTema, correcta: esCorrecto});
+                const esCorrecto = idx === correctoIndex;
+                const nombre = esCorrecto ? metaObj.nombre : cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)];
+                notasBocanada.push({x: posX, y: 76, fase: Math.random() * Math.PI * 2, r: 30, texto: nombre, correcta: esCorrecto, tipo: idx});
             });
         }
 
         const canvasBocanada = document.getElementById('bocanada-canvas');
-        canvasBocanada.onclick = (e) => {
-            let impactoRegistrado = false;
-            blancosBocanada.forEach((blanco) => {
-                let distanciaX = Math.abs(miraAnguloX - blanco.x);
-                if (distanciaX < blanco.r) {
-                    impactoRegistrado = true;
-                    if (blanco.correcta) {
-                        puntos += 40; document.getElementById('txt-puntos').innerText = puntos;
-                        indiceMetaBocanada++; generarBlancosBocanada();
-                    } else {
-                        puntos = Math.max(0, puntos - 15); document.getElementById('txt-puntos').innerText = puntos;
-                        alert("¡Le pegaste a una canción incorrecta! Penalización y pasamos a la siguiente.");
-                        indiceMetaBocanada++; generarBlancosBocanada();
-                    }
+        function dispararBocanada() {
+            if (estadoActual !== "JUEGO_DISCO" || !discoActual || !discoActual.esBocanada || balaBocanada) return;
+            balaBocanada = { xInicial: canvasBocanada.width / 2, yInicial: canvasBocanada.height - 22, xObjetivo: miraAnguloX, progreso: 0 };
+            mensajeBocanada = "";
+            mensajeBocanadaFrames = 0;
+        }
+
+        function resolverDisparoBocanada() {
+            const nota = notasBocanada.find(obj => Math.abs(obj.x - balaBocanada.xObjetivo) <= obj.r);
+            balaBocanada = null;
+            if (!nota) {
+                puntos = Math.max(0, puntos - 5);
+                mensajeBocanada = "¡DISPARO AL AIRE! -5";
+                mensajeBocanadaFrames = 30;
+            } else if (nota.correcta) {
+                puntos += 40;
+                mensajeBocanada = "¡NOTA ACERTADA! +40";
+                mensajeBocanadaFrames = 30;
+                indiceMetaBocanada++;
+                document.getElementById('txt-puntos').innerText = puntos;
+                generarNotasBocanada();
+                return;
+            } else {
+                puntos = Math.max(0, puntos - 15);
+                mensajeBocanada = "¡ERA OTRO TEMA! -15";
+                mensajeBocanadaFrames = 30;
+                indiceMetaBocanada++;
+                generarNotasBocanada();
+            }
+            document.getElementById('txt-puntos').innerText = puntos;
+        }
+
+        canvasBocanada.addEventListener('pointerdown', (e) => {
+            e.preventDefault();
+            dispararBocanada();
+        });
+
+        function dibujarNotaBocanada(ctx, nota) {
+            const tiposNota = [0, 1, 2];
+            const tipo = tiposNota[nota.tipo];
+            const x = nota.x;
+            const y = nota.y;
+
+            ctx.fillStyle = '#ed4b9b';
+            ctx.strokeStyle = '#ffb5da';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.ellipse(x - 3, y + 8, 8, 6, -0.35, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x + 4, y + 6);
+            ctx.lineTo(x + 4, y - 13);
+            ctx.stroke();
+            for (let i = 0; i < tipo; i++) {
+                const flagY = y - 13 + i * 6;
+                ctx.beginPath();
+                ctx.moveTo(x + 4, flagY);
+                ctx.bezierCurveTo(x + 16, flagY + 3, x + 15, flagY + 8, x + 7, flagY + 10);
+                ctx.stroke();
+            }
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '8px sans-serif';
+            ctx.textAlign = 'center';
+            let linea = "";
+            let lineas = [];
+            nota.texto.split(/\s+/).forEach((palabra) => {
+                const propuesta = linea ? `${linea} ${palabra}` : palabra;
+                if (ctx.measureText(propuesta).width > 104 && linea) {
+                    lineas.push(linea);
+                    linea = palabra;
+                } else {
+                    linea = propuesta;
                 }
             });
-            if (!impactoRegistrado) { puntos = Math.max(0, puntos - 5); document.getElementById('txt-puntos').innerText = puntos; }
-        };
+            if (linea) lineas.push(linea);
+            lineas.slice(0, 3).forEach((texto, idx) => ctx.fillText(texto, x, y + 27 + idx * 9, 106));
+        }
 
         function actualizarYRenderizarBocanada() {
             if (estadoActual !== "JUEGO_DISCO" || !discoActual || !discoActual.esBocanada) return;
@@ -1143,15 +1290,33 @@
             ctx.fillStyle = '#020b1a'; ctx.fillRect(0, 0, canvasBocanada.width, canvasBocanada.height);
             miraAnguloX += miraDireccion;
             if (miraAnguloX < 30 || miraAnguloX > canvasBocanada.width - 30) { miraDireccion *= -1; }
-            blancosBocanada.forEach((blanco) => {
-                ctx.fillStyle = blanco.correcta ? 'rgba(0, 255, 255, 0.25)' : 'rgba(255, 0, 255, 0.25)';
-                ctx.strokeStyle = blanco.correcta ? '#00ffff' : '#ff00ff'; ctx.lineWidth = 3;
-                ctx.beginPath(); ctx.arc(blanco.x, blanco.y, blanco.r, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-                ctx.fillStyle = '#ffffff'; ctx.font = 'bold 9px sans-serif'; ctx.textAlign = 'center'; ctx.fillText(blanco.texto, blanco.x, blanco.y + 3);
+            const tiempo = performance.now() / 500;
+            notasBocanada.forEach((nota) => {
+                nota.y = 76 + Math.sin(tiempo + nota.fase) * 7;
+                dibujarNotaBocanada(ctx, nota);
             });
-            ctx.strokeStyle = '#ffcc00'; ctx.lineWidth = 2; ctx.beginPath();
-            ctx.moveTo(miraAnguloX, canvasBocanada.height); ctx.lineTo(miraAnguloX, 110); ctx.stroke();
-            ctx.fillStyle = '#ff0055'; ctx.beginPath(); ctx.arc(miraAnguloX, 110, 6, 0, Math.PI * 2); ctx.fill();
+            ctx.strokeStyle = 'rgba(255, 204, 0, 0.22)'; ctx.lineWidth = 2; ctx.beginPath();
+            ctx.moveTo(canvasBocanada.width / 2, canvasBocanada.height - 18); ctx.lineTo(miraAnguloX, 76); ctx.stroke();
+            ctx.fillStyle = '#ffcc00'; ctx.beginPath(); ctx.moveTo(canvasBocanada.width / 2, canvasBocanada.height - 8);
+            ctx.lineTo(canvasBocanada.width / 2 - 18, canvasBocanada.height); ctx.lineTo(canvasBocanada.width / 2 + 18, canvasBocanada.height); ctx.closePath(); ctx.fill();
+            ctx.strokeStyle = '#fff176'; ctx.lineWidth = 2; ctx.beginPath();
+            ctx.arc(miraAnguloX, 76, 13, 0, Math.PI * 2); ctx.moveTo(miraAnguloX - 19, 76); ctx.lineTo(miraAnguloX - 7, 76);
+            ctx.moveTo(miraAnguloX + 7, 76); ctx.lineTo(miraAnguloX + 19, 76); ctx.moveTo(miraAnguloX, 57); ctx.lineTo(miraAnguloX, 69);
+            ctx.moveTo(miraAnguloX, 83); ctx.lineTo(miraAnguloX, 95); ctx.stroke();
+            if (balaBocanada) {
+                balaBocanada.progreso += 0.08;
+                const progreso = Math.min(balaBocanada.progreso, 1);
+                const balaX = balaBocanada.xInicial + (balaBocanada.xObjetivo - balaBocanada.xInicial) * progreso;
+                const balaY = balaBocanada.yInicial + (76 - balaBocanada.yInicial) * progreso;
+                ctx.strokeStyle = '#fff176'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(balaX, balaY + 12); ctx.lineTo(balaX, balaY - 10); ctx.stroke();
+                ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(balaX, balaY, 4, 0, Math.PI * 2); ctx.fill();
+                if (progreso >= 1) resolverDisparoBocanada();
+            }
+            if (mensajeBocanadaFrames > 0) {
+                ctx.fillStyle = '#ffffff'; ctx.font = 'bold 14px sans-serif'; ctx.textAlign = 'center';
+                ctx.fillText(mensajeBocanada, canvasBocanada.width / 2, canvasBocanada.height - 34);
+                mensajeBocanadaFrames--;
+            }
         }
 
         // --- DISCO 10 (Siempre es hoy 2002) ---
@@ -1325,57 +1490,284 @@
             { nombre: "Rapto", seg: 1540 }, { nombre: "Cactus", seg: 1800 }, { nombre: "Naturaleza muerta", seg: 2060 },
             { nombre: "Dominó", seg: 2320 }, { nombre: "Sal", seg: 2580 }, { nombre: "Convoy", seg: 2840 }
         ];
-        let fuerzaIndice = 0, fuerzaPuntosAciertos = 0, cometaX = 180, objetosFuerza = [], fuerzaGameLoop = null;
+        let fuerzaIndice = 0, fuerzaPuntosAciertos = 0, fuerzaVidas = 3, fuerzaGameLoop = null;
+        let fuerzaJugador = { x: 48, y: 184, vy: 0, ancho: 18, alto: 26, invulnerable: 0, enSuelo: true };
+        let notasFuerza = [], guitarrasFuerza = [], disparosFuerza = [], instrumentosFuerza = [], teclasFuerza = { izquierda: false, derecha: false };
+        let fuerzaTiempo = 0, fuerzaEstado = "jugando", fuerzaMensajeFrames = 0;
 
         function iniciarFuerzaNatural09() {
             document.getElementById('fuerza-natural-modal').style.display = 'block';
-            fuerzaIndice = 0; fuerzaPuntosAciertos = 0; cometaX = 180;
+            fuerzaIndice = 0;
+            fuerzaPuntosAciertos = 0;
+            fuerzaVidas = 3;
+            fuerzaEstado = "jugando";
+            fuerzaTiempo = 0;
+            fuerzaJugador = { x: 48, y: 184, vy: 0, ancho: 18, alto: 26, invulnerable: 0, enSuelo: true };
+            teclasFuerza.izquierda = false;
+            teclasFuerza.derecha = false;
+            notasFuerza = [];
+            guitarrasFuerza = [];
+            disparosFuerza = [];
+            instrumentosFuerza = [];
             document.getElementById('txt-fuerza-puntos').innerText = fuerzaPuntosAciertos;
+            document.getElementById('txt-fuerza-vidas').innerText = fuerzaVidas;
+            document.getElementById('btn-fuerza-reintentar').style.display = 'none';
             cargarSiguienteFuerzaNatural();
             if (!fuerzaGameLoop) fuerzaGameLoop = setInterval(actualizarYRenderizarFuerza, 1000 / 30);
         }
 
         function cargarSiguienteFuerzaNatural() {
             if (fuerzaIndice >= cancionesFuerzaNaturalDetalle.length) { finalizarDiscoActual(); return; }
-            let temaObj = cancionesFuerzaNaturalDetalle[fuerzaIndice];
+            const temaObj = cancionesFuerzaNaturalDetalle[fuerzaIndice];
             document.getElementById('txt-fuerza-meta').innerText = temaObj.nombre;
             reproducirAudio(discoActual.trackId, temaObj.seg);
-            objetosFuerza = [
-                { x: Math.random() * 300 + 30, y: -20, texto: temaObj.nombre, correcta: true, velY: 2 },
-                { x: Math.random() * 300 + 30, y: -120, texto: cancionesTrampa[Math.floor(Math.random() * cancionesTrampa.length)], correcta: false, velY: 1.8 }
-            ];
+            fuerzaPuntosAciertos = 0;
+            notasFuerza = [];
+            guitarrasFuerza = [];
+            disparosFuerza = [];
+            instrumentosFuerza = [];
+            document.getElementById('txt-fuerza-puntos').innerText = fuerzaPuntosAciertos;
+            fuerzaTiempo = 0;
+            fuerzaMensajeFrames = 50;
+            document.getElementById('txt-fuerza-estado').innerText = "¡JUNTÁ 5 NOTAS Y ESQUIVÁ LOS DISPAROS!";
         }
 
         const canvasFuerza = document.getElementById('fuerza-canvas');
-        canvasFuerza.onmousemove = (e) => { cometaX = e.clientX - canvasFuerza.getBoundingClientRect().left; };
-        canvasFuerza.ontouchmove = (e) => { if(e.touches.length > 0) { cometaX = e.touches[0].clientX - canvasFuerza.getBoundingClientRect().left; } };
+        const botonesFuerza = [
+            { id: 'btn-fuerza-izq', tecla: 'izquierda' },
+            { id: 'btn-fuerza-der', tecla: 'derecha' }
+        ];
+        botonesFuerza.forEach(({ id, tecla }) => {
+            const boton = document.getElementById(id);
+            boton.addEventListener('pointerdown', (e) => { e.preventDefault(); teclasFuerza[tecla] = true; boton.setPointerCapture(e.pointerId); });
+            ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(tipo => boton.addEventListener(tipo, () => { teclasFuerza[tecla] = false; }));
+        });
+        function saltarFuerzaNatural() {
+            if (fuerzaEstado === "jugando" && fuerzaJugador.enSuelo) {
+                fuerzaJugador.vy = -8.5;
+                fuerzaJugador.enSuelo = false;
+            }
+        }
+        function perderVidaFuerza(mensaje) {
+            if (fuerzaJugador.invulnerable > 0 || fuerzaEstado !== "jugando") return;
+            fuerzaVidas--;
+            fuerzaJugador.invulnerable = 60;
+            document.getElementById('txt-fuerza-vidas').innerText = fuerzaVidas;
+            puntos = Math.max(0, puntos - 20);
+            document.getElementById('txt-puntos').innerText = puntos;
+            document.getElementById('txt-fuerza-estado').innerText = fuerzaVidas ? `${mensaje} · -1 VIDA` : "SIN VIDAS · VOLVÉ A INTENTAR";
+            if (fuerzaVidas <= 0) {
+                fuerzaEstado = "perdido";
+                teclasFuerza.izquierda = false;
+                teclasFuerza.derecha = false;
+                document.getElementById('btn-fuerza-reintentar').style.display = 'block';
+            }
+        }
+        document.getElementById('btn-fuerza-saltar').addEventListener('click', saltarFuerzaNatural);
+        document.getElementById('btn-fuerza-reintentar').addEventListener('click', iniciarFuerzaNatural09);
+        window.addEventListener('keydown', (e) => {
+            if (estadoActual !== "JUEGO_DISCO" || !discoActual || !discoActual.esFuerzaNatural) return;
+            if (e.code === 'ArrowLeft' || e.code === 'KeyA') { e.preventDefault(); teclasFuerza.izquierda = true; }
+            if (e.code === 'ArrowRight' || e.code === 'KeyD') { e.preventDefault(); teclasFuerza.derecha = true; }
+            if (e.code === 'ArrowUp' || e.code === 'Space' || e.code === 'KeyW') { e.preventDefault(); if (!e.repeat) saltarFuerzaNatural(); }
+        });
+        window.addEventListener('keyup', (e) => {
+            if (e.code === 'ArrowLeft' || e.code === 'KeyA') teclasFuerza.izquierda = false;
+            if (e.code === 'ArrowRight' || e.code === 'KeyD') teclasFuerza.derecha = false;
+        });
 
         function actualizarYRenderizarFuerza() {
             if (estadoActual !== "JUEGO_DISCO" || !discoActual || !discoActual.esFuerzaNatural) return;
             const ctx = canvasFuerza.getContext('2d');
             ctx.clearRect(0, 0, canvasFuerza.width, canvasFuerza.height);
             ctx.fillStyle = '#020b1a'; ctx.fillRect(0, 0, canvasFuerza.width, canvasFuerza.height);
-            objetosFuerza.forEach((obj, idx) => {
-                obj.y += obj.velY;
-                ctx.fillStyle = obj.correcta ? 'rgba(0, 255, 170, 0.3)' : 'rgba(255, 0, 100, 0.3)';
-                ctx.strokeStyle = obj.correcta ? '#00ffaa' : '#ff0066'; ctx.lineWidth = 2;
-                ctx.beginPath(); ctx.arc(obj.x, obj.y, 20, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-                ctx.fillStyle = '#ffffff'; ctx.font = 'bold 10px sans-serif'; ctx.textAlign = 'center'; ctx.fillText(obj.texto, obj.x, obj.y + 4);
-                if (obj.y >= 190 && obj.y <= 225 && Math.abs(obj.x - cometaX) < 30) {
-                    if (obj.correcta) {
-                        fuerzaPuntosAciertos++; puntos += 40;
-                        document.getElementById('txt-puntos').innerText = puntos;
-                        document.getElementById('txt-fuerza-puntos').innerText = fuerzaPuntosAciertos;
-                        if (fuerzaPuntosAciertos >= 5) finalizarDiscoActual();
-                        else { fuerzaIndice++; cargarSiguienteFuerzaNatural(); }
-                    } else {
-                        puntos = Math.max(0, puntos - 10); document.getElementById('txt-puntos').innerText = puntos;
-                        objetosFuerza.splice(idx, 1);
+            const sueloY = 210;
+            ctx.fillStyle = '#102b38'; ctx.fillRect(0, sueloY, canvasFuerza.width, canvasFuerza.height - sueloY);
+            ctx.strokeStyle = '#00ffaa'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(0, sueloY); ctx.lineTo(canvasFuerza.width, sueloY); ctx.stroke();
+
+            if (fuerzaEstado === "jugando") {
+                fuerzaTiempo++;
+                fuerzaJugador.x += (teclasFuerza.derecha ? 3.5 : 0) - (teclasFuerza.izquierda ? 3.5 : 0);
+                fuerzaJugador.x = Math.max(10, Math.min(canvasFuerza.width - fuerzaJugador.ancho - 10, fuerzaJugador.x));
+                const bordeInferiorAnterior = fuerzaJugador.y + fuerzaJugador.alto;
+                fuerzaJugador.vy += 0.42;
+                fuerzaJugador.y += fuerzaJugador.vy;
+                fuerzaJugador.enSuelo = false;
+                const plataformas = [
+                    { x: 86, y: 184, ancho: 48 },
+                    { x: 210, y: 158, ancho: 52 },
+                    { x: 286, y: 188, ancho: 42 }
+                ];
+                if (fuerzaJugador.vy >= 0) {
+                    const plataforma = plataformas.find(item =>
+                        bordeInferiorAnterior <= item.y &&
+                        fuerzaJugador.y + fuerzaJugador.alto >= item.y &&
+                        fuerzaJugador.x + fuerzaJugador.ancho > item.x &&
+                        fuerzaJugador.x < item.x + item.ancho
+                    );
+                    if (plataforma) {
+                        fuerzaJugador.y = plataforma.y - fuerzaJugador.alto;
+                        fuerzaJugador.vy = 0;
+                        fuerzaJugador.enSuelo = true;
+                    } else if (fuerzaJugador.y + fuerzaJugador.alto >= sueloY) {
+                        fuerzaJugador.y = sueloY - fuerzaJugador.alto;
+                        fuerzaJugador.vy = 0;
+                        fuerzaJugador.enSuelo = true;
                     }
                 }
-                if (obj.y > canvasFuerza.height + 30) { if (obj.correcta) cargarSiguienteFuerzaNatural(); else objetosFuerza.splice(idx, 1); }
+                if (fuerzaJugador.invulnerable > 0) fuerzaJugador.invulnerable--;
+
+                if (fuerzaTiempo % 72 === 0) {
+                    const tema = cancionesFuerzaNaturalDetalle[fuerzaIndice];
+                    notasFuerza.push({ x: canvasFuerza.width + 15, y: 108 + Math.random() * 68, texto: tema.nombre, radio: 15, peligrosa: false });
+                }
+                if (fuerzaTiempo % 105 === 45) {
+                    notasFuerza.push({ x: canvasFuerza.width + 15, y: 112 + Math.random() * 65, texto: "!", radio: 15, peligrosa: true });
+                }
+                if (fuerzaTiempo % 360 === 250) {
+                    const instrumentos = [
+                        { nombre: "GUITARRA", simbolo: "🎸" },
+                        { nombre: "BAJO", simbolo: "🎸" },
+                        { nombre: "BATERÍA", simbolo: "🥁" }
+                    ];
+                    const instrumento = instrumentos[Math.floor(Math.random() * instrumentos.length)];
+                    instrumentosFuerza.push({ x: canvasFuerza.width + 15, y: 115 + Math.random() * 50, ...instrumento });
+                }
+                if (fuerzaTiempo % 220 === 100) {
+                    guitarrasFuerza.push({ x: canvasFuerza.width + 20, y: sueloY - 24, disparoEn: fuerzaTiempo + 48 });
+                }
+                if (fuerzaTiempo % 220 === 148 && guitarrasFuerza.length) {
+                    const guitarra = guitarrasFuerza[guitarrasFuerza.length - 1];
+                    disparosFuerza.push({ x: guitarra.x - 6, y: guitarra.y - 12, vx: -3.2 });
+                }
+
+                notasFuerza.forEach(nota => { nota.x -= 2.1; });
+                guitarrasFuerza.forEach(guitarra => { guitarra.x -= 1.8; });
+                disparosFuerza.forEach(disparo => { disparo.x += disparo.vx; });
+
+                for (let i = notasFuerza.length - 1; i >= 0; i--) {
+                    const nota = notasFuerza[i];
+                    if (Math.abs(nota.x - (fuerzaJugador.x + fuerzaJugador.ancho / 2)) < nota.radio + 10 &&
+                        Math.abs(nota.y - (fuerzaJugador.y + fuerzaJugador.alto / 2)) < nota.radio + 13) {
+                        notasFuerza.splice(i, 1);
+                        if (nota.peligrosa) {
+                            perderVidaFuerza("¡NOTA ROSA!");
+                            if (fuerzaEstado !== "jugando") break;
+                        } else {
+                            fuerzaPuntosAciertos++;
+                            puntos += 40;
+                            document.getElementById('txt-puntos').innerText = puntos;
+                            document.getElementById('txt-fuerza-puntos').innerText = fuerzaPuntosAciertos;
+                            document.getElementById('txt-fuerza-estado').innerText = `¡NOTA DE ${cancionesFuerzaNaturalDetalle[fuerzaIndice].nombre.toUpperCase()}! +40`;
+                            fuerzaMensajeFrames = 35;
+                            if (fuerzaPuntosAciertos >= 5) {
+                                fuerzaIndice++;
+                                if (fuerzaIndice >= cancionesFuerzaNaturalDetalle.length) { finalizarDiscoActual(); return; }
+                                cargarSiguienteFuerzaNatural();
+                                break;
+                            }
+                        }
+                    } else if (nota.x < -20) notasFuerza.splice(i, 1);
+                }
+
+                for (let i = instrumentosFuerza.length - 1; i >= 0; i--) {
+                    const instrumento = instrumentosFuerza[i];
+                    if (Math.abs(instrumento.x - (fuerzaJugador.x + fuerzaJugador.ancho / 2)) < 24 &&
+                        Math.abs(instrumento.y - (fuerzaJugador.y + fuerzaJugador.alto / 2)) < 25) {
+                        instrumentosFuerza.splice(i, 1);
+                        if (fuerzaVidas < 5) {
+                            fuerzaVidas++;
+                            document.getElementById('txt-fuerza-vidas').innerText = fuerzaVidas;
+                            document.getElementById('txt-fuerza-estado').innerText = `¡INSTRUMENTO! +1 VIDA`;
+                        } else {
+                            puntos += 10;
+                            document.getElementById('txt-puntos').innerText = puntos;
+                            document.getElementById('txt-fuerza-estado').innerText = "¡INSTRUMENTO! VIDAS AL MÁXIMO · +10";
+                        }
+                        fuerzaMensajeFrames = 45;
+                    } else if (instrumento.x < -25) instrumentosFuerza.splice(i, 1);
+                }
+
+                if (fuerzaJugador.invulnerable === 0) {
+                    const disparoImpacta = disparosFuerza.some(disparo =>
+                        Math.abs(disparo.x - (fuerzaJugador.x + fuerzaJugador.ancho / 2)) < 13 &&
+                        Math.abs(disparo.y - (fuerzaJugador.y + fuerzaJugador.alto / 2)) < 15
+                    );
+                    const guitarraImpacta = guitarrasFuerza.some(guitarra =>
+                        Math.abs(guitarra.x - (fuerzaJugador.x + fuerzaJugador.ancho / 2)) < 20 &&
+                        Math.abs(guitarra.y - (fuerzaJugador.y + fuerzaJugador.alto / 2)) < 22
+                    );
+                    if (disparoImpacta || guitarraImpacta) {
+                        if (disparoImpacta) {
+                            const index = disparosFuerza.findIndex(disparo =>
+                                Math.abs(disparo.x - (fuerzaJugador.x + fuerzaJugador.ancho / 2)) < 13 &&
+                                Math.abs(disparo.y - (fuerzaJugador.y + fuerzaJugador.alto / 2)) < 15
+                            );
+                            if (index >= 0) disparosFuerza.splice(index, 1);
+                        } else {
+                            const index = guitarrasFuerza.findIndex(guitarra =>
+                                Math.abs(guitarra.x - (fuerzaJugador.x + fuerzaJugador.ancho / 2)) < 20 &&
+                                Math.abs(guitarra.y - (fuerzaJugador.y + fuerzaJugador.alto / 2)) < 22
+                            );
+                            if (index >= 0) guitarrasFuerza.splice(index, 1);
+                        }
+                        perderVidaFuerza(disparoImpacta ? "¡TE ALCANZÓ UN DISPARO!" : "¡CHOCASTE CON UNA GUITARRA!");
+                    }
+                }
+                disparosFuerza = disparosFuerza.filter(disparo => disparo.x > -12);
+                guitarrasFuerza = guitarrasFuerza.filter(guitarra => guitarra.x > -30);
+                instrumentosFuerza.forEach(instrumento => { instrumento.x -= 1.7; });
+            }
+
+            const estrellas = [25, 82, 141, 211, 278, 336];
+            ctx.fillStyle = 'rgba(255,255,255,0.65)';
+            estrellas.forEach((x, index) => {
+                const estrellaX = (x - fuerzaTiempo * 0.25 * (index % 2 + 1) + 500) % canvasFuerza.width;
+                ctx.fillRect(estrellaX, 24 + (index * 29) % 100, 2, 2);
             });
-            ctx.fillStyle = '#00ffaa'; ctx.beginPath(); ctx.moveTo(cometaX, 200); ctx.lineTo(cometaX - 15, 230); ctx.lineTo(cometaX + 15, 230); ctx.closePath(); ctx.fill();
+            ctx.fillStyle = '#235364';
+            ctx.fillRect(86, 184, 48, 7);
+            ctx.fillRect(210, 158, 52, 7);
+            ctx.fillRect(286, 188, 42, 7);
+            ctx.fillStyle = '#00ffaa';
+            ctx.fillRect(fuerzaJugador.x, fuerzaJugador.y + 8, fuerzaJugador.ancho, fuerzaJugador.alto - 8);
+            ctx.fillStyle = '#ffdf9e';
+            ctx.beginPath(); ctx.arc(fuerzaJugador.x + 10, fuerzaJugador.y + 6, 8, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = '#ff00ff';
+            notasFuerza.forEach(nota => {
+                ctx.fillStyle = nota.peligrosa ? '#ff3b86' : '#00ffaa';
+                ctx.beginPath(); ctx.arc(nota.x, nota.y, nota.radio, 0, Math.PI * 2); ctx.fill();
+                ctx.strokeStyle = nota.peligrosa ? '#ffd1e1' : '#eafff8'; ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.fillStyle = nota.peligrosa ? '#ffffff' : '#02131a'; ctx.font = 'bold 11px sans-serif'; ctx.textAlign = 'center';
+                ctx.fillText(nota.peligrosa ? '!' : '♫', nota.x, nota.y + 4);
+                if (!nota.peligrosa) {
+                    ctx.fillStyle = '#ffffff'; ctx.font = 'bold 7px sans-serif';
+                    ctx.fillText(nota.texto, nota.x, nota.y + nota.radio + 10, 78);
+                }
+            });
+            instrumentosFuerza.forEach(instrumento => {
+                ctx.fillStyle = 'rgba(255, 204, 0, 0.2)';
+                ctx.strokeStyle = '#ffcc00'; ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.arc(instrumento.x, instrumento.y, 17, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+                ctx.font = '15px sans-serif'; ctx.textAlign = 'center';
+                ctx.fillText(instrumento.simbolo, instrumento.x, instrumento.y + 5);
+                ctx.fillStyle = '#ffecaa'; ctx.font = 'bold 7px sans-serif';
+                ctx.fillText(instrumento.nombre, instrumento.x, instrumento.y + 27);
+            });
+            guitarrasFuerza.forEach(guitarra => {
+                ctx.fillStyle = '#ff5577';
+                ctx.beginPath(); ctx.moveTo(guitarra.x, guitarra.y - 16); ctx.lineTo(guitarra.x + 10, guitarra.y - 7);
+                ctx.lineTo(guitarra.x + 7, guitarra.y + 10); ctx.lineTo(guitarra.x - 7, guitarra.y + 10);
+                ctx.lineTo(guitarra.x - 10, guitarra.y - 7); ctx.closePath(); ctx.fill();
+                ctx.strokeStyle = '#ffe0e8'; ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.moveTo(guitarra.x, guitarra.y - 8); ctx.lineTo(guitarra.x, guitarra.y + 14); ctx.stroke();
+            });
+            ctx.fillStyle = '#ff5577';
+            disparosFuerza.forEach(disparo => { ctx.beginPath(); ctx.arc(disparo.x, disparo.y, 4, 0, Math.PI * 2); ctx.fill(); });
+            if (fuerzaJugador.invulnerable > 0 && Math.floor(fuerzaJugador.invulnerable / 6) % 2 === 0) {
+                ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2; ctx.strokeRect(fuerzaJugador.x - 3, fuerzaJugador.y - 2, fuerzaJugador.ancho + 6, fuerzaJugador.alto + 4);
+            }
         }
 
         const listaDiscos = [
