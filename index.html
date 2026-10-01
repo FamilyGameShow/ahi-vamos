@@ -18,45 +18,6 @@
         #txt-conteo-numero { font-size: 80px; color: #00ffff; text-shadow: 0 0 30px #00ffff; font-weight: bold; margin-bottom: 10px; }
         #txt-conteo-texto { font-size: 16px; color: #ff00ff; letter-spacing: 3px; text-shadow: 0 0 10px #ff00ff; }
 
-        <!-- Sala de Tocadiscos / Vinilos -->
-<div id="tocadiscos-modal" class="modal-juego" style="border-color: #ffaa00;">
-    <div class="hud-juego" style="color:#ffaa00;">🎵 TOCADISCOS - VINILOS DEL MULTIVERSO</div>
-    <div class="objetivo-juego">📀 COLOCÁ EL VINILO EN EL PLATO Y BAJÁ LA PÚA</div>
-    
-    <div class="tocadiscos-container" style="display: flex; flex-direction: column; align-items: center; margin: 15px 0;">
-        <div id="plato-vinilo" style="width: 180px; height: 180px; border-radius: 50%; background: #111; border: 6px solid #333; position: relative; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px rgba(255,170,0,0.5);">
-            <div id="etiqueta-vinilo" style="width: 70px; height: 70px; border-radius: 50%; background: #ffaa00; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: bold; color: #000; text-align: center; padding: 2px;">CERATI</div>
-        </div>
-        <div id="pua-tocadiscos" style="margin-top: 10px; font-size: 14px; color: #ffaa00;">🕹️ Púa: <span id="estado-pua">Levantada</span></div>
-    </div>
-
-    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-        <button class="btn-tetris" onclick="accionarPua()" style="background: #331100; border-color: #ffaa00;">🕹️ BAJAR / SUBIR PÚA</button>
-    </div>
-
-    <div class="estante-cassettes" id="estante-vinilos-grid" style="max-height: 20vh;"></div>
-    <button class="btn-tetris" onclick="mostrarHallCentral()" style="width:100%; margin-top:8px;">🏛️ VOLVER AL HALL</button>
-</div>
-        
-        <!-- Sala de Cine / Proyecciones -->
-<div id="cine-modal" class="modal-juego" style="border-color: #00ffff;">
-    <div class="hud-juego" style="color:#00ffff;">🎬 SALA DE CINE - DOCUMENTALES Y RECITALES</div>
-    <div class="objetivo-juego">🎥 SELECCIONÁ UNA PROYECCIÓN DEL MULTIVERSO</div>
-    <div id="cine-player-container" style="margin: 10px 0; position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px; border: 2px solid #00ffff;">
-        <iframe id="cine-iframe" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-    </div>
-    <div class="estante-cassettes" id="estante-cine-grid" style="max-height: 25vh;"></div>
-    <button class="btn-tetris" onclick="mostrarHallCentral()" style="width:100%; margin-top:8px;">🏛️ VOLVER AL HALL</button>
-</div>
-
-<!-- Sala de Arte / Galería Visual -->
-<div id="galeria-modal" class="modal-juego" style="border-color: #ff00ff;">
-    <div class="hud-juego" style="color:#ff00ff;">🖼️ GALERÍA DE ARTE - MUNDO VISUAL</div>
-    <div class="objetivo-juego">✨ EXPOSICIÓN DE ESTÉTICA Y FOTOGRAFÍA</div>
-    <div class="biblioteca-grid" id="galeria-grid-items" style="max-height: 50vh; grid-template-columns: repeat(2, 1fr);"></div>
-    <button class="btn-tetris" onclick="mostrarHallCentral()" style="width:100%; margin-top:8px;">🏛️ VOLVER AL HALL</button>
-</div>
-
         /* Hall Central / Selector de Habitaciones */
         #hall-central-modal { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(2, 0, 10, 0.95); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 80; padding: 20px; box-sizing: border-box; display: none; }
         .grid-salas { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 100%; max-width: 420px; margin-top: 15px; }
@@ -213,8 +174,6 @@
                 <button class="btn-radio" onclick="accionarCassette('play')">▶ PLAY</button>
                 <button class="btn-radio" onclick="accionarCassette('stop')">⏹ STOP</button>
                 <button class="btn-radio" onclick="accionarCassette('eject')">⏏ EJECT</button>
-                <button class="btn-radio" onclick="accionarCassette('forward')">⏭ FORWARD</button>
-                <button class="btn-radio" onclick="accionarCassette('random')">🔀 RANDOM</button>
             </div>
         </div>
 
@@ -358,194 +317,71 @@
     </div>
 
     <script>
-let juegoIniciado = false;
-let puntos = 0;
-let discosConquistadosCount = 0;
-let estadoActual = "MENU_PRINCIPAL";
-let meshesDiscos = [];
-let discoEnFoco = null;
-let discoActual = null;
-let cancionActualId = "";
+        let juegoIniciado = false;
+        let puntos = 0;
+        let discosConquistadosCount = 0;
+        let estadoActual = "MENU_PRINCIPAL";
+        let meshesDiscos = [];
+        let discoEnFoco = null;
+        let discoActual = null;
+        let cancionActualId = "";
 
-// --- FUNCIÓN DE INICIO CORREGIDA ---
-function iniciarConteoRegresivo() {
-    const pantallaIntro = document.getElementById('pantalla-intro');
-    const pantallaConteo = document.getElementById('pantalla-conteo');
-    if (pantallaIntro) pantallaIntro.style.display = 'none';
-    if (pantallaConteo) pantallaConteo.style.display = 'flex';
-
-    let contador = 3;
-    const txtNumero = document.getElementById('txt-conteo-numero');
-    const intervalo = setInterval(() => {
-        contador--;
-        if (txtNumero) txtNumero.innerText = contador;
-        if (contador <= 0) {
-            clearInterval(intervalo);
-            if (pantallaConteo) pantallaConteo.style.display = 'none';
-            mostrarHallCentral();
+        function reproducirAudio(videoId, segundos = 0) {
+            const cleanId = videoId.split('&')[0];
+            const idKey = `${cleanId}_${segundos}`;
+            if (cancionActualId !== idKey) {
+                cancionActualId = idKey;
+                const ytPlayer = document.getElementById('yt-player');
+                ytPlayer.src = `https://www.youtube.com/embed/${cleanId}?autoplay=1&start=${segundos}&loop=1&playlist=${cleanId}`;
+            }
         }
-    }, 1000);
-}
 
-function mostrarHallCentral() {
-    ocultarTodosLosModales();
-    document.getElementById('hall-central-modal').style.display = 'flex';
-    document.getElementById('ui-capa').style.display = 'flex';
-    document.getElementById('btn-trofeos').style.display = 'block';
-    document.getElementById('btn-volver').style.display = 'none';
-    document.getElementById('btn-hall').style.display = 'none';
-    estadoActual = "HALL_CENTRAL";
-}
-
-function irASala(nombreSala) {
-    document.getElementById('hall-central-modal').style.display = 'none';
-    if (nombreSala === 'juegos') {
-        estadoActual = "MENU_PRINCIPAL";
-        document.getElementById('btn-hall').style.display = 'block';
-        cargarMultiversoDiscos();
-    } else if (nombreSala === 'biblioteca') {
-        abrirSalaBiblioteca();
-    } else if (nombreSala === 'cassettes') {
-        abrirSalaCassettes();
-    } else if (nombreSala === 'cine') {
-        abrirSalaCine();
-    } else if (nombreSala === 'galeria') {
-        abrirSalaGaleria();
-    } else if (nombreSala === 'vinilos') {
-        abrirSalaTocadiscos();
-    } else {
-        alert(`¡Espacio en construcción dentro del multiverso! Volviendo al Hall.`);
-        mostrarHallCentral();
-    }
-}
-
-// --- SALA DE TOCADISCOS / VINILOS ---
-let viniloActual = null;
-let puaBajada = false;
-
-function abrirSalaTocadiscos() {
-    ocultarTodosLosModales();
-    document.getElementById('tocadiscos-modal').style.display = 'flex';
-    document.getElementById('ui-capa').style.display = 'flex';
-    document.getElementById('btn-volver').style.display = 'none';
-    document.getElementById('btn-hall').style.display = 'block';
-    document.getElementById('btn-trofeos').style.display = 'none';
-    estadoActual = "TOCADISCOS";
-
-    const estanteVinilos = document.getElementById('estante-vinilos-grid');
-    estanteVinilos.innerHTML = '';
-    listaDiscos.forEach(disco => {
-        const div = document.createElement('div');
-        div.className = 'cassette-item';
-        div.innerHTML = `<span style="font-size:10px;">📀 ${disco.nombre}</span>`;
-        div.onclick = () => seleccionarVinilo(disco);
-        estanteVinilos.appendChild(div);
-    });
-}
-
-function seleccionarVinilo(disco) {
-    viniloActual = disco;
-    const etiqueta = document.getElementById('etiqueta-vinilo');
-    etiqueta.innerText = disco.nombre;
-    etiqueta.style.backgroundImage = `url(${disco.fondo})`;
-    etiqueta.style.backgroundSize = 'cover';
-    if (puaBajada) {
-        reproducirViniloAudio();
-    }
-}
-
-function accionarPua() {
-    puaBajada = !puaBajada;
-    const textoPua = document.getElementById('estado-pua');
-    const plato = document.getElementById('plato-vinilo');
-    if (puaBajada) {
-        textoPua.innerText = "Reproduciendo (Bajada)";
-        plato.style.animation = "girarVinilo 2s linear infinite";
-        if (viniloActual) {
-            reproducirViniloAudio();
-        } else {
-            alert("¡Seleccioná un vinilo del estante primero!");
+        function iniciarConteoRegresivo() {
+            juegoIniciado = true;
+            document.getElementById('pantalla-intro').style.display = 'none';
+            document.getElementById('pantalla-conteo').style.display = 'flex';
+            cambiarFondo("https://i.ibb.co/9Hy8h9fL/colores-santos.png");
+            reproducirAudio("Wun6zDSpwkg");
+            let cuenta = 3;
+            const numEl = document.getElementById('txt-conteo-numero');
+            numEl.innerText = cuenta;
+            let timer = setInterval(() => {
+                cuenta--;
+                if (cuenta > 0) {
+                    numEl.innerText = cuenta;
+                } else {
+                    clearInterval(timer);
+                    document.getElementById('pantalla-conteo').style.display = 'none';
+                    mostrarHallCentral();
+                }
+            }, 1000);
         }
-    } else {
-        textoPua.innerText = "Levantada";
-        plato.style.animation = "none";
-        detenerAudioVinilo();
-    }
-}
 
-function reproducirViniloAudio() {
-    if (!viniloActual) return;
-    reproducirAudio(viniloActual.trackId, 0);
-}
+        function mostrarHallCentral() {
+            ocultarTodosLosModales();
+            document.getElementById('hall-central-modal').style.display = 'flex';
+            document.getElementById('ui-capa').style.display = 'flex';
+            document.getElementById('btn-trofeos').style.display = 'block';
+            document.getElementById('btn-volver').style.display = 'none';
+            document.getElementById('btn-hall').style.display = 'none';
+            estadoActual = "HALL_CENTRAL";
+        }
 
-function detenerAudioVinilo() {
-    reproducirAudio("Wun6zDSpwkg");
-}
-
-// --- SALA DE CINE ---
-const listaProyeccionesCine = [
-    { nombre: "Gira Bocanada - En Vivo", trackId: "IMw21ADHgJI" },
-    { nombre: "Concierto Zeta, Charly y Gustavo (Soda)", trackId: "jzLVaylmbJU" },
-    { nombre: "Ahí Vamos - Detrás de la Escena", trackId: "2eW4gfPP7j8" },
-    { nombre: "Fuerza Natural - En Vivo en Monterrey", trackId: "9gkUnFGsHtE" }
-];
-
-function abrirSalaCine() {
-    ocultarTodosLosModales();
-    document.getElementById('cine-modal').style.display = 'flex';
-    document.getElementById('ui-capa').style.display = 'flex';
-    document.getElementById('btn-volver').style.display = 'none';
-    document.getElementById('btn-hall').style.display = 'block';
-    document.getElementById('btn-trofeos').style.display = 'none';
-    estadoActual = "CINE";
-
-    reproducirCine(listaProyeccionesCine[0].trackId);
-
-    const estanteCine = document.getElementById('estante-cine-grid');
-    estanteCine.innerHTML = '';
-    listaProyeccionesCine.forEach(proyeccion => {
-        const div = document.createElement('div');
-        div.className = 'cassette-item';
-        div.innerHTML = `<span style="font-size:10px;">🎞️ ${proyeccion.nombre}</span>`;
-        div.onclick = () => reproducirCine(proyeccion.trackId);
-        estanteCine.appendChild(div);
-    });
-}
-
-function reproducirCine(videoId) {
-    const iframe = document.getElementById('cine-iframe');
-    const cleanId = videoId.split('&')[0];
-    iframe.src = `https://www.youtube.com/embed/${cleanId}?autoplay=1`;
-}
-
-// --- SALA DE ARTE / GALERÍA ---
-const galeriaArteItems = [
-    { titulo: "Colores Santos (Multiverso)", img: "https://i.ibb.co/9Hy8h9fL/colores-santos.png" },
-    { titulo: "Soda Stereo 1984", img: "https://i.ibb.co/sT3L0VW/soda-stereo.png" },
-    { titulo: "Signos 1986", img: "https://i.ibb.co/LXQbmwRR/signos.png" },
-    { titulo: "Canción Animal", img: "https://i.ibb.co/rRbsVPJc/cancion-animal.png" },
-    { titulo: "Amor Amarillo", img: "https://i.ibb.co/KpPXvH5K/amor-amarillo.png" },
-    { titulo: "Bocanada 1999", img: "https://i.ibb.co/Gf9jPzVy/bocanada.png" }
-];
-
-function abrirSalaGaleria() {
-    ocultarTodosLosModales();
-    document.getElementById('galeria-modal').style.display = 'flex';
-    document.getElementById('ui-capa').style.display = 'flex';
-    document.getElementById('btn-volver').style.display = 'none';
-    document.getElementById('btn-hall').style.display = 'block';
-    document.getElementById('btn-trofeos').style.display = 'none';
-    estadoActual = "GALERIA";
-
-    const gridGaleria = document.getElementById('galeria-grid-items');
-    gridGaleria.innerHTML = '';
-    galeriaArteItems.forEach(arte => {
-        const div = document.createElement('div');
-        div.className = 'libro-item';
-        div.innerHTML = `<img src="${arte.img}" alt="${arte.titulo}" style="width:100%; height:110px;"><span>${arte.titulo}</span>`;
-        gridGaleria.appendChild(div);
-    });
-}
+        function irASala(nombreSala) {
+            document.getElementById('hall-central-modal').style.display = 'none';
+            if (nombreSala === 'juegos') {
+                estadoActual = "MENU_PRINCIPAL";
+                document.getElementById('btn-hall').style.display = 'block';
+                cargarMultiversoDiscos();
+            } else if (nombreSala === 'biblioteca') {
+                abrirSalaBiblioteca();
+            } else if (nombreSala === 'cassettes') {
+                abrirSalaCassettes();
+            } else {
+                alert(`¡Sala de ${nombreSala.toUpperCase()} en construcción dentro del multiverso! Volviendo al Hall.`);
+                mostrarHallCentral();
+            }
+        }
 
         // --- SALA DE BIBLIOTECA / LIBROS ---
         function abrirSalaBiblioteca() {
@@ -1779,7 +1615,6 @@ function abrirSalaGaleria() {
         });
 
         animate();
-    <script>
-
+    </script>
 </body>
 </html>
