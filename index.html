@@ -25,40 +25,150 @@
         .btn-sala:hover { border-color: #00ffff; box-shadow: 0 0 20px rgba(0, 255, 255, 0.7); transform: scale(1.03); }
 
         /* Sala de Biblioteca / Estantería de Libros */
-        #biblioteca-modal { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(5, 2, 15, 0.98); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 85; padding: 20px; box-sizing: border-box; display: none; }
-        .biblioteca-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; max-width: 420px; max-height: 68vh; overflow-y: auto; padding: 5px; }
-        .libro-item { background: rgba(20, 10, 40, 0.9); border: 2px solid #ff00ff; border-radius: 8px; padding: 8px; text-align: center; cursor: pointer; transition: transform 0.3s; }
-        .libro-item:hover { transform: scale(1.05); border-color: #00ffff; }
-        .libro-item img { width: 50px; height: 50px; object-fit: cover; border-radius: 4px; margin-bottom: 4px; }
-        .libro-item span { color: #fff; font-size: 9px; font-weight: bold; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        #biblioteca-modal { position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(14, 8, 25, 0.88), rgba(3, 1, 10, 0.98)); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 85; padding: 16px; box-sizing: border-box; overflow-y: auto; }
+        #biblioteca-modal h2 { color: #00ffff; font-size: 20px; letter-spacing: 3px; margin: 0 0 6px; text-shadow: 0 0 14px #00ffff; }
+        #biblioteca-modal > p { color: #ff00ff; font-size: 12px; margin: 0 0 16px; text-align: center; }
+        .biblioteca-mueble { width: min(94vw, 760px); max-height: 68vh; overflow-y: auto; padding: 16px 14px 18px; box-sizing: border-box; border: 9px solid #3d2115; border-radius: 8px; background: linear-gradient(90deg, rgba(0,0,0,.22), transparent 12%, rgba(255,255,255,.04) 50%, transparent 88%, rgba(0,0,0,.24)), repeating-linear-gradient(0deg, #754322 0 18px, #86512b 19px 34px, #60391f 35px 38px); box-shadow: inset 0 0 0 2px #bd8954, inset 0 0 26px #1b0e08, 0 14px 30px rgba(0,0,0,.75); }
+        .biblioteca-grid { display: flex; flex-direction: column; gap: 20px; width: 100%; padding: 2px 4px 8px; box-sizing: border-box; }
+        .biblioteca-fila { position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: end; gap: clamp(6px, 2vw, 18px); height: clamp(108px, 17vh, 148px); padding: 0 5px 9px; }
+        .biblioteca-fila::after { content: ""; position: absolute; z-index: 0; left: -14px; right: -14px; bottom: 0; height: 12px; border-radius: 2px; background: linear-gradient(#c18a51, #76431f 40%, #351b10); box-shadow: 0 5px 0 #28150e, 0 8px 8px rgba(0,0,0,.6); }
+        .libro-item { position: relative; z-index: 1; display: flex; justify-content: center; align-items: center; min-width: 0; height: 90%; padding: 9px 5px; overflow: hidden; border: 1px solid rgba(255, 220, 145, .75); border-left: 5px solid rgba(0,0,0,.35); border-radius: 5px 8px 3px 3px; color: #ffe4a6; background: linear-gradient(90deg, rgba(0,0,0,.36), transparent 17%, rgba(255,255,255,.12) 50%, transparent 88%, rgba(0,0,0,.22)), linear-gradient(135deg, #671e35, #a94748 48%, #51202c); box-shadow: inset 2px 0 4px rgba(255,255,255,.25), inset -3px 0 5px rgba(0,0,0,.35), 2px 2px 4px rgba(0,0,0,.6); cursor: pointer; transition: transform .2s, filter .2s; }
+        .libro-item:nth-child(4n + 2) { background-color: #18495a; background-image: linear-gradient(90deg, rgba(0,0,0,.36), transparent 17%, rgba(255,255,255,.12) 50%, transparent 88%, rgba(0,0,0,.22)), linear-gradient(135deg, #175267, #287a7d 48%, #123743); }
+        .libro-item:nth-child(4n + 3) { background-color: #42305c; background-image: linear-gradient(90deg, rgba(0,0,0,.36), transparent 17%, rgba(255,255,255,.12) 50%, transparent 88%, rgba(0,0,0,.22)), linear-gradient(135deg, #403064, #76529a 48%, #302344); }
+        .libro-item:nth-child(4n) { background-color: #66501f; background-image: linear-gradient(90deg, rgba(0,0,0,.36), transparent 17%, rgba(255,255,255,.12) 50%, transparent 88%, rgba(0,0,0,.22)), linear-gradient(135deg, #6b4e19, #aa8230 48%, #4b3716); }
+        .libro-item:hover, .libro-item:focus-visible { transform: translateY(-6px) scale(1.03); filter: brightness(1.25); outline: 2px solid #00ffff; }
+        .libro-item span { max-height: 100%; color: #fff0c6; font-size: clamp(8px, 1.6vw, 11px); font-weight: bold; letter-spacing: .5px; line-height: 1.2; text-shadow: 0 1px 3px #170b07; writing-mode: vertical-rl; transform: rotate(180deg); overflow: hidden; }
+        .libro-item::before { content: "✦"; position: absolute; top: 4px; left: 50%; transform: translateX(-50%); color: #ffe29a; font-size: 10px; text-shadow: 0 0 5px #ffcc66; }
 
-        /* Visor del Libro Abierto */
-        #visor-libro-modal { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #120826; border: 3px solid #00ffff; border-radius: 12px; width: 92%; max-width: 460px; height: 80vh; max-height: 520px; z-index: 90; display: none; flex-direction: column; box-shadow: 0 0 40px rgba(0, 255, 255, 0.6); padding: 15px; box-sizing: border-box; }
-        .libro-hoja { flex: 1; background: #f4eedb; color: #1a0808; border-radius: 6px; padding: 15px; overflow-y: auto; font-family: 'Georgia', serif; position: relative; box-shadow: inset 0 0 15px rgba(0,0,0,0.3); }
-        .libro-hoja h3 { margin-top: 0; color: #b30059; font-size: 15px; border-bottom: 2px solid #b30059; padding-bottom: 5px; text-align: center; }
+        /* Visor del libro de tapa dura */
+        #visor-libro-modal { position: absolute; inset: 0; z-index: 90; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 18px; box-sizing: border-box; background: rgba(3, 1, 10, .96); }
+        .libro-barra { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: min(94vw, 760px); }
+        #titulo-libro-abierto { color: #ffcc66; margin: 0; font-size: clamp(12px, 3vw, 17px); text-align: center; text-shadow: 0 0 10px rgba(255,204,102,.65); }
+        .libro-control { flex: 0 0 auto; background: rgba(255,0,255,.18); border: 1px solid #ff00ff; color: #fff; padding: 8px 10px; border-radius: 7px; font-size: 10px; font-weight: bold; cursor: pointer; }
+        .libro-estructura { position: relative; width: min(94vw, 760px); height: min(70vh, 590px); min-height: 330px; perspective: 1500px; }
+        .libro-cerrado { position: absolute; inset: 0; display: grid; place-items: center; }
+        .libro-cubierta-boton { position: relative; height: 100%; max-height: 590px; aspect-ratio: .76; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 22px; box-sizing: border-box; overflow: hidden; border: 3px solid #d6ad67; border-radius: 8px 16px 16px 8px; color: #ffe8b4; background: linear-gradient(100deg, rgba(0,0,0,.36), transparent 15%, rgba(255,255,255,.08) 52%, transparent 85%, rgba(0,0,0,.27)), linear-gradient(145deg, #5e173c, #24102d 68%, #12091c); box-shadow: inset 0 0 0 7px rgba(214,173,103,.18), inset 12px 0 13px rgba(0,0,0,.36), 12px 16px 30px rgba(0,0,0,.65); cursor: pointer; transform-origin: left center; }
+        .libro-cubierta-boton::before { content: ""; position: absolute; inset: 13px; border: 1px solid rgba(255,221,160,.68); border-radius: 4px 10px 10px 4px; pointer-events: none; }
+        .libro-cubierta-boton img { width: min(62%, 270px); aspect-ratio: 1; object-fit: cover; border: 4px solid #d6ad67; border-radius: 4px; box-shadow: 0 6px 15px rgba(0,0,0,.6); }
+        .libro-cubierta-sello { color: #ffdf9b; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; }
+        .libro-cubierta-boton strong { max-width: 100%; color: #fff0cf; font-family: Georgia, serif; font-size: clamp(15px, 4vw, 22px); line-height: 1.3; text-shadow: 0 2px 5px #130815; }
+        .libro-cerrado.abriendo .libro-cubierta-boton { animation: abrirCubierta .55s ease-in forwards; }
+        @keyframes abrirCubierta { to { transform: rotateY(-108deg); opacity: .12; } }
+        .libro-abierto { display: none; grid-template-columns: 1fr 1fr; position: absolute; inset: 0; transform-origin: center; border: 8px solid #392211; border-radius: 6px 12px 12px 6px; background: #d9c69a; box-shadow: 0 15px 35px rgba(0,0,0,.65); }
+        .libro-abierto.apareciendo { animation: aparecerLibro .4s ease-out both; }
+        @keyframes aparecerLibro { from { opacity: 0; transform: scale(.94); } to { opacity: 1; transform: scale(1); } }
+        .libro-pagina { position: relative; min-width: 0; min-height: 0; padding: clamp(12px, 3vw, 24px); overflow-y: auto; box-sizing: border-box; color: #261c13; font-family: Georgia, serif; background: linear-gradient(90deg, rgba(95,65,35,.08), transparent 12%), #f4eedb; box-shadow: inset 0 0 16px rgba(76,48,20,.18); }
+        .libro-pagina-izquierda { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center; border-right: 1px solid rgba(86,56,29,.35); }
+        .libro-pagina-izquierda img { width: min(90%, 230px); aspect-ratio: 1; object-fit: cover; border: 5px solid #b99b69; box-shadow: 0 6px 16px rgba(45,29,15,.3); }
+        .libro-pagina-izquierda strong { font-size: clamp(12px, 2vw, 17px); line-height: 1.4; }
+        .libro-pagina-derecha { transform-origin: left center; }
+        .libro-pagina-derecha.pasando { animation: pasarPagina .52s ease-in-out; }
+        @keyframes pasarPagina { 0% { transform: rotateY(0); } 45% { transform: rotateY(-82deg); opacity: .25; } 55% { transform: rotateY(-82deg); opacity: .25; } 100% { transform: rotateY(0); opacity: 1; } }
+        .libro-pagina h3 { margin: 0 0 12px; color: #74324a; font-size: clamp(15px, 3vw, 20px); text-align: center; border-bottom: 1px solid #b99b69; padding-bottom: 8px; }
+        .libro-pagina p { font-size: 12px; line-height: 1.65; }
         .lista-canciones-libro { list-style: none; padding: 0; margin: 10px 0; }
-        .lista-canciones-libro li { padding: 8px 10px; margin-bottom: 5px; background: rgba(0,0,0,0.05); border-left: 3px solid #b30059; cursor: pointer; font-size: 11px; font-weight: bold; transition: background 0.2s; }
-        .lista-canciones-libro li:hover { background: rgba(179, 0, 89, 0.15); }
-        .letra-contenedor { font-size: 12px; line-height: 1.6; color: #222; white-space: pre-line; margin-top: 10px; background: rgba(255,255,255,0.7); padding: 10px; border-radius: 6px; }
+        .lista-canciones-libro li { margin-bottom: 6px; }
+        .lista-canciones-libro button { width: 100%; padding: 9px 8px; color: #34241b; background: rgba(116,50,74,.06); border: 0; border-bottom: 1px dotted #b99b69; text-align: left; font-family: Georgia, serif; font-size: clamp(10px, 2vw, 13px); cursor: pointer; }
+        .lista-canciones-libro button:hover, .lista-canciones-libro button:focus-visible { color: #7c1749; background: rgba(179,0,89,.12); outline: 1px solid #b30059; }
+        .libro-indicacion { color: #6c5942; font-style: italic; text-align: center; }
+        .libro-pagina-controles { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-top: 14px; }
+        .libro-pagina-controles button { padding: 7px 9px; color: #fff; background: #74324a; border: 0; border-radius: 5px; font-size: 10px; cursor: pointer; }
+        .letra-contenedor { font-size: 12px; line-height: 1.7; color: #3d3022; margin-top: 12px; padding: 12px; border-left: 3px solid #b99b69; background: rgba(255,255,255,.42); }
+        @media (max-width: 480px) {
+            .biblioteca-mueble { max-height: 64vh; padding: 12px 10px 15px; border-width: 7px; }
+            .biblioteca-grid { gap: 16px; }
+            .biblioteca-fila { height: clamp(100px, 15vh, 132px); gap: 5px; }
+            .libro-item { padding: 7px 3px; }
+            .libro-estructura { width: 96vw; height: 67vh; min-height: 300px; }
+            .libro-abierto { border-width: 5px; }
+            .libro-pagina { padding: 10px 8px; }
+            .libro-pagina-izquierda img { width: 96%; border-width: 3px; }
+            .libro-pagina p, .letra-contenedor { font-size: 10px; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .libro-cerrado.abriendo .libro-cubierta-boton, .libro-abierto.apareciendo, .libro-pagina-derecha.pasando { animation-duration: .01ms; }
+        }
 
         /* Sala de Cassettes / Radiograbador 80s */
-        #cassettes-modal { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(10, 5, 2, 0.98); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 85; padding: 15px; box-sizing: border-box; display: none; }
-        .radiograbador-panel { background: linear-gradient(135deg, #2b2b2b, #1a1a1a); border: 4px solid #555; border-radius: 16px; padding: 20px; width: 100%; max-width: 420px; box-shadow: 0 0 30px rgba(0,0,0,0.8), inset 0 0 15px rgba(255,255,255,0.1); text-align: center; }
-        .pletina-cassette { background: #111; border: 3px solid #333; border-radius: 8px; height: 110px; margin-bottom: 15px; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; box-shadow: inset 0 0 10px #000; }
-        .ventana-cassette { width: 180px; height: 50px; background: rgba(255,255,255,0.15); border: 2px solid #444; border-radius: 4px; display: flex; justify-content: space-around; align-items: center; position: relative; }
-        .carrete-cassette { width: 32px; height: 32px; border: 3px dashed #fff; border-radius: 50%; display: flex; justify-content: center; align-items: center; }
+        #cassettes-modal { position: absolute; inset: 0; background: radial-gradient(ellipse at center, #202833, #0b0f15 68%, #030407); display: none; flex-direction: column; justify-content: center; align-items: center; gap: 10px; z-index: 85; padding: 14px; box-sizing: border-box; overflow-y: auto; }
+        #cassettes-modal > h2 { color: #ffcc66; font-size: clamp(16px, 4vw, 21px); letter-spacing: 3px; margin: 0; text-align: center; text-shadow: 0 0 12px rgba(255,204,102,.8); }
+        #cassettes-modal > p { color: #00ffff; font-size: 11px; text-align: center; margin: 0; }
+        .radiograbador-panel { position: relative; display: grid; grid-template-columns: minmax(92px, 1fr) minmax(0, 2.25fr) minmax(92px, 1fr); align-items: center; gap: clamp(8px, 2vw, 18px); width: min(86vw, 620px); min-height: 215px; padding: clamp(14px, 3vw, 24px); box-sizing: border-box; border: 7px solid #aeb8c1; border-radius: 19px; background: linear-gradient(145deg, #f0f3f5 0%, #a8b2bb 10%, #555f68 19%, #262d34 31%, #69747d 49%, #30383f 67%, #929da6 88%, #dce1e5 100%); box-shadow: inset 0 0 0 3px #363e45, inset 0 0 20px #171c21, 0 18px 30px rgba(0,0,0,.7), 0 0 16px rgba(190,220,245,.12); transition: width .42s ease, min-height .42s ease, padding .42s ease; }
+        .radio-antena { position: absolute; left: 14%; top: -13px; width: 40%; height: 5px; border-radius: 5px; transform: rotate(-12deg); transform-origin: left center; background: linear-gradient(#ddd, #777); box-shadow: 0 1px 3px #000; }
+        .radio-parlante { position: relative; display: grid; place-items: center; width: 100%; aspect-ratio: 1; border: 4px solid #14191e; border-radius: 50%; background: radial-gradient(circle, #d4dbe0 0 3%, #56616a 4% 9%, #181d22 10% 15%, #828d96 16% 18%, #252b31 19% 68%, #a6b0b8 69% 72%, #12161a 73% 100%); box-shadow: inset 0 0 10px #000, 0 2px 3px rgba(255,255,255,.45), 0 0 0 2px rgba(225,235,243,.3); transition: opacity .3s, transform .4s; }
+        .radio-parlante::before { content: ""; position: absolute; inset: 13%; border: 2px dashed rgba(205,220,232,.5); border-radius: 50%; }
+        .radio-parlante::after { content: ""; width: 24%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #e2e7eb, #69747c 60%, #111); box-shadow: 0 0 5px #000; }
+        .radio-centro { display: flex; min-width: 0; flex-direction: column; align-items: center; gap: 10px; }
+        .radio-display { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 38px; padding: 6px 10px; box-sizing: border-box; border: 2px solid #151a1f; border-radius: 5px; color: #ffca65; background: linear-gradient(#080b0d, #171d21); font-family: monospace; font-size: clamp(9px, 2vw, 12px); text-shadow: 0 0 7px #ff8c32; box-shadow: inset 0 0 8px #000, 0 0 0 1px rgba(238,244,248,.42); }
+        .radio-display span:last-child { color: #8ee7c7; }
+        .radio-perillas { display: flex; justify-content: space-around; width: 100%; }
+        .radio-perilla { width: clamp(18px, 5vw, 30px); aspect-ratio: 1; border: 3px solid #20262b; border-radius: 50%; background: repeating-conic-gradient(#d2d9de 0 8deg, #59636b 9deg 19deg); box-shadow: 0 2px 3px #000, inset 0 0 2px #fff; }
+        .pletina-cassette { display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; width: 100%; min-height: 100px; padding: 10px; box-sizing: border-box; border: 3px solid #11171c; border-radius: 7px; background: linear-gradient(145deg, #69737b, #252b30 28%, #0c1014); box-shadow: inset 0 0 13px #000, 0 1px 1px rgba(255,255,255,.4), 0 0 0 1px rgba(221,231,238,.45); transition: min-height .4s, padding .4s; }
+        .pletina-cassette::before, .pletina-cassette::after { content: ""; position: absolute; top: 10px; width: 5px; height: 5px; border-radius: 50%; background: #ffb348; box-shadow: 0 0 6px #ff8c00; }
+        .pletina-cassette::before { left: 9px; }
+        .pletina-cassette::after { right: 9px; }
+        .ventana-cassette { display: flex; justify-content: space-around; align-items: center; position: relative; width: min(90%, 250px); height: 54px; border: 3px solid #87929a; border-radius: 4px; background: linear-gradient(110deg, rgba(255,255,255,.2), rgba(0,0,0,.48)), #151a1e; box-shadow: inset 0 0 8px #000; }
+        .carrete-cassette { display: grid; place-items: center; width: 34px; aspect-ratio: 1; border: 3px dashed #ddd2b4; border-radius: 50%; background: radial-gradient(circle, #a39b86 0 12%, #28251e 13% 40%, transparent 42%); }
         .carrete-girando { animation: girarCarrete 2s linear infinite; }
         @keyframes girarCarrete { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        
-        .botones-radiograbador { display: flex; gap: 8px; justify-content: center; margin-top: 10px; }
-        .btn-radio { background: #444; border: 2px solid #222; color: #fff; padding: 8px 12px; border-radius: 4px; font-size: 10px; font-weight: bold; cursor: pointer; box-shadow: 0 4px #111; }
-        .btn-radio:active { transform: translateY(2px); box-shadow: 0 2px #111; }
-
-        .estante-cassettes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; width: 100%; max-width: 420px; max-height: 35vh; overflow-y: auto; margin-top: 15px; }
-        .cassette-item { background: linear-gradient(45deg, #333, #222); border: 2px solid #ffcc00; border-radius: 6px; padding: 6px; text-align: center; cursor: pointer; transition: transform 0.2s; }
-        .cassette-item:hover { transform: scale(1.05); }
-        .cassette-item img { width: 40px; height: 40px; object-fit: cover; border-radius: 3px; }
-        .cassette-item span { color: #ffcc00; font-size: 8px; font-weight: bold; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 3px; }
+        #txt-cassette-actual { max-width: 64%; overflow: hidden; color: #ffcb73; font-size: clamp(8px, 1.8vw, 12px); font-weight: bold; line-height: 1.4; text-align: center; text-overflow: ellipsis; text-shadow: 0 1px 3px #000; white-space: nowrap; }
+        .radio-meter { display: flex; align-items: end; justify-content: center; gap: 3px; height: 16px; }
+        .radio-meter span { width: 4px; height: 4px; border-radius: 2px; background: #58e6b4; }
+        .radiograbador-panel.sonando .radio-meter span { animation: vumetro .45s ease-in-out infinite alternate; }
+        .radiograbador-panel.sonando .radio-meter span:nth-child(2n) { animation-delay: .2s; }
+        @keyframes vumetro { to { height: 15px; } }
+        .botones-radiograbador { display: flex; flex-wrap: wrap; gap: 7px; justify-content: center; margin-top: 2px; }
+        .btn-radio { background: linear-gradient(#e2e6e9, #6d777f); border: 1px solid #20262b; color: #101418; padding: 8px 11px; border-radius: 4px; font-size: 10px; font-weight: bold; cursor: pointer; box-shadow: 0 3px #101417, inset 0 1px rgba(255,255,255,.7); }
+        .btn-radio:active { transform: translateY(2px); box-shadow: 0 1px #111; }
+        .botones-radiograbador button:last-child { color: #ffcc66; }
+        .radio-logo { color: #edf1f4; font-size: 9px; letter-spacing: 3px; text-shadow: 0 1px 3px #15191d; }
+        .estante-cassettes { display: grid; grid-template-columns: repeat(auto-fit, minmax(104px, 1fr)); gap: 12px; align-items: end; width: min(94vw, 700px); max-height: 34vh; overflow-y: auto; padding: 8px 5px 14px; box-sizing: border-box; border-bottom: 8px solid #684021; background: linear-gradient(transparent 90%, rgba(0,0,0,.32)); }
+        .cassette-item { position: relative; display: grid; place-items: center; min-width: 0; min-height: 88px; padding: 7px; border: 2px solid rgba(255,255,255,.45); border-radius: 4px; background: linear-gradient(135deg, rgba(255,255,255,.18), rgba(255,255,255,.03) 35%, rgba(0,0,0,.2)), rgba(20,20,20,.72); box-shadow: 2px 4px 6px rgba(0,0,0,.6), inset 0 0 0 1px rgba(255,255,255,.1); cursor: pointer; transition: transform .22s, opacity .25s, filter .22s; }
+        .cassette-item:hover, .cassette-item:focus-visible { transform: translateY(-5px) scale(1.04); filter: brightness(1.24); outline: 2px solid #ffcc66; }
+        .cassette-item.seleccionado { outline: 2px solid #00ffff; box-shadow: 0 0 13px rgba(0,255,255,.55); }
+        .cassette-caja { position: relative; display: flex; justify-content: center; align-items: center; width: 100%; max-width: 124px; aspect-ratio: 1.5; padding: 5px; box-sizing: border-box; border: 3px solid rgba(230,235,225,.65); border-radius: 4px; background: linear-gradient(135deg, rgba(255,255,255,.24), rgba(255,255,255,.04) 48%, rgba(0,0,0,.28)); box-shadow: inset 0 0 8px rgba(255,255,255,.2), 0 2px 4px #080808; perspective: 500px; transition: transform .35s; }
+        .cassette-caja::after { content: ""; position: absolute; inset: 4px; border: 1px solid rgba(255,255,255,.42); pointer-events: none; }
+        .cassette-caja.abierta { transform: rotate(-5deg) translateY(-4px); border-color: #ffce78; }
+        .cassette-tapa-caja { position: absolute; z-index: 2; inset: -2px; border: 2px solid rgba(245,248,235,.58); border-radius: 3px; background: linear-gradient(135deg, rgba(255,255,255,.28), rgba(210,225,216,.06) 50%, rgba(255,255,255,.18)); transform-origin: left center; transition: transform .38s ease; }
+        .cassette-caja.abierta .cassette-tapa-caja { transform: rotateY(-68deg); }
+        .cassette-cinta { position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 3px; width: 84%; height: 82%; padding: 3px; box-sizing: border-box; border: 2px solid #1c1c1c; border-radius: 5px; background: linear-gradient(155deg, #e8dfc8, #9f9277); box-shadow: inset 0 0 4px #514a3c; transition: transform .3s; }
+        .cassette-cinta::before { content: ""; position: absolute; bottom: 4px; left: 18%; right: 18%; height: 9px; border: 1px solid #514a3c; border-radius: 2px; background: #24231f; }
+        .cassette-reelitos { display: flex; justify-content: space-around; width: 65%; }
+        .cassette-reelitos i { width: 9px; aspect-ratio: 1; border: 2px solid #39362f; border-radius: 50%; background: #d6c8a6; }
+        .cassette-etiqueta { display: flex; align-items: center; gap: 3px; width: 90%; min-width: 0; padding: 2px; box-sizing: border-box; background: #f5e9c9; }
+        .cassette-etiqueta img { width: 22px; aspect-ratio: 1; object-fit: cover; }
+        .cassette-etiqueta span { min-width: 0; color: #29231a; font-size: 7px; font-weight: bold; line-height: 1.15; text-align: center; }
+        .cassette-spine { color: #ffedcc; font-size: 9px; font-weight: bold; line-height: 1.25; text-align: center; }
+        .cassette-item.abriendo .cassette-cinta { animation: sacarCassette .5s ease-in forwards; }
+        @keyframes sacarCassette { to { transform: translateY(-27px) rotate(-8deg) scale(1.18); } }
+        .cassette-item.abierta { border-color: #ffcc66; }
+        .cassettes-instruccion { color: #f2d6a3; font-size: 10px; text-align: center; margin: 0; }
+        .radiograbador-panel.reproductor-ampliado { width: min(96vw, 800px); min-height: 300px; padding: clamp(16px, 4vw, 32px); grid-template-columns: minmax(90px, .8fr) minmax(0, 2.6fr) minmax(90px, .8fr); }
+        .radiograbador-panel.reproductor-ampliado .pletina-cassette { min-height: 175px; }
+        .radiograbador-panel.reproductor-ampliado .ventana-cassette { width: min(94%, 360px); height: 88px; }
+        .radiograbador-panel.reproductor-ampliado .carrete-cassette { width: 48px; }
+        .radiograbador-panel.reproductor-ampliado .radio-parlante { transform: scale(.9); }
+        #cassettes-modal.reproductor-activo > h2, #cassettes-modal.reproductor-activo > p, #cassettes-modal.reproductor-activo .estante-cassettes, #cassettes-modal.reproductor-activo .cassettes-instruccion { display: none; }
+        #cassettes-modal.reproductor-activo .radiograbador-panel { margin: auto; }
+        @media (max-width: 480px) {
+            #cassettes-modal { justify-content: flex-start; padding-top: 22px; }
+            .radiograbador-panel { grid-template-columns: 62px minmax(0, 1fr) 62px; gap: 7px; min-height: 190px; padding: 12px 8px; border-width: 5px; }
+            .radio-parlante { border-width: 3px; }
+            .radio-display { padding: 5px; font-size: 8px; }
+            .pletina-cassette { min-height: 95px; padding: 6px; }
+            .ventana-cassette { width: 94%; height: 48px; }
+            .carrete-cassette { width: 27px; }
+            .estante-cassettes { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; max-height: 35vh; }
+            .cassette-item { min-height: 74px; padding: 5px; }
+            .cassette-etiqueta img { width: 18px; }
+            .cassette-etiqueta span { font-size: 6px; }
+            .radiograbador-panel.reproductor-ampliado { grid-template-columns: 48px minmax(0, 1fr) 48px; width: 98vw; min-height: 250px; padding: 12px 5px; }
+            .radiograbador-panel.reproductor-ampliado .pletina-cassette { min-height: 150px; }
+            .radiograbador-panel.reproductor-ampliado .ventana-cassette { height: 68px; }
+            .radiograbador-panel.reproductor-ampliado .carrete-cassette { width: 34px; }
+            .radiograbador-panel.reproductor-ampliado .radio-parlante { transform: scale(.84); }
+            #cassettes-modal.reproductor-activo { justify-content: center; }
+        }
 
         .sala-multimedia { position: absolute; inset: 0; z-index: 85; display: none; flex-direction: column; align-items: center; gap: 12px; overflow-y: auto; padding: 22px 16px 24px; box-sizing: border-box; background: rgba(5, 2, 18, 0.98); color: #fff; text-align: center; }
         .sala-multimedia h2 { color: #00ffff; font-size: 18px; letter-spacing: 2px; margin: 0; text-shadow: 0 0 10px #00ffff; }
@@ -72,9 +182,16 @@
         .sala-album.seleccionado { border: 2px solid #00ffff; box-shadow: 0 0 12px rgba(0, 255, 255, 0.45); }
         .sala-album img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 4px; margin-bottom: 5px; }
         .vinilo-panel { width: min(92vw, 340px); display: flex; flex-direction: column; align-items: center; gap: 9px; }
-        .vinilo-disco { width: min(58vw, 210px); aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center; background: repeating-radial-gradient(circle, #15121b 0 3px, #292331 4px 5px, #100e14 6px 8px); border: 5px solid #33303b; box-shadow: 0 0 22px rgba(255, 0, 255, 0.38); }
+        .vinilo-plato { position: relative; width: min(64vw, 238px); aspect-ratio: 1; display: grid; place-items: center; border: 9px solid #545b62; border-radius: 50%; box-sizing: border-box; background: radial-gradient(circle, #afb7bc 0 4%, #353b40 5% 11%, #16191d 12% 100%); box-shadow: 0 0 0 3px #22272c, inset 0 0 10px #000, 0 0 20px rgba(255, 0, 255, 0.32); }
+        .vinilo-disco { position: relative; width: 88%; aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center; background: repeating-radial-gradient(circle, #15121b 0 3px, #292331 4px 5px, #100e14 6px 8px); border: 3px solid #09090c; box-shadow: 0 0 12px #000; }
         .vinilo-disco.girando { animation: girarCarrete 4s linear infinite; }
         .vinilo-etiqueta { width: 37%; aspect-ratio: 1; border-radius: 50%; object-fit: cover; border: 3px solid #ff00ff; box-shadow: 0 0 12px #ff00ff; }
+        .vinilo-brazo-svg { position: absolute; z-index: 2; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+        .vinilo-brazo { transform: translateY(0); transition: transform .3s ease; }
+        .vinilo-brazo.levantada { transform: translateY(-9px); }
+        .vinilo-brazo-giro { transform-origin: 205px 32px; transition: transform .38s ease-in-out; }
+        .vinilo-pua { fill: #ff4f7d; stroke: #ffe9ef; stroke-width: 1.5; }
+        .vinilo-estado { min-height: 15px; color: #00ffff; font-size: 10px; font-weight: bold; letter-spacing: .5px; }
         .vinilo-titulo { color: #fff; font-size: 12px; font-weight: bold; line-height: 1.4; }
         .vinilo-temas { width: 100%; max-height: 20vh; overflow-y: auto; display: grid; gap: 5px; }
         .vinilo-tema { border: 1px solid #44334f; background: rgba(255, 255, 255, 0.05); border-radius: 6px; color: #ddd; text-align: left; padding: 8px 10px; font-size: 10px; cursor: pointer; }
@@ -183,41 +300,73 @@
 
     <!-- Sala de Biblioteca / Estantería de Libros -->
     <div id="biblioteca-modal">
-        <h2 style="color: #00ffff; font-size: 18px; letter-spacing: 2px; margin-bottom: 5px; text-shadow: 0 0 10px #00ffff;">BIBLIOTECA DE DISCOS</h2>
-        <p style="color: #ff00ff; font-size: 11px; margin-bottom: 12px;">Elegí un libro para abrirlo, ver sus canciones y escuchar la música</p>
-        <div class="biblioteca-grid" id="biblioteca-estanteria"></div>
+        <h2>BIBLIOTECA DE DISCOS</h2>
+        <p>Elegí un volumen por su lomo; adentro te espera el índice musical.</p>
+        <div class="biblioteca-mueble">
+            <div class="biblioteca-grid" id="biblioteca-estanteria"></div>
+        </div>
         <button class="btn-cerrar-trofeos" onclick="mostrarHallCentral()">VOLVER AL HALL</button>
     </div>
 
-    <!-- Visor del Libro Abierto -->
+    <!-- Libro de tapa dura -->
     <div id="visor-libro-modal">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <h3 id="titulo-libro-abierto" style="color: #ffcc00; margin: 0; font-size: 14px;">TÍTULO DISCO</h3>
-            <button onclick="cerrarVisorLibro()" style="background: #ff0055; border: none; color: #fff; padding: 5px 10px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 11px;">📖 CERRAR LIBRO</button>
+        <div class="libro-barra">
+            <button class="libro-control" onclick="cerrarVisorLibro()">⬅ ESTANTERÍA</button>
+            <h3 id="titulo-libro-abierto">TÍTULO DISCO</h3>
+            <button class="libro-control" onclick="cerrarVisorLibro()">CERRAR ✕</button>
         </div>
-        <div class="libro-hoja" id="contenido-hoja-libro"></div>
+        <div class="libro-estructura">
+            <div id="libro-cerrado" class="libro-cerrado">
+                <button id="libro-cubierta-boton" class="libro-cubierta-boton" onclick="abrirTapaLibro()" aria-label="Abrir libro">
+                    <span class="libro-cubierta-sello">Edición de colección</span>
+                    <img id="libro-cubierta-imagen" src="" alt="Tapa del álbum">
+                    <strong id="libro-cubierta-titulo"></strong>
+                    <span class="libro-cubierta-sello">Tocá la tapa para abrir</span>
+                </button>
+            </div>
+            <div id="libro-abierto" class="libro-abierto">
+                <div class="libro-pagina libro-pagina-izquierda">
+                    <img id="libro-imagen-interior" src="" alt="Arte del álbum">
+                    <strong id="libro-titulo-interior"></strong>
+                    <span class="libro-indicacion">Colección del Multiverso Sonoro</span>
+                </div>
+                <div class="libro-pagina libro-pagina-derecha" id="contenido-hoja-libro" aria-live="polite"></div>
+            </div>
+        </div>
     </div>
 
     <!-- Sala de Cassettes / Radiograbador 80s -->
     <div id="cassettes-modal">
-        <h2 style="color: #ffcc00; font-size: 17px; letter-spacing: 2px; margin-bottom: 5px; text-shadow: 0 0 10px #ffcc00;">RADIOGRABADOR 80S</h2>
-        <p style="color: #00ffff; font-size: 11px; margin-bottom: 10px;">Elegí un cassette del estante, colocalo en la pletina y dale PLAY</p>
+        <h2>RADIOGRABADOR 80S</h2>
+        <p>Elegí una caja del estante para poner el cassette y escuchar el álbum.</p>
         
         <div class="radiograbador-panel">
-            <div id="txt-cassette-actual" style="color: #ff00ff; font-size: 12px; font-weight: bold; margin-bottom: 8px;">CASSETTE: NINGUNO</div>
-            <div class="pletina-cassette">
-                <div class="ventana-cassette">
-                    <div id="carrete-izq" class="carrete-cassette"></div>
-                    <div id="carrete-der" class="carrete-cassette"></div>
+            <div class="radio-antena"></div>
+            <div class="radio-parlante" aria-hidden="true"></div>
+            <div class="radio-centro">
+                <div class="radio-logo">STEREO · AUTO REVERSE</div>
+                <div class="radio-display">
+                    <span id="txt-radio-frecuencia">FM 88.8 MHz</span>
+                    <span id="txt-cassette-actual" aria-live="polite">CASSETTE: NINGUNO</span>
+                </div>
+                <div class="radio-perillas" aria-hidden="true"><span class="radio-perilla"></span><span class="radio-perilla"></span><span class="radio-perilla"></span></div>
+                <div class="pletina-cassette">
+                    <div class="ventana-cassette">
+                        <div id="carrete-izq" class="carrete-cassette"></div>
+                        <div id="carrete-der" class="carrete-cassette"></div>
+                    </div>
+                    <div class="radio-meter" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+                </div>
+                <div class="botones-radiograbador">
+                    <button class="btn-radio" onclick="accionarCassette('play')">▶ PLAY</button>
+                    <button class="btn-radio" onclick="accionarCassette('stop')">⏹ STOP</button>
+                    <button class="btn-radio" onclick="accionarCassette('eject')">⏏ EJECT</button>
                 </div>
             </div>
-            <div class="botones-radiograbador">
-                <button class="btn-radio" onclick="accionarCassette('play')">▶ PLAY</button>
-                <button class="btn-radio" onclick="accionarCassette('stop')">⏹ STOP</button>
-                <button class="btn-radio" onclick="accionarCassette('eject')">⏏ EJECT</button>
-            </div>
+            <div class="radio-parlante" aria-hidden="true"></div>
         </div>
 
+        <p id="cassettes-instruccion" class="cassettes-instruccion">CAJAS DE CASSETTE · ELEGÍ UNA PARA ABRIRLA</p>
         <div class="estante-cassettes" id="estante-cassettes-grid"></div>
         <button class="btn-cerrar-trofeos" onclick="mostrarHallCentral()" style="margin-top: 10px;">VOLVER AL HALL</button>
     </div>
@@ -226,11 +375,25 @@
         <h2>TOCADISCOS VINILOS</h2>
         <p>Elegí una tapa, seleccioná un tema y poné el disco a girar.</p>
         <div class="vinilo-panel">
-            <div id="vinilo-disco" class="vinilo-disco"><img id="vinilo-etiqueta" class="vinilo-etiqueta" src="" alt="Tapa del disco seleccionado"></div>
+            <div class="vinilo-plato">
+                <div id="vinilo-disco" class="vinilo-disco"><img id="vinilo-etiqueta" class="vinilo-etiqueta" src="" alt="Tapa del disco seleccionado"></div>
+                <svg class="vinilo-brazo-svg" viewBox="0 0 240 240" aria-hidden="true">
+                    <circle cx="205" cy="32" r="12" fill="#c9d1d8" stroke="#68727a" stroke-width="3"></circle>
+                    <g id="vinilo-brazo" class="vinilo-brazo">
+                        <g id="vinilo-brazo-giro" class="vinilo-brazo-giro">
+                            <path d="M205 32 L196 43 L104 151" fill="none" stroke="#22272d" stroke-width="11" stroke-linecap="round"></path>
+                            <path d="M205 32 L196 43 L104 151" fill="none" stroke="#cbd2d8" stroke-width="6" stroke-linecap="round"></path>
+                            <path d="M101 148 L110 155 L100 165 L94 158 Z" fill="#747e86" stroke="#252a2f" stroke-width="2"></path>
+                            <path class="vinilo-pua" d="M97 162 L103 166 L98 174 Z"></path>
+                        </g>
+                    </g>
+                </svg>
+            </div>
             <div id="vinilo-titulo" class="vinilo-titulo" aria-live="polite">Elegí un álbum para comenzar</div>
+            <div id="vinilo-estado" class="vinilo-estado" aria-live="polite">PÚA EN REPOSO</div>
             <div class="sala-acciones">
                 <button class="sala-btn" onclick="reproducirVinilo()">▶ REPRODUCIR</button>
-                <button class="sala-btn secundario" onclick="detenerReproduccionSala()">⏹ DETENER</button>
+                <button class="sala-btn secundario" onclick="detenerVinilo()">⏹ DETENER</button>
             </div>
             <div id="vinilo-temas" class="vinilo-temas" aria-label="Temas del álbum"></div>
         </div>
@@ -452,6 +615,8 @@
 
         function mostrarHallCentral() {
             if (["VINILOS", "GALERIA", "CINE"].includes(estadoActual)) detenerReproduccionSala();
+            if (estadoActual === "BIBLIOTECA" && document.getElementById('visor-libro-modal').style.display !== 'none') cerrarVisorLibro();
+            if (estadoActual === "CASSETTES") detenerSalaCassettes();
             ocultarTodosLosModales();
             document.getElementById('hall-central-modal').style.display = 'flex';
             document.getElementById('ui-capa').style.display = 'flex';
@@ -494,17 +659,26 @@
             estadoActual = "BIBLIOTECA";
 
             const estanteria = document.getElementById('biblioteca-estanteria');
-            estanteria.innerHTML = '';
-            listaDiscos.forEach(disco => {
-                const div = document.createElement('div');
-                div.className = 'libro-item';
-                div.innerHTML = `<img src="${disco.fondo}" alt="${disco.nombre}"><span>${disco.nombre}</span>`;
-                div.onclick = () => abrirLibroDisco(disco);
-                estanteria.appendChild(div);
-            });
+            estanteria.replaceChildren();
+            for (let inicio = 0; inicio < listaDiscos.length; inicio += 4) {
+                const fila = document.createElement('div');
+                fila.className = 'biblioteca-fila';
+                listaDiscos.slice(inicio, inicio + 4).forEach(disco => {
+                    const libro = document.createElement('button');
+                    libro.type = 'button';
+                    libro.className = 'libro-item';
+                    libro.setAttribute('aria-label', `Abrir el libro ${disco.nombre}`);
+                    const titulo = document.createElement('span');
+                    titulo.textContent = disco.nombre;
+                    libro.appendChild(titulo);
+                    libro.addEventListener('click', () => abrirLibroDisco(disco));
+                    fila.appendChild(libro);
+                });
+                estanteria.appendChild(fila);
+            }
         }
 
-        function abrirLibroDisco(disco) {
+        function abrirLibroDiscoLegacy(disco) {
             document.getElementById('titulo-libro-abierto').innerText = disco.nombre;
             const hoja = document.getElementById('contenido-hoja-libro');
             
@@ -532,25 +706,183 @@
             document.getElementById('visor-libro-modal').style.display = 'flex';
         }
 
-        function reproducirYVerLetra(trackId, segundos, nombreTema, nombreDisco) {
-            reproducirAudio(trackId, segundos);
+        let discoLibroActual = null;
+        let cancionesLibroActual = [];
+        let indiceCancionLibroActual = 0;
+        let temporizadoresLibro = [];
+
+        function limpiarTemporizadoresLibro() {
+            temporizadoresLibro.forEach(timer => clearTimeout(timer));
+            temporizadoresLibro = [];
+        }
+
+        function programarAccionLibro(accion, demora) {
+            const timer = setTimeout(() => {
+                temporizadoresLibro = temporizadoresLibro.filter(id => id !== timer);
+                accion();
+            }, demora);
+            temporizadoresLibro.push(timer);
+        }
+
+        function abrirLibroDisco(disco) {
+            limpiarTemporizadoresLibro();
+            discoLibroActual = disco;
+            cancionesLibroActual = obtenerTemasDisco(disco);
+            indiceCancionLibroActual = 0;
+            document.getElementById('titulo-libro-abierto').textContent = disco.nombre;
+            document.getElementById('libro-cubierta-imagen').src = disco.fondo;
+            document.getElementById('libro-cubierta-imagen').alt = `Tapa de ${disco.nombre}`;
+            document.getElementById('libro-cubierta-titulo').textContent = disco.nombre;
+            document.getElementById('libro-imagen-interior').src = disco.fondo;
+            document.getElementById('libro-imagen-interior').alt = `Arte de ${disco.nombre}`;
+            document.getElementById('libro-titulo-interior').textContent = disco.nombre;
+            document.getElementById('libro-cerrado').classList.remove('abriendo');
+            document.getElementById('libro-cerrado').style.display = 'grid';
+            document.getElementById('libro-abierto').style.display = 'none';
+            document.getElementById('libro-abierto').classList.remove('apareciendo');
+            document.getElementById('libro-cubierta-boton').disabled = false;
+            document.getElementById('visor-libro-modal').style.display = 'flex';
+        }
+
+        function abrirTapaLibro() {
+            const cerrada = document.getElementById('libro-cerrado');
+            if (!discoLibroActual || cerrada.classList.contains('abriendo') || document.getElementById('libro-abierto').style.display === 'grid') return;
+            limpiarTemporizadoresLibro();
+            document.getElementById('libro-cubierta-boton').disabled = true;
+            cerrada.classList.add('abriendo');
+            programarAccionLibro(() => {
+                cerrada.style.display = 'none';
+                const abierto = document.getElementById('libro-abierto');
+                abierto.style.display = 'grid';
+                abierto.classList.add('apareciendo');
+                renderizarIndiceLibro();
+                programarAccionLibro(() => abierto.classList.remove('apareciendo'), 420);
+            }, 550);
+        }
+
+        function renderizarIndiceLibro() {
             const hoja = document.getElementById('contenido-hoja-libro');
-            hoja.innerHTML = `
-                <button onclick="abrirLibroDisco(listaDiscos.find(d => d.nombre === '${nombreDisco}'))" style="background:#b30059; color:#fff; border:none; padding:4px 10px; border-radius:4px; font-size:10px; cursor:pointer; margin-bottom:10px;">⬅️ VOLVER AL ÍNDICE</button>
-                <h3>🎵 ${nombreTema}</h3>
-                <p style="text-align:center; font-size:11px; color:#666; margin:0;">Disco: ${nombreDisco}</p>
-                <div class="letra-contenedor">
-                    Reproduciendo sintonía del Universo Cerati... Disfrutá de la música de fondo mientras recorrés las páginas de la biblioteca.
-                </div>
-            `;
+            hoja.classList.remove('pasando');
+            hoja.replaceChildren();
+            const titulo = document.createElement('h3');
+            titulo.textContent = 'Índice de canciones';
+            const indicacion = document.createElement('p');
+            indicacion.className = 'libro-indicacion';
+            indicacion.textContent = 'Elegí un tema para pasar a su página y escucharlo.';
+            const lista = document.createElement('ol');
+            lista.className = 'lista-canciones-libro';
+            cancionesLibroActual.forEach((cancion, indice) => {
+                const item = document.createElement('li');
+                const boton = document.createElement('button');
+                boton.type = 'button';
+                boton.textContent = `${indice + 1}. ${cancion.nombre}`;
+                boton.addEventListener('click', () => reproducirYVerLetra(
+                    discoLibroActual.trackId,
+                    cancion.seg || 0,
+                    cancion.nombre,
+                    discoLibroActual.nombre,
+                    indice
+                ));
+                item.appendChild(boton);
+                lista.appendChild(item);
+            });
+            hoja.append(titulo, indicacion, lista);
+        }
+
+        function cambiarPaginaLibro(renderizar) {
+            limpiarTemporizadoresLibro();
+            const hoja = document.getElementById('contenido-hoja-libro');
+            hoja.classList.remove('pasando');
+            void hoja.offsetWidth;
+            hoja.classList.add('pasando');
+            programarAccionLibro(() => {
+                renderizar();
+                hoja.scrollTop = 0;
+            }, 260);
+            programarAccionLibro(() => hoja.classList.remove('pasando'), 540);
+        }
+
+        function reproducirYVerLetra(trackId, segundos, nombreTema, nombreDisco, indice) {
+            if (!discoLibroActual || discoLibroActual.nombre !== nombreDisco) {
+                discoLibroActual = listaDiscos.find(disco => disco.nombre === nombreDisco);
+                if (!discoLibroActual) return;
+                cancionesLibroActual = obtenerTemasDisco(discoLibroActual);
+            }
+            indiceCancionLibroActual = Number.isInteger(indice)
+                ? indice
+                : cancionesLibroActual.findIndex(tema => tema.nombre === nombreTema && (tema.seg || 0) === segundos);
+            if (indiceCancionLibroActual < 0) return;
+            reproducirAudio(trackId, segundos);
+            cambiarPaginaLibro(renderizarPaginaCancionLibro);
+        }
+
+        function renderizarPaginaCancionLibro() {
+            const cancion = cancionesLibroActual[indiceCancionLibroActual];
+            const hoja = document.getElementById('contenido-hoja-libro');
+            hoja.replaceChildren();
+            const titulo = document.createElement('h3');
+            titulo.textContent = cancion.nombre;
+            const disco = document.createElement('p');
+            disco.className = 'libro-indicacion';
+            disco.textContent = `${discoLibroActual.nombre} · Página ${indiceCancionLibroActual + 1} de ${cancionesLibroActual.length}`;
+            const aviso = document.createElement('div');
+            aviso.className = 'letra-contenedor';
+            aviso.textContent = cancion.letra || 'La letra completa no está incluida en esta edición. Reproducí la canción y disfrutá de la música mientras recorrés esta página.';
+            const controles = document.createElement('div');
+            controles.className = 'libro-pagina-controles';
+            const reproducir = document.createElement('button');
+            reproducir.type = 'button';
+            reproducir.textContent = '▶ ESCUCHAR';
+            reproducir.addEventListener('click', () => reproducirAudio(discoLibroActual.trackId, cancion.seg || 0));
+            const volver = document.createElement('button');
+            volver.type = 'button';
+            volver.textContent = 'ÍNDICE';
+            volver.addEventListener('click', () => cambiarPaginaLibro(renderizarIndiceLibro));
+            controles.append(reproducir, volver);
+            if (cancionesLibroActual.length > 1) {
+                const anterior = document.createElement('button');
+                anterior.type = 'button';
+                anterior.textContent = '◀ ANTERIOR';
+                anterior.addEventListener('click', () => mostrarPaginaCancionLibro(
+                    (indiceCancionLibroActual - 1 + cancionesLibroActual.length) % cancionesLibroActual.length
+                ));
+                const siguiente = document.createElement('button');
+                siguiente.type = 'button';
+                siguiente.textContent = 'SIGUIENTE ▶';
+                siguiente.addEventListener('click', () => mostrarPaginaCancionLibro(
+                    (indiceCancionLibroActual + 1) % cancionesLibroActual.length
+                ));
+                controles.prepend(anterior);
+                controles.appendChild(siguiente);
+            }
+            hoja.append(titulo, disco, aviso, controles);
+        }
+
+        function mostrarPaginaCancionLibro(indice) {
+            const cancion = cancionesLibroActual[indice];
+            if (!cancion) return;
+            indiceCancionLibroActual = indice;
+            reproducirAudio(discoLibroActual.trackId, cancion.seg || 0);
+            cambiarPaginaLibro(renderizarPaginaCancionLibro);
         }
 
         function cerrarVisorLibro() {
+            limpiarTemporizadoresLibro();
             document.getElementById('visor-libro-modal').style.display = 'none';
+            document.getElementById('libro-abierto').style.display = 'none';
+            document.getElementById('libro-cerrado').style.display = 'grid';
+            document.getElementById('libro-cerrado').classList.remove('abriendo');
+            document.getElementById('libro-cubierta-boton').disabled = false;
+            document.getElementById('yt-player').src = '';
+            cancionActualId = '';
+            discoLibroActual = null;
+            cancionesLibroActual = [];
         }
 
         // --- SALA DE CASSETTES / RADIOGRABADOR 80S ---
         let cassetteSeleccionado = null;
+        let cassetteEnEspera = null;
+        let cassetteAnimacionTimer = null;
 
         function abrirSalaCassettes() {
             ocultarTodosLosModales();
@@ -560,53 +892,155 @@
             document.getElementById('btn-hall').style.display = 'block';
             document.getElementById('btn-trofeos').style.display = 'none';
             estadoActual = "CASSETTES";
+            detenerSalaCassettes();
+            cassetteEnEspera = null;
+            document.getElementById('cassettes-modal').classList.remove('reproductor-activo');
+            document.querySelector('#cassettes-modal .radiograbador-panel').classList.remove('reproductor-ampliado', 'sonando');
+            document.getElementById('txt-cassette-actual').innerText = "CASSETTE: NINGUNO";
+            document.getElementById('txt-radio-frecuencia').innerText = "FM 88.8 MHz";
+            document.getElementById('cassettes-instruccion').innerText = "CAJAS DE CASSETTE · ELEGÍ UNA PARA ABRIRLA";
 
             const estante = document.getElementById('estante-cassettes-grid');
-            estante.innerHTML = '';
+            estante.replaceChildren();
             listaDiscos.forEach(disco => {
-                const div = document.createElement('div');
-                div.className = 'cassette-item';
-                div.innerHTML = `<img src="${disco.fondo}" alt="${disco.nombre}"><span>${disco.nombre.split(' ')[0]}</span>`;
-                div.onclick = () => insertarCassette(disco);
-                estante.appendChild(div);
+                const cajaItem = document.createElement('button');
+                cajaItem.type = 'button';
+                cajaItem.className = 'cassette-item';
+                cajaItem.setAttribute('aria-label', `Abrir la caja del cassette ${disco.nombre}`);
+                const caja = document.createElement('span');
+                caja.className = 'cassette-caja';
+                const cinta = document.createElement('span');
+                cinta.className = 'cassette-cinta';
+                const carretes = document.createElement('span');
+                carretes.className = 'cassette-reelitos';
+                carretes.append(document.createElement('i'), document.createElement('i'));
+                const etiqueta = document.createElement('span');
+                etiqueta.className = 'cassette-etiqueta';
+                const portada = document.createElement('img');
+                portada.src = disco.fondo;
+                portada.alt = '';
+                const titulo = document.createElement('span');
+                titulo.textContent = disco.nombre;
+                etiqueta.append(portada, titulo);
+                cinta.append(carretes, etiqueta);
+                const tapaCaja = document.createElement('span');
+                tapaCaja.className = 'cassette-tapa-caja';
+                tapaCaja.setAttribute('aria-hidden', 'true');
+                caja.append(cinta, tapaCaja);
+                const lomo = document.createElement('span');
+                lomo.className = 'cassette-spine';
+                lomo.textContent = disco.nombre;
+                cajaItem.append(caja, lomo);
+                cajaItem.addEventListener('click', () => insertarCassette(disco));
+                estante.appendChild(cajaItem);
             });
         }
 
         function insertarCassette(disco) {
+            if (cassetteAnimacionTimer) clearTimeout(cassetteAnimacionTimer);
+            detenerAudioCassette();
             cassetteSeleccionado = disco;
             document.getElementById('txt-cassette-actual').innerText = `CASSETTE: ${disco.nombre}`;
-            document.getElementById('carrete-izq').classList.remove('carrete-girando');
-            document.getElementById('carrete-der').classList.remove('carrete-girando');
-            reproducirAudio(disco.trackId, 0);
-            document.getElementById('carrete-izq').classList.add('carrete-girando');
-            document.getElementById('carrete-der').classList.add('carrete-girando');
+            document.getElementById('txt-radio-frecuencia').innerText = "TAPE 1 · AUTO PLAY";
+            document.getElementById('cassettes-modal').classList.remove('reproductor-activo');
+            document.querySelector('#cassettes-modal .radiograbador-panel').classList.remove('reproductor-ampliado');
+            document.getElementById('cassettes-instruccion').innerText = `ABRIENDO CAJA · ${disco.nombre}`;
+            const cajas = [...document.querySelectorAll('#estante-cassettes-grid .cassette-item')];
+            cajas.forEach((caja, indice) => {
+                const seleccionada = listaDiscos[indice] === disco;
+                caja.classList.toggle('seleccionado', seleccionada);
+                caja.classList.remove('abierta', 'abriendo');
+                caja.querySelector('.cassette-caja').classList.remove('abierta');
+                if (seleccionada) {
+                    caja.classList.add('abriendo');
+                    caja.querySelector('.cassette-caja').classList.add('abierta');
+                }
+            });
+            cassetteAnimacionTimer = setTimeout(() => {
+                cassetteAnimacionTimer = null;
+                document.getElementById('cassettes-modal').classList.add('reproductor-activo');
+                document.querySelector('#cassettes-modal .radiograbador-panel').classList.add('reproductor-ampliado');
+                document.querySelectorAll('#estante-cassettes-grid .cassette-item.abriendo').forEach(caja => {
+                    caja.classList.remove('abriendo');
+                    caja.classList.add('abierta');
+                });
+                document.getElementById('cassettes-instruccion').innerText = `CASSETTE EN LA PLETINA · ${disco.nombre}`;
+                document.querySelector('#cassettes-modal .radiograbador-panel').classList.add('sonando');
+                document.getElementById('carrete-izq').classList.add('carrete-girando');
+                document.getElementById('carrete-der').classList.add('carrete-girando');
+                reproducirAudio(disco.trackId, 0);
+            }, 450);
         }
 
         function accionarCassette(accion) {
-            if (!cassetteSeleccionado && accion !== 'stop') {
-                alert("Primero elegí y colocá un cassette en el radiograbador.");
-                return;
-            }
             if (accion === 'play') {
+                if (!cassetteSeleccionado) {
+                    document.getElementById('cassettes-instruccion').innerText = "ELEGÍ UNA CAJA DEL ESTANTE PARA CARGAR UN CASSETTE";
+                    return;
+                }
                 reproducirAudio(cassetteSeleccionado.trackId, 0);
+                document.querySelector('#cassettes-modal .radiograbador-panel').classList.add('sonando');
                 document.getElementById('carrete-izq').classList.add('carrete-girando');
                 document.getElementById('carrete-der').classList.add('carrete-girando');
             } else if (accion === 'stop') {
-                reproducirAudio("Wun6zDSpwkg");
-                document.getElementById('carrete-izq').classList.remove('carrete-girando');
-                document.getElementById('carrete-der').classList.remove('carrete-girando');
+                detenerAudioCassette();
+                if (cassetteSeleccionado) document.getElementById('txt-radio-frecuencia').innerText = "TAPE 1 · STOP";
+                if (cassetteSeleccionado) document.getElementById('cassettes-instruccion').innerText = `CASSETTE EN PAUSA · ${cassetteSeleccionado.nombre}`;
             } else if (accion === 'eject') {
-                cassetteSeleccionado = null;
-                document.getElementById('txt-cassette-actual').innerText = "CASSETTE: NINGUNO";
-                document.getElementById('carrete-izq').classList.remove('carrete-girando');
-                document.getElementById('carrete-der').classList.remove('carrete-girando');
-                reproducirAudio("Wun6zDSpwkg");
+                expulsarCassette();
             }
+        }
+
+        function detenerAudioCassette() {
+            if (cassetteAnimacionTimer) {
+                clearTimeout(cassetteAnimacionTimer);
+                cassetteAnimacionTimer = null;
+            }
+            document.getElementById('yt-player').src = '';
+            cancionActualId = '';
+            document.querySelector('#cassettes-modal .radiograbador-panel').classList.remove('sonando');
+            document.getElementById('carrete-izq').classList.remove('carrete-girando');
+            document.getElementById('carrete-der').classList.remove('carrete-girando');
+        }
+
+        function expulsarCassette() {
+            detenerAudioCassette();
+            if (cassetteSeleccionado) {
+                cassetteEnEspera = cassetteSeleccionado;
+                const tarjetas = [...document.querySelectorAll('#estante-cassettes-grid .cassette-item')];
+                const indice = listaDiscos.indexOf(cassetteEnEspera);
+                const cajaUsada = tarjetas[indice];
+                if (cajaUsada) {
+                    cajaUsada.classList.remove('seleccionado', 'abriendo');
+                    cajaUsada.classList.add('abierta');
+                    cajaUsada.querySelector('.cassette-caja').classList.add('abierta');
+                }
+            }
+            cassetteSeleccionado = null;
+            document.getElementById('txt-cassette-actual').innerText = cassetteEnEspera
+                ? `CAJA ABIERTA · ${cassetteEnEspera.nombre}`
+                : "CASSETTE: NINGUNO";
+            document.getElementById('txt-radio-frecuencia').innerText = "FM 88.8 MHz";
+            document.getElementById('cassettes-instruccion').innerText = "CASSETTE EXPULSADO · ELEGÍ OTRA CAJA";
+            document.getElementById('cassettes-modal').classList.remove('reproductor-activo');
+            document.querySelector('#cassettes-modal .radiograbador-panel').classList.remove('reproductor-ampliado');
+        }
+
+        function detenerSalaCassettes() {
+            detenerAudioCassette();
+            cassetteSeleccionado = null;
+            document.getElementById('cassettes-modal').classList.remove('reproductor-activo');
+            const panel = document.querySelector('#cassettes-modal .radiograbador-panel');
+            if (panel) panel.classList.remove('reproductor-ampliado');
+            const estado = document.getElementById('txt-cassette-actual');
+            if (estado) estado.innerText = "CASSETTE: NINGUNO";
         }
 
         // --- TOCADISCOS, GALERÍA Y CINE ---
         let viniloSeleccionado = null;
         let viniloTemaIndice = 0;
+        let viniloSonando = false;
+        let viniloCambioTimers = [];
         let indiceGaleria = 0;
         let indiceCine = 0;
 
@@ -654,6 +1088,7 @@
         }
 
         function abrirSalaVinilos() {
+            limpiarCambioVinilo();
             prepararSalaMultimedia('vinilos-modal', 'VINILOS');
             const estante = document.getElementById('vinilos-estante');
             estante.replaceChildren();
@@ -664,12 +1099,16 @@
             )));
             if (!viniloSeleccionado) seleccionarVinilo(listaDiscos[0]);
             else actualizarVinilos();
+            document.getElementById('vinilo-estado').textContent = viniloSonando ? "PÚA APOYADA · SONANDO" : "PÚA EN REPOSO";
         }
 
         function seleccionarVinilo(disco) {
+            const cambiarAlbum = viniloSeleccionado !== disco;
+            const estabaSonando = viniloSonando;
             viniloSeleccionado = disco;
             viniloTemaIndice = 0;
             actualizarVinilos();
+            if (estabaSonando && cambiarAlbum) iniciarCambioPua(true);
         }
 
         function actualizarVinilos() {
@@ -686,8 +1125,11 @@
                 boton.className = `vinilo-tema${indice === viniloTemaIndice ? ' seleccionado' : ''}`;
                 boton.textContent = `${indice + 1}. ${tema.nombre}`;
                 boton.addEventListener('click', () => {
+                    if (viniloTemaIndice === indice) return;
+                    const estabaSonando = viniloSonando;
                     viniloTemaIndice = indice;
                     actualizarVinilos();
+                    if (estabaSonando) iniciarCambioPua(false);
                 });
                 listaTemas.appendChild(boton);
             });
@@ -701,14 +1143,68 @@
 
         function reproducirVinilo() {
             if (!viniloSeleccionado) return;
+            iniciarCambioPua(false);
+        }
+
+        function limpiarCambioVinilo() {
+            viniloCambioTimers.forEach(timer => clearTimeout(timer));
+            viniloCambioTimers = [];
+        }
+
+        function programarCambioVinilo(accion, demora) {
+            const timer = setTimeout(() => {
+                viniloCambioTimers = viniloCambioTimers.filter(id => id !== timer);
+                accion();
+            }, demora);
+            viniloCambioTimers.push(timer);
+        }
+
+        function iniciarCambioPua(cambiarAlbum) {
+            limpiarCambioVinilo();
+            const pua = document.getElementById('vinilo-brazo');
+            const brazo = document.getElementById('vinilo-brazo-giro');
+            const disco = document.getElementById('vinilo-disco');
+            const estado = document.getElementById('vinilo-estado');
             const tema = obtenerTemasDisco(viniloSeleccionado)[viniloTemaIndice];
-            reproducirAudio(viniloSeleccionado.trackId, tema.seg);
-            document.getElementById('vinilo-disco').classList.add('girando');
+            document.getElementById('yt-player').src = '';
+            cancionActualId = '';
+            pua.classList.add('levantada');
+            if (cambiarAlbum) disco.classList.remove('girando');
+            estado.textContent = cambiarAlbum ? "LEVANTANDO PÚA · CAMBIANDO DISCO" : "LEVANTANDO PÚA · BUSCANDO SURCO";
+
+            programarCambioVinilo(() => {
+                const rango = obtenerTemasDisco(viniloSeleccionado).length;
+                const progreso = rango <= 1 ? 0 : viniloTemaIndice / (rango - 1);
+                const angulo = -21 + progreso * 16;
+                brazo.style.transform = `rotate(${angulo}deg)`;
+                estado.textContent = `PÚA ENCAMINÁNDOSE A: ${tema.nombre}`;
+            }, 260);
+
+            programarCambioVinilo(() => {
+                pua.classList.remove('levantada');
+                reproducirAudio(viniloSeleccionado.trackId, tema.seg);
+                viniloSonando = true;
+                disco.classList.add('girando');
+                estado.textContent = `PÚA APOYADA · ${tema.nombre}`;
+            }, 600);
+        }
+
+        function detenerVinilo() {
+            limpiarCambioVinilo();
+            document.getElementById('yt-player').src = '';
+            cancionActualId = '';
+            viniloSonando = false;
+            document.getElementById('vinilo-disco').classList.remove('girando');
+            document.getElementById('vinilo-brazo').classList.add('levantada');
+            document.getElementById('vinilo-estado').textContent = "REPRODUCCIÓN DETENIDA · PÚA LEVANTADA";
         }
 
         function detenerReproduccionSala() {
+            if (estadoActual === 'VINILOS') {
+                detenerVinilo();
+                return;
+            }
             reproducirAudio("Wun6zDSpwkg");
-            document.getElementById('vinilo-disco').classList.remove('girando');
             const pantalla = document.getElementById('cine-pantalla');
             if (pantalla) pantalla.classList.remove('proyectando');
             const estado = document.getElementById('cine-estado');
