@@ -60,6 +60,45 @@
         .cassette-item img { width: 40px; height: 40px; object-fit: cover; border-radius: 3px; }
         .cassette-item span { color: #ffcc00; font-size: 8px; font-weight: bold; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 3px; }
 
+        .sala-multimedia { position: absolute; inset: 0; z-index: 85; display: none; flex-direction: column; align-items: center; gap: 12px; overflow-y: auto; padding: 22px 16px 24px; box-sizing: border-box; background: rgba(5, 2, 18, 0.98); color: #fff; text-align: center; }
+        .sala-multimedia h2 { color: #00ffff; font-size: 18px; letter-spacing: 2px; margin: 0; text-shadow: 0 0 10px #00ffff; }
+        .sala-multimedia p { color: #ff00ff; font-size: 11px; line-height: 1.5; margin: 0; max-width: 420px; }
+        .sala-acciones { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+        .sala-btn { background: rgba(255, 0, 255, 0.18); border: 1px solid #ff00ff; color: #fff; border-radius: 8px; padding: 9px 12px; font-size: 11px; font-weight: bold; cursor: pointer; }
+        .sala-btn:hover, .sala-btn:focus-visible { border-color: #00ffff; box-shadow: 0 0 12px rgba(0, 255, 255, 0.5); outline: none; }
+        .sala-btn.secundario { border-color: #00ffff; background: rgba(0, 255, 255, 0.15); }
+        .sala-seleccion { width: 100%; max-width: 540px; display: grid; grid-template-columns: repeat(auto-fit, minmax(82px, 1fr)); gap: 8px; max-height: 24vh; overflow-y: auto; padding: 3px; box-sizing: border-box; }
+        .sala-album { min-width: 0; background: rgba(20, 10, 40, 0.9); border: 1px solid #713c90; border-radius: 8px; padding: 6px; color: #fff; cursor: pointer; font-size: 9px; font-weight: bold; line-height: 1.3; }
+        .sala-album.seleccionado { border: 2px solid #00ffff; box-shadow: 0 0 12px rgba(0, 255, 255, 0.45); }
+        .sala-album img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 4px; margin-bottom: 5px; }
+        .vinilo-panel { width: min(92vw, 340px); display: flex; flex-direction: column; align-items: center; gap: 9px; }
+        .vinilo-disco { width: min(58vw, 210px); aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center; background: repeating-radial-gradient(circle, #15121b 0 3px, #292331 4px 5px, #100e14 6px 8px); border: 5px solid #33303b; box-shadow: 0 0 22px rgba(255, 0, 255, 0.38); }
+        .vinilo-disco.girando { animation: girarCarrete 4s linear infinite; }
+        .vinilo-etiqueta { width: 37%; aspect-ratio: 1; border-radius: 50%; object-fit: cover; border: 3px solid #ff00ff; box-shadow: 0 0 12px #ff00ff; }
+        .vinilo-titulo { color: #fff; font-size: 12px; font-weight: bold; line-height: 1.4; }
+        .vinilo-temas { width: 100%; max-height: 20vh; overflow-y: auto; display: grid; gap: 5px; }
+        .vinilo-tema { border: 1px solid #44334f; background: rgba(255, 255, 255, 0.05); border-radius: 6px; color: #ddd; text-align: left; padding: 8px 10px; font-size: 10px; cursor: pointer; }
+        .vinilo-tema.seleccionado { color: #00ffff; border-color: #00ffff; }
+        .galeria-lamina { width: min(55vh, 72vw, 360px); aspect-ratio: 1; object-fit: contain; border: 2px solid #00ffff; border-radius: 10px; background: #080411; box-shadow: 0 0 28px rgba(0, 255, 255, 0.35); }
+        .sala-detalle { color: #ddd !important; }
+        .cine-pantalla { width: min(90vw, 540px); aspect-ratio: 16 / 9; position: relative; overflow: hidden; display: grid; place-items: center; border: 3px solid #00ffff; border-radius: 12px; background: #03020a; box-shadow: 0 0 30px rgba(0, 255, 255, 0.35); }
+        .cine-pantalla::before, .cine-pantalla::after { content: ""; position: absolute; left: 0; right: 0; height: 10%; background: #05030b; z-index: 2; }
+        .cine-pantalla::before { top: 0; }
+        .cine-pantalla::after { bottom: 0; }
+        .cine-tapa { width: 100%; height: 100%; object-fit: cover; opacity: 0.76; filter: saturate(1.2); transition: transform 1s ease; }
+        .cine-pantalla.proyectando .cine-tapa { transform: scale(1.08); }
+        .cine-visualizador { position: absolute; z-index: 3; inset: 15% 8%; display: flex; align-items: center; justify-content: center; gap: 5px; pointer-events: none; }
+        .cine-visualizador span { width: 4px; height: 12%; background: linear-gradient(#ff00ff, #00ffff); border-radius: 4px; box-shadow: 0 0 8px #00ffff; }
+        .cine-pantalla.proyectando .cine-visualizador span { animation: cine-onda 0.8s ease-in-out infinite alternate; }
+        .cine-pantalla.proyectando .cine-visualizador span:nth-child(3n) { animation-delay: 0.2s; }
+        .cine-pantalla.proyectando .cine-visualizador span:nth-child(3n + 1) { animation-delay: 0.4s; }
+        @keyframes cine-onda { to { height: 75%; } }
+        @media (max-height: 700px) {
+            .sala-multimedia { padding-top: 12px; gap: 8px; }
+            .sala-seleccion { max-height: 18vh; }
+            .vinilo-temas { max-height: 16vh; }
+        }
+
         #ui-capa { position: absolute; top: 15px; width: 100%; display: flex; justify-content: space-between; padding: 0 20px; box-sizing: border-box; color: #fff; text-shadow: 0 0 10px #ff00ff; z-index: 10; pointer-events: none; display: none; }
         .stats-box { font-size: 12px; font-weight: bold; background: rgba(10, 5, 30, 0.85); border: 1px solid #ff00ff; padding: 6px 10px; border-radius: 10px; }
         
@@ -181,6 +220,55 @@
 
         <div class="estante-cassettes" id="estante-cassettes-grid"></div>
         <button class="btn-cerrar-trofeos" onclick="mostrarHallCentral()" style="margin-top: 10px;">VOLVER AL HALL</button>
+    </div>
+
+    <div id="vinilos-modal" class="sala-multimedia">
+        <h2>TOCADISCOS VINILOS</h2>
+        <p>Elegí una tapa, seleccioná un tema y poné el disco a girar.</p>
+        <div class="vinilo-panel">
+            <div id="vinilo-disco" class="vinilo-disco"><img id="vinilo-etiqueta" class="vinilo-etiqueta" src="" alt="Tapa del disco seleccionado"></div>
+            <div id="vinilo-titulo" class="vinilo-titulo" aria-live="polite">Elegí un álbum para comenzar</div>
+            <div class="sala-acciones">
+                <button class="sala-btn" onclick="reproducirVinilo()">▶ REPRODUCIR</button>
+                <button class="sala-btn secundario" onclick="detenerReproduccionSala()">⏹ DETENER</button>
+            </div>
+            <div id="vinilo-temas" class="vinilo-temas" aria-label="Temas del álbum"></div>
+        </div>
+        <div id="vinilos-estante" class="sala-seleccion" aria-label="Colección de álbumes"></div>
+        <button class="btn-cerrar-trofeos" onclick="mostrarHallCentral()">VOLVER AL HALL</button>
+    </div>
+
+    <div id="galeria-modal" class="sala-multimedia">
+        <h2>GALERÍA DE ARTE</h2>
+        <p>Recorré las tapas del multiverso y descubrí sus álbumes.</p>
+        <img id="galeria-lamina" class="galeria-lamina" src="" alt="Arte del álbum">
+        <div id="galeria-titulo" class="vinilo-titulo" aria-live="polite"></div>
+        <p id="galeria-detalle" class="sala-detalle"></p>
+        <div class="sala-acciones">
+            <button class="sala-btn" onclick="moverGaleria(-1)">◀ ANTERIOR</button>
+            <button class="sala-btn" onclick="moverGaleria(1)">SIGUIENTE ▶</button>
+        </div>
+        <div id="galeria-estante" class="sala-seleccion" aria-label="Elegir una tapa"></div>
+        <button class="btn-cerrar-trofeos" onclick="mostrarHallCentral()">VOLVER AL HALL</button>
+    </div>
+
+    <div id="cine-modal" class="sala-multimedia">
+        <h2>SALA DE CINE</h2>
+        <p>Una proyección musical de las tapas y pistas disponibles. El catálogo no incluye enlaces de video.</p>
+        <div id="cine-pantalla" class="cine-pantalla">
+            <img id="cine-tapa" class="cine-tapa" src="" alt="Tapa proyectada">
+            <div class="cine-visualizador" aria-hidden="true"></div>
+        </div>
+        <div id="cine-titulo" class="vinilo-titulo" aria-live="polite"></div>
+        <div id="cine-estado" class="sala-detalle" aria-live="polite">Elegí un álbum para proyectar.</div>
+        <div class="sala-acciones">
+            <button class="sala-btn" onclick="moverCine(-1)">◀ ANTERIOR</button>
+            <button class="sala-btn secundario" onclick="reproducirCine()">▶ PROYECTAR</button>
+            <button class="sala-btn" onclick="detenerCine()">⏹ DETENER</button>
+            <button class="sala-btn" onclick="moverCine(1)">SIGUIENTE ▶</button>
+        </div>
+        <div id="cine-estante" class="sala-seleccion" aria-label="Elegir álbum para la proyección"></div>
+        <button class="btn-cerrar-trofeos" onclick="mostrarHallCentral()">VOLVER AL HALL</button>
     </div>
 
     <div id="ui-capa">
@@ -363,6 +451,7 @@
         }
 
         function mostrarHallCentral() {
+            if (["VINILOS", "GALERIA", "CINE"].includes(estadoActual)) detenerReproduccionSala();
             ocultarTodosLosModales();
             document.getElementById('hall-central-modal').style.display = 'flex';
             document.getElementById('ui-capa').style.display = 'flex';
@@ -382,6 +471,12 @@
                 abrirSalaBiblioteca();
             } else if (nombreSala === 'cassettes') {
                 abrirSalaCassettes();
+            } else if (nombreSala === 'vinilos') {
+                abrirSalaVinilos();
+            } else if (nombreSala === 'galeria') {
+                abrirSalaGaleria();
+            } else if (nombreSala === 'cine') {
+                abrirSalaCine();
             } else {
                 alert(`¡Sala de ${nombreSala.toUpperCase()} en construcción dentro del multiverso! Volviendo al Hall.`);
                 mostrarHallCentral();
@@ -507,6 +602,185 @@
                 document.getElementById('carrete-der').classList.remove('carrete-girando');
                 reproducirAudio("Wun6zDSpwkg");
             }
+        }
+
+        // --- TOCADISCOS, GALERÍA Y CINE ---
+        let viniloSeleccionado = null;
+        let viniloTemaIndice = 0;
+        let indiceGaleria = 0;
+        let indiceCine = 0;
+
+        function obtenerTemasDisco(disco) {
+            const temasPorDisco = {
+                soda_84: cancionesSoda84Detalle,
+                nada_personal: cancionesNadaPersonalDetalle,
+                signos: cancionesSignosDetalle,
+                cancion_animal: barcosCancionAnimal.map(tema => ({ nombre: tema.nombre, seg: tema.segundos })),
+                dynamo: dynamoCanciones,
+                sueno_stereo: cancionesSueñoStereoDetalle,
+                amor_amarillo: cancionesAmorAmarilloDetalle,
+                bocanada: cancionesBocanadaDetalle,
+                siempre_es_hoy: cancionesSiempreEsHoy,
+                ahi_vamos: cancionesAhiVamosPalabras,
+                fuerza_natural: cancionesFuerzaNaturalDetalle
+            };
+            return (temasPorDisco[disco.id] || [{ nombre: "Tema principal", seg: 0 }])
+                .map(tema => ({ nombre: tema.nombre, seg: tema.seg || 0 }));
+        }
+
+        function prepararSalaMultimedia(id, estado) {
+            ocultarTodosLosModales();
+            document.getElementById(id).style.display = 'flex';
+            document.getElementById('ui-capa').style.display = 'flex';
+            document.getElementById('btn-volver').style.display = 'none';
+            document.getElementById('btn-hall').style.display = 'block';
+            document.getElementById('btn-trofeos').style.display = 'none';
+            estadoActual = estado;
+        }
+
+        function crearBotonAlbum(disco, seleccionado, alElegir) {
+            const boton = document.createElement('button');
+            boton.type = 'button';
+            boton.className = `sala-album${seleccionado ? ' seleccionado' : ''}`;
+            boton.setAttribute('aria-pressed', String(seleccionado));
+            const tapa = document.createElement('img');
+            tapa.src = disco.fondo;
+            tapa.alt = `Tapa de ${disco.nombre}`;
+            const titulo = document.createElement('span');
+            titulo.textContent = disco.nombre;
+            boton.append(tapa, titulo);
+            boton.addEventListener('click', alElegir);
+            return boton;
+        }
+
+        function abrirSalaVinilos() {
+            prepararSalaMultimedia('vinilos-modal', 'VINILOS');
+            const estante = document.getElementById('vinilos-estante');
+            estante.replaceChildren();
+            listaDiscos.forEach(disco => estante.appendChild(crearBotonAlbum(
+                disco,
+                disco === viniloSeleccionado,
+                () => seleccionarVinilo(disco)
+            )));
+            if (!viniloSeleccionado) seleccionarVinilo(listaDiscos[0]);
+            else actualizarVinilos();
+        }
+
+        function seleccionarVinilo(disco) {
+            viniloSeleccionado = disco;
+            viniloTemaIndice = 0;
+            actualizarVinilos();
+        }
+
+        function actualizarVinilos() {
+            if (!viniloSeleccionado) return;
+            const temas = obtenerTemasDisco(viniloSeleccionado);
+            viniloTemaIndice = Math.min(viniloTemaIndice, temas.length - 1);
+            document.getElementById('vinilo-etiqueta').src = viniloSeleccionado.fondo;
+            document.getElementById('vinilo-titulo').textContent = `${viniloSeleccionado.nombre} · ${temas[viniloTemaIndice].nombre}`;
+            const listaTemas = document.getElementById('vinilo-temas');
+            listaTemas.replaceChildren();
+            temas.forEach((tema, indice) => {
+                const boton = document.createElement('button');
+                boton.type = 'button';
+                boton.className = `vinilo-tema${indice === viniloTemaIndice ? ' seleccionado' : ''}`;
+                boton.textContent = `${indice + 1}. ${tema.nombre}`;
+                boton.addEventListener('click', () => {
+                    viniloTemaIndice = indice;
+                    actualizarVinilos();
+                });
+                listaTemas.appendChild(boton);
+            });
+            const estante = document.getElementById('vinilos-estante');
+            Array.from(estante.children).forEach((boton, indice) => {
+                const seleccionado = listaDiscos[indice] === viniloSeleccionado;
+                boton.classList.toggle('seleccionado', seleccionado);
+                boton.setAttribute('aria-pressed', String(seleccionado));
+            });
+        }
+
+        function reproducirVinilo() {
+            if (!viniloSeleccionado) return;
+            const tema = obtenerTemasDisco(viniloSeleccionado)[viniloTemaIndice];
+            reproducirAudio(viniloSeleccionado.trackId, tema.seg);
+            document.getElementById('vinilo-disco').classList.add('girando');
+        }
+
+        function detenerReproduccionSala() {
+            reproducirAudio("Wun6zDSpwkg");
+            document.getElementById('vinilo-disco').classList.remove('girando');
+            const pantalla = document.getElementById('cine-pantalla');
+            if (pantalla) pantalla.classList.remove('proyectando');
+            const estado = document.getElementById('cine-estado');
+            if (estado && estadoActual === 'CINE') estado.textContent = 'Proyección detenida.';
+        }
+
+        function abrirSalaGaleria() {
+            prepararSalaMultimedia('galeria-modal', 'GALERIA');
+            indiceGaleria = 0;
+            actualizarGaleria();
+        }
+
+        function moverGaleria(direccion) {
+            indiceGaleria = (indiceGaleria + direccion + listaDiscos.length) % listaDiscos.length;
+            actualizarGaleria();
+        }
+
+        function actualizarGaleria() {
+            const disco = listaDiscos[indiceGaleria];
+            document.getElementById('galeria-lamina').src = disco.fondo;
+            document.getElementById('galeria-lamina').alt = `Tapa de ${disco.nombre}`;
+            document.getElementById('galeria-titulo').textContent = disco.nombre;
+            document.getElementById('galeria-detalle').textContent = `Álbum ${indiceGaleria + 1} de ${listaDiscos.length} · ${obtenerTemasDisco(disco).length} temas disponibles en el catálogo.`;
+            const estante = document.getElementById('galeria-estante');
+            estante.replaceChildren();
+            listaDiscos.forEach((item, indice) => estante.appendChild(crearBotonAlbum(
+                item,
+                indice === indiceGaleria,
+                () => { indiceGaleria = indice; actualizarGaleria(); }
+            )));
+        }
+
+        function abrirSalaCine() {
+            prepararSalaMultimedia('cine-modal', 'CINE');
+            indiceCine = 0;
+            actualizarCine();
+        }
+
+        function moverCine(direccion) {
+            detenerCine();
+            indiceCine = (indiceCine + direccion + listaDiscos.length) % listaDiscos.length;
+            actualizarCine();
+        }
+
+        function actualizarCine() {
+            const disco = listaDiscos[indiceCine];
+            document.getElementById('cine-tapa').src = disco.fondo;
+            document.getElementById('cine-tapa').alt = `Tapa proyectada: ${disco.nombre}`;
+            document.getElementById('cine-titulo').textContent = disco.nombre;
+            document.getElementById('cine-estado').textContent = `Proyección ${indiceCine + 1} de ${listaDiscos.length} · arte del álbum y pista musical disponible.`;
+            const visualizador = document.querySelector('#cine-modal .cine-visualizador');
+            if (!visualizador.childElementCount) {
+                for (let i = 0; i < 24; i++) visualizador.appendChild(document.createElement('span'));
+            }
+            const estante = document.getElementById('cine-estante');
+            estante.replaceChildren();
+            listaDiscos.forEach((item, indice) => estante.appendChild(crearBotonAlbum(
+                item,
+                indice === indiceCine,
+                () => { detenerCine(); indiceCine = indice; actualizarCine(); }
+            )));
+        }
+
+        function reproducirCine() {
+            const disco = listaDiscos[indiceCine];
+            reproducirAudio(disco.trackId, 0);
+            document.getElementById('cine-pantalla').classList.add('proyectando');
+            document.getElementById('cine-estado').textContent = `Proyectando ${disco.nombre} con su pista musical.`;
+        }
+
+        function detenerCine() {
+            detenerReproduccionSala();
         }
 
         // --- DISCO 1 (Pac-Man - Soda Stereo 1984) ---
@@ -1894,6 +2168,9 @@
             document.getElementById('biblioteca-modal').style.display = 'none';
             document.getElementById('visor-libro-modal').style.display = 'none';
             document.getElementById('cassettes-modal').style.display = 'none';
+            document.getElementById('vinilos-modal').style.display = 'none';
+            document.getElementById('galeria-modal').style.display = 'none';
+            document.getElementById('cine-modal').style.display = 'none';
         }
 
         function finalizarDiscoActual() {
