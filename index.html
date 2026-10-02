@@ -196,7 +196,40 @@
         .vinilo-temas { width: 100%; max-height: 20vh; overflow-y: auto; display: grid; gap: 5px; }
         .vinilo-tema { border: 1px solid #44334f; background: rgba(255, 255, 255, 0.05); border-radius: 6px; color: #ddd; text-align: left; padding: 8px 10px; font-size: 10px; cursor: pointer; }
         .vinilo-tema.seleccionado { color: #00ffff; border-color: #00ffff; }
-        .galeria-lamina { width: min(55vh, 72vw, 360px); aspect-ratio: 1; object-fit: contain; border: 2px solid #00ffff; border-radius: 10px; background: #080411; box-shadow: 0 0 28px rgba(0, 255, 255, 0.35); }
+        #galeria-modal { background: radial-gradient(ellipse at 50% 25%, #41301d, #1d1713 57%, #100d0c); }
+        #galeria-modal > h2 { color: #f0ce91; text-shadow: 0 0 10px rgba(235,183,101,.65); }
+        #galeria-modal > p { color: #e0c9a4; }
+        .galeria-secciones { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+        .galeria-seccion-btn { padding: 9px 14px; border: 1px solid #c6a467; border-radius: 18px; color: #f0dfbe; background: rgba(27,19,12,.82); font-size: 10px; font-weight: bold; cursor: pointer; }
+        .galeria-seccion-btn.activa { color: #21170b; background: #e8c17f; box-shadow: 0 0 12px rgba(232,193,127,.5); }
+        .galeria-vista { display: flex; width: 100%; flex-direction: column; align-items: center; gap: 10px; }
+        .galeria-pared { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: clamp(10px, 2vw, 22px); width: min(94vw, 900px); max-height: 55vh; overflow-y: auto; padding: 15px 8px; box-sizing: border-box; background: repeating-linear-gradient(90deg, rgba(255,255,255,.025) 0 2px, transparent 2px 8px), linear-gradient(90deg, #24180f, #3d2b1b 50%, #24180f); border: 8px solid #6b4b2b; box-shadow: inset 0 0 22px #100a05, 0 10px 25px #080605; }
+        .galeria-cuadro { position: relative; display: flex; min-width: 0; flex-direction: column; align-items: center; gap: 7px; padding: 9px; border: 5px ridge #c59b58; outline: 2px solid #3d2915; color: #fff1d2; background: linear-gradient(145deg, #e3c27d, #795123 40%, #d4ad67 72%, #76502b); box-shadow: 0 6px 12px rgba(0,0,0,.65), inset 0 0 0 2px rgba(255,238,190,.55); cursor: zoom-in; transition: transform .2s, filter .2s; }
+        .galeria-cuadro::before { content: ""; position: absolute; inset: 4px; border: 1px solid rgba(255,239,199,.72); pointer-events: none; }
+        .galeria-cuadro:hover, .galeria-cuadro:focus-visible { z-index: 1; transform: scale(1.045); filter: brightness(1.15); outline: 2px solid #f5dcaa; }
+        .galeria-cuadro[aria-pressed="true"] { box-shadow: 0 0 0 2px #f5dcaa, 0 6px 15px rgba(0,0,0,.8), inset 0 0 0 2px rgba(255,238,190,.65); }
+        .galeria-cuadro img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; border: 4px solid #291b10; box-sizing: border-box; box-shadow: 0 3px 8px rgba(0,0,0,.7); }
+        .galeria-cuadro span { position: relative; max-width: 100%; font-family: Georgia, serif; font-size: clamp(8px, 1.8vw, 11px); font-weight: bold; line-height: 1.2; }
+        .galeria-info { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px 14px; max-width: 90vw; color: #ead7b4; font-size: 10px; }
+        .galeria-audio-btn { padding: 8px 11px; border: 1px solid #d8ba84; border-radius: 7px; color: #f9e8c5; background: rgba(35,24,15,.8); font-size: 10px; font-weight: bold; cursor: pointer; }
+        .galeria-zoom { position: absolute; z-index: 95; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 18px; box-sizing: border-box; background: rgba(9,7,6,.96); }
+        .galeria-zoom[hidden], .galeria-vista[hidden], .grafitis-vista[hidden] { display: none; }
+        .galeria-zoom-marco { display: grid; place-items: center; width: min(86vw, 76vh, 680px); max-height: 72vh; padding: clamp(10px, 2.2vw, 22px); border: clamp(8px, 2vw, 17px) ridge #c7a15e; outline: 3px solid #513919; background: linear-gradient(140deg,#ead28f,#815c2c 42%,#d8b775 72%,#795226); box-shadow: 0 0 0 5px #2c1d0f, 0 18px 40px #000; }
+        .galeria-zoom-marco img { display: block; max-width: 100%; max-height: 65vh; object-fit: contain; border: 5px solid #24180f; box-shadow: 0 4px 18px #000; }
+        .galeria-zoom-titulo { color: #f3dbac; font: bold clamp(13px, 3vw, 19px) Georgia, serif; }
+        .galeria-zoom-controles { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+        .grafitis-vista { position: relative; display: flex; width: min(94vw, 900px); min-height: 390px; max-height: 58vh; flex-direction: column; align-items: center; justify-content: center; gap: 20px; overflow-y: auto; padding: 24px 14px; box-sizing: border-box; border: 5px solid #312640; background: radial-gradient(ellipse at 50% 48%, #20172d, #090711 65%, #030308); box-shadow: inset 0 0 60px #000, 0 0 24px rgba(70,36,130,.35); }
+        .grafitis-vista::before { content: "GRAFITIS"; position: absolute; top: 8px; left: 12px; color: #8c7ba5; font-size: 9px; letter-spacing: 4px; }
+        .grafiti-frase { max-width: 95%; margin: 0; color: #ff56ef; font-family: Impact, "Arial Black", sans-serif; font-size: clamp(21px, 5vw, 42px); line-height: 1.05; letter-spacing: 1px; text-transform: uppercase; text-shadow: 0 0 5px #ff00de, 0 0 15px #ff00de, 3px 4px 0 #5b145e; transform: rotate(-2deg); }
+        .grafiti-frase:nth-of-type(2n) { color: #63f7ff; text-shadow: 0 0 5px #00dfff, 0 0 15px #00dfff, 3px 4px 0 #125468; transform: rotate(1deg); }
+        .grafiti-fuente { margin-top: -14px; color: #aaa0c3; font-size: 9px; letter-spacing: 1px; }
+        .grafitis-nota { max-width: 92%; color: #978da9 !important; font-size: 9px !important; }
+        @media (max-width: 480px) {
+            .galeria-pared { grid-template-columns: repeat(2, minmax(0, 1fr)); max-height: 50vh; padding: 10px 5px; border-width: 5px; }
+            .galeria-cuadro { padding: 6px; border-width: 4px; }
+            .galeria-zoom { padding: 10px; }
+            .grafitis-vista { min-height: 340px; max-height: 52vh; gap: 17px; }
+        }
         .sala-detalle { color: #ddd !important; }
         .cine-pantalla { width: min(90vw, 540px); aspect-ratio: 16 / 9; position: relative; overflow: hidden; display: grid; place-items: center; border: 3px solid #00ffff; border-radius: 12px; background: #03020a; box-shadow: 0 0 30px rgba(0, 255, 255, 0.35); }
         .cine-pantalla::before, .cine-pantalla::after { content: ""; position: absolute; left: 0; right: 0; height: 10%; background: #05030b; z-index: 2; }
@@ -210,6 +243,33 @@
         .cine-pantalla.proyectando .cine-visualizador span:nth-child(3n) { animation-delay: 0.2s; }
         .cine-pantalla.proyectando .cine-visualizador span:nth-child(3n + 1) { animation-delay: 0.4s; }
         @keyframes cine-onda { to { height: 75%; } }
+        .cine-pantalla { width: min(92vw, 760px); }
+        .cine-marco { position: absolute; z-index: 4; inset: 10% 7%; display: grid; place-items: center; overflow: hidden; background: #030206; }
+        .cine-marco[hidden] { display: none; }
+        .cine-pantalla iframe { width: 100%; height: 100%; border: 0; }
+        .cine-pantalla.con-video .cine-tapa, .cine-pantalla.con-video .cine-visualizador { display: none; }
+        .cine-cartelera-filtros { display: flex; flex-wrap: wrap; justify-content: center; gap: 7px; }
+        .cine-filtro { padding: 7px 10px; border: 1px solid #8b559d; border-radius: 18px; color: #ddd; background: rgba(25,10,40,.85); font-size: 10px; font-weight: bold; cursor: pointer; }
+        .cine-filtro.activo { color: #05020a; border-color: #00ffff; background: #00ffff; box-shadow: 0 0 10px rgba(0,255,255,.55); }
+        .cine-funcion { width: min(92vw, 760px); color: #fff; }
+        .cine-funcion h3 { color: #ffcc66; font-size: 14px; margin: 0 0 4px; }
+        .cine-funcion p { color: #d7d0dd; font-size: 10px; margin: 0; }
+        .cine-cartelera { display: grid; grid-template-columns: repeat(auto-fit, minmax(128px, 1fr)); gap: 9px; width: min(92vw, 760px); max-height: 26vh; overflow-y: auto; padding: 3px; box-sizing: border-box; }
+        .cine-ticket { display: flex; align-items: center; gap: 8px; min-width: 0; padding: 7px; border: 1px solid #61466f; border-radius: 7px; color: #eee; background: linear-gradient(145deg, rgba(32,19,44,.96), rgba(9,6,17,.96)); text-align: left; cursor: pointer; }
+        .cine-ticket:hover, .cine-ticket:focus-visible { border-color: #00ffff; outline: none; box-shadow: 0 0 11px rgba(0,255,255,.4); }
+        .cine-ticket.seleccionada { border: 2px solid #ffcc66; box-shadow: 0 0 12px rgba(255,204,102,.38); }
+        .cine-ticket img { flex: 0 0 42px; width: 42px; aspect-ratio: 1; object-fit: cover; border-radius: 4px; }
+        .cine-ticket-texto { display: flex; min-width: 0; flex-direction: column; gap: 3px; }
+        .cine-ticket-texto strong { font-size: 9px; line-height: 1.25; }
+        .cine-ticket-texto span { color: #9e9aaa; font-size: 8px; }
+        .cine-ticket.sin-url .cine-ticket-texto span::after { content: " · FALTA URL"; color: #ffcc66; }
+        .cine-sin-url { color: #ffdc8a !important; }
+        @media (max-width: 480px) {
+            .cine-cartelera { grid-template-columns: repeat(2, minmax(0, 1fr)); max-height: 24vh; }
+            .cine-ticket { gap: 5px; padding: 5px; }
+            .cine-ticket img { flex-basis: 34px; width: 34px; }
+            .cine-pantalla { width: 94vw; }
+        }
         @media (max-height: 700px) {
             .sala-multimedia { padding-top: 12px; gap: 8px; }
             .sala-seleccion { max-height: 18vh; }
@@ -403,34 +463,72 @@
 
     <div id="galeria-modal" class="sala-multimedia">
         <h2>GALERÍA DE ARTE</h2>
-        <p>Recorré las tapas del multiverso y descubrí sus álbumes.</p>
-        <img id="galeria-lamina" class="galeria-lamina" src="" alt="Arte del álbum">
-        <div id="galeria-titulo" class="vinilo-titulo" aria-live="polite"></div>
-        <p id="galeria-detalle" class="sala-detalle"></p>
-        <div class="sala-acciones">
-            <button class="sala-btn" onclick="moverGaleria(-1)">◀ ANTERIOR</button>
-            <button class="sala-btn" onclick="moverGaleria(1)">SIGUIENTE ▶</button>
+        <p>Recorré los cuadros y acercate a cada tapa; también podés entrar a la sala de Grafitis.</p>
+        <div class="galeria-secciones" aria-label="Espacios de la galería">
+            <button id="btn-galeria-cuadros" class="galeria-seccion-btn activa" onclick="cambiarVistaGaleria('cuadros')">🖼️ CUADROS</button>
+            <button id="btn-galeria-grafitis" class="galeria-seccion-btn" onclick="cambiarVistaGaleria('grafitis')">🚪 GRAFITIS</button>
         </div>
-        <div id="galeria-estante" class="sala-seleccion" aria-label="Elegir una tapa"></div>
+        <section id="galeria-vista-cuadros" class="galeria-vista" aria-label="Cuadros de arte">
+            <div class="galeria-info">
+                <span id="galeria-titulo" aria-live="polite">Elegí un cuadro para escuchar su álbum</span>
+                <button id="btn-audio-galeria" class="galeria-audio-btn" type="button" onclick="alternarAudioGaleria()" aria-pressed="true">🔊 PAUSAR MÚSICA</button>
+                <span id="galeria-detalle" aria-live="polite"></span>
+            </div>
+            <div id="galeria-estante" class="galeria-pared" aria-label="Pared de cuadros"></div>
+        </section>
+        <section id="galeria-vista-grafitis" class="grafitis-vista" aria-label="Sala oscura de grafitis" hidden>
+            <p class="grafiti-frase">Gracias totales</p>
+            <span class="grafiti-fuente">FRASE DE DESPEDIDA · SODA STEREO, 1997</span>
+            <p class="grafiti-frase">Me verás volver</p>
+            <span class="grafiti-fuente">TÍTULO DE CANCIÓN Y GIRA</span>
+            <p class="grafiti-frase">Un millón de años luz</p>
+            <span class="grafiti-fuente">CANCIÓN ANIMAL · 1990</span>
+            <p class="grafiti-frase">Puente</p>
+            <span class="grafiti-fuente">BOCANADA · 1999</span>
+            <p class="grafiti-frase">Cosas imposibles</p>
+            <span class="grafiti-fuente">SIEMPRE ES HOY · 2002</span>
+            <p class="grafiti-frase">Fuerza natural</p>
+            <span class="grafiti-fuente">FUERZA NATURAL · 2009</span>
+            <p class="grafitis-nota">Un mural de frases y títulos del universo Cerati; salvo “Gracias totales”, son nombres de obras, no citas textuales.</p>
+        </section>
+        <div id="galeria-zoom" class="galeria-zoom" role="dialog" aria-modal="true" aria-label="Obra ampliada" hidden>
+            <div class="galeria-zoom-marco"><img id="galeria-zoom-imagen" src="" alt=""></div>
+            <div id="galeria-zoom-titulo" class="galeria-zoom-titulo"></div>
+            <div class="galeria-zoom-controles">
+                <button class="sala-btn" type="button" onclick="moverGaleria(-1)">◀ ANTERIOR</button>
+                <button class="sala-btn secundario" type="button" onclick="cerrarCuadroGaleria()">CERRAR CUADRO</button>
+                <button class="sala-btn" type="button" onclick="moverGaleria(1)">SIGUIENTE ▶</button>
+            </div>
+        </div>
         <button class="btn-cerrar-trofeos" onclick="mostrarHallCentral()">VOLVER AL HALL</button>
     </div>
 
     <div id="cine-modal" class="sala-multimedia">
         <h2>SALA DE CINE</h2>
-        <p>Una proyección musical de las tapas y pistas disponibles. El catálogo no incluye enlaces de video.</p>
+        <p>Elegí una función de la cartelera. Las direcciones de YouTube se completan en el catálogo del código.</p>
         <div id="cine-pantalla" class="cine-pantalla">
             <img id="cine-tapa" class="cine-tapa" src="" alt="Tapa proyectada">
             <div class="cine-visualizador" aria-hidden="true"></div>
+            <div id="cine-marco" class="cine-marco" hidden></div>
         </div>
-        <div id="cine-titulo" class="vinilo-titulo" aria-live="polite"></div>
-        <div id="cine-estado" class="sala-detalle" aria-live="polite">Elegí un álbum para proyectar.</div>
+        <div id="cine-funcion" class="cine-funcion" aria-live="polite">
+            <h3 id="cine-titulo">Elegí una función</h3>
+            <p id="cine-descripcion">Recitales destacados por álbum, reportajes y proyectos especiales.</p>
+        </div>
+        <div id="cine-estado" class="sala-detalle" aria-live="polite">Seleccioná una película y presioná PROYECTAR.</div>
         <div class="sala-acciones">
             <button class="sala-btn" onclick="moverCine(-1)">◀ ANTERIOR</button>
-            <button class="sala-btn secundario" onclick="reproducirCine()">▶ PROYECTAR</button>
+            <button id="btn-proyectar-cine" class="sala-btn secundario" onclick="reproducirCine()">▶ PROYECTAR</button>
             <button class="sala-btn" onclick="detenerCine()">⏹ DETENER</button>
             <button class="sala-btn" onclick="moverCine(1)">SIGUIENTE ▶</button>
         </div>
-        <div id="cine-estante" class="sala-seleccion" aria-label="Elegir álbum para la proyección"></div>
+        <div class="cine-cartelera-filtros" aria-label="Filtrar la cartelera">
+            <button class="cine-filtro activo" data-cine-filtro="todos" onclick="filtrarCarteleraCine('todos')">TODO</button>
+            <button class="cine-filtro" data-cine-filtro="recitales" onclick="filtrarCarteleraCine('recitales')">RECITALES</button>
+            <button class="cine-filtro" data-cine-filtro="especiales" onclick="filtrarCarteleraCine('especiales')">ESPECIALES</button>
+            <button class="cine-filtro" data-cine-filtro="reportajes" onclick="filtrarCarteleraCine('reportajes')">REPORTAJES</button>
+        </div>
+        <div id="cine-estante" class="cine-cartelera" aria-label="Cartelera de recitales y películas"></div>
         <button class="btn-cerrar-trofeos" onclick="mostrarHallCentral()">VOLVER AL HALL</button>
     </div>
 
@@ -614,7 +712,9 @@
         }
 
         function mostrarHallCentral() {
-            if (["VINILOS", "GALERIA", "CINE"].includes(estadoActual)) detenerReproduccionSala();
+            if (estadoActual === "CINE") detenerCine();
+            else if (estadoActual === "VINILOS") detenerReproduccionSala();
+            else if (estadoActual === "GALERIA") detenerGaleria();
             if (estadoActual === "BIBLIOTECA" && document.getElementById('visor-libro-modal').style.display !== 'none') cerrarVisorLibro();
             if (estadoActual === "CASSETTES") detenerSalaCassettes();
             ocultarTodosLosModales();
@@ -1042,7 +1142,12 @@
         let viniloSonando = false;
         let viniloCambioTimers = [];
         let indiceGaleria = 0;
+        let galeriaVistaActual = "cuadros";
+        let galeriaAudioActiva = true;
         let indiceCine = 0;
+        let cineFiltroActual = "todos";
+        let cineFuncionSeleccionadaId = "";
+        let cineFunciones = [];
 
         function obtenerTemasDisco(disco) {
             const temasPorDisco = {
@@ -1214,6 +1319,10 @@
         function abrirSalaGaleria() {
             prepararSalaMultimedia('galeria-modal', 'GALERIA');
             indiceGaleria = 0;
+            galeriaVistaActual = "cuadros";
+            galeriaAudioActiva = true;
+            document.getElementById('galeria-zoom').hidden = true;
+            cambiarVistaGaleria('cuadros');
             actualizarGaleria();
         }
 
@@ -1222,61 +1331,277 @@
             actualizarGaleria();
         }
 
+        function cambiarVistaGaleria(vista) {
+            galeriaVistaActual = vista === "grafitis" ? "grafitis" : "cuadros";
+            const muestraCuadros = galeriaVistaActual === "cuadros";
+            document.getElementById('galeria-vista-cuadros').hidden = !muestraCuadros;
+            document.getElementById('galeria-vista-grafitis').hidden = muestraCuadros;
+            document.getElementById('btn-galeria-cuadros').classList.toggle('activa', muestraCuadros);
+            document.getElementById('btn-galeria-grafitis').classList.toggle('activa', !muestraCuadros);
+            document.getElementById('btn-galeria-cuadros').setAttribute('aria-pressed', String(muestraCuadros));
+            document.getElementById('btn-galeria-grafitis').setAttribute('aria-pressed', String(!muestraCuadros));
+        }
+
         function actualizarGaleria() {
             const disco = listaDiscos[indiceGaleria];
-            document.getElementById('galeria-lamina').src = disco.fondo;
-            document.getElementById('galeria-lamina').alt = `Tapa de ${disco.nombre}`;
             document.getElementById('galeria-titulo').textContent = disco.nombre;
-            document.getElementById('galeria-detalle').textContent = `Álbum ${indiceGaleria + 1} de ${listaDiscos.length} · ${obtenerTemasDisco(disco).length} temas disponibles en el catálogo.`;
+            document.getElementById('galeria-detalle').textContent = `CUADRO ${indiceGaleria + 1} DE ${listaDiscos.length}`;
             const estante = document.getElementById('galeria-estante');
             estante.replaceChildren();
-            listaDiscos.forEach((item, indice) => estante.appendChild(crearBotonAlbum(
-                item,
-                indice === indiceGaleria,
-                () => { indiceGaleria = indice; actualizarGaleria(); }
-            )));
+            listaDiscos.forEach((item, indice) => {
+                const boton = document.createElement('button');
+                boton.type = 'button';
+                boton.className = 'galeria-cuadro';
+                boton.setAttribute('aria-label', `Ampliar cuadro: ${item.nombre}`);
+                boton.setAttribute('aria-pressed', String(indice === indiceGaleria));
+                const imagen = document.createElement('img');
+                imagen.src = item.fondo;
+                imagen.alt = "";
+                const titulo = document.createElement('span');
+                titulo.textContent = item.nombre;
+                boton.append(imagen, titulo);
+                boton.addEventListener('click', () => abrirCuadroGaleria(indice));
+                estante.appendChild(boton);
+            });
+
+            const zoom = document.getElementById('galeria-zoom');
+            const imagenZoom = document.getElementById('galeria-zoom-imagen');
+            imagenZoom.src = disco.fondo;
+            imagenZoom.alt = `Obra ampliada: tapa de ${disco.nombre}`;
+            document.getElementById('galeria-zoom-titulo').textContent = disco.nombre;
+            if (galeriaAudioActiva && estadoActual === "GALERIA") reproducirAudio(disco.trackId, 0);
+            const botonAudio = document.getElementById('btn-audio-galeria');
+            botonAudio.textContent = galeriaAudioActiva ? "🔊 PAUSAR MÚSICA" : "🔇 ACTIVAR MÚSICA";
+            botonAudio.setAttribute('aria-pressed', String(galeriaAudioActiva));
+            if (zoom.hidden === false) {
+                const cuadroActual = estante.querySelector('.galeria-cuadro[aria-pressed="true"]');
+                if (cuadroActual) cuadroActual.classList.add('seleccionado');
+            }
+        }
+
+        function abrirCuadroGaleria(indice) {
+            indiceGaleria = indice;
+            actualizarGaleria();
+            document.getElementById('galeria-zoom').hidden = false;
+            document.getElementById('galeria-zoom').querySelector('.galeria-zoom-controles button:nth-child(2)').focus();
+        }
+
+        function cerrarCuadroGaleria() {
+            document.getElementById('galeria-zoom').hidden = true;
+            const seleccionado = document.querySelector('#galeria-estante .galeria-cuadro[aria-pressed="true"]');
+            if (seleccionado) seleccionado.focus();
+        }
+
+        function alternarAudioGaleria() {
+            galeriaAudioActiva = !galeriaAudioActiva;
+            if (galeriaAudioActiva) {
+                reproducirAudio(listaDiscos[indiceGaleria].trackId, 0);
+            } else {
+                detenerAudioGaleria();
+            }
+            const botonAudio = document.getElementById('btn-audio-galeria');
+            botonAudio.textContent = galeriaAudioActiva ? "🔊 PAUSAR MÚSICA" : "🔇 ACTIVAR MÚSICA";
+            botonAudio.setAttribute('aria-pressed', String(galeriaAudioActiva));
+        }
+
+        function detenerAudioGaleria() {
+            document.getElementById('yt-player').src = "";
+            cancionActualId = "";
+        }
+
+        function detenerGaleria() {
+            galeriaAudioActiva = false;
+            detenerAudioGaleria();
+            const zoom = document.getElementById('galeria-zoom');
+            if (zoom) zoom.hidden = true;
         }
 
         function abrirSalaCine() {
+            detenerCine();
             prepararSalaMultimedia('cine-modal', 'CINE');
-            indiceCine = 0;
+            cineFunciones = [
+                ...listaDiscos.map(disco => ({
+                    id: `recital-${disco.id}`,
+                    tipo: "recitales",
+                    titulo: `Recital destacado · ${disco.nombre}`,
+                    subtitulo: "RECITAL",
+                    descripcion: `Concierto destacado de la etapa ${disco.nombre}. Pegá la URL exacta de YouTube en youtubeUrl para habilitar la proyección.`,
+                    imagen: disco.fondo,
+                    youtubeUrl: ""
+                })),
+                {
+                    id: "especial-unplugged",
+                    tipo: "especiales",
+                    titulo: "MTV Unplugged",
+                    subtitulo: "ESPECIAL",
+                    descripcion: "Concierto acústico especial. Agregá la URL exacta de YouTube en youtubeUrl.",
+                    imagen: listaDiscos.find(disco => disco.id === "sueno_stereo").fondo,
+                    youtubeUrl: ""
+                },
+                {
+                    id: "especial-11-episodios",
+                    tipo: "especiales",
+                    titulo: "11 Episodios Sinfónicos",
+                    subtitulo: "ESPECIAL",
+                    descripcion: "Proyecto sinfónico de Gustavo Cerati. Agregá la URL exacta de YouTube en youtubeUrl.",
+                    imagen: listaDiscos.find(disco => disco.id === "amor_amarillo").fondo,
+                    youtubeUrl: ""
+                },
+                {
+                    id: "pelicula-mas-bien",
+                    tipo: "especiales",
+                    titulo: "+Bien",
+                    subtitulo: "PELÍCULA",
+                    descripcion: "Película protagonizada por Gustavo Cerati, con música suya. Agregá la URL exacta de YouTube en youtubeUrl.",
+                    imagen: listaDiscos.find(disco => disco.id === "bocanada").fondo,
+                    youtubeUrl: ""
+                },
+                {
+                    id: "reportaje-gustavo-cerati",
+                    tipo: "reportajes",
+                    titulo: "Reportajes a Gustavo Cerati",
+                    subtitulo: "REPORTAJES",
+                    descripcion: "Espacio para entrevistas y reportajes. Agregá la URL exacta de YouTube en youtubeUrl.",
+                    imagen: listaDiscos.find(disco => disco.id === "ahi_vamos").fondo,
+                    youtubeUrl: ""
+                }
+            ];
+            if (!cineFunciones.some(funcion => funcion.id === cineFuncionSeleccionadaId)) {
+                cineFuncionSeleccionadaId = cineFunciones[0].id;
+            }
+            document.querySelectorAll('.cine-filtro').forEach(boton => {
+                boton.classList.toggle('activo', boton.dataset.cineFiltro === cineFiltroActual);
+            });
             actualizarCine();
         }
 
         function moverCine(direccion) {
+            const cartelera = obtenerFuncionesFiltradasCine();
+            if (!cartelera.length) return;
+            const indiceActual = cartelera.findIndex(funcion => funcion.id === cineFuncionSeleccionadaId);
+            const indiceSiguiente = (indiceActual + direccion + cartelera.length) % cartelera.length;
+            seleccionarFuncionCine(cartelera[indiceSiguiente]);
+        }
+
+        function obtenerFuncionesFiltradasCine() {
+            return cineFunciones.filter(funcion => cineFiltroActual === "todos" || funcion.tipo === cineFiltroActual);
+        }
+
+        function filtrarCarteleraCine(filtro) {
             detenerCine();
-            indiceCine = (indiceCine + direccion + listaDiscos.length) % listaDiscos.length;
+            cineFiltroActual = filtro;
+            const funciones = obtenerFuncionesFiltradasCine();
+            if (!funciones.some(funcion => funcion.id === cineFuncionSeleccionadaId) && funciones.length) {
+                cineFuncionSeleccionadaId = funciones[0].id;
+            }
+            document.querySelectorAll('.cine-filtro').forEach(boton => {
+                boton.classList.toggle('activo', boton.dataset.cineFiltro === filtro);
+            });
+            actualizarCine();
+        }
+
+        function seleccionarFuncionCine(funcion) {
+            detenerCine();
+            cineFuncionSeleccionadaId = funcion.id;
             actualizarCine();
         }
 
         function actualizarCine() {
-            const disco = listaDiscos[indiceCine];
-            document.getElementById('cine-tapa').src = disco.fondo;
-            document.getElementById('cine-tapa').alt = `Tapa proyectada: ${disco.nombre}`;
-            document.getElementById('cine-titulo').textContent = disco.nombre;
-            document.getElementById('cine-estado').textContent = `Proyección ${indiceCine + 1} de ${listaDiscos.length} · arte del álbum y pista musical disponible.`;
+            const funciones = obtenerFuncionesFiltradasCine();
+            const funcion = funciones.find(item => item.id === cineFuncionSeleccionadaId) || funciones[0];
+            if (!funcion) return;
+            cineFuncionSeleccionadaId = funcion.id;
+            document.getElementById('cine-tapa').src = funcion.imagen;
+            document.getElementById('cine-tapa').alt = `Afiche: ${funcion.titulo}`;
+            document.getElementById('cine-titulo').textContent = funcion.titulo;
+            document.getElementById('cine-descripcion').textContent = funcion.descripcion;
+            const tieneUrl = Boolean(extraerIdYoutube(funcion.youtubeUrl));
+            document.getElementById('cine-estado').textContent = tieneUrl
+                ? `${funcion.subtitulo} · LISTO PARA PROYECTAR`
+                : `${funcion.subtitulo} · AGREGÁ LA URL DE YOUTUBE PARA HABILITAR ESTA FUNCIÓN`;
+            document.getElementById('cine-estado').classList.toggle('cine-sin-url', !tieneUrl);
+            document.getElementById('btn-proyectar-cine').disabled = !tieneUrl;
+            document.getElementById('btn-proyectar-cine').style.opacity = tieneUrl ? '1' : '.55';
             const visualizador = document.querySelector('#cine-modal .cine-visualizador');
             if (!visualizador.childElementCount) {
                 for (let i = 0; i < 24; i++) visualizador.appendChild(document.createElement('span'));
             }
             const estante = document.getElementById('cine-estante');
             estante.replaceChildren();
-            listaDiscos.forEach((item, indice) => estante.appendChild(crearBotonAlbum(
-                item,
-                indice === indiceCine,
-                () => { detenerCine(); indiceCine = indice; actualizarCine(); }
-            )));
+            funciones.forEach(item => {
+                const boton = document.createElement('button');
+                boton.type = 'button';
+                boton.className = `cine-ticket${item.id === cineFuncionSeleccionadaId ? ' seleccionada' : ''}${extraerIdYoutube(item.youtubeUrl) ? '' : ' sin-url'}`;
+                boton.setAttribute('aria-pressed', String(item.id === cineFuncionSeleccionadaId));
+                const imagen = document.createElement('img');
+                imagen.src = item.imagen;
+                imagen.alt = '';
+                const texto = document.createElement('span');
+                texto.className = 'cine-ticket-texto';
+                const titulo = document.createElement('strong');
+                titulo.textContent = item.titulo;
+                const tipo = document.createElement('span');
+                tipo.textContent = item.subtitulo;
+                texto.append(titulo, tipo);
+                boton.append(imagen, texto);
+                boton.addEventListener('click', () => seleccionarFuncionCine(item));
+                estante.appendChild(boton);
+            });
+        }
+
+        function extraerIdYoutube(url) {
+            const valor = (url || "").trim();
+            if (!valor) return "";
+            try {
+                const parsed = new URL(valor);
+                const host = parsed.hostname.replace(/^www\./, "");
+                let id = "";
+                if (host === "youtu.be") id = parsed.pathname.split("/").filter(Boolean)[0] || "";
+                else if (host === "youtube.com" || host === "m.youtube.com" || host === "music.youtube.com") {
+                    if (parsed.pathname === "/watch") id = parsed.searchParams.get("v") || "";
+                    else {
+                        const partes = parsed.pathname.split("/").filter(Boolean);
+                        if (["embed", "shorts", "live"].includes(partes[0])) id = partes[1] || "";
+                    }
+                }
+                return /^[A-Za-z0-9_-]{11}$/.test(id) ? id : "";
+            } catch (error) {
+                return "";
+            }
         }
 
         function reproducirCine() {
-            const disco = listaDiscos[indiceCine];
-            reproducirAudio(disco.trackId, 0);
+            const funcion = cineFunciones.find(item => item.id === cineFuncionSeleccionadaId);
+            if (!funcion) return;
+            const videoId = extraerIdYoutube(funcion.youtubeUrl);
+            if (!videoId) {
+                document.getElementById('cine-estado').textContent = "Esta función todavía no tiene una URL válida de YouTube.";
+                document.getElementById('cine-estado').classList.add('cine-sin-url');
+                return;
+            }
+            const marco = document.getElementById('cine-marco');
+            const video = document.createElement('iframe');
+            video.src = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0`;
+            video.title = funcion.titulo;
+            video.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+            video.allowFullscreen = true;
+            marco.replaceChildren(video);
+            marco.hidden = false;
+            document.getElementById('cine-pantalla').classList.add('con-video');
             document.getElementById('cine-pantalla').classList.add('proyectando');
-            document.getElementById('cine-estado').textContent = `Proyectando ${disco.nombre} con su pista musical.`;
+            document.getElementById('cine-estado').textContent = `PROYECTANDO · ${funcion.titulo}`;
+            document.getElementById('cine-estado').classList.remove('cine-sin-url');
         }
 
         function detenerCine() {
-            detenerReproduccionSala();
+            const marco = document.getElementById('cine-marco');
+            if (marco) {
+                marco.replaceChildren();
+                marco.hidden = true;
+            }
+            const pantalla = document.getElementById('cine-pantalla');
+            if (pantalla) pantalla.classList.remove('proyectando', 'con-video');
+            if (estadoActual === "CINE") actualizarCine();
         }
 
         // --- DISCO 1 (Pac-Man - Soda Stereo 1984) ---
