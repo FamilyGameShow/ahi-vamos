@@ -57,6 +57,7 @@
         .comunidad-vista[hidden] { display: none; }
         .comunidad-vista { display: grid; gap: 10px; }
         .comunidad-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 12px; border: 1px solid #49355e; border-radius: 9px; background: rgba(17,10,30,.8); text-align: left; }
+        .comunidad-form[hidden] { display: none; }
         .comunidad-form label { display: grid; align-content: start; gap: 4px; color: #00ffff; font-size: 10px; }
         .comunidad-form .ancho-completo { grid-column: 1 / -1; }
         .comunidad-form input, .comunidad-form select, .comunidad-form textarea { width: 100%; min-width: 0; box-sizing: border-box; padding: 9px; border: 1px solid #624a78; border-radius: 6px; color: #f4edf9; background: #0b0714; font: 11px sans-serif; }
@@ -69,11 +70,41 @@
         .comunidad-card small { color: #9c8eaf; font-size: 9px; }
         .comunidad-card a { width: fit-content; color: #73f8ff; font-size: 10px; overflow-wrap: anywhere; }
         .comunidad-card img { display: block; width: 100%; max-height: 220px; object-fit: contain; border-radius: 5px; background: #08060d; }
+        .noticias-cartelera { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; max-height: 58vh; overflow-y: auto; padding: 3px; }
+        .noticias-flyer { display: block; min-width: 0; padding: 7px; border: 1px solid #58436d; border-radius: 8px; background: linear-gradient(145deg,rgba(30,19,43,.95),rgba(8,6,14,.96)); box-shadow: 0 5px 14px rgba(0,0,0,.4); }
+        .noticias-flyer img { display: block; width: 100%; max-height: 52vh; aspect-ratio: 3 / 4; object-fit: contain; border-radius: 4px; background: #08060d; }
+        .noticias-promocionar { justify-self: center; width: min(92vw, 480px); padding: 13px 18px; border: 1px solid #00ffff; border-radius: 10px; color: #fff; background: linear-gradient(105deg,rgba(104,22,113,.95),rgba(10,96,116,.95)); box-shadow: 0 0 18px rgba(0,255,255,.25); font-size: 12px; font-weight: bold; letter-spacing: .5px; cursor: pointer; }
+        .noticias-promocionar:hover, .noticias-promocionar:focus-visible { outline: 2px solid #fff; box-shadow: 0 0 22px rgba(0,255,255,.5); }
         .comunidad-mensajes { display: flex; flex-direction: column; gap: 7px; max-height: 28vh; min-height: 90px; overflow-y: auto; padding: 10px; border: 1px solid #49355e; border-radius: 8px; background: #080611; text-align: left; }
         .comunidad-mensaje { color: #e7dff0; font-size: 10px; line-height: 1.45; overflow-wrap: anywhere; }
         .comunidad-mensaje strong { color: #00ffff; }
         .comunidad-mensaje time { margin-left: 6px; color: #827991; font-size: 8px; }
         .comunidad-vacia { color: #a99bb8; font-size: 10px; }
+        .satelite-album { display: grid; gap: 12px; width: 100%; padding: 13px; box-sizing: border-box; border: 1px solid #4e4772; border-radius: 12px; background: radial-gradient(ellipse at 10% 0%, rgba(92,43,132,.36), transparent 55%), linear-gradient(145deg, rgba(24,18,42,.97), rgba(7,6,17,.98)); box-shadow: 0 0 22px rgba(108,57,177,.18); text-align: center; }
+        .satelite-encabezado { display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .satelite-portada { display: grid; place-items: center; flex: 0 0 clamp(72px, 19vw, 145px); aspect-ratio: 1; padding: 6px; box-sizing: border-box; border: 2px solid #b29ad2; border-radius: 7px; color: #e8dcfa; background: radial-gradient(circle at 35% 30%, #715492, #241938 68%, #0a0712); box-shadow: 0 6px 18px rgba(0,0,0,.55), inset 0 0 18px rgba(206,160,255,.22); font: bold 10px/1.4 Georgia,serif; letter-spacing: 2px; text-align: center; }
+        .satelite-info { display: flex; min-width: 0; flex-direction: column; align-items: flex-start; justify-content: center; gap: 6px; text-align: left; }
+        .satelite-sello { color: #00ffff; font-size: 9px; font-weight: bold; letter-spacing: 2px; }
+        .satelite-info h3 { margin: 0; color: #f4e7ff; font: bold clamp(23px, 6vw, 38px) Georgia, serif; letter-spacing: 2px; text-shadow: 0 0 12px rgba(198,131,255,.55); }
+        .satelite-info p { max-width: none; color: #cfc2dd; font-size: 10px; line-height: 1.45; }
+        .satelite-arte { position: relative; display: grid; place-items: center; width: min(88vw, 590px); aspect-ratio: 1; overflow: hidden; margin: 0 auto; border: 8px ridge #a98a54; border-radius: 8px; box-sizing: border-box; background: radial-gradient(circle at 50% 38%, rgba(158,100,194,.65), transparent 38%), radial-gradient(ellipse at 50% 80%, #313055, #11101e 62%, #07060d); box-shadow: 0 0 0 3px #382946, 0 12px 28px rgba(0,0,0,.65), inset 0 0 28px rgba(0,0,0,.8); }
+        .satelite-arte[hidden] { display: none; }
+        .satelite-arte img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+        .satelite-arte-placeholder { position: relative; z-index: 1; display: flex; width: 78%; height: 78%; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 16px; box-sizing: border-box; border: 1px solid rgba(234,213,255,.5); background: linear-gradient(145deg,rgba(12,8,23,.12),rgba(7,6,15,.48)); color: #eddbff; text-shadow: 0 2px 12px #08040e; text-align: center; }
+        .satelite-arte-placeholder span { color: #93f8ff; font-size: 9px; font-weight: bold; letter-spacing: 3px; }
+        .satelite-arte-placeholder strong { font: bold clamp(17px, 5vw, 34px)/1.2 Georgia,serif; }
+        .satelite-arte-placeholder small { color: #dac6ef; font-size: 9px; }
+        .satelite-ahora { color: #ffcc66 !important; font-size: 11px !important; font-weight: bold; }
+        .satelite-album > .comunidad-aviso { grid-column: 1 / -1; margin: 0; }
+        .satelite-lista { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; max-height: 28vh; overflow-y: auto; padding: 2px; }
+        .satelite-cancion { display: grid; grid-template-columns: 38px minmax(0, 1fr); align-items: center; gap: 8px; min-width: 0; padding: 8px; border: 1px solid #453653; border-radius: 6px; color: #e8dff0; background: rgba(16,11,26,.9); text-align: left; cursor: pointer; }
+        .satelite-cancion:hover, .satelite-cancion:focus-visible { border-color: #00ffff; outline: none; box-shadow: 0 0 10px rgba(0,255,255,.28); }
+        .satelite-cancion[aria-current="true"] { border-color: #ffcc66; color: #fff1cf; background: rgba(93,62,20,.36); }
+        .satelite-cancion-tiempo { color: #00ffff; font-family: monospace; font-size: 9px; font-weight: bold; }
+        .satelite-cancion-nombre { min-width: 0; font-size: 10px; line-height: 1.3; }
+        .compania-presencia { display: grid; gap: 7px; padding: 10px; border: 1px solid #34525e; border-radius: 8px; background: rgba(6,20,27,.65); text-align: left; }
+        .compania-presencia strong { color: #75f4ff; font-size: 10px; letter-spacing: 1px; }
+        .compania-presencia p { max-width: none; color: #bbb2c8; font-size: 9px; line-height: 1.45; }
         @media (max-width: 480px) {
             .karaoke-display { min-height: 130px; max-height: 30vh; }
             .trivia-opciones { grid-template-columns: 1fr; }
@@ -82,6 +113,9 @@
             .comunidad-form { grid-template-columns: 1fr; }
             .comunidad-form .ancho-completo { grid-column: auto; }
             .comunidad-lista { grid-template-columns: 1fr; max-height: 28vh; }
+            .satelite-album { padding: 9px; gap: 9px; }
+            .satelite-lista { grid-template-columns: 1fr; max-height: 25vh; }
+            .satelite-arte { width: min(82vw, 430px); }
         }
 
         /* Sala de Biblioteca / Estantería de Libros */
@@ -641,34 +675,41 @@
 
     <div id="compania-modal" class="sala-multimedia">
         <h2>SALA DE COMPAÑÍA</h2>
-        <p>Un espacio para descubrir colaboraciones y conversar con otros fans.</p>
+        <p>Satélite: las canciones y colaboraciones de Gustavo Cerati con otros músicos.</p>
         <div class="comunidad-panel">
-            <p class="comunidad-aviso">Prototipo local: lo que publiques se guarda solo en este navegador y no lo ve otra persona. La comunidad compartida requiere cuentas, base de datos y moderación.</p>
+            <p class="comunidad-aviso">El chat de esta versión es una maqueta local. Para ver usuarios conectados y hablar entre distintos dispositivos hay que sumar inicio de sesión y una base compartida.</p>
             <div class="comunidad-tabs" aria-label="Secciones de la sala de compañía">
-                <button id="compania-tab-colaboraciones" class="comunidad-tab activa" type="button" onclick="cambiarSeccionCompania('colaboraciones')">COLABORACIONES</button>
+                <button id="compania-tab-colaboraciones" class="comunidad-tab activa" type="button" onclick="cambiarSeccionCompania('colaboraciones')">DISCO SATÉLITE</button>
                 <button id="compania-tab-chat" class="comunidad-tab" type="button" onclick="cambiarSeccionCompania('chat')">CHAT DE FANS</button>
             </div>
             <section id="compania-vista-colaboraciones" class="comunidad-vista">
-                <p>El archivo se completa con aportes de la comunidad; todavía no hay colaboraciones verificadas cargadas.</p>
-                <form class="comunidad-form" onsubmit="guardarColaboracion(event)">
-                    <label>ARTISTA COLABORADOR<input id="colaboracion-artista" maxlength="80" required placeholder="Nombre del artista"></label>
-                    <label>CANCIÓN O PUBLICACIÓN<input id="colaboracion-titulo" maxlength="100" required placeholder="Tema, disco o presentación"></label>
-                    <label>FORMATO
-                        <select id="colaboracion-formato">
-                            <option>Grabación de estudio</option>
-                            <option>Presentación en vivo</option>
-                            <option>Entrevista o registro</option>
-                            <option>Otro</option>
-                        </select>
-                    </label>
-                    <label>ENLACE DE REFERENCIA (OPCIONAL)<input id="colaboracion-enlace" type="url" maxlength="300" placeholder="https://…"></label>
-                    <label class="ancho-completo">NOTA O FUENTE (OPCIONAL)<textarea id="colaboracion-nota" maxlength="280" placeholder="Agregá contexto o fuente para poder verificarlo."></textarea></label>
-                    <button class="sala-btn secundario ancho-completo" type="submit">AGREGAR A ESTE NAVEGADOR</button>
-                </form>
-                <div id="compania-colaboraciones" class="comunidad-lista" aria-live="polite"></div>
+                <article class="satelite-album">
+                    <div class="satelite-encabezado">
+                        <div class="satelite-portada" aria-label="Espacio reservado para la portada de Satélite">SATÉLITE<br>PORTADA</div>
+                        <div class="satelite-info">
+                            <span class="satelite-sello">ÁLBUM DE COLABORACIONES</span>
+                            <h3>Satélite</h3>
+                            <p>Elegí un tema: aparece su arte y empieza a sonar desde el comienzo indicado.</p>
+                        </div>
+                    </div>
+                    <div id="satelite-arte" class="satelite-arte" aria-live="polite">
+                        <img id="satelite-imagen-tema" src="" alt="" hidden>
+                        <div id="satelite-arte-placeholder" class="satelite-arte-placeholder">
+                            <span>ARTE DEL TEMA</span>
+                            <strong id="satelite-placeholder-titulo">Elegí una canción</strong>
+                            <small>La ilustración de cada tema se puede agregar después.</small>
+                        </div>
+                    </div>
+                    <p id="satelite-ahora" class="satelite-ahora" aria-live="polite">Elegí un tema para escuchar Satélite.</p>
+                    <div id="satelite-canciones" class="satelite-lista" aria-label="Canciones de Satélite"></div>
+                </article>
             </section>
             <section id="compania-vista-chat" class="comunidad-vista" hidden>
-                <label style="color:#00ffff;font-size:10px;text-align:left;">TU NOMBRE<input id="chat-nombre" maxlength="30" autocomplete="nickname" placeholder="¿Cómo te llamamos?" style="display:block;width:100%;margin-top:5px;padding:9px;box-sizing:border-box;border:1px solid #624a78;border-radius:6px;color:#fff;background:#0b0714;"></label>
+                <label style="color:#00ffff;font-size:10px;text-align:left;">TU APODO (EN ESTA PRUEBA NO ES UN INICIO DE SESIÓN)<input id="chat-nombre" maxlength="30" autocomplete="nickname" placeholder="¿Cómo te llamamos?" style="display:block;width:100%;margin-top:5px;padding:9px;box-sizing:border-box;border:1px solid #624a78;border-radius:6px;color:#fff;background:#0b0714;"></label>
+                <div class="compania-presencia">
+                    <strong>QUIÉN ESTÁ CONECTADO</strong>
+                    <p id="compania-usuarios-vacios">La lista de personas conectadas y los chats privados aparecerán cuando esta sala tenga inicio de sesión y servicio en línea. El apodo de esta maqueta solo identifica tus mensajes locales.</p>
+                </div>
                 <div id="compania-mensajes" class="comunidad-mensajes" aria-live="polite"></div>
                 <form class="comunidad-form" onsubmit="enviarMensajeCompania(event)">
                     <label class="ancho-completo">MENSAJE<input id="chat-mensaje" maxlength="280" required placeholder="Saludá y contá qué música te gusta…"></label>
@@ -682,10 +723,12 @@
 
     <div id="noticias-modal" class="sala-multimedia">
         <h2>SALA DE NOTICIAS</h2>
-        <p>Compartí shows tributo, homenajes, exposiciones y encuentros del universo Cerati.</p>
+        <p>Cartelera de shows tributo, homenajes, exposiciones y encuentros del universo Cerati.</p>
         <div class="comunidad-panel">
-            <p class="comunidad-aviso">Prototipo local: los eventos y flyers quedan en este navegador. No se publican para otros usuarios ni se revisan hasta conectar un servicio compartido con moderación.</p>
-            <form id="form-evento" class="comunidad-form" onsubmit="publicarEvento(event)">
+            <div id="noticias-lista" class="noticias-cartelera" aria-label="Flyers de eventos"></div>
+            <button id="noticias-abrir-form" class="noticias-promocionar" type="button" aria-controls="form-evento" aria-expanded="false" onclick="abrirFormularioEvento()">TENGO UN EVENTO · PROMOCIONAR EVENTO</button>
+            <form id="form-evento" class="comunidad-form" onsubmit="publicarEvento(event)" hidden>
+                <p class="comunidad-aviso ancho-completo">Los datos y flyers se guardan solo en este navegador; todavía no se publican para otros usuarios.</p>
                 <label>NOMBRE DEL EVENTO<input id="evento-nombre" maxlength="100" required placeholder="Ej.: Homenaje a Cerati"></label>
                 <label>TIPO
                     <select id="evento-tipo">
@@ -701,13 +744,13 @@
                 <label>LUGAR<input id="evento-lugar" maxlength="100" required placeholder="Sala, bar o espacio cultural"></label>
                 <label>ORGANIZA<input id="evento-organiza" maxlength="70" placeholder="Nombre o colectivo"></label>
                 <label>ENLACE O CONTACTO<input id="evento-enlace" type="url" maxlength="300" placeholder="https://…"></label>
-                <label>FLYER O FOTO (máximo 500 KB)<input id="evento-imagen" type="file" accept="image/png,image/jpeg,image/webp" onchange="previsualizarFlyer(this)"></label>
+                <label>FLYER O FOTO (PNG, JPG o WebP; máximo 500 KB)<input id="evento-imagen" type="file" accept="image/png,image/jpeg,image/webp" onchange="previsualizarFlyer(this)" required></label>
                 <label class="ancho-completo">DETALLES<textarea id="evento-detalles" maxlength="500" required placeholder="Contá de qué se trata y cómo participar."></textarea></label>
                 <div id="evento-imagen-preview" class="ancho-completo"></div>
-                <button class="sala-btn secundario ancho-completo" type="submit">GUARDAR EVENTO EN ESTE NAVEGADOR</button>
+                <button class="sala-btn secundario ancho-completo" type="submit">PUBLICAR FLYER EN ESTA CARTELERA</button>
+                <button class="sala-btn secundario ancho-completo" type="button" onclick="cerrarFormularioEvento()">CANCELAR · VOLVER A LA CARTELERA</button>
             </form>
             <div id="noticias-estado" class="trivia-feedback" aria-live="polite"></div>
-            <div id="noticias-lista" class="comunidad-lista" aria-live="polite"></div>
         </div>
         <button class="btn-cerrar-trofeos" onclick="mostrarHallCentral()">VOLVER AL HALL</button>
     </div>
@@ -896,6 +939,7 @@
             else if (estadoActual === "VINILOS") detenerReproduccionSala();
             else if (estadoActual === "GALERIA") detenerGaleria();
             else if (estadoActual === "KARAOKE") detenerKaraoke();
+            else if (estadoActual === "COMPANIA") detenerAudioSatelite();
             if (estadoActual === "BIBLIOTECA" && document.getElementById('visor-libro-modal').style.display !== 'none') cerrarVisorLibro();
             if (estadoActual === "CASSETTES") detenerSalaCassettes();
             ocultarTodosLosModales();
@@ -1347,9 +1391,26 @@
         let triviaIndice = 0;
         let triviaAciertos = 0;
         let triviaRespondida = false;
-        let companiaSeccionActual = "colaboraciones";
+        let companiaSeccionActual = "satelite";
+        let indiceTemaSatelite = 0;
         let eventoFlyerData = "";
         let eventoFlyerLeyendo = false;
+        const cancionesSatelite = [
+            { nombre: "Tráeme la Noche (Bring on the Night)", inicio: 0, tiempo: "00:00", imagen: "" },
+            { nombre: "El Mareo", inicio: 282, tiempo: "04:42", imagen: "" },
+            { nombre: "19", inicio: 559, tiempo: "09:19", imagen: "" },
+            { nombre: "Zona de Promesas", inicio: 755, tiempo: "12:35", imagen: "" },
+            { nombre: "Los Libros de la Buena Memoria", inicio: 992, tiempo: "16:32", imagen: "" },
+            { nombre: "Desde el Papel", inicio: 1308, tiempo: "21:48", imagen: "" },
+            { nombre: "Eiti Leda", inicio: 1487, tiempo: "24:47", imagen: "" },
+            { nombre: "Sueño en Gotas", inicio: 1763, tiempo: "29:23", imagen: "" },
+            { nombre: "Té para Tres", inicio: 2006, tiempo: "33:26", imagen: "" },
+            { nombre: "Bajan", inicio: 2224, tiempo: "37:04", imagen: "" },
+            { nombre: "I'm Losing You", inicio: 2476, tiempo: "41:16", imagen: "" },
+            { nombre: "Electroshock", inicio: 2683, tiempo: "44:43", imagen: "" },
+            { nombre: "Nunca Iré", inicio: 2921, tiempo: "48:41", imagen: "" },
+            { nombre: "Tesoro", inicio: 3146, tiempo: "52:26", imagen: "" }
+        ];
 
         function obtenerTemasDisco(disco) {
             const temasPorDisco = {
@@ -1889,7 +1950,6 @@
         }
 
         const clavesComunidadLocal = {
-            colaboraciones: "colores-santos-colaboraciones-v1",
             mensajes: "colores-santos-chat-v1",
             eventos: "colores-santos-eventos-v1"
         };
@@ -1954,81 +2014,80 @@
                 console.error("Error al leer el nombre local del chat:", error);
             }
             cambiarSeccionCompania(companiaSeccionActual);
-            renderizarColaboraciones();
+            renderizarCancionesSatelite();
             renderizarMensajesCompania();
         }
 
+        function renderizarCancionesSatelite() {
+            const lista = document.getElementById('satelite-canciones');
+            lista.replaceChildren();
+            cancionesSatelite.forEach((cancion, indice) => {
+                const boton = document.createElement('button');
+                boton.type = 'button';
+                boton.className = 'satelite-cancion';
+                boton.setAttribute('aria-current', String(indice === indiceTemaSatelite));
+                const tiempo = document.createElement('span');
+                tiempo.className = 'satelite-cancion-tiempo';
+                tiempo.textContent = cancion.tiempo;
+                const nombre = document.createElement('span');
+                nombre.className = 'satelite-cancion-nombre';
+                nombre.textContent = cancion.nombre;
+                boton.append(tiempo, nombre);
+                boton.addEventListener('click', () => reproducirTemaSatelite(indice));
+                lista.appendChild(boton);
+            });
+            actualizarArteSatelite();
+        }
+
+        function actualizarArteSatelite() {
+            const cancion = cancionesSatelite[indiceTemaSatelite];
+            const imagen = document.getElementById('satelite-imagen-tema');
+            const placeholder = document.getElementById('satelite-arte-placeholder');
+            const titulo = document.getElementById('satelite-placeholder-titulo');
+            const tieneImagen = Boolean(cancion.imagen);
+            imagen.hidden = !tieneImagen;
+            placeholder.hidden = tieneImagen;
+            imagen.onerror = () => {
+                imagen.hidden = true;
+                placeholder.hidden = false;
+            };
+            if (tieneImagen) imagen.src = cancion.imagen;
+            else imagen.removeAttribute('src');
+            imagen.alt = tieneImagen ? `Arte de ${cancion.nombre}` : "";
+            titulo.textContent = cancion.nombre;
+            document.getElementById('satelite-ahora').textContent = `SATÉLITE · ${cancion.nombre} · ${cancion.tiempo}`;
+            document.querySelectorAll('#satelite-canciones .satelite-cancion').forEach((boton, indice) => {
+                boton.setAttribute('aria-current', String(indice === indiceTemaSatelite));
+            });
+        }
+
+        function reproducirTemaSatelite(indice) {
+            if (!Number.isInteger(indice) || indice < 0 || indice >= cancionesSatelite.length) return;
+            indiceTemaSatelite = indice;
+            actualizarArteSatelite();
+            const cancion = cancionesSatelite[indiceTemaSatelite];
+            reproducirAudio("6xqpU5ot2AE", cancion.inicio);
+        }
+
+        function detenerAudioSatelite() {
+            const player = document.getElementById('yt-player');
+            if (player) player.src = "";
+            cancionActualId = "";
+        }
+
         function cambiarSeccionCompania(seccion) {
-            companiaSeccionActual = seccion === "chat" ? "chat" : "colaboraciones";
-            const mostrarColaboraciones = companiaSeccionActual === "colaboraciones";
-            document.getElementById('compania-vista-colaboraciones').hidden = !mostrarColaboraciones;
-            document.getElementById('compania-vista-chat').hidden = mostrarColaboraciones;
-            document.getElementById('compania-tab-colaboraciones').classList.toggle('activa', mostrarColaboraciones);
-            document.getElementById('compania-tab-chat').classList.toggle('activa', !mostrarColaboraciones);
-            document.getElementById('compania-tab-colaboraciones').setAttribute('aria-pressed', String(mostrarColaboraciones));
-            document.getElementById('compania-tab-chat').setAttribute('aria-pressed', String(!mostrarColaboraciones));
+            companiaSeccionActual = seccion === "chat" ? "chat" : "satelite";
+            const mostrarSatelite = companiaSeccionActual === "satelite";
+            document.getElementById('compania-vista-colaboraciones').hidden = !mostrarSatelite;
+            document.getElementById('compania-vista-chat').hidden = mostrarSatelite;
+            document.getElementById('compania-tab-colaboraciones').classList.toggle('activa', mostrarSatelite);
+            document.getElementById('compania-tab-chat').classList.toggle('activa', !mostrarSatelite);
+            document.getElementById('compania-tab-colaboraciones').setAttribute('aria-pressed', String(mostrarSatelite));
+            document.getElementById('compania-tab-chat').setAttribute('aria-pressed', String(!mostrarSatelite));
             const estado = document.getElementById('compania-estado');
-            estado.textContent = "Prototipo local: los aportes solo aparecen en este navegador.";
-        }
-
-        function guardarColaboracion(evento) {
-            evento.preventDefault();
-            const estadoId = 'compania-estado';
-            const artista = document.getElementById('colaboracion-artista').value.trim();
-            const titulo = document.getElementById('colaboracion-titulo').value.trim();
-            const enlace = validarEnlaceOpcional(document.getElementById('colaboracion-enlace').value);
-            if (enlace === null) {
-                document.getElementById(estadoId).textContent = "El enlace debe ser una URL http o https válida.";
-                return;
-            }
-            const aportes = leerListaLocal(clavesComunidadLocal.colaboraciones, estadoId);
-            aportes.unshift({
-                id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-                artista,
-                titulo,
-                formato: document.getElementById('colaboracion-formato').value,
-                enlace,
-                nota: document.getElementById('colaboracion-nota').value.trim(),
-                fecha: new Date().toISOString()
-            });
-            if (aportes.length > 60) aportes.length = 60;
-            if (guardarListaLocal(clavesComunidadLocal.colaboraciones, aportes, estadoId)) {
-                evento.target.reset();
-                renderizarColaboraciones();
-            }
-        }
-
-        function renderizarColaboraciones() {
-            const contenedor = document.getElementById('compania-colaboraciones');
-            if (!contenedor) return;
-            const aportes = leerListaLocal(clavesComunidadLocal.colaboraciones, 'compania-estado');
-            contenedor.replaceChildren();
-            if (!aportes.length) {
-                const vacio = document.createElement('p');
-                vacio.className = 'comunidad-vacia';
-                vacio.textContent = "Todavía no hay aportes en este navegador. Las colaboraciones se mostrarán como aportes pendientes de verificar.";
-                contenedor.appendChild(vacio);
-                return;
-            }
-            aportes.forEach(aporte => {
-                const tarjeta = document.createElement('article');
-                tarjeta.className = 'comunidad-card';
-                const titulo = document.createElement('h3');
-                titulo.textContent = aporte.titulo || "Aporte sin título";
-                const detalle = document.createElement('p');
-                detalle.textContent = `${aporte.artista || "Artista no indicado"} · ${aporte.formato || "Formato no indicado"}`;
-                tarjeta.append(titulo, detalle);
-                if (aporte.nota) {
-                    const nota = document.createElement('small');
-                    nota.textContent = `Nota/fuente: ${aporte.nota}`;
-                    tarjeta.appendChild(nota);
-                }
-                const pendiente = document.createElement('small');
-                pendiente.textContent = "Aporte local · pendiente de verificación";
-                tarjeta.appendChild(pendiente);
-                agregarEnlaceSeguro(tarjeta, validarEnlaceOpcional(aporte.enlace || "") || "", "Abrir referencia");
-                contenedor.appendChild(tarjeta);
-            });
+            estado.textContent = mostrarSatelite
+                ? "Satélite · el reproductor contiene el álbum completo."
+                : "Chat local de demostración. No es un chat privado ni muestra usuarios conectados.";
         }
 
         function enviarMensajeCompania(evento) {
@@ -2090,11 +2149,36 @@
 
         function abrirSalaNoticias() {
             prepararSalaMultimedia('noticias-modal', 'NOTICIAS');
-            document.getElementById('evento-imagen').value = "";
+            limpiarFormularioEvento();
+            document.getElementById('form-evento').hidden = true;
+            document.getElementById('noticias-abrir-form').hidden = false;
+            document.getElementById('noticias-abrir-form').setAttribute('aria-expanded', 'false');
+            renderizarEventos();
+        }
+
+        function limpiarFormularioEvento() {
+            document.getElementById('form-evento').reset();
             document.getElementById('evento-imagen-preview').replaceChildren();
+            document.getElementById('noticias-estado').textContent = "";
             eventoFlyerData = "";
             eventoFlyerLeyendo = false;
-            renderizarEventos();
+        }
+
+        function abrirFormularioEvento() {
+            const formulario = document.getElementById('form-evento');
+            formulario.hidden = false;
+            document.getElementById('noticias-abrir-form').hidden = true;
+            document.getElementById('noticias-abrir-form').setAttribute('aria-expanded', 'true');
+            formulario.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            document.getElementById('evento-nombre').focus({ preventScroll: true });
+        }
+
+        function cerrarFormularioEvento() {
+            limpiarFormularioEvento();
+            document.getElementById('form-evento').hidden = true;
+            document.getElementById('noticias-abrir-form').hidden = false;
+            document.getElementById('noticias-abrir-form').setAttribute('aria-expanded', 'false');
+            document.getElementById('noticias-abrir-form').focus();
         }
 
         function previsualizarFlyer(entrada) {
@@ -2145,6 +2229,10 @@
                 document.getElementById(estadoId).textContent = "Esperá a que termine de cargarse la vista previa del flyer.";
                 return;
             }
+            if (!eventoFlyerData) {
+                document.getElementById(estadoId).textContent = "Elegí un flyer o una foto válida para publicar el evento.";
+                return;
+            }
             const enlace = validarEnlaceOpcional(document.getElementById('evento-enlace').value);
             if (enlace === null) {
                 document.getElementById(estadoId).textContent = "El enlace debe ser una URL http o https válida.";
@@ -2171,10 +2259,10 @@
             });
             if (eventos.length > 20) eventos.length = 20;
             if (guardarListaLocal(clavesComunidadLocal.eventos, eventos, estadoId)) {
-                evento.target.reset();
-                eventoFlyerData = "";
-                eventoFlyerLeyendo = false;
-                document.getElementById('evento-imagen-preview').replaceChildren();
+                limpiarFormularioEvento();
+                document.getElementById('form-evento').hidden = true;
+                document.getElementById('noticias-abrir-form').hidden = false;
+                document.getElementById('noticias-abrir-form').setAttribute('aria-expanded', 'false');
                 renderizarEventos();
             }
         }
@@ -2184,47 +2272,26 @@
             if (!contenedor) return;
             const eventos = leerListaLocal(clavesComunidadLocal.eventos, 'noticias-estado');
             contenedor.replaceChildren();
-            if (!eventos.length) {
+            const flyers = eventos.filter(evento => evento && /^data:image\/(?:png|jpeg|webp);base64,/.test(evento.imagen || ""));
+            if (!flyers.length) {
                 const vacio = document.createElement('p');
                 vacio.className = 'comunidad-vacia';
-                vacio.textContent = "Todavía no hay eventos guardados en este navegador.";
+                vacio.textContent = "Todavía no hay flyers en la cartelera. ¡Podés sumar el primero!";
                 contenedor.appendChild(vacio);
                 return;
             }
-            eventos.slice().sort((a, b) => new Date(a.fecha) - new Date(b.fecha)).forEach(evento => {
-                const tarjeta = document.createElement('article');
-                tarjeta.className = 'comunidad-card';
-                const titulo = document.createElement('h3');
-                titulo.textContent = evento.nombre || "Evento sin título";
-                const fecha = document.createElement('small');
-                const fechaDate = new Date(evento.fecha);
-                fecha.textContent = Number.isNaN(fechaDate.getTime()) ? "Fecha no válida" : fechaDate.toLocaleString();
-                const lugar = document.createElement('p');
-                lugar.textContent = `${evento.tipo || "Evento"} · ${evento.lugar || ""} · ${evento.ciudad || ""}`;
-                tarjeta.append(titulo, fecha, lugar);
-                if (evento.imagen && /^data:image\/(?:png|jpeg|webp);base64,/.test(evento.imagen)) {
-                    const imagen = document.createElement('img');
-                    imagen.src = evento.imagen;
-                    imagen.alt = `Flyer de ${evento.nombre || "evento"}`;
-                    tarjeta.appendChild(imagen);
-                }
-                if (evento.detalles) {
-                    const detalles = document.createElement('p');
-                    detalles.textContent = evento.detalles;
-                    tarjeta.appendChild(detalles);
-                }
-                if (evento.organiza) {
-                    const organiza = document.createElement('small');
-                    organiza.textContent = `Organiza: ${evento.organiza}`;
-                    tarjeta.appendChild(organiza);
-                }
-                agregarEnlaceSeguro(tarjeta, validarEnlaceOpcional(evento.enlace || "") || "", "Más información / contacto");
+            flyers.slice().sort((a, b) => new Date(a.fecha) - new Date(b.fecha)).forEach(evento => {
+                const tarjeta = document.createElement('div');
+                tarjeta.className = 'noticias-flyer';
+                const imagen = document.createElement('img');
+                imagen.src = evento.imagen;
+                imagen.alt = `Flyer de ${evento.nombre || "evento"}`;
+                tarjeta.appendChild(imagen);
                 contenedor.appendChild(tarjeta);
             });
         }
 
         window.addEventListener('storage', evento => {
-            if (evento.key === clavesComunidadLocal.colaboraciones && estadoActual === "COMPANIA") renderizarColaboraciones();
             if (evento.key === clavesComunidadLocal.mensajes && estadoActual === "COMPANIA") renderizarMensajesCompania();
             if (evento.key === clavesComunidadLocal.eventos && estadoActual === "NOTICIAS") renderizarEventos();
         });
