@@ -24,6 +24,66 @@
         .btn-sala { background: rgba(10, 5, 30, 0.9); border: 2px solid #ff00ff; color: #fff; padding: 15px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; cursor: pointer; box-shadow: 0 0 15px rgba(255, 0, 255, 0.4); transition: all 0.3s ease; text-align: center; }
         .btn-sala:hover { border-color: #00ffff; box-shadow: 0 0 20px rgba(0, 255, 255, 0.7); transform: scale(1.03); }
 
+        /* Salas de Karaoke y Trivias */
+        #karaoke-modal, #trivias-modal { background: radial-gradient(ellipse at center, rgba(15, 8, 35, .97), rgba(3, 1, 12, .99)); }
+        .karaoke-controles, .trivia-panel { display: flex; width: min(94vw, 760px); flex-direction: column; align-items: center; gap: 10px; }
+        .karaoke-selectores { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; width: min(94vw, 600px); }
+        .karaoke-selectores label { display: grid; gap: 4px; color: #00ffff; font-size: 10px; text-align: left; }
+        .karaoke-selectores select { min-width: 0; padding: 9px; border: 1px solid #00ffff; border-radius: 6px; color: #fff; background: #120b24; font-size: 11px; }
+        .karaoke-display { display: flex; width: min(94vw, 760px); min-height: 150px; max-height: 38vh; flex-direction: column; align-items: center; justify-content: center; gap: 7px; overflow-y: auto; padding: 18px 12px; box-sizing: border-box; border: 2px solid #ff00ff; border-radius: 12px; background: radial-gradient(ellipse at center, #17102c, #05030c 78%); box-shadow: inset 0 0 25px #000, 0 0 22px rgba(255,0,255,.24); }
+        .karaoke-renglon { width: 100%; margin: 0; color: #77718d; font-size: clamp(13px, 3.8vw, 21px); font-weight: bold; line-height: 1.45; text-align: center; transition: color .2s, transform .2s, text-shadow .2s; }
+        .karaoke-renglon.actual { color: #fff; transform: scale(1.04); text-shadow: 0 0 6px #ff00ff, 0 0 18px #ff00ff; }
+        .karaoke-renglon.siguiente { color: #b9a9d5; }
+        .karaoke-renglon.pasada { color: #615873; }
+        .karaoke-aviso { max-width: min(92vw, 640px) !important; color: #ded3ed !important; font-size: 10px !important; }
+        .karaoke-editor { width: min(94vw, 640px); display: grid; gap: 6px; text-align: left; }
+        .karaoke-editor label { color: #ffcc66; font-size: 10px; font-weight: bold; }
+        .karaoke-editor textarea { min-height: 74px; resize: vertical; padding: 9px; border: 1px solid #72568b; border-radius: 7px; color: #eee; background: #0b0714; font: 11px/1.5 monospace; }
+        .karaoke-editor small { color: #aaa0bb; font-size: 9px; line-height: 1.4; }
+        .trivia-progreso { color: #00ffff; font-size: 11px; font-weight: bold; letter-spacing: 1px; }
+        .trivia-pregunta { color: #fff; font-size: clamp(15px, 4vw, 21px); line-height: 1.4; }
+        .trivia-opciones { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; width: min(92vw, 620px); }
+        .trivia-opcion { min-height: 46px; padding: 10px; border: 1px solid #794d99; border-radius: 8px; color: #eee; background: rgba(36,18,58,.88); font-size: 11px; font-weight: bold; cursor: pointer; }
+        .trivia-opcion:hover:not(:disabled), .trivia-opcion:focus-visible { border-color: #00ffff; outline: none; box-shadow: 0 0 11px rgba(0,255,255,.3); }
+        .trivia-opcion.correcta { border-color: #4dffb8; color: #03160e; background: #4dffb8; }
+        .trivia-opcion.incorrecta { border-color: #ff7195; color: #fff; background: #9e2648; }
+        .trivia-feedback { min-height: 20px; color: #ffcc66; font-size: 11px; font-weight: bold; }
+        #compania-modal, #noticias-modal { background: radial-gradient(ellipse at center, rgba(12, 7, 29, .98), rgba(3, 1, 10, .99)); }
+        .comunidad-panel { display: grid; width: min(94vw, 820px); gap: 12px; }
+        .comunidad-aviso { padding: 9px 11px; border: 1px solid rgba(255,204,102,.55); border-radius: 7px; color: #ffdfa1 !important; background: rgba(75,49,12,.22); font-size: 10px !important; }
+        .comunidad-tabs { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+        .comunidad-tab { padding: 8px 12px; border: 1px solid #794d99; border-radius: 18px; color: #eee; background: rgba(36,18,58,.88); font-size: 10px; font-weight: bold; cursor: pointer; }
+        .comunidad-tab.activa { color: #090512; border-color: #00ffff; background: #00ffff; }
+        .comunidad-vista[hidden] { display: none; }
+        .comunidad-vista { display: grid; gap: 10px; }
+        .comunidad-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 12px; border: 1px solid #49355e; border-radius: 9px; background: rgba(17,10,30,.8); text-align: left; }
+        .comunidad-form label { display: grid; align-content: start; gap: 4px; color: #00ffff; font-size: 10px; }
+        .comunidad-form .ancho-completo { grid-column: 1 / -1; }
+        .comunidad-form input, .comunidad-form select, .comunidad-form textarea { width: 100%; min-width: 0; box-sizing: border-box; padding: 9px; border: 1px solid #624a78; border-radius: 6px; color: #f4edf9; background: #0b0714; font: 11px sans-serif; }
+        .comunidad-form textarea { min-height: 66px; resize: vertical; line-height: 1.45; }
+        .comunidad-form input[type="file"] { padding: 7px; }
+        .comunidad-lista { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 9px; max-height: 32vh; overflow-y: auto; padding: 2px; }
+        .comunidad-card { display: grid; align-content: start; gap: 6px; padding: 10px; border: 1px solid #483558; border-radius: 8px; color: #e7dff0; background: linear-gradient(145deg, rgba(35,21,51,.95), rgba(10,7,17,.95)); text-align: left; overflow-wrap: anywhere; }
+        .comunidad-card h3 { margin: 0; color: #ffcc66; font-size: 12px; line-height: 1.35; }
+        .comunidad-card p { max-width: none; color: #d0c4df; font-size: 10px; line-height: 1.45; }
+        .comunidad-card small { color: #9c8eaf; font-size: 9px; }
+        .comunidad-card a { width: fit-content; color: #73f8ff; font-size: 10px; overflow-wrap: anywhere; }
+        .comunidad-card img { display: block; width: 100%; max-height: 220px; object-fit: contain; border-radius: 5px; background: #08060d; }
+        .comunidad-mensajes { display: flex; flex-direction: column; gap: 7px; max-height: 28vh; min-height: 90px; overflow-y: auto; padding: 10px; border: 1px solid #49355e; border-radius: 8px; background: #080611; text-align: left; }
+        .comunidad-mensaje { color: #e7dff0; font-size: 10px; line-height: 1.45; overflow-wrap: anywhere; }
+        .comunidad-mensaje strong { color: #00ffff; }
+        .comunidad-mensaje time { margin-left: 6px; color: #827991; font-size: 8px; }
+        .comunidad-vacia { color: #a99bb8; font-size: 10px; }
+        @media (max-width: 480px) {
+            .karaoke-display { min-height: 130px; max-height: 30vh; }
+            .trivia-opciones { grid-template-columns: 1fr; }
+            .grid-salas { gap: 8px; }
+            .btn-sala { padding: 11px 7px; font-size: 10px; }
+            .comunidad-form { grid-template-columns: 1fr; }
+            .comunidad-form .ancho-completo { grid-column: auto; }
+            .comunidad-lista { grid-template-columns: 1fr; max-height: 28vh; }
+        }
+
         /* Sala de Biblioteca / Estantería de Libros */
         #biblioteca-modal { position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(14, 8, 25, 0.88), rgba(3, 1, 10, 0.98)); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 85; padding: 16px; box-sizing: border-box; overflow-y: auto; }
         #biblioteca-modal h2 { color: #00ffff; font-size: 20px; letter-spacing: 3px; margin: 0 0 6px; text-shadow: 0 0 14px #00ffff; }
@@ -355,6 +415,10 @@
             <button class="btn-sala" onclick="irASala('vinilos')">🎶 TOCADISCOS VINILOS</button>
             <button class="btn-sala" onclick="irASala('galeria')">🖼️ GALERÍA DE ARTE</button>
             <button class="btn-sala" onclick="irASala('cine')">🎬 SALA DE CINE</button>
+            <button class="btn-sala" onclick="irASala('karaoke')">🎤 SALA DE KARAOKE</button>
+            <button class="btn-sala" onclick="irASala('trivias')">🧠 SALA DE TRIVIAS</button>
+            <button class="btn-sala" onclick="irASala('compania')">🤝 SALA DE COMPAÑÍA</button>
+            <button class="btn-sala" onclick="irASala('noticias')">📣 SALA DE NOTICIAS</button>
         </div>
     </div>
 
@@ -529,6 +593,122 @@
             <button class="cine-filtro" data-cine-filtro="reportajes" onclick="filtrarCarteleraCine('reportajes')">REPORTAJES</button>
         </div>
         <div id="cine-estante" class="cine-cartelera" aria-label="Cartelera de recitales y películas"></div>
+        <button class="btn-cerrar-trofeos" onclick="mostrarHallCentral()">VOLVER AL HALL</button>
+    </div>
+
+    <div id="karaoke-modal" class="sala-multimedia">
+        <h2>SALA DE KARAOKE</h2>
+        <p>Elegí álbum y canción. La música usa los audios del catálogo; la letra sincronizada la cargás vos con marcas de tiempo.</p>
+        <div class="karaoke-controles">
+            <div class="karaoke-selectores">
+                <label for="karaoke-album">ÁLBUM
+                    <select id="karaoke-album" onchange="cambiarAlbumKaraoke(this.value)"></select>
+                </label>
+                <label for="karaoke-cancion">CANCIÓN
+                    <select id="karaoke-cancion" onchange="cambiarCancionKaraoke(Number(this.value))"></select>
+                </label>
+            </div>
+            <div id="karaoke-display" class="karaoke-display" aria-live="polite">
+                <p class="karaoke-aviso">Cargá una letra sincronizada para empezar el karaoke.</p>
+            </div>
+            <div id="karaoke-estado" class="karaoke-aviso" aria-live="polite">La sincronización empieza al tocar REPRODUCIR y es aproximada al audio.</div>
+            <div class="sala-acciones">
+                <button class="sala-btn secundario" type="button" onclick="reproducirKaraoke()">▶ REPRODUCIR</button>
+                <button class="sala-btn" type="button" onclick="detenerKaraoke()">⏹ DETENER</button>
+            </div>
+            <div class="karaoke-editor">
+                <label for="karaoke-letra-entrada">LETRA CON MARCAS DE TIEMPO</label>
+                <textarea id="karaoke-letra-entrada" placeholder="[00:00.00]Primera línea&#10;[00:08.50]Siguiente línea"></textarea>
+                <small>Formato LRC: una línea por renglón, [mm:ss.xx]texto. El tiempo empieza al inicio de la canción. No se incluye ninguna letra en el HTML; podés cargar material que tengas derecho a usar.</small>
+                <button class="sala-btn" type="button" onclick="cargarLetraKaraoke()">CARGAR LETRA</button>
+            </div>
+        </div>
+        <button class="btn-cerrar-trofeos" onclick="mostrarHallCentral()">VOLVER AL HALL</button>
+    </div>
+
+    <div id="trivias-modal" class="sala-multimedia">
+        <h2>SALA DE TRIVIAS</h2>
+        <p>Poné a prueba cuánto conocés de los discos y canciones del catálogo.</p>
+        <div class="trivia-panel">
+            <div id="trivia-progreso" class="trivia-progreso" aria-live="polite"></div>
+            <h3 id="trivia-pregunta" class="trivia-pregunta"></h3>
+            <div id="trivia-opciones" class="trivia-opciones"></div>
+            <div id="trivia-feedback" class="trivia-feedback" aria-live="polite"></div>
+            <button id="trivia-siguiente" class="sala-btn secundario" type="button" onclick="avanzarTrivia()" hidden>SIGUIENTE ▶</button>
+        </div>
+        <button class="btn-cerrar-trofeos" onclick="mostrarHallCentral()">VOLVER AL HALL</button>
+    </div>
+
+    <div id="compania-modal" class="sala-multimedia">
+        <h2>SALA DE COMPAÑÍA</h2>
+        <p>Un espacio para descubrir colaboraciones y conversar con otros fans.</p>
+        <div class="comunidad-panel">
+            <p class="comunidad-aviso">Prototipo local: lo que publiques se guarda solo en este navegador y no lo ve otra persona. La comunidad compartida requiere cuentas, base de datos y moderación.</p>
+            <div class="comunidad-tabs" aria-label="Secciones de la sala de compañía">
+                <button id="compania-tab-colaboraciones" class="comunidad-tab activa" type="button" onclick="cambiarSeccionCompania('colaboraciones')">COLABORACIONES</button>
+                <button id="compania-tab-chat" class="comunidad-tab" type="button" onclick="cambiarSeccionCompania('chat')">CHAT DE FANS</button>
+            </div>
+            <section id="compania-vista-colaboraciones" class="comunidad-vista">
+                <p>El archivo se completa con aportes de la comunidad; todavía no hay colaboraciones verificadas cargadas.</p>
+                <form class="comunidad-form" onsubmit="guardarColaboracion(event)">
+                    <label>ARTISTA COLABORADOR<input id="colaboracion-artista" maxlength="80" required placeholder="Nombre del artista"></label>
+                    <label>CANCIÓN O PUBLICACIÓN<input id="colaboracion-titulo" maxlength="100" required placeholder="Tema, disco o presentación"></label>
+                    <label>FORMATO
+                        <select id="colaboracion-formato">
+                            <option>Grabación de estudio</option>
+                            <option>Presentación en vivo</option>
+                            <option>Entrevista o registro</option>
+                            <option>Otro</option>
+                        </select>
+                    </label>
+                    <label>ENLACE DE REFERENCIA (OPCIONAL)<input id="colaboracion-enlace" type="url" maxlength="300" placeholder="https://…"></label>
+                    <label class="ancho-completo">NOTA O FUENTE (OPCIONAL)<textarea id="colaboracion-nota" maxlength="280" placeholder="Agregá contexto o fuente para poder verificarlo."></textarea></label>
+                    <button class="sala-btn secundario ancho-completo" type="submit">AGREGAR A ESTE NAVEGADOR</button>
+                </form>
+                <div id="compania-colaboraciones" class="comunidad-lista" aria-live="polite"></div>
+            </section>
+            <section id="compania-vista-chat" class="comunidad-vista" hidden>
+                <label style="color:#00ffff;font-size:10px;text-align:left;">TU NOMBRE<input id="chat-nombre" maxlength="30" autocomplete="nickname" placeholder="¿Cómo te llamamos?" style="display:block;width:100%;margin-top:5px;padding:9px;box-sizing:border-box;border:1px solid #624a78;border-radius:6px;color:#fff;background:#0b0714;"></label>
+                <div id="compania-mensajes" class="comunidad-mensajes" aria-live="polite"></div>
+                <form class="comunidad-form" onsubmit="enviarMensajeCompania(event)">
+                    <label class="ancho-completo">MENSAJE<input id="chat-mensaje" maxlength="280" required placeholder="Saludá y contá qué música te gusta…"></label>
+                    <button class="sala-btn secundario ancho-completo" type="submit">ENVIAR MENSAJE</button>
+                </form>
+            </section>
+            <div id="compania-estado" class="trivia-feedback" aria-live="polite"></div>
+        </div>
+        <button class="btn-cerrar-trofeos" onclick="mostrarHallCentral()">VOLVER AL HALL</button>
+    </div>
+
+    <div id="noticias-modal" class="sala-multimedia">
+        <h2>SALA DE NOTICIAS</h2>
+        <p>Compartí shows tributo, homenajes, exposiciones y encuentros del universo Cerati.</p>
+        <div class="comunidad-panel">
+            <p class="comunidad-aviso">Prototipo local: los eventos y flyers quedan en este navegador. No se publican para otros usuarios ni se revisan hasta conectar un servicio compartido con moderación.</p>
+            <form id="form-evento" class="comunidad-form" onsubmit="publicarEvento(event)">
+                <label>NOMBRE DEL EVENTO<input id="evento-nombre" maxlength="100" required placeholder="Ej.: Homenaje a Cerati"></label>
+                <label>TIPO
+                    <select id="evento-tipo">
+                        <option>Show tributo</option>
+                        <option>Homenaje</option>
+                        <option>Exposición de cuadros</option>
+                        <option>Encuentro</option>
+                        <option>Otro</option>
+                    </select>
+                </label>
+                <label>FECHA Y HORA<input id="evento-fecha" type="datetime-local" required></label>
+                <label>CIUDAD<input id="evento-ciudad" maxlength="70" required placeholder="Ciudad, provincia"></label>
+                <label>LUGAR<input id="evento-lugar" maxlength="100" required placeholder="Sala, bar o espacio cultural"></label>
+                <label>ORGANIZA<input id="evento-organiza" maxlength="70" placeholder="Nombre o colectivo"></label>
+                <label>ENLACE O CONTACTO<input id="evento-enlace" type="url" maxlength="300" placeholder="https://…"></label>
+                <label>FLYER O FOTO (máximo 500 KB)<input id="evento-imagen" type="file" accept="image/png,image/jpeg,image/webp" onchange="previsualizarFlyer(this)"></label>
+                <label class="ancho-completo">DETALLES<textarea id="evento-detalles" maxlength="500" required placeholder="Contá de qué se trata y cómo participar."></textarea></label>
+                <div id="evento-imagen-preview" class="ancho-completo"></div>
+                <button class="sala-btn secundario ancho-completo" type="submit">GUARDAR EVENTO EN ESTE NAVEGADOR</button>
+            </form>
+            <div id="noticias-estado" class="trivia-feedback" aria-live="polite"></div>
+            <div id="noticias-lista" class="comunidad-lista" aria-live="polite"></div>
+        </div>
         <button class="btn-cerrar-trofeos" onclick="mostrarHallCentral()">VOLVER AL HALL</button>
     </div>
 
@@ -715,6 +895,7 @@
             if (estadoActual === "CINE") detenerCine();
             else if (estadoActual === "VINILOS") detenerReproduccionSala();
             else if (estadoActual === "GALERIA") detenerGaleria();
+            else if (estadoActual === "KARAOKE") detenerKaraoke();
             if (estadoActual === "BIBLIOTECA" && document.getElementById('visor-libro-modal').style.display !== 'none') cerrarVisorLibro();
             if (estadoActual === "CASSETTES") detenerSalaCassettes();
             ocultarTodosLosModales();
@@ -742,6 +923,14 @@
                 abrirSalaGaleria();
             } else if (nombreSala === 'cine') {
                 abrirSalaCine();
+            } else if (nombreSala === 'karaoke') {
+                abrirSalaKaraoke();
+            } else if (nombreSala === 'trivias') {
+                abrirSalaTrivias();
+            } else if (nombreSala === 'compania') {
+                abrirSalaCompania();
+            } else if (nombreSala === 'noticias') {
+                abrirSalaNoticias();
             } else {
                 alert(`¡Sala de ${nombreSala.toUpperCase()} en construcción dentro del multiverso! Volviendo al Hall.`);
                 mostrarHallCentral();
@@ -1148,6 +1337,19 @@
         let cineFiltroActual = "todos";
         let cineFuncionSeleccionadaId = "";
         let cineFunciones = [];
+        let karaokeDiscoActual = null;
+        let karaokeTemaIndice = 0;
+        let karaokeLineas = [];
+        let karaokeIntervalo = null;
+        let karaokeInicio = 0;
+        let karaokeUltimoIndice = -1;
+        let triviaPreguntasRonda = [];
+        let triviaIndice = 0;
+        let triviaAciertos = 0;
+        let triviaRespondida = false;
+        let companiaSeccionActual = "colaboraciones";
+        let eventoFlyerData = "";
+        let eventoFlyerLeyendo = false;
 
         function obtenerTemasDisco(disco) {
             const temasPorDisco = {
@@ -1415,6 +1617,617 @@
             const zoom = document.getElementById('galeria-zoom');
             if (zoom) zoom.hidden = true;
         }
+
+        function abrirSalaKaraoke() {
+            detenerKaraoke();
+            prepararSalaMultimedia('karaoke-modal', 'KARAOKE');
+            const album = document.getElementById('karaoke-album');
+            album.replaceChildren();
+            listaDiscos.forEach(disco => {
+                const opcion = document.createElement('option');
+                opcion.value = disco.id;
+                opcion.textContent = disco.nombre;
+                album.appendChild(opcion);
+            });
+            cambiarAlbumKaraoke(album.value);
+        }
+
+        function cambiarAlbumKaraoke(idDisco) {
+            detenerKaraoke();
+            karaokeDiscoActual = listaDiscos.find(disco => disco.id === idDisco) || listaDiscos[0];
+            karaokeTemaIndice = 0;
+            const canciones = obtenerTemasDisco(karaokeDiscoActual);
+            const selector = document.getElementById('karaoke-cancion');
+            selector.replaceChildren();
+            canciones.forEach((cancion, indice) => {
+                const opcion = document.createElement('option');
+                opcion.value = String(indice);
+                opcion.textContent = cancion.nombre;
+                selector.appendChild(opcion);
+            });
+            prepararCancionKaraoke();
+        }
+
+        function cambiarCancionKaraoke(indice) {
+            detenerKaraoke();
+            karaokeTemaIndice = indice;
+            prepararCancionKaraoke();
+        }
+
+        function prepararCancionKaraoke() {
+            karaokeLineas = [];
+            document.getElementById('karaoke-letra-entrada').value = "";
+            document.getElementById('karaoke-display').replaceChildren();
+            const aviso = document.createElement('p');
+            aviso.className = 'karaoke-aviso';
+            aviso.textContent = `Cargá un archivo LRC o pegá la letra sincronizada de “${obtenerTemasDisco(karaokeDiscoActual)[karaokeTemaIndice].nombre}”.`;
+            document.getElementById('karaoke-display').appendChild(aviso);
+            document.getElementById('karaoke-estado').textContent = "La sincronización comienza cuando presionás REPRODUCIR.";
+        }
+
+        function cargarLetraKaraoke() {
+            const contenido = document.getElementById('karaoke-letra-entrada').value;
+            const lineasParseadas = [];
+            const renglones = contenido.split(/\r?\n/);
+            for (let i = 0; i < renglones.length; i++) {
+                const renglon = renglones[i].trim();
+                if (!renglon || /^\[(ar|ti|al|by|offset|re|ve):/i.test(renglon)) continue;
+                const coincidencia = renglon.match(/^((?:\[\d{1,3}:[0-5]\d(?:\.\d{1,3})?\])+)\s*(.+)$/);
+                if (!coincidencia) {
+                    document.getElementById('karaoke-estado').textContent = `Formato inválido en la línea ${i + 1}. Usá [mm:ss.xx]texto.`;
+                    return;
+                }
+                const marcas = coincidencia[1].match(/\[(\d{1,3}):([0-5]\d)(?:\.(\d{1,3}))?\]/g) || [];
+                marcas.forEach(marca => {
+                    const partes = marca.match(/\[(\d{1,3}):([0-5]\d)(?:\.(\d{1,3}))?\]/);
+                    const centesimas = (partes[3] || "").padEnd(2, "0").slice(0, 2);
+                    lineasParseadas.push({
+                        segundos: Number(partes[1]) * 60 + Number(partes[2]) + Number(`0.${centesimas || "0"}`),
+                        texto: coincidencia[2].trim()
+                    });
+                });
+            }
+            if (!lineasParseadas.length) {
+                document.getElementById('karaoke-estado').textContent = "No encontré líneas con marcas de tiempo LRC.";
+                return;
+            }
+            if (lineasParseadas.length > 500) {
+                document.getElementById('karaoke-estado').textContent = "El archivo supera el límite de 500 líneas para esta sala.";
+                return;
+            }
+            karaokeLineas = lineasParseadas.sort((a, b) => a.segundos - b.segundos);
+            renderizarLineasKaraoke();
+            document.getElementById('karaoke-estado').textContent = `${karaokeLineas.length} líneas LRC cargadas para esta sesión.`;
+        }
+
+        function renderizarLineasKaraoke() {
+            const display = document.getElementById('karaoke-display');
+            display.replaceChildren();
+            karaokeLineas.forEach((linea, indice) => {
+                const parrafo = document.createElement('p');
+                parrafo.className = 'karaoke-renglon';
+                parrafo.dataset.karaokeIndice = String(indice);
+                parrafo.textContent = linea.texto;
+                display.appendChild(parrafo);
+            });
+        }
+
+        function reproducirKaraoke() {
+            if (!karaokeDiscoActual) return;
+            detenerKaraoke();
+            const cancion = obtenerTemasDisco(karaokeDiscoActual)[karaokeTemaIndice];
+            reproducirAudio(karaokeDiscoActual.trackId, cancion.seg || 0);
+            karaokeInicio = performance.now();
+            if (karaokeLineas.length) {
+                document.querySelectorAll('#karaoke-display .karaoke-renglon').forEach(renglon => {
+                    renglon.classList.remove('actual', 'siguiente', 'pasada', 'karaoke-visible');
+                });
+                document.getElementById('karaoke-display').scrollTop = 0;
+                karaokeUltimoIndice = -1;
+                karaokeIntervalo = setInterval(actualizarSincroniaKaraoke, 100);
+                actualizarSincroniaKaraoke();
+                document.getElementById('karaoke-estado').textContent = "Sonando · tiempo LRC relativo al inicio del tema (sincronización aproximada).";
+            } else {
+                document.getElementById('karaoke-estado').textContent = "Sonando sin letra sincronizada. Podés cargar un LRC mientras escuchás.";
+            }
+        }
+
+        function actualizarSincroniaKaraoke() {
+            const transcurrido = (performance.now() - karaokeInicio) / 1000;
+            let indiceActual = -1;
+            for (let i = 0; i < karaokeLineas.length; i++) {
+                if (karaokeLineas[i].segundos <= transcurrido) indiceActual = i;
+                else break;
+            }
+            document.querySelectorAll('#karaoke-display .karaoke-renglon').forEach((renglon, indice) => {
+                renglon.classList.toggle('actual', indice === indiceActual);
+                renglon.classList.toggle('siguiente', indice === indiceActual + 1);
+                renglon.classList.toggle('pasada', indice < indiceActual);
+            });
+            if (indiceActual >= 0 && indiceActual !== karaokeUltimoIndice) {
+                const activa = document.querySelector(`#karaoke-display [data-karaoke-indice="${indiceActual}"]`);
+                if (activa) {
+                    activa.scrollIntoView({ block: 'center', behavior: 'smooth' });
+                    activa.classList.add('karaoke-visible');
+                }
+            }
+            karaokeUltimoIndice = indiceActual;
+        }
+
+        function detenerKaraoke() {
+            if (karaokeIntervalo) {
+                clearInterval(karaokeIntervalo);
+                karaokeIntervalo = null;
+            }
+            const player = document.getElementById('yt-player');
+            if (player) player.src = "";
+            cancionActualId = "";
+            if (estadoActual === "KARAOKE") {
+                document.getElementById('karaoke-estado').textContent = "Reproducción detenida.";
+            }
+        }
+
+        function normalizarTextoTrivia(texto) {
+            return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+        }
+
+        function mezclarTrivia(elementos) {
+            const resultado = elementos.slice();
+            for (let i = resultado.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [resultado[i], resultado[j]] = [resultado[j], resultado[i]];
+            }
+            return resultado;
+        }
+
+        function construirPreguntasTrivia() {
+            const preguntas = [];
+            const discosConAnio = listaDiscos.map(disco => ({
+                disco,
+                anio: Number((disco.nombre.match(/\((\d{4})\)/) || [])[1])
+            })).filter(item => Number.isFinite(item.anio));
+
+            discosConAnio.forEach(({ disco, anio }) => {
+                preguntas.push({
+                    tipo: "album",
+                    texto: `¿Qué álbum del catálogo lleva el año ${anio}?`,
+                    respuesta: disco,
+                    explicacion: `En el catálogo figura como ${disco.nombre}.`
+                });
+            });
+
+            const cancionesPorNombre = new Map();
+            listaDiscos.forEach(disco => obtenerTemasDisco(disco).forEach(tema => {
+                const clave = normalizarTextoTrivia(tema.nombre);
+                if (!cancionesPorNombre.has(clave)) cancionesPorNombre.set(clave, { nombre: tema.nombre, discos: new Set() });
+                cancionesPorNombre.get(clave).discos.add(disco.id);
+            }));
+            cancionesPorNombre.forEach(tema => {
+                if (tema.discos.size !== 1) return;
+                const disco = listaDiscos.find(item => tema.discos.has(item.id));
+                preguntas.push({
+                    tipo: "cancion",
+                    texto: `¿En qué álbum del catálogo aparece “${tema.nombre}”?`,
+                    respuesta: disco,
+                    explicacion: `“${tema.nombre}” aparece en el listado de ${disco.nombre}.`
+                });
+            });
+            return preguntas;
+        }
+
+        function abrirSalaTrivias() {
+            prepararSalaMultimedia('trivias-modal', 'TRIVIAS');
+            iniciarRondaTrivia();
+        }
+
+        function iniciarRondaTrivia() {
+            const banco = construirPreguntasTrivia();
+            triviaPreguntasRonda = mezclarTrivia(banco).slice(0, Math.min(10, banco.length));
+            triviaIndice = 0;
+            triviaAciertos = 0;
+            mostrarPreguntaTrivia();
+        }
+
+        function mostrarPreguntaTrivia() {
+            if (triviaIndice >= triviaPreguntasRonda.length) {
+                document.getElementById('trivia-progreso').textContent = "RONDA COMPLETADA";
+                document.getElementById('trivia-pregunta').textContent = `¡Terminaste! Acertaste ${triviaAciertos} de ${triviaPreguntasRonda.length}.`;
+                document.getElementById('trivia-opciones').replaceChildren();
+                document.getElementById('trivia-feedback').textContent = "¿Te animás a probar otra ronda?";
+                const siguiente = document.getElementById('trivia-siguiente');
+                siguiente.textContent = "🔄 OTRA RONDA";
+                siguiente.hidden = false;
+                return;
+            }
+            triviaRespondida = false;
+            const pregunta = triviaPreguntasRonda[triviaIndice];
+            document.getElementById('trivia-progreso').textContent = `PREGUNTA ${triviaIndice + 1} DE ${triviaPreguntasRonda.length} · ACIERTOS ${triviaAciertos}`;
+            document.getElementById('trivia-pregunta').textContent = pregunta.texto;
+            document.getElementById('trivia-feedback').textContent = "";
+            document.getElementById('trivia-siguiente').hidden = true;
+            const opciones = mezclarTrivia([
+                pregunta.respuesta,
+                ...mezclarTrivia(listaDiscos.filter(disco => disco.id !== pregunta.respuesta.id)).slice(0, 3)
+            ]);
+            const contenedor = document.getElementById('trivia-opciones');
+            contenedor.replaceChildren();
+            opciones.forEach(disco => {
+                const boton = document.createElement('button');
+                boton.type = 'button';
+                boton.className = 'trivia-opcion';
+                boton.textContent = disco.nombre;
+                boton.addEventListener('click', () => responderTrivia(boton, disco, pregunta));
+                contenedor.appendChild(boton);
+            });
+        }
+
+        function responderTrivia(botonElegido, discoElegido, pregunta) {
+            if (triviaRespondida) return;
+            triviaRespondida = true;
+            const acertada = discoElegido.id === pregunta.respuesta.id;
+            if (acertada) triviaAciertos++;
+            document.querySelectorAll('#trivia-opciones .trivia-opcion').forEach(opcion => {
+                opcion.disabled = true;
+                if (opcion.textContent === pregunta.respuesta.nombre) opcion.classList.add('correcta');
+            });
+            if (!acertada) botonElegido.classList.add('incorrecta');
+            document.getElementById('trivia-feedback').textContent = `${acertada ? "¡Correcto!" : "No era esa."} ${pregunta.explicacion}`;
+            document.getElementById('trivia-progreso').textContent = `PREGUNTA ${triviaIndice + 1} DE ${triviaPreguntasRonda.length} · ACIERTOS ${triviaAciertos}`;
+            const siguiente = document.getElementById('trivia-siguiente');
+            siguiente.textContent = triviaIndice + 1 === triviaPreguntasRonda.length ? "VER RESULTADO" : "SIGUIENTE ▶";
+            siguiente.hidden = false;
+        }
+
+        function avanzarTrivia() {
+            if (triviaIndice >= triviaPreguntasRonda.length) {
+                iniciarRondaTrivia();
+                return;
+            }
+            if (!triviaRespondida) return;
+            triviaIndice++;
+            mostrarPreguntaTrivia();
+        }
+
+        const clavesComunidadLocal = {
+            colaboraciones: "colores-santos-colaboraciones-v1",
+            mensajes: "colores-santos-chat-v1",
+            eventos: "colores-santos-eventos-v1"
+        };
+
+        function leerListaLocal(clave, estadoId) {
+            try {
+                const guardado = localStorage.getItem(clave);
+                if (!guardado) return [];
+                const datos = JSON.parse(guardado);
+                if (!Array.isArray(datos)) throw new Error("El contenido guardado no tiene el formato esperado.");
+                return datos;
+            } catch (error) {
+                const estado = document.getElementById(estadoId);
+                if (estado) estado.textContent = "No se pudo leer el contenido local guardado. Revisá el almacenamiento de este navegador.";
+                console.error("Error al leer los datos locales de la comunidad:", error);
+                return [];
+            }
+        }
+
+        function guardarListaLocal(clave, elementos, estadoId) {
+            try {
+                localStorage.setItem(clave, JSON.stringify(elementos));
+                const estado = document.getElementById(estadoId);
+                if (estado) estado.textContent = "Guardado en este navegador.";
+                return true;
+            } catch (error) {
+                const estado = document.getElementById(estadoId);
+                if (estado) estado.textContent = "No se pudo guardar. El almacenamiento local puede estar lleno o deshabilitado.";
+                console.error("Error al guardar los datos locales de la comunidad:", error);
+                return false;
+            }
+        }
+
+        function validarEnlaceOpcional(valor) {
+            const limpio = valor.trim();
+            if (!limpio) return "";
+            try {
+                const url = new URL(limpio);
+                return ["https:", "http:"].includes(url.protocol) ? url.href : null;
+            } catch (error) {
+                return null;
+            }
+        }
+
+        function agregarEnlaceSeguro(contenedor, url, texto) {
+            if (!url) return;
+            const enlace = document.createElement('a');
+            enlace.href = url;
+            enlace.target = "_blank";
+            enlace.rel = "noopener noreferrer";
+            enlace.textContent = texto || "Abrir enlace de referencia";
+            contenedor.appendChild(enlace);
+        }
+
+        function abrirSalaCompania() {
+            prepararSalaMultimedia('compania-modal', 'COMPANIA');
+            try {
+                const nombreGuardado = localStorage.getItem("colores-santos-nombre-chat-v1");
+                if (nombreGuardado) document.getElementById('chat-nombre').value = nombreGuardado;
+            } catch (error) {
+                document.getElementById('compania-estado').textContent = "El almacenamiento local está deshabilitado en este navegador.";
+                console.error("Error al leer el nombre local del chat:", error);
+            }
+            cambiarSeccionCompania(companiaSeccionActual);
+            renderizarColaboraciones();
+            renderizarMensajesCompania();
+        }
+
+        function cambiarSeccionCompania(seccion) {
+            companiaSeccionActual = seccion === "chat" ? "chat" : "colaboraciones";
+            const mostrarColaboraciones = companiaSeccionActual === "colaboraciones";
+            document.getElementById('compania-vista-colaboraciones').hidden = !mostrarColaboraciones;
+            document.getElementById('compania-vista-chat').hidden = mostrarColaboraciones;
+            document.getElementById('compania-tab-colaboraciones').classList.toggle('activa', mostrarColaboraciones);
+            document.getElementById('compania-tab-chat').classList.toggle('activa', !mostrarColaboraciones);
+            document.getElementById('compania-tab-colaboraciones').setAttribute('aria-pressed', String(mostrarColaboraciones));
+            document.getElementById('compania-tab-chat').setAttribute('aria-pressed', String(!mostrarColaboraciones));
+            const estado = document.getElementById('compania-estado');
+            estado.textContent = "Prototipo local: los aportes solo aparecen en este navegador.";
+        }
+
+        function guardarColaboracion(evento) {
+            evento.preventDefault();
+            const estadoId = 'compania-estado';
+            const artista = document.getElementById('colaboracion-artista').value.trim();
+            const titulo = document.getElementById('colaboracion-titulo').value.trim();
+            const enlace = validarEnlaceOpcional(document.getElementById('colaboracion-enlace').value);
+            if (enlace === null) {
+                document.getElementById(estadoId).textContent = "El enlace debe ser una URL http o https válida.";
+                return;
+            }
+            const aportes = leerListaLocal(clavesComunidadLocal.colaboraciones, estadoId);
+            aportes.unshift({
+                id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+                artista,
+                titulo,
+                formato: document.getElementById('colaboracion-formato').value,
+                enlace,
+                nota: document.getElementById('colaboracion-nota').value.trim(),
+                fecha: new Date().toISOString()
+            });
+            if (aportes.length > 60) aportes.length = 60;
+            if (guardarListaLocal(clavesComunidadLocal.colaboraciones, aportes, estadoId)) {
+                evento.target.reset();
+                renderizarColaboraciones();
+            }
+        }
+
+        function renderizarColaboraciones() {
+            const contenedor = document.getElementById('compania-colaboraciones');
+            if (!contenedor) return;
+            const aportes = leerListaLocal(clavesComunidadLocal.colaboraciones, 'compania-estado');
+            contenedor.replaceChildren();
+            if (!aportes.length) {
+                const vacio = document.createElement('p');
+                vacio.className = 'comunidad-vacia';
+                vacio.textContent = "Todavía no hay aportes en este navegador. Las colaboraciones se mostrarán como aportes pendientes de verificar.";
+                contenedor.appendChild(vacio);
+                return;
+            }
+            aportes.forEach(aporte => {
+                const tarjeta = document.createElement('article');
+                tarjeta.className = 'comunidad-card';
+                const titulo = document.createElement('h3');
+                titulo.textContent = aporte.titulo || "Aporte sin título";
+                const detalle = document.createElement('p');
+                detalle.textContent = `${aporte.artista || "Artista no indicado"} · ${aporte.formato || "Formato no indicado"}`;
+                tarjeta.append(titulo, detalle);
+                if (aporte.nota) {
+                    const nota = document.createElement('small');
+                    nota.textContent = `Nota/fuente: ${aporte.nota}`;
+                    tarjeta.appendChild(nota);
+                }
+                const pendiente = document.createElement('small');
+                pendiente.textContent = "Aporte local · pendiente de verificación";
+                tarjeta.appendChild(pendiente);
+                agregarEnlaceSeguro(tarjeta, validarEnlaceOpcional(aporte.enlace || "") || "", "Abrir referencia");
+                contenedor.appendChild(tarjeta);
+            });
+        }
+
+        function enviarMensajeCompania(evento) {
+            evento.preventDefault();
+            const estadoId = 'compania-estado';
+            const nombre = document.getElementById('chat-nombre').value.trim().slice(0, 30);
+            const texto = document.getElementById('chat-mensaje').value.trim();
+            if (!nombre || !texto) {
+                document.getElementById(estadoId).textContent = "Completá tu nombre y el mensaje.";
+                return;
+            }
+            try {
+                localStorage.setItem("colores-santos-nombre-chat-v1", nombre);
+            } catch (error) {
+                document.getElementById(estadoId).textContent = "No se pudo guardar el nombre en este navegador.";
+                console.error("Error al guardar el nombre local del chat:", error);
+            }
+            const mensajes = leerListaLocal(clavesComunidadLocal.mensajes, estadoId);
+            mensajes.push({
+                id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+                nombre,
+                texto,
+                fecha: new Date().toISOString()
+            });
+            if (mensajes.length > 100) mensajes.splice(0, mensajes.length - 100);
+            if (guardarListaLocal(clavesComunidadLocal.mensajes, mensajes, estadoId)) {
+                document.getElementById('chat-mensaje').value = "";
+                renderizarMensajesCompania();
+            }
+        }
+
+        function renderizarMensajesCompania() {
+            const contenedor = document.getElementById('compania-mensajes');
+            if (!contenedor) return;
+            const mensajes = leerListaLocal(clavesComunidadLocal.mensajes, 'compania-estado');
+            contenedor.replaceChildren();
+            if (!mensajes.length) {
+                const vacio = document.createElement('p');
+                vacio.className = 'comunidad-vacia';
+                vacio.textContent = "Todavía no hay mensajes en este navegador. ¡Rompé el hielo!";
+                contenedor.appendChild(vacio);
+                return;
+            }
+            mensajes.slice(-100).forEach(mensaje => {
+                const linea = document.createElement('div');
+                linea.className = 'comunidad-mensaje';
+                const autor = document.createElement('strong');
+                autor.textContent = mensaje.nombre || "Fan";
+                const texto = document.createElement('span');
+                texto.textContent = `: ${mensaje.texto || ""}`;
+                const hora = document.createElement('time');
+                const fecha = new Date(mensaje.fecha);
+                hora.textContent = Number.isNaN(fecha.getTime()) ? "" : fecha.toLocaleString();
+                linea.append(autor, texto, hora);
+                contenedor.appendChild(linea);
+            });
+            contenedor.scrollTop = contenedor.scrollHeight;
+        }
+
+        function abrirSalaNoticias() {
+            prepararSalaMultimedia('noticias-modal', 'NOTICIAS');
+            document.getElementById('evento-imagen').value = "";
+            document.getElementById('evento-imagen-preview').replaceChildren();
+            eventoFlyerData = "";
+            eventoFlyerLeyendo = false;
+            renderizarEventos();
+        }
+
+        function previsualizarFlyer(entrada) {
+            const estado = document.getElementById('noticias-estado');
+            const preview = document.getElementById('evento-imagen-preview');
+            preview.replaceChildren();
+            eventoFlyerData = "";
+            eventoFlyerLeyendo = false;
+            const archivo = entrada.files && entrada.files[0];
+            if (!archivo) return;
+            if (!["image/png", "image/jpeg", "image/webp"].includes(archivo.type)) {
+                estado.textContent = "El flyer debe ser PNG, JPG o WebP.";
+                entrada.value = "";
+                return;
+            }
+            if (archivo.size > 500 * 1024) {
+                estado.textContent = "La imagen supera el límite de 500 KB.";
+                entrada.value = "";
+                return;
+            }
+            const lector = new FileReader();
+            eventoFlyerLeyendo = true;
+            lector.onload = () => {
+                eventoFlyerLeyendo = false;
+                if (typeof lector.result !== "string") {
+                    estado.textContent = "No se pudo leer la imagen seleccionada.";
+                    return;
+                }
+                eventoFlyerData = lector.result;
+                const imagen = document.createElement('img');
+                imagen.src = eventoFlyerData;
+                imagen.alt = "Vista previa del flyer";
+                imagen.style.cssText = "display:block;max-width:100%;max-height:160px;object-fit:contain;margin-top:8px;border-radius:6px;";
+                preview.appendChild(imagen);
+                estado.textContent = "Vista previa lista. El flyer se guardará localmente con el evento.";
+            };
+            lector.onerror = () => {
+                eventoFlyerLeyendo = false;
+                estado.textContent = "No se pudo leer la imagen. Probá con otro archivo.";
+            };
+            lector.readAsDataURL(archivo);
+        }
+
+        function publicarEvento(evento) {
+            evento.preventDefault();
+            const estadoId = 'noticias-estado';
+            if (eventoFlyerLeyendo) {
+                document.getElementById(estadoId).textContent = "Esperá a que termine de cargarse la vista previa del flyer.";
+                return;
+            }
+            const enlace = validarEnlaceOpcional(document.getElementById('evento-enlace').value);
+            if (enlace === null) {
+                document.getElementById(estadoId).textContent = "El enlace debe ser una URL http o https válida.";
+                return;
+            }
+            const fecha = document.getElementById('evento-fecha').value;
+            const fechaDate = new Date(fecha);
+            if (!fecha || Number.isNaN(fechaDate.getTime())) {
+                document.getElementById(estadoId).textContent = "Ingresá una fecha y hora válidas.";
+                return;
+            }
+            const eventos = leerListaLocal(clavesComunidadLocal.eventos, estadoId);
+            eventos.unshift({
+                id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+                nombre: document.getElementById('evento-nombre').value.trim(),
+                tipo: document.getElementById('evento-tipo').value,
+                fecha: fechaDate.toISOString(),
+                ciudad: document.getElementById('evento-ciudad').value.trim(),
+                lugar: document.getElementById('evento-lugar').value.trim(),
+                organiza: document.getElementById('evento-organiza').value.trim(),
+                enlace,
+                detalles: document.getElementById('evento-detalles').value.trim(),
+                imagen: eventoFlyerData
+            });
+            if (eventos.length > 20) eventos.length = 20;
+            if (guardarListaLocal(clavesComunidadLocal.eventos, eventos, estadoId)) {
+                evento.target.reset();
+                eventoFlyerData = "";
+                eventoFlyerLeyendo = false;
+                document.getElementById('evento-imagen-preview').replaceChildren();
+                renderizarEventos();
+            }
+        }
+
+        function renderizarEventos() {
+            const contenedor = document.getElementById('noticias-lista');
+            if (!contenedor) return;
+            const eventos = leerListaLocal(clavesComunidadLocal.eventos, 'noticias-estado');
+            contenedor.replaceChildren();
+            if (!eventos.length) {
+                const vacio = document.createElement('p');
+                vacio.className = 'comunidad-vacia';
+                vacio.textContent = "Todavía no hay eventos guardados en este navegador.";
+                contenedor.appendChild(vacio);
+                return;
+            }
+            eventos.slice().sort((a, b) => new Date(a.fecha) - new Date(b.fecha)).forEach(evento => {
+                const tarjeta = document.createElement('article');
+                tarjeta.className = 'comunidad-card';
+                const titulo = document.createElement('h3');
+                titulo.textContent = evento.nombre || "Evento sin título";
+                const fecha = document.createElement('small');
+                const fechaDate = new Date(evento.fecha);
+                fecha.textContent = Number.isNaN(fechaDate.getTime()) ? "Fecha no válida" : fechaDate.toLocaleString();
+                const lugar = document.createElement('p');
+                lugar.textContent = `${evento.tipo || "Evento"} · ${evento.lugar || ""} · ${evento.ciudad || ""}`;
+                tarjeta.append(titulo, fecha, lugar);
+                if (evento.imagen && /^data:image\/(?:png|jpeg|webp);base64,/.test(evento.imagen)) {
+                    const imagen = document.createElement('img');
+                    imagen.src = evento.imagen;
+                    imagen.alt = `Flyer de ${evento.nombre || "evento"}`;
+                    tarjeta.appendChild(imagen);
+                }
+                if (evento.detalles) {
+                    const detalles = document.createElement('p');
+                    detalles.textContent = evento.detalles;
+                    tarjeta.appendChild(detalles);
+                }
+                if (evento.organiza) {
+                    const organiza = document.createElement('small');
+                    organiza.textContent = `Organiza: ${evento.organiza}`;
+                    tarjeta.appendChild(organiza);
+                }
+                agregarEnlaceSeguro(tarjeta, validarEnlaceOpcional(evento.enlace || "") || "", "Más información / contacto");
+                contenedor.appendChild(tarjeta);
+            });
+        }
+
+        window.addEventListener('storage', evento => {
+            if (evento.key === clavesComunidadLocal.colaboraciones && estadoActual === "COMPANIA") renderizarColaboraciones();
+            if (evento.key === clavesComunidadLocal.mensajes && estadoActual === "COMPANIA") renderizarMensajesCompania();
+            if (evento.key === clavesComunidadLocal.eventos && estadoActual === "NOTICIAS") renderizarEventos();
+        });
 
         function abrirSalaCine() {
             detenerCine();
@@ -2992,6 +3805,10 @@
             document.getElementById('vinilos-modal').style.display = 'none';
             document.getElementById('galeria-modal').style.display = 'none';
             document.getElementById('cine-modal').style.display = 'none';
+            document.getElementById('karaoke-modal').style.display = 'none';
+            document.getElementById('trivias-modal').style.display = 'none';
+            document.getElementById('compania-modal').style.display = 'none';
+            document.getElementById('noticias-modal').style.display = 'none';
         }
 
         function finalizarDiscoActual() {
