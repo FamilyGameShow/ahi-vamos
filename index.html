@@ -2307,13 +2307,13 @@
             prepararSalaMultimedia('cine-modal', 'CINE');
             cineFunciones = [
                 ...listaDiscos.map(disco => ({
-                    id: `recital-${disco.id}`,
+                    id: `GRAN REX - BOCANADA-${disco.id}`,
                     tipo: "recitales",
-                    titulo: `Recital destacado · ${disco.nombre}`,
+                    titulo: `Gran Rex 1999 · ${disco.nombre}`,
                     subtitulo: "RECITAL",
-                    descripcion: `Concierto destacado de la etapa ${disco.nombre}. Pegá la URL exacta de YouTube en youtubeUrl para habilitar la proyección.`,
+                    descripcion: `Gustavo Cerati Teatro Gran Rex 1999 Completo Bocanada ${disco.nombre}. Pegá la URL exacta de YouTube en youtubeUrl para habilitar la proyección.`,
                     imagen: disco.fondo,
-                    youtubeUrl: ""
+                    youtubeUrl: "WX1UMBfq_X0&list=RDWX1UMBfq_X0&start_radio=1&t=1177s"
                 })),
                 {
                     id: "especial-unplugged",
@@ -2322,7 +2322,7 @@
                     subtitulo: "ESPECIAL",
                     descripcion: "Concierto acústico especial. Agregá la URL exacta de YouTube en youtubeUrl.",
                     imagen: listaDiscos.find(disco => disco.id === "sueno_stereo").fondo,
-                    youtubeUrl: ""
+                    youtubeUrl: "YlU6N0fxr0o&list=RDYlU6N0fxr0o&start_radio=1"
                 },
                 {
                     id: "especial-11-episodios",
@@ -2331,7 +2331,7 @@
                     subtitulo: "ESPECIAL",
                     descripcion: "Proyecto sinfónico de Gustavo Cerati. Agregá la URL exacta de YouTube en youtubeUrl.",
                     imagen: listaDiscos.find(disco => disco.id === "amor_amarillo").fondo,
-                    youtubeUrl: ""
+                    youtubeUrl: "frg2xR18eCg&list=PLq5-BKH1QxbxaW2t-sdcUExBimikshFmx"
                 },
                 {
                     id: "pelicula-mas-bien",
@@ -2340,16 +2340,16 @@
                     subtitulo: "PELÍCULA",
                     descripcion: "Película protagonizada por Gustavo Cerati, con música suya. Agregá la URL exacta de YouTube en youtubeUrl.",
                     imagen: listaDiscos.find(disco => disco.id === "bocanada").fondo,
-                    youtubeUrl: ""
+                    youtubeUrl: "RHJAZhZ9Ok0"
                 },
                 {
-                    id: "reportaje-gustavo-cerati",
-                    tipo: "reportajes",
-                    titulo: "Reportajes a Gustavo Cerati",
-                    subtitulo: "REPORTAJES",
-                    descripcion: "Espacio para entrevistas y reportajes. Agregá la URL exacta de YouTube en youtubeUrl.",
+                    id: "ultimo concierto",
+                    tipo: "recitales",
+                    titulo: "Soda Stereo - El Último Concierto",
+                    subtitulo: "RECITAL",
+                    descripcion: "Ultimo concierto Soda Stereo 1997. Agregá la URL exacta de YouTube en youtubeUrl.",
                     imagen: listaDiscos.find(disco => disco.id === "ahi_vamos").fondo,
-                    youtubeUrl: ""
+                    youtubeUrl: "xk7fSD6MZeg&list=RDxk7fSD6MZeg&start_radio=1"
                 }
             ];
             if (!cineFunciones.some(funcion => funcion.id === cineFuncionSeleccionadaId)) {
