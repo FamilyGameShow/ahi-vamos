@@ -579,20 +579,14 @@
             <span class="grafiti-fuente">FRASE DE DESPEDIDA · SODA STEREO, 1997</span>
             <p class="grafiti-frase">Me verás volver</p>
             <span class="grafiti-fuente">TÍTULO DE CANCIÓN Y GIRA</span>
-            <p class="grafiti-frase">Mereces lo que sueñas</p>
-            <span class="grafiti-fuente">BEAUTIFUL · 1999</span>
-            <p class="grafiti-frase">Poder decir adios es crecer</p>
-            <span class="grafiti-fuente">ADIOS · 2006</span>
-            <p class="grafiti-frase">Del mismo dolor vendra un nuevo amanecer</p>
-            <span class="grafiti-fuente">ADIOS · 2006</span>
-            <p class="grafiti-frase">Siempre es hoy</p>
-            <span class="grafiti-fuente">COSAS IMPOSIBLES · 2002</span>
-             <p class="grafiti-frase">El fin de amar es sentirse mas vivoy</p>
-            <span class="grafiti-fuente">VIVO · 2002</span>
-             <p class="grafiti-frase">Vamos despacio para encontrarnos, el tiempo es arena en mis manosy</p>
-            <span class="grafiti-fuente">LAGO EN EL CIELO · 2006</span>
-             <p class="grafiti-frase">Sacar belleza de este caos es virtud</p>
-            <span class="grafiti-fuente">DEJA VU · 2009</span>
+            <p class="grafiti-frase">Un millón de años luz</p>
+            <span class="grafiti-fuente">CANCIÓN ANIMAL · 1990</span>
+            <p class="grafiti-frase">Puente</p>
+            <span class="grafiti-fuente">BOCANADA · 1999</span>
+            <p class="grafiti-frase">Cosas imposibles</p>
+            <span class="grafiti-fuente">SIEMPRE ES HOY · 2002</span>
+            <p class="grafiti-frase">Fuerza natural</p>
+            <span class="grafiti-fuente">FUERZA NATURAL · 2009</span>
             <p class="grafitis-nota">Un mural de frases y títulos del universo Cerati; salvo “Gracias totales”, son nombres de obras, no citas textuales.</p>
         </section>
         <div id="galeria-zoom" class="galeria-zoom" role="dialog" aria-modal="true" aria-label="Obra ampliada" hidden>
@@ -919,12 +913,18 @@
             }
         }
 
+        function detenerMusicaDeFondo() {
+            const reproductor = document.getElementById('yt-player');
+            if (reproductor) reproductor.src = "";
+            cancionActualId = "";
+        }
+
         function iniciarConteoRegresivo() {
             juegoIniciado = true;
             document.getElementById('pantalla-intro').style.display = 'none';
             document.getElementById('pantalla-conteo').style.display = 'flex';
             cambiarFondo("https://i.ibb.co/9Hy8h9fL/colores-santos.png");
-            reproducirAudio("xbcK0-oEzzw&list=RDxbcK0-oEzzw&start_radio=1");
+            reproducirAudio("Wun6zDSpwkg");
             let cuenta = 3;
             const numEl = document.getElementById('txt-conteo-numero');
             numEl.innerText = cuenta;
@@ -1402,7 +1402,7 @@
         let eventoFlyerData = "";
         let eventoFlyerLeyendo = false;
         const cancionesSatelite = [
-            { nombre: "Tráeme la Noche (Bring on the Night)", inicio: 0, tiempo: "00:00", imagen: "https://i.ibb.co/20jTh2X9/traeme-la-noche.jpg" },
+            { nombre: "Tráeme la Noche (Bring on the Night)", inicio: 0, tiempo: "00:00", imagen: "" },
             { nombre: "El Mareo", inicio: 282, tiempo: "04:42", imagen: "" },
             { nombre: "19", inicio: 559, tiempo: "09:19", imagen: "" },
             { nombre: "Zona de Promesas", inicio: 755, tiempo: "12:35", imagen: "" },
@@ -2303,15 +2303,16 @@
         });
 
         function abrirSalaCine() {
+            detenerMusicaDeFondo();
             detenerCine();
             prepararSalaMultimedia('cine-modal', 'CINE');
             cineFunciones = [
                 ...listaDiscos.map(disco => ({
-                    id: `GRAN REX - BOCANADA-${disco.id}`,
+                    id: `gran-rex-${disco.id}`,
                     tipo: "recitales",
                     titulo: `Gran Rex 1999 · ${disco.nombre}`,
                     subtitulo: "RECITAL",
-                    descripcion: `Gustavo Cerati Teatro Gran Rex 1999 Completo Bocanada ${disco.nombre}. `,
+                    descripcion: `Gustavo Cerati · Teatro Gran Rex 1999 · Bocanada · ${disco.nombre}.`,
                     imagen: disco.fondo,
                     youtubeUrl: "https://www.youtube.com/watch?v=g1ws0-wI3Mk&list=RDg1ws0-wI3Mk&start_radio=1"
                 })),
@@ -2320,7 +2321,7 @@
                     tipo: "especiales",
                     titulo: "MTV Unplugged",
                     subtitulo: "ESPECIAL",
-                    descripcion: "Concierto acústico especial. ",
+                    descripcion: "Concierto acústico especial.",
                     imagen: listaDiscos.find(disco => disco.id === "sueno_stereo").fondo,
                     youtubeUrl: "https://www.youtube.com/watch?v=YlU6N0fxr0o&list=RDYlU6N0fxr0o&start_radio=1&t=214s"
                 },
@@ -2329,7 +2330,7 @@
                     tipo: "especiales",
                     titulo: "11 Episodios Sinfónicos",
                     subtitulo: "ESPECIAL",
-                    descripcion: "Proyecto sinfónico de Gustavo Cerati. ",
+                    descripcion: "Proyecto sinfónico de Gustavo Cerati.",
                     imagen: listaDiscos.find(disco => disco.id === "amor_amarillo").fondo,
                     youtubeUrl: "https://www.youtube.com/watch?v=frg2xR18eCg&list=PLq5-BKH1QxbxaW2t-sdcUExBimikshFmx"
                 },
@@ -2338,27 +2339,36 @@
                     tipo: "especiales",
                     titulo: "+Bien",
                     subtitulo: "PELÍCULA",
-                    descripcion: "Película protagonizada por Gustavo Cerati, con música suya. ",
+                    descripcion: "Película protagonizada por Gustavo Cerati, con música suya.",
                     imagen: listaDiscos.find(disco => disco.id === "bocanada").fondo,
-                    youtubeUrl: "https://www.youtube.com/watch?v=RHJAZhZ9Ok0&t=3577s"
+                    youtubeUrl: "https://www.youtube.com/watch?reload=9&v=wRMR9H_VOm4&t=613s"
                 },
                 {
-                    id: "ultimo concierto",
+                    id: "reportaje-gustavo-cerati",
+                    tipo: "reportajes",
+                    titulo: "Reportajes a Gustavo Cerati",
+                    subtitulo: "REPORTAJES",
+                    descripcion: "Espacio para entrevistas y reportajes.",
+                    imagen: listaDiscos.find(disco => disco.id === "ahi_vamos").fondo,
+                    youtubeUrl: ""
+                },
+                {
+                    id: "ultimo-concierto",
                     tipo: "recitales",
-                    titulo: "Soda Stereo - El Último Concierto",
+                    titulo: "Soda Stereo · El Último Concierto",
                     subtitulo: "RECITAL",
-                    descripcion: "Ultimo concierto Soda Stereo 1997. ",
+                    descripcion: "Último concierto de Soda Stereo, 1997.",
                     imagen: listaDiscos.find(disco => disco.id === "ahi_vamos").fondo,
                     youtubeUrl: "https://www.youtube.com/watch?v=xk7fSD6MZeg&list=RDxk7fSD6MZeg&start_radio=1"
                 },
                 {
-                    id: "9 de julio",
+                    id: "9-de-julio",
                     tipo: "recitales",
-                    titulo: "Soda Stereo - El Último Concierto",
+                    titulo: "Soda Stereo · 9 de Julio",
                     subtitulo: "RECITAL",
-                    descripcion: "Ultimo concierto Soda Stereo 1997. ",
+                    descripcion: "Concierto de Soda Stereo.",
                     imagen: listaDiscos.find(disco => disco.id === "ahi_vamos").fondo,
-                    youtubeUrl: "xk7fSD6MZeg&list=RDxk7fSD6MZeg&start_radio=1"
+                    youtubeUrl: "https://www.youtube.com/watch?v=xk7fSD6MZeg&list=RDxk7fSD6MZeg&start_radio=1"
                 }
             ];
             if (!cineFunciones.some(funcion => funcion.id === cineFuncionSeleccionadaId)) {
@@ -2465,6 +2475,20 @@
             }
         }
 
+        function extraerInicioYoutube(url) {
+            try {
+                const parametros = new URL((url || "").trim()).searchParams;
+                const tiempo = parametros.get('t') || parametros.get('start') || "";
+                if (/^\d+$/.test(tiempo)) return Number(tiempo);
+                const partes = tiempo.match(/^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?$/);
+                return partes && tiempo
+                    ? Number(partes[1] || 0) * 3600 + Number(partes[2] || 0) * 60 + Number(partes[3] || 0)
+                    : 0;
+            } catch (error) {
+                return 0;
+            }
+        }
+
         function reproducirCine() {
             const funcion = cineFunciones.find(item => item.id === cineFuncionSeleccionadaId);
             if (!funcion) return;
@@ -2474,9 +2498,13 @@
                 document.getElementById('cine-estado').classList.add('cine-sin-url');
                 return;
             }
+            detenerMusicaDeFondo();
             const marco = document.getElementById('cine-marco');
             const video = document.createElement('iframe');
-            video.src = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0`;
+            const parametros = new URLSearchParams({ autoplay: "1", rel: "0" });
+            const inicio = extraerInicioYoutube(funcion.youtubeUrl);
+            if (inicio > 0) parametros.set("start", String(inicio));
+            video.src = `https://www.youtube-nocookie.com/embed/${videoId}?${parametros}`;
             video.title = funcion.titulo;
             video.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
             video.allowFullscreen = true;
